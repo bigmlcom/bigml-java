@@ -26,9 +26,6 @@ public class BigMLClient {
    */
   static Logger logger = Logger.getLogger(BigMLClient.class.getName());
   private static BigMLClient instance = null;
-//    BIGML_USERNAME=xxxxx
-//    BIGML_API_KEY=yyyyyyyyyyyyy
-//    BIGML_AUTH="username=$BIGML_USERNAME;api_key=$BIGML_API_KEY"
   private String bigmlUrl;
   private String bigmlUser;
   private String bigmlApiKey;
