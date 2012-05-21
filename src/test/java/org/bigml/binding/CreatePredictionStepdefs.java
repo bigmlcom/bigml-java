@@ -34,7 +34,7 @@ public class CreatePredictionStepdefs {
 
   // Source steps
   @Given("^I create a data source uploading a \"([^\"]*)\" file$")
-  public void I_create_a_data_source_uploading_a_file(String fileName) {
+  public void I_create_a_data_source_uploading_a_file(String fileName) throws InvalidAuthenticationException {
     JSONObject resource = BigMLClient.getInstance().createSource(fileName, "new source", null);
 
     // update status
@@ -46,7 +46,7 @@ public class CreatePredictionStepdefs {
   }
 
   @Given("^I wait until the resource status code is either (\\d) or (\\d) less than (\\d+)")
-  public void I_wait_until_source_status_code_is(int code1, int code2, int secs) {
+  public void I_wait_until_source_status_code_is(int code1, int code2, int secs) throws InvalidAuthenticationException {
     Long code = (Long) ((JSONObject) source.get("status")).get("code");
     GregorianCalendar start = new GregorianCalendar();
     start.add(Calendar.SECOND, secs);
@@ -65,12 +65,12 @@ public class CreatePredictionStepdefs {
   }
 
   @Given("^I wait until the source is ready less than (\\d+) secs$")
-  public void I_wait_until_the_source_is_ready_less_than_secs(int secs) {
+  public void I_wait_until_the_source_is_ready_less_than_secs(int secs) throws InvalidAuthenticationException {
     I_wait_until_source_status_code_is(AbstractResource.FINISHED, AbstractResource.FAULTY, secs);
   }
 
   @Given("^I get the source \"(.*)\"")
-  public void I_get_the_source(String sourceId) {
+  public void I_get_the_source(String sourceId) throws InvalidAuthenticationException {
     JSONObject resource = BigMLClient.getInstance().getSource(sourceId);
     Integer code = (Integer) resource.get("code");
     assertEquals(code.intValue(), AbstractResource.HTTP_OK);
@@ -79,7 +79,7 @@ public class CreatePredictionStepdefs {
 
   // Dataset steps
   @Given("^I create a dataset$")
-  public void I_create_a_dataset() {
+  public void I_create_a_dataset() throws InvalidAuthenticationException {
     String sourceId = (String) source.get("resource");
     JSONObject resource = BigMLClient.getInstance().createDataset(sourceId, null, 5);
     status = (Integer) resource.get("code");
@@ -89,7 +89,7 @@ public class CreatePredictionStepdefs {
   }
 
   @Given("^I wait until the dataset status code is either (\\d) or (\\d) less than (\\d+)")
-  public void I_wait_until_dataset_status_code_is(int code1, int code2, int secs) {
+  public void I_wait_until_dataset_status_code_is(int code1, int code2, int secs) throws InvalidAuthenticationException {
     Long code = (Long) ((JSONObject) dataset.get("status")).get("code");
     GregorianCalendar start = new GregorianCalendar();
     start.add(Calendar.SECOND, secs);
@@ -107,12 +107,12 @@ public class CreatePredictionStepdefs {
   }
 
   @Given("^I wait until the dataset is ready less than (\\d+) secs$")
-  public void I_wait_until_the_dataset_is_ready_less_than_secs(int secs) {
+  public void I_wait_until_the_dataset_is_ready_less_than_secs(int secs) throws InvalidAuthenticationException {
     I_wait_until_dataset_status_code_is(AbstractResource.FINISHED, AbstractResource.FAULTY, secs);
   }
 
   @Given("^I get the dataset \"(.*)\"")
-  public void I_get_the_dataset(String datasetId) {
+  public void I_get_the_dataset(String datasetId) throws InvalidAuthenticationException {
     JSONObject resource = BigMLClient.getInstance().getDataset(datasetId);
     Integer code = (Integer) resource.get("code");
     assertEquals(code.intValue(), AbstractResource.HTTP_OK);
@@ -121,7 +121,7 @@ public class CreatePredictionStepdefs {
 
   // Model steps
   @Given("^I create a model$")
-  public void I_create_a_model() {
+  public void I_create_a_model() throws InvalidAuthenticationException {
     String datasetId = (String) dataset.get("resource");
     JSONObject resource = BigMLClient.getInstance().createModel(datasetId, null, 5);
     status = (Integer) resource.get("code");
@@ -131,7 +131,7 @@ public class CreatePredictionStepdefs {
   }
 
   @Given("^I wait until the model status code is either (\\d) or (\\d) less than (\\d+)")
-  public void I_wait_until_model_status_code_is(int code1, int code2, int secs) {
+  public void I_wait_until_model_status_code_is(int code1, int code2, int secs) throws InvalidAuthenticationException {
     Long code = (Long) ((JSONObject) model.get("status")).get("code");
     GregorianCalendar start = new GregorianCalendar();
     start.add(Calendar.SECOND, secs);
@@ -149,12 +149,12 @@ public class CreatePredictionStepdefs {
   }
 
   @Given("^I wait until the model is ready less than (\\d+) secs$")
-  public void I_wait_until_the_model_is_ready_less_than_secs(int secs) {
+  public void I_wait_until_the_model_is_ready_less_than_secs(int secs) throws InvalidAuthenticationException {
     I_wait_until_model_status_code_is(AbstractResource.FINISHED, AbstractResource.FAULTY, secs);
   }
 
   @Given("^I get the model \"(.*)\"")
-  public void I_get_the_model(String modelId) {
+  public void I_get_the_model(String modelId) throws InvalidAuthenticationException {
     JSONObject resource = BigMLClient.getInstance().getModel(modelId);
     Integer code = (Integer) resource.get("code");
     assertEquals(code.intValue(), AbstractResource.HTTP_OK);
@@ -163,7 +163,7 @@ public class CreatePredictionStepdefs {
 
   // Prediction steps
   @When("^I create a prediction for \"(.*)\"$")
-  public void I_create_a_prediction_for_petal_length(String args) {
+  public void I_create_a_prediction_for_petal_length(String args) throws InvalidAuthenticationException {
     String modelId = (String) model.get("resource");
     JSONObject resource = BigMLClient.getInstance().createPrediction(modelId, args, 5);
     status = (Integer) resource.get("code");
@@ -173,7 +173,7 @@ public class CreatePredictionStepdefs {
   }
 
   @Given("^I get the prediction \"(.*)\"")
-  public void I_get_the_prediction(String predictionId) {
+  public void I_get_the_prediction(String predictionId) throws InvalidAuthenticationException {
     JSONObject resource = BigMLClient.getInstance().getPrediction(predictionId);
     Integer code = (Integer) resource.get("code");
     assertEquals(code.intValue(), AbstractResource.HTTP_OK);
@@ -189,7 +189,7 @@ public class CreatePredictionStepdefs {
 
   // Listing
   @Then("^test listing$")
-  public void test_listing() {
+  public void test_listing() throws InvalidAuthenticationException {
     JSONObject listing = BigMLClient.getInstance().listSources("");
     assertEquals(((Integer) listing.get("code")).intValue(), AbstractResource.HTTP_OK);
     listing = BigMLClient.getInstance().listDatasets("");
@@ -202,7 +202,7 @@ public class CreatePredictionStepdefs {
 
   // Delete test data
   @Then("^delete test data$")
-  public void delete_test_data() {
+  public void delete_test_data() throws InvalidAuthenticationException {
     if (prediction != null) {
       BigMLClient.getInstance().deletePrediction((String) prediction.get("resource"));
     }

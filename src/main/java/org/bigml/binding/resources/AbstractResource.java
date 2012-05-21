@@ -16,6 +16,7 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.bigml.binding.BigMLClient;
+import org.bigml.binding.InvalidAuthenticationException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -35,9 +36,14 @@ public abstract class AbstractResource {
   // Logging
   Logger logger = LoggerFactory.getLogger(AbstractResource.class);
   // Base URL
-  public final static String BIGML_URL = BigMLClient.getInstance().getBigMLUrl() != null && !BigMLClient.getInstance().getBigMLUrl().equals("")
-          ? BigMLClient.getInstance().getBigMLUrl()
-          : "https://bigml.io/andromeda/";
+  public static String BIGML_URL;
+  static {
+    try {
+      BIGML_URL = BigMLClient.getInstance().getBigMLUrl();
+    } catch (InvalidAuthenticationException e) {
+      BIGML_URL = "https://bigml.io/andromeda/";
+    }
+  }
   public final static String SOURCE_PATH = "source";
   public final static String DATASET_PATH = "dataset";
   public final static String MODEL_PATH = "model";
