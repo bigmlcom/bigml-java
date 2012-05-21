@@ -2,7 +2,7 @@ package org.bigml.binding;
 
 @SuppressWarnings("serial")
 public class InvalidAuthenticationException extends Exception {
-	
+
   /**
    * Forward the default constructor onto the RuntimeException default constructor
    */
