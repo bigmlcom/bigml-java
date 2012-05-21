@@ -41,26 +41,18 @@ public class BigMLClient {
   protected BigMLClient() {
   }
 
-  public static BigMLClient getInstance() {
+  public static BigMLClient getInstance() throws InvalidAuthenticationException {
     if (instance == null) {
       instance = new BigMLClient();
-      try {
-        instance.init();
-      } catch (InvalidAuthenticationException iae) {
-        return null;
-      }
+      instance.init();
     }
     return instance;
   }
 
-  public static BigMLClient getInstance(final String apiUser, final String apiKey) {
+  public static BigMLClient getInstance(final String apiUser, final String apiKey) throws InvalidAuthenticationException {
     if (instance == null) {
       instance = new BigMLClient();
-      try {
-        instance.init(apiUser, apiKey);
-      } catch (InvalidAuthenticationException iae) {
-        return null;
-      }
+      instance.init(apiUser, apiKey);
     }
     return instance;
   }
@@ -77,8 +69,9 @@ public class BigMLClient {
       this.bigmlUser = props.getProperty("BIGML_USERNAME");
       this.bigmlApiKey = props.getProperty("BIGML_API_KEY");
       if (this.bigmlUser == null || this.bigmlUser.equals("") || this.bigmlApiKey == null || this.bigmlApiKey.equals("")) {
-        logger.info("???????????");
-        throw new InvalidAuthenticationException("");
+        InvalidAuthenticationException ex = new InvalidAuthenticationException("Missing authentication information.");
+        logger.info(instance, ex);
+        throw ex;
       }
     }
 
@@ -97,7 +90,9 @@ public class BigMLClient {
       this.bigmlUser = props.getProperty("BIGML_USERNAME");
       this.bigmlApiKey = props.getProperty("BIGML_API_KEY");
       if (this.bigmlUser == null || this.bigmlUser.equals("") || this.bigmlApiKey == null || this.bigmlApiKey.equals("")) {
-        throw new InvalidAuthenticationException("");
+        InvalidAuthenticationException ex = new InvalidAuthenticationException("Missing authentication information.");
+        logger.info(instance, ex);
+        throw ex;
       }
     }
 
