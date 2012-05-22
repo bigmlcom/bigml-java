@@ -16,7 +16,7 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.bigml.binding.BigMLClient;
-import org.bigml.binding.InvalidAuthenticationException;
+import org.bigml.binding.AuthenticationException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -40,7 +40,7 @@ public abstract class AbstractResource {
   static {
     try {
       BIGML_URL = BigMLClient.getInstance().getBigMLUrl();
-    } catch (InvalidAuthenticationException e) {
+    } catch (AuthenticationException e) {
       BIGML_URL = "https://bigml.io/andromeda/";
     }
   }

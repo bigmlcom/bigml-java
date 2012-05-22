@@ -38,7 +38,7 @@ public class BigMLClient {
   protected BigMLClient() {
   }
 
-  public static BigMLClient getInstance() throws InvalidAuthenticationException {
+  public static BigMLClient getInstance() throws AuthenticationException {
     if (instance == null) {
       instance = new BigMLClient();
       instance.init();
@@ -46,7 +46,7 @@ public class BigMLClient {
     return instance;
   }
 
-  public static BigMLClient getInstance(final String apiUser, final String apiKey) throws InvalidAuthenticationException {
+  public static BigMLClient getInstance(final String apiUser, final String apiKey) throws AuthenticationException {
     if (instance == null) {
       instance = new BigMLClient();
       instance.init(apiUser, apiKey);
@@ -57,7 +57,7 @@ public class BigMLClient {
   /**
    * Init object.
    */
-  private void init() throws InvalidAuthenticationException {
+  private void init() throws AuthenticationException {
     initConfiguration();
 
     this.bigmlUser = System.getProperty("BIGML_USERNAME");
@@ -66,7 +66,7 @@ public class BigMLClient {
       this.bigmlUser = props.getProperty("BIGML_USERNAME");
       this.bigmlApiKey = props.getProperty("BIGML_API_KEY");
       if (this.bigmlUser == null || this.bigmlUser.equals("") || this.bigmlApiKey == null || this.bigmlApiKey.equals("")) {
-        InvalidAuthenticationException ex = new InvalidAuthenticationException("Missing authentication information.");
+        AuthenticationException ex = new AuthenticationException("Missing authentication information.");
         logger.info(instance, ex);
         throw ex;
       }
@@ -78,7 +78,7 @@ public class BigMLClient {
   /**
    * Init object.
    */
-  private void init(final String apiUser, final String apiKey) throws InvalidAuthenticationException {
+  private void init(final String apiUser, final String apiKey) throws AuthenticationException {
     initConfiguration();
 
     this.bigmlUser = apiUser != null ? apiUser : System.getProperty("BIGML_USERNAME");
@@ -87,7 +87,7 @@ public class BigMLClient {
       this.bigmlUser = props.getProperty("BIGML_USERNAME");
       this.bigmlApiKey = props.getProperty("BIGML_API_KEY");
       if (this.bigmlUser == null || this.bigmlUser.equals("") || this.bigmlApiKey == null || this.bigmlApiKey.equals("")) {
-        InvalidAuthenticationException ex = new InvalidAuthenticationException("Missing authentication information.");
+        AuthenticationException ex = new AuthenticationException("Missing authentication information.");
         logger.info(instance, ex);
         throw ex;
       }

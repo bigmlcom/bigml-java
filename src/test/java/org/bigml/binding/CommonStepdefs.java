@@ -19,7 +19,7 @@ public class CommonStepdefs {
 //    		assertTrue("", BigMLClient.getInstance()!=null);
 //    }
   @Given("^a instantiated BigML client$")
-  public void a_instantiated_BigML_client() throws InvalidAuthenticationException {
+  public void a_instantiated_BigML_client() throws AuthenticationException {
     BigMLClient.getInstance();
     assertTrue("", BigMLClient.getInstance() != null);
   }
