@@ -20,7 +20,7 @@ Feature: Create Predictions
 
   Examples: 
         | data	| time_1  | time_2 | time_3 | data_input    | objective | prediction  |
-        | data/iris.csv | 10      | 10     | 10     | {"input_data": {"petal length": 1}} | 000004    | Iris-virginica |
+        | data/iris.csv | 15      | 15     | 15     | {"input_data": {"petal length": 1}} | 000004    | Iris-virginica |
 
 
    

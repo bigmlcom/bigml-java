@@ -10,6 +10,7 @@ import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.slf4j.Logger;
@@ -33,25 +34,30 @@ public class Source extends AbstractResource {
    *
    */
   public Source() {
-    this.bigmlUser = System.getProperty("BIGML_USERNAME");
     this.bigmlApiKey = System.getProperty("BIGML_API_KEY");
     bigmlAuth = "?username=" + this.bigmlUser + ";api_key=" + this.bigmlApiKey + ";";
+    this.devMode = false;
+    super.init();
   }
 
   /**
    * Constructor
    *
    */
-  public Source(final String apiUser, final String apiKey) {
+  public Source(final String apiUser, final String apiKey, final boolean devMode) {
     this.bigmlUser = apiUser != null ? apiUser : System.getProperty("BIGML_USERNAME");
     this.bigmlApiKey = apiKey != null ? apiKey : System.getProperty("BIGML_API_KEY");
     bigmlAuth = "?username=" + this.bigmlUser + ";api_key=" + this.bigmlApiKey + ";";
+    this.devMode = devMode;
+    super.init();
   }
-
+  
+  
   /**
-   * Create a new source.
+   * Creating a source using a local file.
    *
-   * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY; HTTP/1.1 Host: bigml.io
+   * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY; HTTP/1.1 
+   * Host: bigml.io
    * Content-Type: multipart/form-data;
    *
    * @param fileName	file containing your data in csv format. It can be compressed, gzipped, or
@@ -60,7 +66,7 @@ public class Source extends AbstractResource {
    * @param sourceParser	set of parameters to parse the source. Optional
    *
    */
-  public JSONObject create(final String fileName, String name, String sourceParser) {
+  public JSONObject createLocalSource(final String fileName, String name, String sourceParser) {
     int code = HTTP_INTERNAL_SERVER_ERROR;
     String resourceId = null;
     JSONObject resource = null;
@@ -100,12 +106,12 @@ public class Source extends AbstractResource {
 
       if (code == HTTP_CREATED) {
         location = (String) response.getHeaders("location")[0].getValue();
-        resource = (JSONObject) JSONValue.parse(inputStreamAsString(resEntity.getContent()));
+        resource = (JSONObject) JSONValue.parse(Utils.inputStreamAsString(resEntity.getContent()));
         resourceId = (String) resource.get("resource");
         error = new JSONObject();
       } else {
         if (code == HTTP_BAD_REQUEST || code == HTTP_UNAUTHORIZED || code == HTTP_PAYMENT_REQUIRED || code == HTTP_NOT_FOUND) {
-          error = (JSONObject) JSONValue.parse(inputStreamAsString(resEntity.getContent()));
+          error = (JSONObject) JSONValue.parse(Utils.inputStreamAsString(resEntity.getContent()));
         } else {
           logger.info("Unexpected error (" + code + ")");
           code = HTTP_INTERNAL_SERVER_ERROR;
@@ -124,7 +130,61 @@ public class Source extends AbstractResource {
     result.put("error", error);
     return result;
   }
+  
+  
+  /**
+   * Creating a source using a URL.
+   * 
+   * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY; HTTP/1.1
+   * Host: bigml.io
+   * Content-Type: application/json;
+   *
+   * @param url		url for remote source
+   * @param args	set of parameters to create the source. Optional
+   *
+   */
+  public JSONObject createRemoteSource(final String url, final String args) {
+	try {
+      JSONObject requestObject = new JSONObject();
+      if (args != null) {
+        requestObject = (JSONObject) JSONValue.parse(args);
+      }
+      requestObject.put("remote", url);
 
+      return createResource(SOURCE_URL, requestObject.toJSONString());
+    } catch (Throwable e) {
+      logger.error("Error creating source");
+      return null;
+    }
+  }
+  
+  
+  /**
+   * Creating a source using inline data.
+   * 
+   * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY; HTTP/1.1
+   * Host: bigml.io
+   * Content-Type: application/json;
+   *
+   * @param data	inline data for source
+   * @param args	set of parameters to create the source. Optional
+   *
+   */
+  public JSONObject createInlineSource(final String data, final String args) {
+	try {
+      JSONObject requestObject = new JSONObject();
+      if (args != null) {
+        requestObject = (JSONObject) JSONValue.parse(args);
+      }
+      requestObject.put("data", data);      
+      return createResource(SOURCE_URL, requestObject.toJSONString());
+    } catch (Throwable e) {
+      logger.error("Error creating source");
+      return null;
+    }
+  }
+
+  
   /**
    * Retrieve a source.
    *

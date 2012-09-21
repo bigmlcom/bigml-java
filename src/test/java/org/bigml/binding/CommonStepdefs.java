@@ -1,11 +1,11 @@
 package org.bigml.binding;
 
+import static org.junit.Assert.assertTrue;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import cucumber.annotation.en.Given;
-
-import static org.junit.Assert.assertTrue;
 
 public class CommonStepdefs {
 
@@ -20,7 +20,8 @@ public class CommonStepdefs {
 //    }
   @Given("^a instantiated BigML client$")
   public void a_instantiated_BigML_client() throws AuthenticationException {
-    BigMLClient.getInstance();
-    assertTrue("", BigMLClient.getInstance() != null);
+    BigMLClient.getInstance(true);
+    assertTrue("", BigMLClient.getInstance(true) != null);
   }
+  
 }

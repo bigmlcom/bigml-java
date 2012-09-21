@@ -27,16 +27,20 @@ public class Prediction extends AbstractResource {
     this.bigmlUser = System.getProperty("BIGML_USERNAME");
     this.bigmlApiKey = System.getProperty("BIGML_API_KEY");
     bigmlAuth = "?username=" + this.bigmlUser + ";api_key=" + this.bigmlApiKey + ";";
+    this.devMode = false;
+    super.init();
   }
 
   /**
    * Constructor
    *
    */
-  public Prediction(final String apiUser, final String apiKey) {
+  public Prediction(final String apiUser, final String apiKey, final boolean devMode) {
     this.bigmlUser = apiUser != null ? apiUser : System.getProperty("BIGML_USERNAME");
     this.bigmlApiKey = apiKey != null ? apiKey : System.getProperty("BIGML_API_KEY");
     bigmlAuth = "?username=" + this.bigmlUser + ";api_key=" + this.bigmlApiKey + ";";
+    this.devMode = devMode;
+    super.init();
   }
 
   /**
@@ -61,7 +65,7 @@ public class Prediction extends AbstractResource {
     try {
       waitTime = waitTime != null ? waitTime : 3;
       if (waitTime > 0) {
-        while (!BigMLClient.getInstance().modelIsReady(modelId)) {
+        while (!BigMLClient.getInstance(this.devMode).modelIsReady(modelId)) {
           Thread.sleep(waitTime);
         }
       }
