@@ -25,7 +25,9 @@ public class BigMLClient {
    * Logging
    */
   static Logger logger = Logger.getLogger(BigMLClient.class.getName());
+  
   private static BigMLClient instance = null;
+  
   private String bigmlUrl;
   private String bigmlUser;
   private String bigmlApiKey;
@@ -34,6 +36,7 @@ public class BigMLClient {
   private Model model;
   private Prediction prediction;
   private Properties props;
+  private Boolean devMode = false;
 
   protected BigMLClient() {
   }
@@ -41,23 +44,34 @@ public class BigMLClient {
   public static BigMLClient getInstance() throws AuthenticationException {
     if (instance == null) {
       instance = new BigMLClient();
-      instance.init();
+      instance.init(false);
     }
     return instance;
   }
-
-  public static BigMLClient getInstance(final String apiUser, final String apiKey) throws AuthenticationException {
+  
+  public static BigMLClient getInstance(final boolean devMode) throws AuthenticationException {
     if (instance == null) {
       instance = new BigMLClient();
-      instance.init(apiUser, apiKey);
+      instance.init(devMode);
     }
     return instance;
   }
 
+  
+  public static BigMLClient getInstance(final String apiUser, final String apiKey, final boolean devMode) throws AuthenticationException {
+    if (instance == null) {
+      instance = new BigMLClient();
+      instance.init(apiUser, apiKey, devMode);
+    }
+    return instance;
+  }
+
+  
   /**
    * Init object.
    */
-  private void init() throws AuthenticationException {
+  private void init(final boolean devMode) throws AuthenticationException {
+	this.devMode = devMode;
     initConfiguration();
 
     this.bigmlUser = System.getProperty("BIGML_USERNAME");
@@ -78,8 +92,9 @@ public class BigMLClient {
   /**
    * Init object.
    */
-  private void init(final String apiUser, final String apiKey) throws AuthenticationException {
-    initConfiguration();
+  private void init(final String apiUser, final String apiKey, final boolean devMode) throws AuthenticationException {
+    this.devMode = devMode;
+	initConfiguration();
 
     this.bigmlUser = apiUser != null ? apiUser : System.getProperty("BIGML_USERNAME");
     this.bigmlApiKey = apiKey != null ? apiKey : System.getProperty("BIGML_API_KEY");
@@ -103,22 +118,23 @@ public class BigMLClient {
       props.load(fis);
       fis.close();
 
-      bigmlUrl = props.getProperty("BIGML_URL");
+      bigmlUrl = this.devMode ? props.getProperty("BIGML_DEV_URL") : props.getProperty("BIGML_URL");
     } catch (Throwable e) {
       logger.error("Error loading configuration", e);
     }
   }
 
   private void initResources() {
-    source = new Source(this.bigmlUser, this.bigmlApiKey);
-    dataset = new Dataset(this.bigmlUser, this.bigmlApiKey);
-    model = new Model(this.bigmlUser, this.bigmlApiKey);
-    prediction = new Prediction(this.bigmlUser, this.bigmlApiKey);
+    source = new Source(this.bigmlUser, this.bigmlApiKey, this.devMode);
+    dataset = new Dataset(this.bigmlUser, this.bigmlApiKey, this.devMode);
+    model = new Model(this.bigmlUser, this.bigmlApiKey, this.devMode);
+    prediction = new Prediction(this.bigmlUser, this.bigmlApiKey, this.devMode);
   }
 
   public String getBigMLUrl() {
     return bigmlUrl;
   }
+  
 
   // ################################################################
   // #
@@ -126,6 +142,7 @@ public class BigMLClient {
   // # https://bigml.com/developers/sources
   // #
   // ################################################################
+  
   /**
    * Create a new source.
    *
@@ -139,9 +156,26 @@ public class BigMLClient {
    *
    */
   public JSONObject createSource(final String fileName, String name, String sourceParser) {
-    return source.create(fileName, name, sourceParser);
+    return source.createLocalSource(fileName, name, sourceParser);
+  }
+  
+  
+  /**
+   * Creating a source using a URL.
+   * 
+   * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY; HTTP/1.1
+   * Host: bigml.io
+   * Content-Type: application/json;
+   *
+   * @param url		url for remote source
+   * @param args	set of parameters to create the source. Optional
+   *
+   */
+  public JSONObject createRemoteSource(final String url, final String args) {
+    return source.createRemoteSource(url, args);
   }
 
+  
   /**
    * Retrieve a source.
    *
@@ -156,6 +190,7 @@ public class BigMLClient {
     return source.get(sourceId);
   }
 
+  
   /**
    * Retrieve a source.
    *
@@ -170,6 +205,7 @@ public class BigMLClient {
     return source.get(sourceJSON);
   }
 
+  
   /**
    * Check whether a source' status is FINISHED.
    *
@@ -181,6 +217,7 @@ public class BigMLClient {
     return source.isReady(sourceId);
   }
 
+  
   /**
    * Check whether a source' status is FINISHED.
    *
@@ -192,6 +229,7 @@ public class BigMLClient {
     return source.isReady(sourceJSON);
   }
 
+  
   /**
    * List all your sources.
    *
@@ -204,6 +242,7 @@ public class BigMLClient {
     return source.list(queryString);
   }
 
+  
   /**
    * Update a source.
    *
@@ -220,6 +259,7 @@ public class BigMLClient {
     return source.update(sourceId, body);
   }
 
+  
   /**
    * Update a source.
    *
@@ -236,6 +276,7 @@ public class BigMLClient {
     return source.update(sourceJSON, json);
   }
 
+  
   /**
    * Delete a source.
    *
@@ -251,6 +292,7 @@ public class BigMLClient {
     return source.delete(sourceId);
   }
 
+  
   /**
    * Delete a source.
    *
@@ -266,12 +308,14 @@ public class BigMLClient {
     return source.delete(sourceJSON);
   }
 
+  
   // ################################################################
   // #
   // # Datasets
   // # https://bigml.com/developers/datasets
   // #
   // ################################################################
+  
   /**
    * Create a new dataset.
    *
@@ -289,6 +333,7 @@ public class BigMLClient {
     return dataset.create(sourceId, args, waitTime);
   }
 
+  
   /**
    * Retrieve a dataset.
    *
@@ -304,6 +349,7 @@ public class BigMLClient {
     return dataset.get(datasetId);
   }
 
+  
   /**
    * Retrieve a dataset.
    *
@@ -319,6 +365,7 @@ public class BigMLClient {
     return dataset.get(datasetJSON);
   }
 
+  
   /**
    * Check whether a dataset' status is FINISHED.
    *
@@ -330,6 +377,7 @@ public class BigMLClient {
     return dataset.isReady(datasetId);
   }
 
+  
   /**
    * Check whether a dataset' status is FINISHED.
    *
@@ -341,6 +389,7 @@ public class BigMLClient {
     return dataset.isReady(datasetJSON);
   }
 
+  
   /**
    * List all your datasources.
    *
@@ -353,6 +402,7 @@ public class BigMLClient {
     return dataset.list(queryString);
   }
 
+  
   /**
    * Update a dataset.
    *
@@ -369,6 +419,7 @@ public class BigMLClient {
     return dataset.update(datasetId, json);
   }
 
+  
   /**
    * Update a dataset.
    *
@@ -385,6 +436,7 @@ public class BigMLClient {
     return dataset.update(datasetJSON, json);
   }
 
+  
   /**
    * Delete a dataset.
    *
@@ -400,6 +452,7 @@ public class BigMLClient {
     return dataset.delete(datasetId);
   }
 
+  
   /**
    * Delete a dataset.
    *
@@ -415,12 +468,14 @@ public class BigMLClient {
     return dataset.delete(datasetJSON);
   }
 
+  
   // ################################################################
   // #
   // # Models
   // # https://bigml.com/developers/models
   // #
   // ################################################################
+  
   /**
    * Create a new model.
    *
@@ -438,6 +493,7 @@ public class BigMLClient {
     return model.create(datasetId, args, waitTime);
   }
 
+  
   /**
    * Retrieve a model.
    *
@@ -452,6 +508,7 @@ public class BigMLClient {
     return model.get(modelId);
   }
 
+  
   /**
    * Retrieve a model.
    *
@@ -466,6 +523,7 @@ public class BigMLClient {
     return model.get(modelJSON);
   }
 
+  
   /**
    * Check whether a model' status is FINISHED.
    *
@@ -477,6 +535,7 @@ public class BigMLClient {
     return model.isReady(modelId);
   }
 
+  
   /**
    * Check whether a model' status is FINISHED.
    *
@@ -488,6 +547,7 @@ public class BigMLClient {
     return model.isReady(modelJSON);
   }
 
+  
   /**
    * List all your models.
    *
@@ -500,6 +560,7 @@ public class BigMLClient {
     return model.list(queryString);
   }
 
+  
   /**
    * Update a model.
    *
@@ -515,6 +576,7 @@ public class BigMLClient {
     return model.update(modelId, json);
   }
 
+  
   /**
    * Update a model.
    *
@@ -530,6 +592,7 @@ public class BigMLClient {
     return model.update(modelJSON, json);
   }
 
+  
   /**
    * Delete a model.
    *
@@ -545,6 +608,7 @@ public class BigMLClient {
     return model.delete(modelId);
   }
 
+  
   /**
    * Delete a model.
    *
@@ -560,12 +624,14 @@ public class BigMLClient {
     return model.delete(modelJSON);
   }
 
+  
   // ################################################################
   // #
   // # Predictions
   // # https://bigml.com/developers/predictions
   // #
   // ################################################################
+  
   /**
    * Create a new prediction.
    *
@@ -581,9 +647,9 @@ public class BigMLClient {
    */
   public JSONObject createPrediction(final String modelId, String args, Integer waitTime) {
     return prediction.create(modelId, args, waitTime);
-
   }
 
+  
   /**
    * Retrieve a prediction.
    *
@@ -599,6 +665,7 @@ public class BigMLClient {
     return prediction.get(predictionId);
   }
 
+  
   /**
    * Retrieve a prediction.
    *
@@ -614,6 +681,7 @@ public class BigMLClient {
     return prediction.get(predictionJSON);
   }
 
+  
   /**
    * Check whether a prediction' status is FINISHED.
    *
@@ -625,6 +693,7 @@ public class BigMLClient {
     return prediction.isReady(predictionId);
   }
 
+  
   /**
    * Check whether a prediction' status is FINISHED.
    *
@@ -636,6 +705,7 @@ public class BigMLClient {
     return prediction.isReady(predictionJSON);
   }
 
+  
   /**
    * List all your predictions.
    *
@@ -648,6 +718,7 @@ public class BigMLClient {
     return prediction.list(queryString);
   }
 
+  
   /**
    * Update a prediction.
    *
@@ -663,6 +734,7 @@ public class BigMLClient {
     return prediction.update(predictionId, json);
   }
 
+  
   /**
    * Update a prediction.
    *
@@ -678,6 +750,7 @@ public class BigMLClient {
     return prediction.update(predictionJSON, json);
   }
 
+  
   /**
    * Delete a prediction.
    *
@@ -693,6 +766,7 @@ public class BigMLClient {
     return prediction.delete(predictionId);
   }
 
+  
   /**
    * Delete a prediction.
    *
@@ -707,4 +781,19 @@ public class BigMLClient {
   public JSONObject deletePrediction(final JSONObject predictionJSON) {
     return prediction.delete(predictionJSON);
   }
+  
+  
+  public static void main(String[] args) {
+	try {
+		BigMLClient instance = BigMLClient.getInstance(true);
+		
+		
+		
+		System.out.println("....... " + instance.getBigMLUrl());
+	} catch (Exception e) {
+		e.printStackTrace();
+	}
+ }
+  
+  
 }
