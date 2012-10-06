@@ -6,10 +6,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.Normalizer;
+import java.text.Normalizer.Form;
+import java.util.Locale;
+import java.util.regex.Pattern;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-
 
 public class Utils {
 	
@@ -83,5 +86,17 @@ public class Utils {
 
     return null;
   }
-	
+  
+  
+  
+  private static final Pattern NONLATIN = Pattern.compile("[^\\w-]");  
+  private static final Pattern WHITESPACE = Pattern.compile("[\\s]");  
+
+  public static String slugify(String input) {  
+    String nowhitespace = WHITESPACE.matcher(input).replaceAll("_");  
+    String normalized = Normalizer.normalize(nowhitespace, Form.NFD);  
+    String slug = NONLATIN.matcher(normalized).replaceAll("");  
+    return slug.toLowerCase(Locale.ENGLISH);  
+  } 
+
 }

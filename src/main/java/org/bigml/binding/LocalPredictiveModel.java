@@ -32,6 +32,7 @@ package org.bigml.binding;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -56,6 +57,20 @@ public class LocalPredictiveModel {
   * Logging
   */
   static Logger logger = Logger.getLogger(LocalPredictiveModel.class.getName());
+  
+  // Map operator str to its corresponding java operator
+  static HashMap<String, String> JAVA_TYPES = new HashMap<String, String>();
+  static {
+    JAVA_TYPES.put("string", "String");
+    JAVA_TYPES.put("double", "Double");
+    JAVA_TYPES.put("long", "Long");
+    JAVA_TYPES.put("float", "Float");
+    JAVA_TYPES.put("char", "Char");
+    JAVA_TYPES.put("boolean", "Boolean");
+    JAVA_TYPES.put("int8", "Float");
+    JAVA_TYPES.put("int16", "Float");
+    JAVA_TYPES.put("int32", "Float");
+  }
 
   private JSONObject fields;
   private JSONObject root;
@@ -130,7 +145,7 @@ public class LocalPredictiveModel {
         inputData.put(fieldName, argsData.get(key));
       }
     }
-  
+    
     return tree.predict(inputData);
   }
 
@@ -144,6 +159,38 @@ public class LocalPredictiveModel {
     return tree.rules(depth);
   }
   
+
+  /**
+   * Writes a java method that implements the model.
+   *
+   */
+  public String java() {
+    Iterator iter = fields.keySet().iterator();
+    if (!iter.hasNext()) {
+      return null;
+    }
+
+    String key = (String) iter.next();
+    String methodName = (String) Utils.getJSONObject(fields, key+".name");
+    String dataType = (String) Utils.getJSONObject(fields, key+".datatype");
+    String methodReturn = JAVA_TYPES.get(dataType);
+    
+    String methodParams = "";
+    while (iter.hasNext()) {
+      key = (String) iter.next();
+      String name = (String) Utils.getJSONObject(fields, key+".name");
+      dataType = (String) Utils.getJSONObject(fields, key+".datatype");
+      methodParams += "final " + JAVA_TYPES.get(dataType) + " " + Utils.slugify(name) + ", ";
+    }
+    methodParams = methodParams.substring(0, methodParams.length()-2);
+	  
+    return MessageFormat.format("public {0} predict_{1}({2}) '{'\n{3}\n    return null;\n'}'\n",
+			  	methodReturn,
+			  	Utils.slugify(methodName),
+			  	methodParams,
+			  	tree.javaBody(1, methodReturn));
+  }
+
 }
 
 
@@ -221,6 +268,19 @@ class Tree {
   final static String OPERATOR_NE = "!=";
   final static String OPERATOR_GE = ">=";
   final static String OPERATOR_GT = ">";
+  
+  // Map operator str to its corresponding java operator
+  static HashMap<String, String> JAVA_OPERATOR = new HashMap<String, String>();
+  
+  static {
+	  JAVA_OPERATOR.put(OPERATOR_LT, "<");
+	  JAVA_OPERATOR.put(OPERATOR_LE, "<=");
+	  JAVA_OPERATOR.put(OPERATOR_EQ, "=");
+	  JAVA_OPERATOR.put(OPERATOR_NE, "!=");
+	  JAVA_OPERATOR.put(OPERATOR_GE, ">=");
+	  JAVA_OPERATOR.put(OPERATOR_GT, ">");
+  }
+  
   
   private JSONObject fields;
   private JSONObject root;
@@ -321,8 +381,6 @@ class Tree {
   */
   public String predict(final JSONObject inputData) {
 	  
-	  
-	  
 	if (this.children!=null && this.children.size()>0) {
 	  for (int i=0; i<this.children.size(); i++) {
 		Tree child = (Tree) this.children.get(i);
@@ -401,6 +459,38 @@ class Tree {
   */
   public String rules(final int depth) {
     return generateRules(depth);
+  }
+  
+  
+  /**
+   * Translate the model into a set of "if" java statements.
+   * 
+   * @param depth	controls the size of indentation
+   */
+  public String javaBody(final int depth, final String methodReturn) {
+    String instructions = "";
+    if (this.children!=null && this.children.size()>0) {
+	  for (int i=0; i<this.children.size(); i++) {
+		Tree child = (Tree) this.children.get(i);
+		String fieldName = (String) Utils.getJSONObject(fields, child.predicate.getField()+".name");
+		instructions += MessageFormat.format("{0}if ({1} != null && {2} {3} {4}) '{'\n",
+							StringUtils.repeat(INDENT, depth),
+							Utils.slugify(fieldName),
+							Utils.slugify(fieldName),
+							JAVA_OPERATOR.get(child.predicate.getOperator()),
+							child.predicate.getValue()+"");
+					
+		instructions += child.javaBody(depth + 1, methodReturn);
+		instructions += StringUtils.repeat(INDENT, depth) + "}\n";
+	  }
+    } else {
+      String returnSentence = methodReturn.equals("String") ? "{0} return \"{1}\";\n" : "{0} return {1};\n";
+      instructions += MessageFormat.format(returnSentence,
+    		  StringUtils.repeat(INDENT, depth),
+    		  this.output);			
+    }
+
+    return instructions;
   }
 	
 }
