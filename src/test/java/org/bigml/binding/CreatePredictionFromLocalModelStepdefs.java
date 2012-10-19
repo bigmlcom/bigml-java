@@ -31,13 +31,13 @@ public class CreatePredictionFromLocalModelStepdefs {
   
   @Then("^the local prediction by name for \"(.*)\" is \"([^\"]*)\"$")
   public void the_local_prediction_by_name_for_is(String args, String pred) {
-    String prediction = predictiveModel.predict(args, false);
+    String prediction = (String) predictiveModel.predict(args, false);
     assertTrue("", prediction!=null && prediction.equals(pred));
   }
   
   @Then("^the local prediction for \"(.*)\" is \"([^\"]*)\"$")
   public void the_local_prediction_for_is(String args, String pred) {	    
-    String prediction = predictiveModel.predict(args, null);
+    String prediction = (String) predictiveModel.predict(args, null);
     assertTrue("", prediction!=null && prediction.equals(pred));
   }
   

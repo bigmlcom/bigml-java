@@ -89,7 +89,7 @@ public class Utils {
   
   
   
-  private static final Pattern NONLATIN = Pattern.compile("[^\\w-]");  
+  private static final Pattern NONLATIN = Pattern.compile("[^\\w]");  
   private static final Pattern WHITESPACE = Pattern.compile("[\\s]");  
 
   public static String slugify(String input) {  
