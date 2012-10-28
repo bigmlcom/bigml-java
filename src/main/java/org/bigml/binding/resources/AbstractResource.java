@@ -37,12 +37,14 @@ public abstract class AbstractResource {
   public final static String DATASET_PATH = "dataset";
   public final static String MODEL_PATH = "model";
   public final static String PREDICTION_PATH = "prediction";
+  public final static String EVALUATION_PATH = "evaluation";
   
   // Base Resource regular expressions
   static String SOURCE_RE = "^" + SOURCE_PATH + "/[a-f,0-9]{24}$";
   static String DATASET_RE = "^" + DATASET_PATH + "/[a-f,0-9]{24}$";
   static String MODEL_RE = "^" + MODEL_PATH + "/[a-f,0-9]{24}$";
   static String PREDICTION_RE = "^" + PREDICTION_PATH + "/[a-f,0-9]{24}$";
+  static String EVALUATION_RE = "^" + EVALUATION_PATH + "/[a-f,0-9]{24}$";
   
   // Headers
   static String JSON = "application/json";
@@ -101,6 +103,7 @@ public abstract class AbstractResource {
   protected String DATASET_URL;
   protected String MODEL_URL;
   protected String PREDICTION_URL;
+  protected String EVALUATION_URL;
   
   
   protected void init() {
@@ -110,6 +113,7 @@ public abstract class AbstractResource {
 		  DATASET_URL = BIGML_URL + DATASET_PATH;
 		  MODEL_URL = BIGML_URL + MODEL_PATH;
 		  PREDICTION_URL = BIGML_URL + PREDICTION_PATH;
+		  EVALUATION_URL = BIGML_URL + EVALUATION_PATH;
 	  } catch (AuthenticationException ae) {
 		  
 	  }

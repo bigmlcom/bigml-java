@@ -6,14 +6,15 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.bigml.binding.resources.Dataset;
+import org.bigml.binding.resources.Evaluation;
 import org.bigml.binding.resources.Model;
 import org.bigml.binding.resources.Prediction;
 import org.bigml.binding.resources.Source;
 import org.json.simple.JSONObject;
 
 /**
- * Entry point to create, retrieve, list, update, and delete sources, datasets, models and
- * predictions.
+ * Entry point to create, retrieve, list, update, and delete sources, datasets, models,
+ * predictions and evaluations.
  *
  * Full API documentation on the API can be found from BigML at: https://bigml.com/developers
  *
@@ -35,6 +36,7 @@ public class BigMLClient {
   private Dataset dataset;
   private Model model;
   private Prediction prediction;
+  private Evaluation evaluation;
   private Properties props;
   private Boolean devMode = false;
 
@@ -68,7 +70,7 @@ public class BigMLClient {
 
   
   /**
-   * Init object.
+   * Initialization object.
    */
   private void init(final boolean devMode) throws AuthenticationException {
 	this.devMode = devMode;
@@ -90,7 +92,7 @@ public class BigMLClient {
   }
 
   /**
-   * Init object.
+   * Initialization object.
    */
   private void init(final String apiUser, final String apiKey, final boolean devMode) throws AuthenticationException {
     this.devMode = devMode;
@@ -129,6 +131,7 @@ public class BigMLClient {
     dataset = new Dataset(this.bigmlUser, this.bigmlApiKey, this.devMode);
     model = new Model(this.bigmlUser, this.bigmlApiKey, this.devMode);
     prediction = new Prediction(this.bigmlUser, this.bigmlApiKey, this.devMode);
+    evaluation = new Evaluation(this.bigmlUser, this.bigmlApiKey, this.devMode);
   }
 
   public String getBigMLUrl() {
@@ -179,7 +182,7 @@ public class BigMLClient {
   /**
    * Retrieve a source.
    *
-   * GET /andromeda/source/4f64be4003ce890b4500000b?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * GET /andromeda/source/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * HTTP/1.1 Host: bigml.io
    *
    * @param sourceId a unique identifier in the form source/id where id is a string of 24
@@ -194,7 +197,7 @@ public class BigMLClient {
   /**
    * Retrieve a source.
    *
-   * GET /andromeda/source/4f64be4003ce890b4500000b?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * GET /andromeda/source/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * HTTP/1.1 Host: bigml.io
    *
    * @param source a unique identifier in the form source/id where id is a string of 24
@@ -247,7 +250,7 @@ public class BigMLClient {
    * Update a source.
    *
    * POST
-   * /andromeda/source/4f64191d03ce89860a000000?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * /andromeda/source/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * HTTP/1.1 Host: bigml.io Content-Type: application/json
    *
    * @param sourceId a unique identifier in the form source/id where id is a string of 24
@@ -264,7 +267,7 @@ public class BigMLClient {
    * Update a source.
    *
    * POST
-   * /andromeda/source/4f64191d03ce89860a000000?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * /andromeda/source/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * HTTP/1.1 Host: bigml.io Content-Type: application/json
    *
    * @param source a unique identifier in the form source/id where id is a string of 24
@@ -281,7 +284,7 @@ public class BigMLClient {
    * Delete a source.
    *
    * DELETE
-   * /andromeda/source/4f603fe203ce89bb2d000000?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * /andromeda/source/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * HTTP/1.1
    *
    * @param sourceId a unique identifier in the form source/id where id is a string of 24
@@ -297,7 +300,7 @@ public class BigMLClient {
    * Delete a source.
    *
    * DELETE
-   * /andromeda/source/4f603fe203ce89bb2d000000?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * /andromeda/source/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * HTTP/1.1
    *
    * @param source a unique identifier in the form source/id where id is a string of 24
@@ -338,7 +341,7 @@ public class BigMLClient {
    * Retrieve a dataset.
    *
    * GET
-   * /andromeda/dataset/4f66a0b903ce8940c5000000?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * /andromeda/dataset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * HTTP/1.1 Host: bigml.io
    *
    * @param datasetId a unique identifier in the form datset/id where id is a string of 24
@@ -354,7 +357,7 @@ public class BigMLClient {
    * Retrieve a dataset.
    *
    * GET
-   * /andromeda/dataset/4f66a0b903ce8940c5000000?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * /andromeda/dataset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * HTTP/1.1 Host: bigml.io
    *
    * @param dataset a unique identifier in the form datset/id where id is a string of 24
@@ -407,7 +410,7 @@ public class BigMLClient {
    * Update a dataset.
    *
    * PUT
-   * /andromeda/dataset/4f64191d03ce89860a000000?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * /andromeda/dataset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * HTTP/1.1 Host: bigml.io Content-Type: application/json
    *
    * @param datasetId a unique identifier in the form dataset/id where id is a string of 24
@@ -424,7 +427,7 @@ public class BigMLClient {
    * Update a dataset.
    *
    * PUT
-   * /andromeda/dataset/4f64191d03ce89860a000000?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * /andromeda/dataset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * HTTP/1.1 Host: bigml.io Content-Type: application/json
    *
    * @param dataset a unique identifier in the form dataset/id where id is a string of 24
@@ -441,7 +444,7 @@ public class BigMLClient {
    * Delete a dataset.
    *
    * DELETE
-   * /andromeda/dataset/4f66a0b903ce8940c5000000?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * /andromeda/dataset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * HTTP/1.1
    *
    * @param datasetId a unique identifier in the form dataset/id where id is a string of 24
@@ -457,7 +460,7 @@ public class BigMLClient {
    * Delete a dataset.
    *
    * DELETE
-   * /andromeda/dataset/4f66a0b903ce8940c5000000?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * /andromeda/dataset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * HTTP/1.1
    *
    * @param dataset a unique identifier in the form dataset/id where id is a string of 24
@@ -497,7 +500,7 @@ public class BigMLClient {
   /**
    * Retrieve a model.
    *
-   * GET /andromeda/model/4f67c0ee03ce89c74a000006?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * GET /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * Host: bigml.io
    *
    * @param modelId a unique identifier in the form model/id where id is a string of 24
@@ -512,7 +515,7 @@ public class BigMLClient {
   /**
    * Retrieve a model.
    *
-   * GET /andromeda/model/4f67c0ee03ce89c74a000006?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * GET /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * Host: bigml.io
    *
    * @param model a unique identifier in the form model/id where id is a string of 24 alpha-numeric
@@ -564,7 +567,7 @@ public class BigMLClient {
   /**
    * Update a model.
    *
-   * PUT /andromeda/model/4f67c0ee03ce89c74a000006?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * PUT /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * HTTP/1.1 Host: bigml.io Content-Type: application/json
    *
    * @param modelId a unique identifier in the form model/id where id is a string of 24
@@ -580,7 +583,7 @@ public class BigMLClient {
   /**
    * Update a model.
    *
-   * PUT /andromeda/model/4f67c0ee03ce89c74a000006?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * PUT /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * HTTP/1.1 Host: bigml.io Content-Type: application/json
    *
    * @param model a unique identifier in the form model/id where id is a string of 24 alpha-numeric
@@ -597,7 +600,7 @@ public class BigMLClient {
    * Delete a model.
    *
    * DELETE
-   * /andromeda/model/4f67c0ee03ce89c74a000006?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * HTTP/1.1
    *
    * @param modelId a unique identifier in the form model/id where id is a string of 24
@@ -613,7 +616,7 @@ public class BigMLClient {
    * Delete a model.
    *
    * DELETE
-   * /andromeda/model/4f67c0ee03ce89c74a000006?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * HTTP/1.1
    *
    * @param model unique identifier in the form model/id where id is a string of 24 alpha-numeric
@@ -654,7 +657,7 @@ public class BigMLClient {
    * Retrieve a prediction.
    *
    * GET
-   * /andromeda/prediction/4f6a014b03ce89584500000f?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * /andromeda/prediction/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * HTTP/1.1 Host: bigml.io
    *
    * @param predictionId a unique identifier in the form prediction/id where id is a string of 24
@@ -670,7 +673,7 @@ public class BigMLClient {
    * Retrieve a prediction.
    *
    * GET
-   * /andromeda/prediction/4f6a014b03ce89584500000f?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * /andromeda/prediction/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * HTTP/1.1 Host: bigml.io
    *
    * @param prediction a unique identifier in the form prediction/id where id is a string of 24
@@ -722,7 +725,7 @@ public class BigMLClient {
   /**
    * Update a prediction.
    *
-   * PUT /andromeda/model/4f6a014b03ce89584500000f?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * PUT /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * HTTP/1.1 Host: bigml.io Content-Type: application/json
    *
    * @param predictionId a unique identifier in the form prediction/id where id is a string of 24
@@ -738,7 +741,7 @@ public class BigMLClient {
   /**
    * Update a prediction.
    *
-   * PUT /andromeda/model/4f6a014b03ce89584500000f?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * PUT /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * HTTP/1.1 Host: bigml.io Content-Type: application/json
    *
    * @param prediction a unique identifier in the form prediction/id where id is a string of 24
@@ -755,7 +758,7 @@ public class BigMLClient {
    * Delete a prediction.
    *
    * DELETE
-   * /andromeda/prediction/4f6a014b03ce89584500000f?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * /andromeda/prediction/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * HTTP/1.1
    *
    * @param predictionId a unique identifier in the form prediction/id where id is a string of 24
@@ -771,7 +774,7 @@ public class BigMLClient {
    * Delete a prediction.
    *
    * DELETE
-   * /andromeda/prediction/4f6a014b03ce89584500000f?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * /andromeda/prediction/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * HTTP/1.1
    *
    * @param prediction a unique identifier in the form prediction/id where id is a string of 24
@@ -783,17 +786,155 @@ public class BigMLClient {
   }
   
   
-  public static void main(String[] args) {
-	try {
-		BigMLClient instance = BigMLClient.getInstance(true);
-		
-		
-		
-		System.out.println("....... " + instance.getBigMLUrl());
-	} catch (Exception e) {
-		e.printStackTrace();
-	}
- }
-  
-  
+  // ################################################################
+  // #
+  // # Evaluations
+  // # https://bigml.com/developers/evaluations
+  // #
+  // ################################################################
+
+  /**
+   * Create a new evaluation.
+   *
+   * POST /andromeda/evaluation?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY; HTTP/1.1
+   * Host: bigml.io
+   * Content-Type: application/json
+   *
+   * @param modelId		a unique identifier in the form model/id where id is a string of 24
+   *                	alpha-numeric chars for the model to attach the evaluation.
+   * @param datasetId	a unique identifier in the form dataset/id where id is a string of 24
+   * 					alpha-numeric chars for the dataset to attach the evaluation.
+   * @param args		set of parameters for the new evaluation. Optional
+   * @param waitTime	time to wait for next check of FINISHED status for model before to start to
+   * 					create the evaluation. Optional
+   *
+   */
+  public JSONObject createEvaluation(final String modelId, final String datasetId, String args, Integer waitTime) {
+    return evaluation.create(modelId, datasetId, args, waitTime);
+  }
+
+ 
+  /**
+   * Retrieve a evaluation.
+   *
+   * GET /andromeda/evaluation/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * HTTP/1.1 Host: bigml.io
+   *
+   * @param evaluationId 	a unique identifier in the form evaluation/id where id 
+   * 						is a string of 24 alpha-numeric chars.
+   *
+   */
+  public JSONObject getEvaluation(final String evaluationId) {
+    return evaluation.get(evaluationId);
+  }
+
+ 
+  /**
+   * Retrieve a evaluation.
+   *
+   * GET /andromeda/evaluation/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * HTTP/1.1 Host: bigml.io
+   *
+   * @param evaluationJSON 	a evaluation JSONObject.
+   *
+   */
+  public JSONObject getEvaluation(final JSONObject evaluationJSON) {
+    return evaluation.get(evaluationJSON);
+  }
+
+ 
+  /**
+   * Check whether a evaluation' status is FINISHED.
+   *
+   * @param evaluationId 	a unique identifier in the form evaluation/id where id 
+   * 						is a string of 24 alpha-numeric chars.
+   *
+   */
+  public boolean evaluationIsReady(final String evaluationId) {
+    return evaluation.isReady(evaluationId);
+  }
+
+ 
+  /**
+   * Check whether a evaluation' status is FINISHED.
+   *
+   * @param evaluationJSON 	a evaluation JSONObject.
+   *
+   */
+  public boolean evaluationIsReady(final JSONObject evaluationJSON) {
+    return evaluation.isReady(evaluationJSON);
+  }
+
+ 
+  /**
+   * List all your evaluations.
+   *
+   * GET /andromeda/evaluation?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY; Host: bigml.io
+   *
+   * @param queryString	query filtering the listing.
+   *
+   */
+  public JSONObject listEvaluations(final String queryString) {
+    return evaluation.list(queryString);
+  }
+
+ 
+  /**
+   * Update a evaluation.
+   *
+   * PUT /andromeda/evaluation/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * HTTP/1.1 Host: bigml.io Content-Type: application/json
+   *
+   * @param evaluationId	a unique identifier in the form evauation/id where id 
+   * 						is a string of 24 alpha-numeric chars.
+   * @param json			set of parameters to update the evaluation. Optional
+   *
+   */
+  public JSONObject updateEvaluation(final String evaluationId, final String json) {
+    return evaluation.update(evaluationId, json);
+  }
+
+ 
+  /**
+   * Update a evaluation.
+   *
+   * PUT /andromeda/evaluation/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * HTTP/1.1 Host: bigml.io Content-Type: application/json
+   *
+   * @param evaluationJSON	a evaluation JSONObject
+   * @param json			set of parameters to update the evaluation. Optional
+   */
+  public JSONObject updateEvaluation(final JSONObject evaluationJSON, final JSONObject json) {
+    return evaluation.update(evaluationJSON, json);
+  }
+
+ 
+  /**
+   * Delete a evaluation.
+   *
+   * DELETE /andromeda/evaluation/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * HTTP/1.1
+   *
+   * @param evaluationId 	a unique identifier in the form evaluation/id where id is a 
+   * 						string of 24 alpha-numeric chars.
+   *
+   */
+  public JSONObject deleteEvaluation(final String evaluationId) {
+    return evaluation.delete(evaluationId);
+  }
+
+ 
+  /**
+   * Delete a evaluation.
+   *
+   * DELETE /andromeda/evaluation/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * HTTP/1.1
+   *
+   * @param evaluationJSON 	a evaluation JSONObject.
+   *
+   */
+  public JSONObject deleteEvaluation(final JSONObject evaluationJSON) {
+    return evaluation.delete(evaluationJSON);
+  }
+ 
 }

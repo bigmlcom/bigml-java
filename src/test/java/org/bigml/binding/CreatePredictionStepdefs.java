@@ -26,6 +26,7 @@ public class CreatePredictionStepdefs {
   JSONObject dataset = null;
   JSONObject model = null;
   JSONObject prediction = null;
+  JSONObject evaluation = null;
 
   @Given("^the resource has been created")
   public void the_resource_has_been_created() {
@@ -160,6 +161,50 @@ public class CreatePredictionStepdefs {
     assertEquals(code.intValue(), AbstractResource.HTTP_OK);
     model = (JSONObject) resource.get("object");
   }
+  
+  // Evaluation steps
+  @Given("^I create a evaluation$")
+  public void I_create_a_evaluation() throws AuthenticationException {
+    String modelId = (String) model.get("resource");
+    String datasetId = (String) dataset.get("resource");
+    
+    JSONObject resource = BigMLClient.getInstance().createEvaluation(modelId, datasetId, null, 5);
+    status = (Integer) resource.get("code");
+    location = (String) resource.get("location");
+    evaluation = (JSONObject) resource.get("object");
+    the_resource_has_been_created();
+  }
+ 
+  @Given("^I wait until the evaluation status code is either (\\d) or (\\d) less than (\\d+)")
+  public void I_wait_until_evaluation_status_code_is(int code1, int code2, int secs) throws AuthenticationException {
+    Long code = (Long) ((JSONObject) evaluation.get("status")).get("code");
+    GregorianCalendar start = new GregorianCalendar();
+    start.add(Calendar.SECOND, secs);
+    Date end = start.getTime();
+    while (code.intValue() != code1 && code.intValue() != code2) {
+      try {
+        Thread.sleep(3);
+      } catch (InterruptedException e) {
+      }
+      assertTrue("Time exceded ", end.after(new Date()));
+      I_get_the_evaluation((String) evaluation.get("resource"));
+      code = (Long) ((JSONObject) evaluation.get("status")).get("code");
+    }
+    assertEquals(code.intValue(), code1);
+  }
+
+  @Given("^I wait until the evaluation is ready less than (\\d+) secs$")
+  public void I_wait_until_the_evaluation_is_ready_less_than_secs(int secs) throws AuthenticationException {
+    I_wait_until_evaluation_status_code_is(AbstractResource.FINISHED, AbstractResource.FAULTY, secs);
+  }
+  
+  @Given("^I get the evaluation \"(.*)\"")
+  public void I_get_the_evaluation(String evaluationId) throws AuthenticationException {
+    JSONObject resource = BigMLClient.getInstance().getEvaluation(evaluationId);
+    Integer code = (Integer) resource.get("code");
+    assertEquals(code.intValue(), AbstractResource.HTTP_OK);
+    evaluation = (JSONObject) resource.get("object");
+  }
 
   // Prediction steps
   @When("^I create a prediction for \"(.*)\"$")
@@ -196,8 +241,11 @@ public class CreatePredictionStepdefs {
     assertEquals(((Integer) listing.get("code")).intValue(), AbstractResource.HTTP_OK);
     listing = BigMLClient.getInstance().listModels("");
     assertEquals(((Integer) listing.get("code")).intValue(), AbstractResource.HTTP_OK);
+    listing = BigMLClient.getInstance().listEvaluations("");
+    assertEquals(((Integer) listing.get("code")).intValue(), AbstractResource.HTTP_OK);
     listing = BigMLClient.getInstance().listPredictions("");
     assertEquals(((Integer) listing.get("code")).intValue(), AbstractResource.HTTP_OK);
+    
   }
 
   // Delete test data
@@ -205,6 +253,9 @@ public class CreatePredictionStepdefs {
   public void delete_test_data() throws AuthenticationException {
     if (prediction != null) {
       BigMLClient.getInstance().deletePrediction((String) prediction.get("resource"));
+    }
+    if (evaluation != null) {
+        BigMLClient.getInstance().deleteEvaluation((String) evaluation.get("resource"));
     }
     if (model != null) {
       BigMLClient.getInstance().deleteModel((String) model.get("resource"));
@@ -215,6 +266,6 @@ public class CreatePredictionStepdefs {
     if (source != null) {
       BigMLClient.getInstance().deleteSource((String) source.get("resource"));
     }
-
   }
+  
 }
