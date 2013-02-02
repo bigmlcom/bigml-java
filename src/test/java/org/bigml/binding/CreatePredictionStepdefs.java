@@ -82,7 +82,7 @@ public class CreatePredictionStepdefs {
   @Given("^I create a dataset$")
   public void I_create_a_dataset() throws AuthenticationException {
     String sourceId = (String) source.get("resource");
-    JSONObject resource = BigMLClient.getInstance().createDataset(sourceId, null, 5);
+    JSONObject resource = BigMLClient.getInstance().createDataset(sourceId, null, 5, null);
     status = (Integer) resource.get("code");
     location = (String) resource.get("location");
     dataset = (JSONObject) resource.get("object");
@@ -124,7 +124,7 @@ public class CreatePredictionStepdefs {
   @Given("^I create a model$")
   public void I_create_a_model() throws AuthenticationException {
     String datasetId = (String) dataset.get("resource");
-    JSONObject resource = BigMLClient.getInstance().createModel(datasetId, null, 5);
+    JSONObject resource = BigMLClient.getInstance().createModel(datasetId, null, 5, null);
     status = (Integer) resource.get("code");
     location = (String) resource.get("location");
     model = (JSONObject) resource.get("object");
@@ -168,7 +168,7 @@ public class CreatePredictionStepdefs {
     String modelId = (String) model.get("resource");
     String datasetId = (String) dataset.get("resource");
     
-    JSONObject resource = BigMLClient.getInstance().createEvaluation(modelId, datasetId, null, 5);
+    JSONObject resource = BigMLClient.getInstance().createEvaluation(modelId, datasetId, null, 5, null);
     status = (Integer) resource.get("code");
     location = (String) resource.get("location");
     evaluation = (JSONObject) resource.get("object");
@@ -210,7 +210,7 @@ public class CreatePredictionStepdefs {
   @When("^I create a prediction for \"(.*)\"$")
   public void I_create_a_prediction_for_petal_length(String args) throws AuthenticationException {
     String modelId = (String) model.get("resource");
-    JSONObject resource = BigMLClient.getInstance().createPrediction(modelId, args, 5);
+    JSONObject resource = BigMLClient.getInstance().createPrediction(modelId, null, false, args, 5, null);
     status = (Integer) resource.get("code");
     location = (String) resource.get("location");
     prediction = (JSONObject) resource.get("object");

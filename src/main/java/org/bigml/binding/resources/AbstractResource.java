@@ -61,7 +61,10 @@ public abstract class AbstractResource {
   public static int HTTP_NOT_FOUND = 404;
   public static int HTTP_METHOD_NOT_ALLOWED = 405;
   public static int HTTP_LENGTH_REQUIRED = 411;
+  public static int HTTP_REQUEST_ENTITY_TOO_LARGE = 413;
+  public static int HTTP_UNSUPPORTED_MEDIA_TPE = 415;
   public static int HTTP_INTERNAL_SERVER_ERROR = 500;
+  public static int HTTP_SERVICE_UNAVAILABLE = 500;
   
   // Resource status codes
   public static int WAITING = 0;
@@ -73,8 +76,8 @@ public abstract class AbstractResource {
   public static int FAULTY = -1;
   public static int UNKNOWN = -2;
   public static int RUNNABLE = -3;
+  
   static HashMap<Integer, String> STATUSES = new HashMap<Integer, String>();
-
   static {
     STATUSES.put(WAITING, "WAITING");
     STATUSES.put(QUEUED, "QUEUED");
@@ -177,6 +180,14 @@ public abstract class AbstractResource {
    * Retrieve a resource.
    */
   public JSONObject getResource(final String urlString) {
+	return getResource(urlString, null);
+  }
+  
+  
+  /**
+   * Retrieve a resource.
+   */
+  public JSONObject getResource(final String urlString, final String queryString) {
     int code = HTTP_INTERNAL_SERVER_ERROR;
     JSONObject resource = null;
     String resourceId = null;
@@ -189,8 +200,9 @@ public abstract class AbstractResource {
     error.put("status", status);
 
     try {
+      String query = queryString != null ? queryString : "";
       HttpClient httpclient = new DefaultHttpClient();
-      HttpGet httpget = new HttpGet(urlString + bigmlAuth);
+      HttpGet httpget = new HttpGet(urlString + bigmlAuth + query);
       httpget.setHeader("Accept", JSON);
 
       HttpResponse response = httpclient.execute(httpget);

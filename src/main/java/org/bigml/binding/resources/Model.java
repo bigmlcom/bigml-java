@@ -42,20 +42,22 @@ public class Model extends AbstractResource {
     super.init();
   }
 
+  
   /**
-   * Create a new model.
+   * Creates a new model.
    *
    * POST /andromeda/model?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY; HTTP/1.1 Host: bigml.io
    * Content-Type: application/json
    *
    * @param datsetId	a unique identifier in the form datset/id where id is a string of 24
-   * alpha-numeric chars for the dataset to attach the model.
-   * @param args	set of parameters for the new model. Optional
+   * 					alpha-numeric chars for the dataset to attach the model.
+   * @param args		set of parameters for the new model. Optional
    * @param waitTime	time to wait for next check of FINISHED status for source before to start to
-   * create the model. Optional
+   * 					create the model. Optional
+   * @param retries		number of times to try the operation. Optional
    *
    */
-  public JSONObject create(final String datasetId, String args, Integer waitTime) {
+  public JSONObject create(final String datasetId, String args, Integer waitTime, Integer retries) {
     if (datasetId == null || datasetId.length() == 0 || !datasetId.matches(DATASET_RE)) {
       logger.info("Wrong dataset id");
       return null;
@@ -63,9 +65,12 @@ public class Model extends AbstractResource {
 
     try {
       waitTime = waitTime != null ? waitTime : 3;
+      retries = retries != null ? retries : 10;
       if (waitTime > 0) {
-        while (!BigMLClient.getInstance(this.devMode).datasetIsReady(datasetId)) {
+        int count = 0;
+        while (count<retries && !BigMLClient.getInstance(this.devMode).datasetIsReady(datasetId)) {
           Thread.sleep(waitTime);
+          count++;
         }
       }
 
@@ -81,14 +86,15 @@ public class Model extends AbstractResource {
     }
   }
 
+  
   /**
-   * Retrieve a model.
+   * Retrieves a model.
    *
-   * GET /andromeda/model/4f67c0ee03ce89c74a000006?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * GET /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * Host: bigml.io
    *
-   * @param modelId a unique identifier in the form model/id where id is a string of 24
-   * alpha-numeric chars.
+   * @param modelId 	a unique identifier in the form model/id where id is a string of 24
+   * 					alpha-numeric chars.
    *
    */
   public JSONObject get(final String modelId) {
@@ -100,37 +106,75 @@ public class Model extends AbstractResource {
     return getResource(BIGML_URL + modelId);
   }
 
+  
   /**
-   * Retrieve a model.
+   * Retrieves a model.
    *
-   * GET /andromeda/model/4f67c0ee03ce89c74a000006?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * GET /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * Host: bigml.io
    *
-   * @param model a unique identifier in the form model/id where id is a string of 24 alpha-numeric
-   * chars.
+   * @param model	a model JSONObject
    *
    */
   public JSONObject get(final JSONObject model) {
     String resourceId = (String) model.get("resource");
     return get(resourceId);
   }
-
+  
+  
   /**
-   * Check whether a model' status is FINISHED.
+   * Retrieves a model.
    *
-   * @param modelId a unique identifier in the form model/id where id is a string of 24
-   * alpha-numeric chars.
+   * GET /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * Host: bigml.io
+   *
+   * @param modelId 	a unique identifier in the form model/id where id is a string of 24
+   * 					alpha-numeric chars.
+   * @param queryString query for filtering.
+   *
+   */
+  public JSONObject get(final String modelId, final String queryString) {
+    if (modelId == null || modelId.length() == 0 || !modelId.matches(MODEL_RE)) {
+      logger.info("Wrong model id");
+      return null;
+    }
+
+    return getResource(BIGML_URL + modelId, queryString);
+  }
+
+  
+  /**
+   * Retrieves a model.
+   *
+   * GET /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * Host: bigml.io
+   *
+   * @param model	a model JSONObject
+   * @param queryString query for filtering
+   *
+   */
+  public JSONObject get(final JSONObject model, final String queryString) {
+    String resourceId = (String) model.get("resource");
+    return get(resourceId, queryString);
+  }
+
+  
+  /**
+   * Checks whether a model's status is FINISHED.
+   *
+   * @param modelId	a unique identifier in the form model/id where id is a string of 24
+   * 				alpha-numeric chars.
    *
    */
   public boolean isReady(final String modelId) {
     return isResourceReady(get(modelId));
   }
 
+  
   /**
-   * Check whether a model' status is FINISHED.
+   * Checks whether a model's status is FINISHED.
    *
-   * @param model a unique identifier in the form model/id where id is a string of 24 alpha-numeric
-   * chars.
+   * @param model	a model JSONObject
    *
    */
   public boolean isReady(final JSONObject model) {
@@ -138,62 +182,67 @@ public class Model extends AbstractResource {
     return isReady(resourceId);
   }
 
+  
   /**
-   * List all your models.
+   * Lists all your models.
    *
    * GET /andromeda/model?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY; Host: bigml.io
    *
-   * @param queryString	query filtering the listing.
+   * @param queryString		query filtering the listing.
    *
    */
   public JSONObject list(final String queryString) {
     return listResources(MODEL_URL, queryString);
   }
 
+  
   /**
-   * Update a model.
+   * Updates a model.
    *
-   * PUT /andromeda/model/4f67c0ee03ce89c74a000006?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-   * HTTP/1.1 Host: bigml.io Content-Type: application/json
+   * PUT /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * HTTP/1.1 Host: bigml.io 
+   * Content-Type: application/json
    *
-   * @param modelId a unique identifier in the form model/id where id is a string of 24
-   * alpha-numeric chars.
-   * @param json	set of parameters to update the source. Optional
+   * @param modelId 	a unique identifier in the form model/id where id is a string of 24
+   * 					alpha-numeric chars.
+   * @param changes		set of parameters to update the source. Optional
    *
    */
-  public JSONObject update(final String modelId, final String json) {
+  public JSONObject update(final String modelId, final String changes) {
     if (modelId == null || modelId.length() == 0 || !modelId.matches(MODEL_RE)) {
       logger.info("Wrong model id");
       return null;
     }
-    return updateResource(BIGML_URL + modelId, json);
+    return updateResource(BIGML_URL + modelId, changes);
   }
 
+  
   /**
-   * Update a model.
+   * Updates a model.
    *
-   * PUT /andromeda/model/4f67c0ee03ce89c74a000006?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-   * HTTP/1.1 Host: bigml.io Content-Type: application/json
+   * PUT /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * HTTP/1.1 Host: bigml.io 
+   * Content-Type: application/json
    *
-   * @param model a unique identifier in the form model/id where id is a string of 24 alpha-numeric
-   * chars.
-   * @param json	set of parameters to update the source. Optional
+   * @param model		a model JSONObject
+   * @param changes		set of parameters to update the source. Optional
    *
    */
-  public JSONObject update(final JSONObject model, final JSONObject json) {
+  public JSONObject update(final JSONObject model, final JSONObject changes) {
     String resourceId = (String) model.get("resource");
-    return update(resourceId, json.toJSONString());
+    return update(resourceId, changes.toJSONString());
   }
 
+  
   /**
-   * Delete a model.
+   * Deletes a model.
    *
    * DELETE
-   * /andromeda/model/4f67c0ee03ce89c74a000006?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * HTTP/1.1
    *
-   * @param modelId a unique identifier in the form model/id where id is a string of 24
-   * alpha-numeric chars.
+   * @param modelId 	a unique identifier in the form model/id where id is a string of 24
+   * 					alpha-numeric chars.
    *
    */
   public JSONObject delete(final String modelId) {
@@ -204,19 +253,20 @@ public class Model extends AbstractResource {
     return deleteResource(BIGML_URL + modelId);
   }
 
+        		  
   /**
-   * Delete a model.
+   * Deletes a model.
    *
    * DELETE
-   * /andromeda/model/4f67c0ee03ce89c74a000006?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * HTTP/1.1
    *
-   * @param model unique identifier in the form model/id where id is a string of 24 alpha-numeric
-   * chars.
+   * @param model	a model JSONObject
    *
    */
   public JSONObject delete(final JSONObject model) {
     String resourceId = (String) model.get("resource");
     return delete(resourceId);
   }
+  
 }

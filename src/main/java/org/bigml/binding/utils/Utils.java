@@ -8,6 +8,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
@@ -15,6 +16,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 public class Utils {
+
 	
   /**
    * Converts a InputStream to a String.
@@ -87,7 +89,22 @@ public class Utils {
     return null;
   }
   
-  
+  /**
+   * Inverts a dictionary changin keys per values
+   * 
+   * @param json	the json object to invert
+   * @return
+   */
+  public static JSONObject invertDictionary(JSONObject json) {
+	  JSONObject invertedObject = new JSONObject();
+	  Iterator iter = json.keySet().iterator();
+      while (iter.hasNext()) {
+        String key = (String) iter.next();
+        String fieldName = (String) Utils.getJSONObject(json, key+".name"); 
+        invertedObject.put(fieldName, json.get(key));
+      }
+      return invertedObject;
+  }
   
   private static final Pattern NONLATIN = Pattern.compile("[^\\w]");  
   private static final Pattern WHITESPACE = Pattern.compile("[\\s]");  

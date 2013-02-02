@@ -58,9 +58,10 @@ public class Evaluation extends AbstractResource {
    * @param args		set of parameters for the new evaluation. Optional
    * @param waitTime	time to wait for next check of FINISHED status for model before to start to
    * 					create the evaluation. Optional
-   *
+   * @param retries		number of times to try the operation. Optional
+   * 
    */
-  public JSONObject create(final String modelId, final String datasetId, String args, Integer waitTime) {
+  public JSONObject create(final String modelId, final String datasetId, String args, Integer waitTime, Integer retries) {
     if (modelId == null || modelId.length() == 0 || !modelId.matches(MODEL_RE)) {
       logger.info("Wrong model id");
       return null;
@@ -72,9 +73,18 @@ public class Evaluation extends AbstractResource {
 
     try {
       waitTime = waitTime != null ? waitTime : 3;
+      retries = retries != null ? retries : 10;
       if (waitTime > 0) {
-        while (!BigMLClient.getInstance(this.devMode).modelIsReady(modelId)) {
+    	int count = 0;
+        while (count<retries && !BigMLClient.getInstance(this.devMode).modelIsReady(modelId)) {
           Thread.sleep(waitTime);
+          count++;
+        }
+        
+        count = 0;
+        while (count<retries && !BigMLClient.getInstance(this.devMode).datasetIsReady(datasetId)) {
+          Thread.sleep(waitTime);
+          count++;
         }
       }
 
@@ -94,7 +104,12 @@ public class Evaluation extends AbstractResource {
 
   
   /**
-   * Retrieve a evaluation.
+   * Retrieves an evaluation.
+   * 
+   * An evaluation is an evolving object that is processed until it
+   * reaches the FINISHED or FAULTY state, the method will return a
+   * JSONObject that encloses the evaluation values and state info
+   * available at the time it is called.
    *
    * GET /andromeda/evaluation/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * HTTP/1.1 Host: bigml.io
@@ -112,13 +127,19 @@ public class Evaluation extends AbstractResource {
     return getResource(BIGML_URL + evaluationId);
   }
 
+  
   /**
-   * Retrieve a evaluation.
+   * Retrieves an evaluation.
+   * 
+   * An evaluation is an evolving object that is processed until it
+   * reaches the FINISHED or FAULTY state, the method will return a
+   * JSONObject that encloses the evaluation values and state info
+   * available at the time it is called.
    *
    * GET /andromeda/evaluation/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * HTTP/1.1 Host: bigml.io
    *
-   * @param evaluation 	a evaluation JSONObject.
+   * @param evaluation 	an evaluation JSONObject.
    *
    */
   public JSONObject get(final JSONObject evaluation) {
@@ -126,8 +147,9 @@ public class Evaluation extends AbstractResource {
     return get(evaluationId);
   }
 
+  
   /**
-   * Check whether a evaluation' status is FINISHED.
+   * Check whether an evaluation's status is FINISHED.
    *
    * @param evaluationId 	a unique identifier in the form evaluation/id where id 
    * 						is a string of 24 alpha-numeric chars.
@@ -137,10 +159,11 @@ public class Evaluation extends AbstractResource {
     return isResourceReady(get(evaluationId));
   }
 
+  
   /**
-   * Check whether a evaluation' status is FINISHED.
+   * Check whether an evaluation's status is FINISHED.
    *
-   * @param evaluation 	a evaluation JSONObject.
+   * @param evaluation 	an evaluation JSONObject.
    *
    */
   public boolean isReady(final JSONObject evaluation) {
@@ -148,10 +171,12 @@ public class Evaluation extends AbstractResource {
     return isReady(resourceId);
   }
 
+  
   /**
-   * List all your evaluations.
+   * Lists all your evaluations.
    *
-   * GET /andromeda/evaluation?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY; Host: bigml.io
+   * GET /andromeda/evaluation?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY; 
+   * Host: bigml.io
    *
    * @param queryString	query filtering the listing.
    *
@@ -160,42 +185,47 @@ public class Evaluation extends AbstractResource {
     return listResources(EVALUATION_URL, queryString);
   }
 
+  
   /**
-   * Update a evaluation.
+   * Updates an evaluation.
    *
    * PUT /andromeda/evaluation/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-   * HTTP/1.1 Host: bigml.io Content-Type: application/json
+   * HTTP/1.1 Host: bigml.io 
+   * Content-Type: application/json
    *
    * @param evaluationId 	a unique identifier in the form evaluation/id where id 
    * 						is a string of 24 alpha-numeric chars.
-   * @param json			set of parameters to update the evaluation. Optional
+   * @param changes			set of parameters to update the evaluation. Optional
    *
    */
-  public JSONObject update(final String evaluationId, final String json) {
+  public JSONObject update(final String evaluationId, final String changes) {
     if (evaluationId == null || evaluationId.length() == 0 || !evaluationId.matches(EVALUATION_RE)) {
       logger.info("Wrong evaluation id");
       return null;
     }
-    return updateResource(BIGML_URL + evaluationId, json);
+    return updateResource(BIGML_URL + evaluationId, changes);
   }
 
+  
   /**
-   * Update a evaluation.
+   * Updates an evaluation.
    *
    * PUT /andromeda/evaluation/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-   * HTTP/1.1 Host: bigml.io Content-Type: application/json
+   * HTTP/1.1 Host: bigml.io 
+   * Content-Type: application/json
    *
-   * @param evaluation 	a evaluation JSONObject
-   * @param json		set of parameters to update the evaluation. Optional
+   * @param evaluation 	an evaluation JSONObject
+   * @param changes		set of parameters to update the evaluation. Optional
    *
    */
-  public JSONObject update(final JSONObject evaluation, final JSONObject json) {
+  public JSONObject update(final JSONObject evaluation, final JSONObject changes) {
     String resourceId = (String) evaluation.get("resource");
-    return update(resourceId, json.toJSONString());
+    return update(resourceId, changes.toJSONString());
   }
 
+  
   /**
-   * Delete a evaluation.
+   * Deletes an evaluation.
    *
    * DELETE /andromeda/evaluation/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * HTTP/1.1
@@ -211,18 +241,20 @@ public class Evaluation extends AbstractResource {
     }
     return deleteResource(BIGML_URL + evaluationId);
   }
-
+  
+  
   /**
-   * Delete a evaluation.
+   * Deletes an evaluation.
    *
    * DELETE /andromeda/evaluation/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * HTTP/1.1
    *
-   * @param evaluation 	a evaluation JSONObject.
+   * @param evaluation 	an evaluation JSONObject.
    *
    */
   public JSONObject delete(final JSONObject evaluation) {
     String resourceId = (String) evaluation.get("resource");
     return delete(resourceId);
   }
+  
 }

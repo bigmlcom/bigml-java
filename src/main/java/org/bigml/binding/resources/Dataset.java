@@ -47,19 +47,25 @@ public class Dataset extends AbstractResource {
 
   
   /**
-   * Create a new dataset.
+   * Creates a remote dataset.
+   *
+   * Uses remote `source` to create a new dataset using the arguments in
+   * `args`.  If `wait_time` is higher than 0 then the dataset creation
+   * request is not sent until the `source` has been created successfuly.
+   *
    *
    * POST /andromeda/dataset?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY; HTTP/1.1 Host:
    * bigml.io Content-Type: application/json
    *
    * @param sourceId	a unique identifier in the form source/id where id is a string of 24
-   * alpha-numeric chars for the source to attach the dataset.
-   * @param args	set of parameters for the new dataset. Optional
+   * 					alpha-numeric chars for the source to attach the dataset.
+   * @param args		set of parameters for the new dataset. Optional
    * @param waitTime	time to wait for next check of FINISHED status for source before to start to
-   * create the dataset. Optional
+   * 					create the dataset. Optional
+   * @param retries		number of times to try the operation. Optional
    *
    */
-  public JSONObject create(final String sourceId, String args, Integer waitTime) {
+  public JSONObject create(final String sourceId, String args, Integer waitTime, Integer retries) {
     if (sourceId == null || sourceId.length() == 0 || !sourceId.matches(SOURCE_RE)) {
       logger.info("Wrong source id");
       return null;
@@ -67,9 +73,12 @@ public class Dataset extends AbstractResource {
 
     try {
       waitTime = waitTime != null ? waitTime : 3;
+      retries = retries != null ? retries : 10;
       if (waitTime > 0) {
-        while (!BigMLClient.getInstance(this.devMode).sourceIsReady(sourceId)) {
+        int count = 0;
+        while (count<retries && !BigMLClient.getInstance(this.devMode).sourceIsReady(sourceId)) {
           Thread.sleep(waitTime);
+          count++;
         }
       }
 
@@ -88,14 +97,14 @@ public class Dataset extends AbstractResource {
 
   
   /**
-   * Retrieve a dataset.
+   * Retrieves a dataset.
    *
    * GET
-   * /andromeda/dataset/4f66a0b903ce8940c5000000?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * /andromeda/dataset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * HTTP/1.1 Host: bigml.io
    *
-   * @param datasetId a unique identifier in the form datset/id where id is a string of 24
-   * alpha-numeric chars.
+   * @param datasetId 	a unique identifier in the form datset/id where id is a string of 24
+   * 					alpha-numeric chars.
    *
    */
   public JSONObject get(final String datasetId) {
@@ -107,15 +116,15 @@ public class Dataset extends AbstractResource {
     return getResource(BIGML_URL + datasetId);
   }
 
+  
   /**
-   * Retrieve a dataset.
+   * Retrieves a dataset.
    *
    * GET
-   * /andromeda/dataset/4f66a0b903ce8940c5000000?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * /andromeda/dataset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * HTTP/1.1 Host: bigml.io
    *
-   * @param dataset a unique identifier in the form datset/id where id is a string of 24
-   * alpha-numeric chars.
+   * @param dataset 	a dataset JSONObject
    *
    */
   public JSONObject get(final JSONObject dataset) {
@@ -123,22 +132,23 @@ public class Dataset extends AbstractResource {
     return get(resourceId);
   }
 
+  
   /**
-   * Check whether a dataset' status is FINISHED.
+   * Checks whether a dataset's status is FINISHED.
    *
-   * @param datasetId a unique identifier in the form dataset/id where id is a string of 24
-   * alpha-numeric chars.
+   * @param datasetId 	a unique identifier in the form dataset/id where id is a string of 24
+   * 					alpha-numeric chars.
    *
    */
   public boolean isReady(final String datasetId) {
     return isResourceReady(get(datasetId));
   }
 
+  
   /**
-   * Check whether a dataset' status is FINISHED.
+   * Checks whether a dataset's status is FINISHED.
    *
-   * @param dataset a unique identifier in the form dataset/id where id is a string of 24
-   * alpha-numeric chars.
+   * @param dataset	a dataset JSONObject
    *
    */
   public boolean isReady(final JSONObject dataset) {
@@ -146,64 +156,69 @@ public class Dataset extends AbstractResource {
     return isReady(resourceId);
   }
 
+  
   /**
-   * List all your datasources.
+   * Lists all your datasources.
    *
    * GET /andromeda/dataset?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY; Host: bigml.io
    *
-   * @param queryString	query filtering the listing.
+   * @param queryString		query filtering the listing.
    *
    */
   public JSONObject list(final String queryString) {
     return listResources(DATASET_URL, queryString);
   }
 
+  
   /**
-   * Update a dataset.
+   * Updates a dataset.
    *
    * PUT
-   * /andromeda/dataset/4f64191d03ce89860a000000?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-   * HTTP/1.1 Host: bigml.io Content-Type: application/json
+   * /andromeda/dataset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * HTTP/1.1 Host: bigml.io 
+   * Content-Type: application/json
    *
-   * @param datasetId a unique identifier in the form dataset/id where id is a string of 24
-   * alpha-numeric chars.
-   * @param json	set of parameters to update the source. Optional
+   * @param datasetId	a unique identifier in the form dataset/id where id is a string of 24
+   * 					alpha-numeric chars.
+   * @param changes		set of parameters to update the source. Optional
    *
    */
-  public JSONObject update(final String datasetId, final String json) {
+  public JSONObject update(final String datasetId, final String changes) {
     if (datasetId == null || datasetId.length() == 0 || !datasetId.matches(DATASET_RE)) {
       logger.info("Wrong dataset id");
       return null;
     }
-    return updateResource(BIGML_URL + datasetId, json);
+    return updateResource(BIGML_URL + datasetId, changes);
   }
 
+  
   /**
-   * Update a dataset.
+   * Updates a dataset.
    *
    * PUT
-   * /andromeda/dataset/4f64191d03ce89860a000000?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-   * HTTP/1.1 Host: bigml.io Content-Type: application/json
+   * /andromeda/dataset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * HTTP/1.1 Host: bigml.io 
+   * Content-Type: application/json
    *
-   * @param dataset a unique identifier in the form dataset/id where id is a string of 24
-   * alpha-numeric chars.
-   * @param json	set of parameters to update the source. Optional
+   * @param dataset 	a dataset JSONObject
+   * @param changes		set of parameters to update the source. Optional
    *
    */
-  public JSONObject update(final JSONObject dataset, final JSONObject json) {
+  public JSONObject update(final JSONObject dataset, final JSONObject changes) {
     String resourceId = (String) dataset.get("resource");
-    return update(resourceId, json.toJSONString());
+    return update(resourceId, changes.toJSONString());
   }
 
+  
   /**
-   * Delete a dataset.
+   * Deletes a dataset.
    *
    * DELETE
-   * /andromeda/dataset/4f66a0b903ce8940c5000000?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * /andromeda/dataset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * HTTP/1.1
    *
-   * @param datasetId a unique identifier in the form dataset/id where id is a string of 24
-   * alpha-numeric chars.
+   * @param datasetId 	a unique identifier in the form dataset/id where id is a string of 24
+   * 					alpha-numeric chars.
    *
    */
   public JSONObject delete(final String datasetId) {
@@ -214,19 +229,20 @@ public class Dataset extends AbstractResource {
     return deleteResource(BIGML_URL + datasetId);
   }
 
+  
   /**
-   * Delete a dataset.
+   * Deletes a dataset.
    *
    * DELETE
-   * /andromeda/dataset/4f66a0b903ce8940c5000000?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * /andromeda/dataset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * HTTP/1.1
    *
-   * @param dataset a unique identifier in the form dataset/id where id is a string of 24
-   * alpha-numeric chars.
+   * @param dataset 	a dataset JSONObject
    *
    */
   public JSONObject delete(final JSONObject dataset) {
     String resourceId = (String) dataset.get("resource");
     return delete(resourceId);
   }
+  
 }
