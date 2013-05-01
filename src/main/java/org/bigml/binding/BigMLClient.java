@@ -6,6 +6,7 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.bigml.binding.resources.Dataset;
+import org.bigml.binding.resources.Ensemble;
 import org.bigml.binding.resources.Evaluation;
 import org.bigml.binding.resources.Model;
 import org.bigml.binding.resources.Prediction;
@@ -14,11 +15,27 @@ import org.json.simple.JSONObject;
 
 /**
  * Entry point to create, retrieve, list, update, and delete sources, datasets, models,
- * predictions and evaluations.
+ * predictions, evaluations and ensembles.
  *
  * Full API documentation on the API can be found from BigML at: https://bigml.com/developers
  *
- *
+ * Resources are wrapped in a dictionary that includes:
+        code: HTTP status code
+        resource: The resource/id
+        location: Remote location of the resource
+        object: The resource itself
+        error: An error code and message
+        
+    If left unspecified, `username` and `api_key` will default to the
+    values of the `BIGML_USERNAME` and `BIGML_API_KEY` environment
+    variables respectively.
+
+    If `dev_mode` is set to `True`, the API will be used in development
+    mode where the size of your datasets are limited but you are not
+    charged any credits.
+
+    If storage is set to a directory name, the resources obtained in
+    CRU operations will be stored in the given directory.    
  */
 public class BigMLClient {
 
@@ -37,8 +54,10 @@ public class BigMLClient {
   private Model model;
   private Prediction prediction;
   private Evaluation evaluation;
+  private Ensemble ensemble;
   private Properties props;
   private Boolean devMode = false;
+  private String storage;
 
   protected BigMLClient() {
   }
@@ -64,6 +83,14 @@ public class BigMLClient {
     if (instance == null) {
       instance = new BigMLClient();
       instance.init(apiUser, apiKey, devMode);
+    }
+    return instance;
+  }
+  
+  public static BigMLClient getInstance(final String apiUser, final String apiKey, final boolean devMode, final String storage) throws AuthenticationException {
+    if (instance == null) {
+      instance = new BigMLClient();
+      instance.init(apiUser, apiKey, devMode, storage);
     }
     return instance;
   }
@@ -112,6 +139,30 @@ public class BigMLClient {
 
     initResources();
   }
+  
+  /**
+   * Initialization object.
+   */
+  private void init(final String apiUser, final String apiKey, final boolean devMode, final String storage) throws AuthenticationException {
+    this.devMode = devMode;
+    this.storage = storage;
+	initConfiguration();
+
+    this.bigmlUser = apiUser != null ? apiUser : System.getProperty("BIGML_USERNAME");
+    this.bigmlApiKey = apiKey != null ? apiKey : System.getProperty("BIGML_API_KEY");
+    if (this.bigmlUser == null || this.bigmlUser.equals("") || this.bigmlApiKey == null || this.bigmlApiKey.equals("")) {
+      this.bigmlUser = props.getProperty("BIGML_USERNAME");
+      this.bigmlApiKey = props.getProperty("BIGML_API_KEY");
+      if (this.bigmlUser == null || this.bigmlUser.equals("") || this.bigmlApiKey == null || this.bigmlApiKey.equals("")) {
+        AuthenticationException ex = new AuthenticationException("Missing authentication information.");
+        logger.info(instance, ex);
+        throw ex;
+      }
+    }
+
+    initResources();
+  }
+  
 
   private void initConfiguration() {
     try {
@@ -132,6 +183,7 @@ public class BigMLClient {
     model = new Model(this.bigmlUser, this.bigmlApiKey, this.devMode);
     prediction = new Prediction(this.bigmlUser, this.bigmlApiKey, this.devMode);
     evaluation = new Evaluation(this.bigmlUser, this.bigmlApiKey, this.devMode);
+    ensemble = new Ensemble(this.bigmlUser, this.bigmlApiKey, this.devMode);
   }
 
   public String getBigMLUrl() {
@@ -690,8 +742,8 @@ public class BigMLClient {
    * POST /andromeda/prediction?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY; HTTP/1.1 Host:
    * bigml.io Content-Type: application/json
    *
-   * @param modelId		a unique identifier in the form model/id where id is a string of 24
-   * 					alpha-numeric chars for the source to attach the prediction.
+   * @param modelOrEnsembleId		a unique identifier in the form model/id  or ensembke/id where id is a string of 24
+   * 								alpha-numeric chars for the nodel or ensemble to attach the prediction.
    * @param inputData	an object with field's id/value pairs representing the instance you 
    * 					want to create a prediction for. 
    * @param byName	
@@ -701,8 +753,8 @@ public class BigMLClient {
    * @param retries		number of times to try the operation. Optional
    *
    */
-  public JSONObject createPrediction(final String modelId, JSONObject inputData, Boolean byName, String args, Integer waitTime, Integer retries) {
-    return prediction.create(modelId, inputData, byName, args, waitTime, retries);
+  public JSONObject createPrediction(final String modelOrEnsembleId, JSONObject inputData, Boolean byName, String args, Integer waitTime, Integer retries) {
+    return prediction.create(modelOrEnsembleId, inputData, byName, args, waitTime, retries);
   }
 
   
@@ -1002,4 +1054,168 @@ public class BigMLClient {
     return evaluation.delete(evaluationJSON);
   }
  
+  
+  
+ //################################################################
+ // #
+ // # Ensembles
+ // # https://bigml.com/developers/ensembles
+ // #
+ // ################################################################
+  
+  /**
+   * Creates a new ensemble.
+   *
+   * POST /andromeda/ensemble?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY; HTTP/1.1
+   * Host: bigml.io
+   * Content-Type: application/json
+   *
+   * @param datasetId	a unique identifier in the form dataset/id where id is a string of 24
+   * 					alpha-numeric chars for the dataset to attach the evaluation.
+   * @param args		set of parameters for the new ensemble. Optional
+   * @param waitTime	time to wait for next check of FINISHED status for dataset before to start to
+   * 					create the ensemble. Optional
+   * @param retries		number of times to try the operation. Optional
+   *
+   */
+  public JSONObject createEnsemble(final String datasetId, String args, Integer waitTime, Integer tries) {
+    return ensemble.create(datasetId, args, waitTime, tries);
+  }
+  
+  
+  /**
+   * Retrieves an ensemble.
+   * 
+   * An ensemble is an evolving object that is processed until it
+   * reaches the FINISHED or FAULTY state, the method will return a
+   * JSONObject that encloses the ensemble values and state info
+   * available at the time it is called.
+   *
+   * GET /andromeda/ensemble/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * HTTP/1.1 Host: bigml.io
+   *
+   * @param ensembleId 		a unique identifier in the form ensemble/id where id 
+   * 						is a string of 24 alpha-numeric chars.
+   *
+   */
+  public JSONObject getEnsemble(final String ensembleId) {
+    return ensemble.get(ensembleId);
+  }        		  
+ 
+  
+  /**
+   * Retrieves an ensemble.
+   * 
+   * An ensemble is an evolving object that is processed until it
+   * reaches the FINISHED or FAULTY state, the method will return a
+   * JSONObject that encloses the ensemble values and state info
+   * available at the time it is called.
+   *
+   * GET /andromeda/ensemble/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * HTTP/1.1 Host: bigml.io
+   *
+   * @param ensembleJSON 	an ensemble JSONObject.
+   *
+   */
+  public JSONObject getEnsemble(final JSONObject ensembleJSON) {
+    return ensemble.get(ensembleJSON);
+  }
+  
+  
+  
+  /**
+   * Check whether a ensemble's status is FINISHED.
+   *
+   * @param ensembleId 		a unique identifier in the form ensemble/id where id 
+   * 						is a string of 24 alpha-numeric chars.
+   *
+   */
+  public boolean ensembleIsReady(final String ensembleId) {
+    return ensemble.isReady(ensembleId);
+  }
+  
+  /**
+   * Check whether a ensemble's status is FINISHED.
+   *
+   * @param ensembleJSON 	an ensemble JSONObject.
+   *
+   */
+  public boolean ensembleIsReady(final JSONObject ensembleJSON) {
+    return ensemble.isReady(ensembleJSON);
+  }
+
+ 
+  /**
+   * Lists all your ensembles.
+   *
+   * GET /andromeda/ensemble?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY; Host: bigml.io
+   *
+   * @param queryString	query filtering the listing.
+   *
+   */
+  public JSONObject listEnsembles(final String queryString) {
+    return ensemble.list(queryString);
+  }
+  
+  
+  /**
+   * Updates an ensemble.
+   *
+   * PUT /andromeda/ensemble/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * HTTP/1.1 Host: bigml.io 
+   * Content-Type: application/json
+   *
+   * @param ensembleId		a unique identifier in the form ensemble/id where id 
+   * 						is a string of 24 alpha-numeric chars.
+   * @param changes			set of parameters to update the ensemble. Optional
+   *
+   */
+  public JSONObject updateEnsemble(final String ensembleId, final String changes) {
+    return ensemble.update(ensembleId, changes);
+  }
+
+ 
+  /**
+   * Updates an ensemble.
+   *
+   * PUT /andromeda/ensemble/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * HTTP/1.1 Host: bigml.io 
+   * Content-Type: application/json
+   *
+   * @param ensembleJSON	an ensemble JSONObject
+   * @param changes			set of parameters to update the ensemble. Optional
+   */
+  public JSONObject updateEnsemble(final JSONObject ensembleJSON, final JSONObject changes) {
+    return ensemble.update(ensembleJSON, changes);
+  }
+  
+  
+  /**
+   * Deletes an ensemble.
+   *
+   * DELETE /andromeda/ensemble/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * HTTP/1.1
+   *
+   * @param ensembleId 		a unique identifier in the form ensemble/id where id is a 
+   * 						string of 24 alpha-numeric chars.
+   *
+   */
+  public JSONObject deleteEnsemble(final String ensembleId) {
+    return ensemble.delete(ensembleId);
+  }
+  
+  /**
+   * Deletes an ensemble.
+   *
+   * DELETE /andromeda/ensemble/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * HTTP/1.1
+   *
+   * @param ensembleJSON 	an ensemble JSONObject.
+   *
+   */
+  public JSONObject deleteEnsemble(final JSONObject ensembleJSON) {
+    return ensemble.delete(ensembleJSON);
+  }
+  
+  
 }

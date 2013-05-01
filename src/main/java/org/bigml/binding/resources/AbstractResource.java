@@ -38,6 +38,7 @@ public abstract class AbstractResource {
   public final static String MODEL_PATH = "model";
   public final static String PREDICTION_PATH = "prediction";
   public final static String EVALUATION_PATH = "evaluation";
+  public final static String ENSEMBLE_PATH = "ensemble";
   
   // Base Resource regular expressions
   static String SOURCE_RE = "^" + SOURCE_PATH + "/[a-f,0-9]{24}$";
@@ -45,11 +46,12 @@ public abstract class AbstractResource {
   static String MODEL_RE = "^" + MODEL_PATH + "/[a-f,0-9]{24}$";
   static String PREDICTION_RE = "^" + PREDICTION_PATH + "/[a-f,0-9]{24}$";
   static String EVALUATION_RE = "^" + EVALUATION_PATH + "/[a-f,0-9]{24}$";
+  static String ENSEMBLE_RE = "^" + ENSEMBLE_PATH + "/[a-f,0-9]{24}$";
   
   // Headers
   static String JSON = "application/json";
   
-  // HTTP Status Codes
+  // HTTP Status Codes from https://bigml.com/developers/status_codes
   public static int HTTP_OK = 200;
   public static int HTTP_CREATED = 201;
   public static int HTTP_ACCEPTED = 202;
@@ -73,9 +75,11 @@ public abstract class AbstractResource {
   public static int IN_PROGRESS = 3;
   public static int SUMMARIZED = 4;
   public static int FINISHED = 5;
+  public static int UPLOADING = 6;
   public static int FAULTY = -1;
   public static int UNKNOWN = -2;
   public static int RUNNABLE = -3;
+  
   
   static HashMap<Integer, String> STATUSES = new HashMap<Integer, String>();
   static {
@@ -85,6 +89,7 @@ public abstract class AbstractResource {
     STATUSES.put(IN_PROGRESS, "IN_PROGRESS");
     STATUSES.put(SUMMARIZED, "SUMMARIZED");
     STATUSES.put(FINISHED, "FINISHED");
+    STATUSES.put(UPLOADING, "UPLOADING");
     STATUSES.put(FAULTY, "FAULTY");
     STATUSES.put(UNKNOWN, "UNKNOWN");
     STATUSES.put(RUNNABLE, "RUNNABLE");
@@ -107,6 +112,7 @@ public abstract class AbstractResource {
   protected String MODEL_URL;
   protected String PREDICTION_URL;
   protected String EVALUATION_URL;
+  protected String ENSEMBLE_URL;
   
   
   protected void init() {
@@ -117,6 +123,7 @@ public abstract class AbstractResource {
 		  MODEL_URL = BIGML_URL + MODEL_PATH;
 		  PREDICTION_URL = BIGML_URL + PREDICTION_PATH;
 		  EVALUATION_URL = BIGML_URL + EVALUATION_PATH;
+		  ENSEMBLE_URL = BIGML_URL + ENSEMBLE_PATH;
 	  } catch (AuthenticationException ae) {
 		  
 	  }

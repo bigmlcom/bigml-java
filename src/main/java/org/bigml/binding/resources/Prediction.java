@@ -4,6 +4,7 @@ import java.util.Iterator;
 
 import org.bigml.binding.BigMLClient;
 import org.bigml.binding.utils.Utils;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.slf4j.Logger;
@@ -53,8 +54,8 @@ public class Prediction extends AbstractResource {
    * POST /andromeda/prediction?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY; HTTP/1.1 Host:
    * bigml.io Content-Type: application/json
    *
-   * @param modelId		a unique identifier in the form model/id where id is a string of 24
-   * 					alpha-numeric chars for the source to attach the prediction.
+   * @param modelOrEnsembleId		a unique identifier in the form model/id  or ensembke/id where id is a string of 24
+   * 								alpha-numeric chars for the nodel or ensemble to attach the prediction.
    * @param inputData	an object with field's id/value pairs representing the instance you 
    * 					want to create a prediction for. 
    * @param byName
@@ -64,22 +65,55 @@ public class Prediction extends AbstractResource {
    * @param retries		number of times to try the operation. Optional
    *
    */
-  public JSONObject create(final String modelId, JSONObject inputData, Boolean byName, String args, Integer waitTime, Integer retries) {
-    if (modelId == null || modelId.length() == 0 || !modelId.matches(MODEL_RE)) {
-      logger.info("Wrong model id");
-      return null;
-    }
-
+  public JSONObject create(final String modelOrEnsembleId, JSONObject inputData, Boolean byName, String args, Integer waitTime, Integer retries) {
+	JSONObject ensemble = null;
+	JSONObject model = null;
+	String ensembleId = null;
+	String modelId = null;
+    
+	waitTime = waitTime != null ? waitTime : 3;
+    retries = retries != null ? retries : 10;
+	
     try {
-      waitTime = waitTime != null ? waitTime : 3;
-      retries = retries != null ? retries : 10;
-      if (waitTime > 0) {
-    	int count = 0;
-        while (count<retries && !BigMLClient.getInstance(this.devMode).modelIsReady(modelId)) {
-          Thread.sleep(waitTime);
-          count++;
+    	ensemble = BigMLClient.getInstance(this.devMode).getEnsemble(modelOrEnsembleId);
+    	if (ensemble!=null) {
+    		ensembleId = modelOrEnsembleId;
+    		if (waitTime > 0) {
+    	    	int count = 0;
+    	        while (count<retries && !BigMLClient.getInstance(this.devMode).ensembleIsReady(ensemble)) {
+    	          Thread.sleep(waitTime);
+    	          count++;
+    	        }
+    	        try {
+    	        	modelId = (String) ((JSONArray) Utils.getJSONObject(ensemble, "object.models")).get(0);		
+    	        } catch (Exception e) {
+    	        	logger.error("The ensemble has no valid model information", e);
+    	        	modelId = null;
+    	        }
+    	    }
+    	}
+    	
+    } catch (Throwable e) {
+    	logger.error("");
+    } finally {
+    	try {
+    		model = BigMLClient.getInstance(this.devMode).getModel(modelOrEnsembleId);
+    		modelId = modelOrEnsembleId;
+    	} catch (Throwable ex) {}
+    }
+    
+    try {
+    	if (model!=null) {
+        	if (ensemble==null) {
+        		if (waitTime > 0) {
+        	    	int count = 0;
+        	        while (count<retries && !BigMLClient.getInstance(this.devMode).modelIsReady(model)) {
+        	          Thread.sleep(waitTime);
+        	          count++;
+        	        }
+        		}
+        	}
         }
-      }
       
       //Input data
       JSONObject inputDataJSON = null;
@@ -104,13 +138,20 @@ public class Prediction extends AbstractResource {
       if (args != null) {
         requestObject = (JSONObject) JSONValue.parse(args);
       }
-      requestObject.put("model", modelId);
+      
+      if (ensemble==null) {
+    	  requestObject.put("model", modelId);
+      } else {
+    	  requestObject.put("ensemble", ensembleId);
+      }
       requestObject.put("input_data", inputDataJSON);
+
       return createResource(PREDICTION_URL, requestObject.toJSONString());
     } catch (Throwable e) {
       logger.error("Error creating prediction", e);
       return null;
     }
+    
   }
   
   

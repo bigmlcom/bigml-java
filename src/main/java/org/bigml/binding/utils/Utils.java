@@ -50,7 +50,7 @@ public class Utils {
     	return false;
     }
   }
-
+  
 
   /**
    * Returns JSONObject child.
@@ -89,8 +89,9 @@ public class Utils {
     return null;
   }
   
+  
   /**
-   * Inverts a dictionary changin keys per values
+   * Inverts a dictionary changing keys per values
    * 
    * @param json	the json object to invert
    * @return
@@ -106,9 +107,13 @@ public class Utils {
       return invertedObject;
   }
   
+  
   private static final Pattern NONLATIN = Pattern.compile("[^\\w]");  
   private static final Pattern WHITESPACE = Pattern.compile("[\\s]");  
 
+  /**
+   * Translates a field name into a variable name.
+   */
   public static String slugify(String input) {  
     String nowhitespace = WHITESPACE.matcher(input).replaceAll("_");  
     String normalized = Normalizer.normalize(nowhitespace, Form.NFD);  

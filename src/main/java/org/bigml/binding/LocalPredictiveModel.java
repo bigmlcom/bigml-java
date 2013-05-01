@@ -10,23 +10,22 @@ reduce the latency for each prediction and let you use your models
 offline.
 
 You can also visualize your predictive model in IF-THEN rule format
-and even generate a python function that implements the model.
+and even generate a java function that implements the model.
 
 Example usage (assuming that you have previously set up the BIGML_USERNAME
 and BIGML_API_KEY environment variables and that you own the model/id below):
 
-from bigml.api import BigML
-from bigml.model import Model
+import org.bigml.binding.BigMLClient;
+import org.bigml.binding.resources.Model;
 
-api = BigML()
+BigMLClient bigmlClient = new BigMLClient();
 
-model = Model(api.get_model('model/5026965515526876630001b2'))
-model.predict({"petal length": 3, "petal width": 1})
+Model model = new Model(bigmlClient.getModel('model/5026965515526876630001b2'));
+model.predict({"petal length": 3, "petal width": 1});
 
 You can also see model in a IF-THEN rule format with:
 
 model.rules()
-
  */
 package org.bigml.binding;
 

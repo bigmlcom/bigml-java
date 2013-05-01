@@ -27,6 +27,7 @@ public class CreatePredictionStepdefs {
   JSONObject model = null;
   JSONObject prediction = null;
   JSONObject evaluation = null;
+  JSONObject ensemble = null;
 
   @Given("^the resource has been created")
   public void the_resource_has_been_created() {
@@ -231,6 +232,68 @@ public class CreatePredictionStepdefs {
     String objective = (String) obj.get(expected);
     assertEquals(objective, pred);
   }
+	  
+  @When("^I create a prediction with ensemble for \"(.*)\"$")
+  public void I_create_a_prediction_with_ensemble_for(String args) throws AuthenticationException {	  
+	  String ensembleId = (String) ensemble.get("resource");
+	  JSONObject resource = BigMLClient.getInstance().createPrediction(ensembleId, null, false, args, 5, null);
+	  status = (Integer) resource.get("code");
+	  location = (String) resource.get("location");
+	  prediction = (JSONObject) resource.get("object");
+	  the_resource_has_been_created();
+  }
+
+  @Then("^the prediction with ensemble for \"([^\"]*)\" is \"([^\"]*)\"$")
+  public void the_prediction_with_ensemble_for_is(String expected, String pred) {
+	  JSONObject obj = (JSONObject) prediction.get("prediction");
+	  String objective = (String) obj.get(expected);
+	  assertEquals(objective, pred);
+  }
+  
+  
+//Ensemble steps
+  @Given("^I create a ensemble$")
+ public void I_create_a_ensemble() throws AuthenticationException {
+   String datasetId = (String) dataset.get("resource");
+   JSONObject resource = BigMLClient.getInstance().createEnsemble(datasetId, null, 5, null);
+   status = (Integer) resource.get("code");
+   location = (String) resource.get("location");
+   ensemble = (JSONObject) resource.get("object");
+   the_resource_has_been_created();
+ }
+ 
+
+ @Given("^I wait until the ensemble status code is either (\\d) or (\\d) less than (\\d+)")
+ public void I_wait_until_ensemble_status_code_is(int code1, int code2, int secs) throws AuthenticationException {
+   Long code = (Long) ((JSONObject) ensemble.get("status")).get("code");
+   GregorianCalendar start = new GregorianCalendar();
+   start.add(Calendar.SECOND, secs);
+   Date end = start.getTime();
+   while (code.intValue() != code1 && code.intValue() != code2) {
+     try {
+       Thread.sleep(3);
+     } catch (InterruptedException e) {
+     }
+     assertTrue("Time exceded ", end.after(new Date()));
+     I_get_the_ensemble((String) ensemble.get("resource"));
+     code = (Long) ((JSONObject) ensemble.get("status")).get("code");
+   }
+   assertEquals(code.intValue(), code1);
+ }
+ 
+ @Given("^I wait until the ensemble is ready less than (\\d+) secs$")
+ public void I_wait_until_the_ensemble_is_ready_less_than_secs(int secs) throws AuthenticationException {
+   I_wait_until_ensemble_status_code_is(AbstractResource.FINISHED, AbstractResource.FAULTY, secs);
+ }
+
+ @Given("^I get the ensemble \"(.*)\"")
+ public void I_get_the_ensemble(String ensembleId) throws AuthenticationException {
+   JSONObject resource = BigMLClient.getInstance().getEnsemble(ensembleId);
+   Integer code = (Integer) resource.get("code");
+   assertEquals(code.intValue(), AbstractResource.HTTP_OK);
+   ensemble = (JSONObject) resource.get("object");
+ }
+  
 
   // Listing
   @Then("^test listing$")
@@ -244,6 +307,8 @@ public class CreatePredictionStepdefs {
     listing = BigMLClient.getInstance().listEvaluations("");
     assertEquals(((Integer) listing.get("code")).intValue(), AbstractResource.HTTP_OK);
     listing = BigMLClient.getInstance().listPredictions("");
+    assertEquals(((Integer) listing.get("code")).intValue(), AbstractResource.HTTP_OK);
+    listing = BigMLClient.getInstance().listEnsembles("");
     assertEquals(((Integer) listing.get("code")).intValue(), AbstractResource.HTTP_OK);
     
   }
@@ -260,6 +325,9 @@ public class CreatePredictionStepdefs {
     if (model != null) {
       BigMLClient.getInstance().deleteModel((String) model.get("resource"));
     }
+    if (ensemble != null) {
+        BigMLClient.getInstance().deleteEnsemble((String) ensemble.get("resource"));
+      }
     if (dataset != null) {
       BigMLClient.getInstance().deleteDataset((String) dataset.get("resource"));
     }
