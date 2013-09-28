@@ -3,7 +3,10 @@ package org.bigml.binding.localmodel;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -60,7 +63,7 @@ public class Tree {
   private List<Tree> children;
   private Long count;
   private JSONArray distribution;
-	
+  private double confidence;	
     
  /**
   * Constructor
@@ -77,11 +80,13 @@ public class Tree {
 	} else {
 		this.objectiveField = (String) objective;
 	}
-
+	
 	this.root = root;
 	this.output = root.get("output");
 	this.count = (Long) root.get("count"); 
-
+	this.confidence = (Double) root.get("confidence");
+	
+	
 	if (root.get("predicate") instanceof Boolean) {
 		isPredicate = true;
 	} else {
@@ -90,7 +95,8 @@ public class Tree {
 					(String) Utils.getJSONObject(fields, predicateObj.get("field")+".optype"),
 					(String) predicateObj.get("operator"),
 					(String) predicateObj.get("field"),
-					(Object) predicateObj.get("value"));
+					(Object) predicateObj.get("value"),
+					(String) predicateObj.get("term"));
 	}
 	
 	children = new ArrayList<Tree>();
@@ -128,7 +134,6 @@ public class Tree {
 			}
 		}
 	}
-	
  }
 
 	
@@ -146,6 +151,19 @@ public class Tree {
 	return objectiveField;
   }
 
+ 
+ /**
+  * Makes a prediction based on a number of field values.
+  * 
+  * The input fields must be keyed by Id.
+  * 
+  * .predict({"petal length": 1})
+  * 
+  */
+  public Object predict(final JSONObject inputData) {
+	  return predict(inputData, false);
+	  
+  }
 
 /**
   * Makes a prediction based on a number of field values.
@@ -155,12 +173,16 @@ public class Tree {
   * .predict({"petal length": 1})
   * 
   */
-  public Object predict(final JSONObject inputData) {
+  public Object predict(final JSONObject inputData, Boolean withConfidence) {
+	if (withConfidence == null) {
+		withConfidence = false;
+	}  
 	  
 	if (this.children!=null && this.children.size()>0) {
 	  for (int i=0; i<this.children.size(); i++) {
 		Tree child = (Tree) this.children.get(i);
-		String field = child.predicate.getField(); 
+		
+		String field = child.predicate.getField();
 		Object inputValue = (Object) inputData.get(((JSONObject)fields.get(field)).get("name"));
 		if (inputValue==null) {
 			continue;
@@ -169,51 +191,110 @@ public class Tree {
 		String opType = child.predicate.getOpType();
 		String operator = child.predicate.getOperator();
 		Object value = (Object) child.predicate.getValue();
+		String term = child.predicate.getTerm();
 		
 		if (operator.equals(Constants.OPERATOR_EQ) && inputValue.equals(value)) {
-			return child.predict(inputData);
+			return child.predict(inputData, withConfidence);
 		}
 		if ((operator.equals(Constants.OPERATOR_NE) || operator.equals(Constants.OPERATOR_NE2)) && !inputValue.equals(value)) {
-			return child.predict(inputData);
+			return child.predict(inputData, withConfidence);
 		}
 		if (operator.equals(Constants.OPERATOR_LT)) {
 			if (opType.equals(Constants.OPTYPE_DATETIME) && ((String) inputValue).compareTo((String) value)<0) {
-				return child.predict(inputData);
+				return child.predict(inputData, withConfidence);
 			}
-			if (!opType.equals(Constants.OPTYPE_DATETIME) && ((Number)inputValue).doubleValue()<((Number)value).doubleValue()) {
-				return child.predict(inputData);
+			if (opType.equals(Constants.OPTYPE_TEXT) && termMatches(inputData, (String) inputValue, field, term) < ((Number)value).doubleValue()) {
+				return child.predict(inputData, withConfidence);
+			}
+			if (!opType.equals(Constants.OPTYPE_DATETIME) && !opType.equals(Constants.OPTYPE_TEXT) && ((Number)inputValue).doubleValue()<((Number)value).doubleValue()) {
+				return child.predict(inputData, withConfidence);
 			}
 		}
 		if (operator.equals(Constants.OPERATOR_LE)) {
 			if (opType.equals(Constants.OPTYPE_DATETIME) && ((String) inputValue).compareTo((String) value)<=0) {
-				return child.predict(inputData);
+				return child.predict(inputData, withConfidence);
 			}
-			if (!opType.equals(Constants.OPTYPE_DATETIME) && ((Number)inputValue).doubleValue()<=((Number)value).doubleValue()) {
-				return child.predict(inputData);
+			if (opType.equals(Constants.OPTYPE_TEXT) && termMatches(inputData, (String) inputValue,field, term)<=((Number)value).doubleValue()) {
+				return child.predict(inputData, withConfidence);
+			}
+			if (!opType.equals(Constants.OPTYPE_DATETIME) && !opType.equals(Constants.OPTYPE_TEXT) && ((Number)inputValue).doubleValue()<=((Number)value).doubleValue()) {
+				return child.predict(inputData, withConfidence);
 			}
 		}
 		if (operator.equals(Constants.OPERATOR_GE)) {
 			if (opType.equals(Constants.OPTYPE_DATETIME) && ((String) inputValue).compareTo((String) value)>=0) {
+				return child.predict(inputData, withConfidence);
+			}
+			if (opType.equals(Constants.OPTYPE_TEXT) && termMatches(inputData, (String) inputValue, field, term)>=((Number)value).doubleValue()) {
 				return child.predict(inputData);
 			}
-			if (!opType.equals(Constants.OPTYPE_DATETIME) && ((Number)inputValue).doubleValue()>=((Number)value).doubleValue()) {
-				return child.predict(inputData);
+			if (!opType.equals(Constants.OPTYPE_DATETIME) && !opType.equals(Constants.OPTYPE_TEXT) && ((Number)inputValue).doubleValue()>=((Number)value).doubleValue()) {
+				return child.predict(inputData, withConfidence);
 			}
 		}
 		if (operator.equals(Constants.OPERATOR_GT)) {
 			if (opType.equals(Constants.OPTYPE_DATETIME) && ((String) inputValue).compareTo((String) value)>0) {
-				return child.predict(inputData);
+				return child.predict(inputData, withConfidence);
 			}
-			if (!opType.equals(Constants.OPTYPE_DATETIME) && ((Number)inputValue).doubleValue()>((Number)value).doubleValue()) {
-				return child.predict(inputData);
+			if (opType.equals(Constants.OPTYPE_TEXT) && termMatches(inputData, (String) inputValue, field, term) > ((Number)value).doubleValue()) {
+				return child.predict(inputData, withConfidence);
+			}
+			if (!opType.equals(Constants.OPTYPE_DATETIME) && !opType.equals(Constants.OPTYPE_TEXT) && ((Number)inputValue).doubleValue()>((Number)value).doubleValue()) {
+				return child.predict(inputData, withConfidence);
 			}
 		}
 				
 	  }
 	}
+	
+	if (withConfidence) {
+		HashMap<String, Object> result = new HashMap<String, Object>();
+		result.put("count", this.count);
+		result.put("prediction", this.output);
+		result.put("confidence", this.confidence);
+		result.put("distribution", this.distribution);
+		return result;
+	}
+	
     return this.output;
   }
   
+  
+  private int termMatches(JSONObject inputData, String text, String fieldLabel, String term) {
+	  
+	  // Checking Full Terms Only
+	  String tokenMode = (String) Utils.getJSONObject(this.fields, fieldLabel+".term_analysis.token_mode");
+	  if (tokenMode.equals("full_terms_only")) {
+		  return text.equals(term) ? 1 : 0;
+	  }
+	  
+	  // All and Tokens only
+	  
+	  int flags = Pattern.CASE_INSENSITIVE;
+	  JSONObject termForms = (JSONObject) Utils.getJSONObject(this.fields, fieldLabel+".summary.term_forms");
+	  
+	  HashMap<String, Boolean> caseSensitive = new HashMap<String, Boolean>();
+	  Iterator iter = inputData.keySet().iterator();
+	  while (iter.hasNext()) {
+		String key = (String) iter.next();
+	    caseSensitive.put(key.toLowerCase(), false);
+	  }
+	 
+	  JSONArray relatedTerms = (JSONArray) termForms.get(term);
+	  String regexp = "(\\b|_)" + term + "(\\b|_)";
+	  for (int i=0; relatedTerms!=null && i<relatedTerms.size(); i++) {
+		  regexp +=  "|(\\b|_)" + (String) relatedTerms.get(i) + "(\\b|_)";
+	  }
+	  
+	  Pattern pattern = Pattern.compile(regexp, flags);
+	  Matcher matcher = pattern.matcher(text);
+	  int count = 0;
+	  while (matcher.find()) {
+		  count++;
+	  }
+	  
+	  return count;	  
+  }
   
 	
  /**
@@ -299,5 +380,5 @@ public class Tree {
 
     return instructions;
   }
-	
+  
 }

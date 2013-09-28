@@ -26,10 +26,13 @@ model.predict({"petal length": 3, "petal width": 1});
 You can also see model in a IF-THEN rule format with:
 
 model.rules()
+
+Or auto-generate a java function code for the model with:
+
+model.java()
  */
 package org.bigml.binding;
 
-import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -54,7 +57,6 @@ public class LocalPredictiveModel {
   * Logging
   */
   static Logger logger = Logger.getLogger(LocalPredictiveModel.class.getName());
-  
   
   
   
@@ -135,18 +137,32 @@ public class LocalPredictiveModel {
    }
 
    
+   /**
+    * Makes a prediction based on a number of field values.
+    *
+    * The input fields must be keyed by field name.
+    */
+   public Object predict(final String args, Boolean byName) {
+	   return predict(args, byName, null);
+   }
+   
+   
   /**
    * Makes a prediction based on a number of field values.
    *
    * The input fields must be keyed by field name.
    */
-  public Object predict(final String args, Boolean byName) {
+  public Object predict(final String args, Boolean byName, Boolean withConfidence) {
     if (byName == null) {
       byName = true;
+    }
+    if (withConfidence == null) {
+    	withConfidence = false;
     }
     
     JSONObject argsData = (JSONObject) JSONValue.parse(args);
     JSONObject inputData = argsData;
+    
     if (!byName) {
       inputData = new JSONObject();
       Iterator iter = argsData.keySet().iterator();
@@ -156,8 +172,8 @@ public class LocalPredictiveModel {
         inputData.put(fieldName, argsData.get(key));
       }
     }
-
-    return tree.predict(inputData);
+    
+    return tree.predict(inputData, withConfidence);
   }
 
 
@@ -175,7 +191,7 @@ public class LocalPredictiveModel {
    * Writes a java method that implements the model.
    *
    */
-  public String java() {
+  /*public String java() {
     Iterator iter = fields.keySet().iterator();
     if (!iter.hasNext()) {
       return null;
@@ -208,6 +224,6 @@ public class LocalPredictiveModel {
 			  	Utils.slugify(methodName),
 			  	methodParams,
 			  	tree.javaBody(1, methodReturn));
-  }
-
+  }*/
+  
 }

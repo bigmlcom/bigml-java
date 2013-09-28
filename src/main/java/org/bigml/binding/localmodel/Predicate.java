@@ -15,17 +15,19 @@ public class Predicate {
   private String operator;
   private String field;
   private Object value;
-	
+  private String term;	
+  
  /**
   * Constructor
   */
-  public Predicate(final String opType, final String operator, final String field, final Object value) {
+  public Predicate(final String opType, final String operator, final String field, final Object value, final String term) {
     super();
 		
     this.opType = opType;
     this.operator = operator;
     this.field = field;
     this.value = value;
+    this.term = term;
   }
   
   public String getOpType() {
@@ -38,10 +40,14 @@ public class Predicate {
 
   public String getField() {
     return field;
- }
+  }
 
   public Object getValue() {
     return value;
+  }
+  
+  public String getTerm() {
+	return term;
   }
   
   

@@ -70,6 +70,14 @@ public class BigMLClient {
     return instance;
   }
   
+  public static BigMLClient getInstance(final String storage) throws AuthenticationException {
+    if (instance == null) {
+      instance = new BigMLClient();
+      instance.init(null, null, false, storage);
+    }
+    return instance;
+  }
+  
   public static BigMLClient getInstance(final boolean devMode) throws AuthenticationException {
     if (instance == null) {
       instance = new BigMLClient();
