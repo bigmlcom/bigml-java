@@ -175,7 +175,7 @@ public class CreatePredictionStepdefs {
     String modelId = (String) model.get("resource");
     String datasetId = (String) dataset.get("resource");
 
-    JSONObject resource = BigMLClient.getInstance().createEvaluation(modelId, datasetId, null, 5);
+    JSONObject resource = BigMLClient.getInstance().createEvaluation(modelId, datasetId, null, 5, 3);
     status = (Integer) resource.get("code");
     location = (String) resource.get("location");
     evaluation = (JSONObject) resource.get("object");
