@@ -4,7 +4,6 @@ import java.io.File;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.FileBody;
@@ -79,7 +78,7 @@ public class Source extends AbstractResource {
     error.put("status", status);
 
     try {
-      HttpClient httpclient = new DefaultHttpClient();
+	  DefaultHttpClient httpclient = Utils.httpClient();
       HttpPost httppost = new HttpPost(SOURCE_URL + bigmlAuth);
 
       MultipartEntity reqEntity = new MultipartEntity();

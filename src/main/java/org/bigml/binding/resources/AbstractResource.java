@@ -10,7 +10,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.bigml.binding.AuthenticationException;
 import org.bigml.binding.BigMLClient;
 import org.bigml.binding.utils.Utils;
@@ -146,7 +145,7 @@ public abstract class AbstractResource {
     error.put("status", status);
 
     try {
-      HttpClient httpclient = new DefaultHttpClient();
+      HttpClient httpclient = Utils.httpClient();
       HttpPost httppost = new HttpPost(urlString + bigmlAuth);
       httppost.setHeader("Content-Type", JSON);
 
@@ -208,7 +207,7 @@ public abstract class AbstractResource {
 
     try {
       String query = queryString != null ? queryString : "";
-      HttpClient httpclient = new DefaultHttpClient();
+      HttpClient httpclient = Utils.httpClient();
       HttpGet httpget = new HttpGet(urlString + bigmlAuth + query);
       httpget.setHeader("Accept", JSON);
 
@@ -259,7 +258,7 @@ public abstract class AbstractResource {
 
     try {
       String query = queryString != null ? queryString : "";
-      HttpClient httpclient = new DefaultHttpClient();
+      HttpClient httpclient = Utils.httpClient();
       HttpGet httpget = new HttpGet(urlString + bigmlAuth + query);
 
       HttpResponse response = httpclient.execute(httpget);
@@ -307,7 +306,7 @@ public abstract class AbstractResource {
     error.put("status", status);
 
     try {
-      HttpClient httpclient = new DefaultHttpClient();
+      HttpClient httpclient = Utils.httpClient();
       HttpPut httpput = new HttpPut(urlString + bigmlAuth);
       httpput.setHeader("Content-Type", JSON);
       StringEntity reqEntity = new StringEntity(json);
@@ -357,7 +356,7 @@ public abstract class AbstractResource {
     error.put("status", status);
 
     try {
-      HttpClient httpclient = new DefaultHttpClient();
+      HttpClient httpclient = Utils.httpClient();
       HttpDelete httpdelete = new HttpDelete(urlString + bigmlAuth);
       HttpResponse response = httpclient.execute(httpdelete);
       HttpEntity resEntity = response.getEntity();

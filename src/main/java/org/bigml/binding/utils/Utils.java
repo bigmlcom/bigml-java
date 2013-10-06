@@ -12,11 +12,28 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.scheme.PlainSocketFactory;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.SingleClientConnManager;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 public class Utils {
 
+  /**
+   * 	
+   */
+  public static DefaultHttpClient httpClient() throws Exception {
+	  SchemeRegistry schemeRegistry = new SchemeRegistry();
+ 	  schemeRegistry.register(new Scheme("http", 80, PlainSocketFactory.getSocketFactory()));
+	  schemeRegistry.register(new Scheme("https", 443, new MockSSLSocketFactory()));
+	  ClientConnectionManager cm = new SingleClientConnManager(schemeRegistry);
+	  return new DefaultHttpClient(cm);	
+  }
+  
 	
   /**
    * Converts a InputStream to a String.
