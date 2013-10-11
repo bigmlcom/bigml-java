@@ -85,7 +85,8 @@ public class Prediction extends AbstractResource {
     	          count++;
     	        }
     	        try {
-    	        	modelId = (String) ((JSONArray) Utils.getJSONObject(ensemble, "object.models")).get(0);		
+    	        	modelId = (String) ((JSONArray) Utils.getJSONObject(ensemble, "object.models")).get(0);
+    	        	model = BigMLClient.getInstance(this.devMode).getModel(modelId);
     	        } catch (Exception e) {
     	        	logger.error("The ensemble has no valid model information", e);
     	        	modelId = null;
@@ -93,13 +94,15 @@ public class Prediction extends AbstractResource {
     	    }
     	}
     	
-    } catch (Throwable e) {
-    	logger.error("");
-    } finally {
+    } catch (Throwable e) {} 
+    
+    // No ensemble
+    if (modelId == null) {
     	try {
     		model = BigMLClient.getInstance(this.devMode).getModel(modelOrEnsembleId);
     		modelId = modelOrEnsembleId;
     	} catch (Throwable ex) {}
+    	
     }
     
     try {
@@ -121,16 +124,19 @@ public class Prediction extends AbstractResource {
     	  inputDataJSON = new JSONObject();
       } else {
 	      if (byName) {
-	    	  JSONObject fields = getFields(modelId);
+	    	  JSONObject fields = (JSONObject) Utils.getJSONObject(model, "object.model.fields");
+	    	  
 		      JSONObject invertedFields = Utils.invertDictionary(fields);
 		      inputDataJSON = new JSONObject();
 		      Iterator iter = inputData.keySet().iterator();
 		      while (iter.hasNext()) {
 		    	  String key = (String) iter.next();
 		    	  if (invertedFields.get(key)!=null) {
-		    		  inputDataJSON.put(key, inputData.get(key));
+		    		  inputDataJSON.put(Utils.getJSONObject(invertedFields, key+".fieldID"), inputData.get(key));
 		    	  }
 		      }
+	      } else {
+	    	  inputDataJSON = inputData;
 	      }
       }
       
@@ -145,7 +151,7 @@ public class Prediction extends AbstractResource {
     	  requestObject.put("ensemble", ensembleId);
       }
       requestObject.put("input_data", inputDataJSON);
-
+      
       return createResource(PREDICTION_URL, requestObject.toJSONString());
     } catch (Throwable e) {
       logger.error("Error creating prediction", e);

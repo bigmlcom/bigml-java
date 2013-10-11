@@ -7,7 +7,6 @@ import cucumber.junit.Cucumber;
 
 @RunWith(Cucumber.class)
 @Cucumber.Options(format = {"pretty", "html:target/cucumber-html-report"})
-
-//, features = {"src/test/resources/org/bigml/binding/createRemoteSource.feature"})
+//@Cucumber.Options(format = {"pretty", "html:target/cucumber-html-report"}, features = {"src/test/resources/org/bigml/binding/createPrediction.feature"})
 public class RunCukesTest {
 }

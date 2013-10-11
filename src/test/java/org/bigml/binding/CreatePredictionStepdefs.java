@@ -9,6 +9,7 @@ import java.util.GregorianCalendar;
 
 import org.bigml.binding.resources.AbstractResource;
 import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -214,16 +215,24 @@ public class CreatePredictionStepdefs {
   }
 
   // Prediction steps
-  @When("^I create a prediction for \"(.*)\"$")
-  public void I_create_a_prediction_for_petal_length(String args) throws AuthenticationException {
+  //@When("^I create a prediction for \"(.*)\"$")
+  
+  //When I create a prediction "by_name" for "<data_input>"
+  
+  @When("^I create a prediction by name=(true|false) for \"(.*)\"$")
+  public void I_create_a_prediction_for(String by_name, String inputData) throws AuthenticationException {
     String modelId = (String) model.get("resource");
-    JSONObject resource = BigMLClient.getInstance().createPrediction(modelId, null, false, args, 5, null);
+    Boolean byName = new Boolean(by_name);
+    JSONObject resource = BigMLClient.getInstance().createPrediction(modelId, (JSONObject) JSONValue.parse(inputData), byName, null, 5, null);
     status = (Integer) resource.get("code");
     location = (String) resource.get("location");
     prediction = (JSONObject) resource.get("object");
     the_resource_has_been_created();
   }
 
+
+  
+  
   @Given("^I get the prediction \"(.*)\"")
   public void I_get_the_prediction(String predictionId) throws AuthenticationException {
     JSONObject resource = BigMLClient.getInstance().getPrediction(predictionId);
@@ -239,10 +248,11 @@ public class CreatePredictionStepdefs {
     assertEquals(objective, pred);
   }
 	  
-  @When("^I create a prediction with ensemble for \"(.*)\"$")
-  public void I_create_a_prediction_with_ensemble_for(String args) throws AuthenticationException {	  
+  @When("^I create a prediction with ensemble by name=(true|false) for \"(.*)\"$")
+  public void I_create_a_prediction_with_ensemble_for(String by_name, String inputData) throws AuthenticationException {	  
 	  String ensembleId = (String) ensemble.get("resource");
-	  JSONObject resource = BigMLClient.getInstance().createPrediction(ensembleId, null, false, args, 5, null);
+	  Boolean byName = new Boolean(by_name);
+	  JSONObject resource = BigMLClient.getInstance().createPrediction(ensembleId, (JSONObject) JSONValue.parse(inputData), byName, null, 5, null);
 	  status = (Integer) resource.get("code");
 	  location = (String) resource.get("location");
 	  prediction = (JSONObject) resource.get("object");

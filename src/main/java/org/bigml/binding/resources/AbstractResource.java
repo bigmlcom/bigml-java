@@ -1,7 +1,9 @@
 package org.bigml.binding.resources;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -10,6 +12,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpParams;
 import org.bigml.binding.AuthenticationException;
 import org.bigml.binding.BigMLClient;
 import org.bigml.binding.utils.Utils;
@@ -146,12 +150,12 @@ public abstract class AbstractResource {
 
     try {
       HttpClient httpclient = Utils.httpClient();
-      HttpPost httppost = new HttpPost(urlString + bigmlAuth);
+      HttpPost httppost = new HttpPost(urlString + bigmlAuth); 
       httppost.setHeader("Content-Type", JSON);
 
       StringEntity reqEntity = new StringEntity(json);
       httppost.setEntity(reqEntity);
-
+      
       HttpResponse response = httpclient.execute(httppost);
       HttpEntity resEntity = response.getEntity();
       code = response.getStatusLine().getStatusCode();
@@ -209,6 +213,7 @@ public abstract class AbstractResource {
       String query = queryString != null ? queryString : "";
       HttpClient httpclient = Utils.httpClient();
       HttpGet httpget = new HttpGet(urlString + bigmlAuth + query);
+      
       httpget.setHeader("Accept", JSON);
 
       HttpResponse response = httpclient.execute(httpget);
@@ -393,8 +398,9 @@ public abstract class AbstractResource {
       logger.info("Wrong resource id");
       return null;
     }
-
+    
     JSONObject resource = get(BIGML_URL + resourceId);
+    
     JSONObject obj = (JSONObject) resource.get("object");
     if (obj == null) {
       obj = (JSONObject) resource.get("error");

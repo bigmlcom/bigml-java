@@ -119,7 +119,9 @@ public class Utils {
       while (iter.hasNext()) {
         String key = (String) iter.next();
         String fieldName = (String) Utils.getJSONObject(json, key+".name"); 
-        invertedObject.put(fieldName, json.get(key));
+        JSONObject jsonObj = (JSONObject) json.get(key);
+        jsonObj.put("fieldID", key);
+        invertedObject.put(fieldName, jsonObj);
       }
       return invertedObject;
   }

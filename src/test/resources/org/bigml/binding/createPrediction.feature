@@ -15,9 +15,9 @@ Feature: Create Predictions
         And I wait until the ensemble is ready less than <time_3> secs
         And I create a evaluation
         And I wait until the evaluation is ready less than <time_4> secs
-        When I create a prediction for "<data_input>"
+        When I create a prediction by name=<by_name> for "<data_input>"
         Then the prediction for "<objective>" is "<prediction>"
-        When I create a prediction with ensemble for "<data_input>"
+        When I create a prediction with ensemble by name=<by_name> for "<data_input>"
         Then the prediction with ensemble for "<objective>" is "<predictionEnsemble>"
         
         Then test listing
@@ -25,10 +25,10 @@ Feature: Create Predictions
         Then delete test data
 
   Examples: 
-        | data	| time_1  | time_2 | time_3 | time_4 | data_input    | objective | prediction  | predictionEnsemble  |
-        | data/iris.csv | 15      | 15     | 15     | 15     | {"input_data": {"petal length": 1}} | 000004    | Iris-virginica | Iris-setosa |
+        | data	| time_1  | time_2 | time_3 | time_4 | by_name    | data_input    | objective | prediction  | predictionEnsemble  |
+        | data/iris.csv | 15      | 15     | 15     | 15     | true | {"petal width": 0.5} | 000004    | Iris-setosa | Iris-setosa |
 
-
+		
    
    
    
