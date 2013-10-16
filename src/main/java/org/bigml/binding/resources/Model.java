@@ -58,7 +58,7 @@ public class Model extends AbstractResource {
    *
    */
   public JSONObject create(final String datasetId, String args, Integer waitTime, Integer retries) {
-    if (datasetId == null || datasetId.length() == 0 || !datasetId.matches(DATASET_RE)) {
+    if (datasetId == null || datasetId.length() == 0 || !(datasetId.matches(DATASET_RE) || datasetId.matches(DATASET_PUBLIC_RE))) {
       logger.info("Wrong dataset id");
       return null;
     }
@@ -98,7 +98,7 @@ public class Model extends AbstractResource {
    *
    */
   public JSONObject get(final String modelId) {
-    if (modelId == null || modelId.length() == 0 || !modelId.matches(MODEL_RE)) {
+    if (modelId == null || modelId.length() == 0 || !(modelId.matches(MODEL_RE) || modelId.matches(MODEL_PUBLIC_RE))) {
       logger.info("Wrong model id");
       return null;
     }
@@ -134,7 +134,7 @@ public class Model extends AbstractResource {
    *
    */
   public JSONObject get(final String modelId, final String queryString) {
-    if (modelId == null || modelId.length() == 0 || !modelId.matches(MODEL_RE)) {
+    if (modelId == null || modelId.length() == 0 ||  !(modelId.matches(MODEL_RE) || modelId.matches(MODEL_PUBLIC_RE))) {
       logger.info("Wrong model id");
       return null;
     }
@@ -209,7 +209,7 @@ public class Model extends AbstractResource {
    *
    */
   public JSONObject update(final String modelId, final String changes) {
-    if (modelId == null || modelId.length() == 0 || !modelId.matches(MODEL_RE)) {
+    if (modelId == null || modelId.length() == 0 || !(modelId.matches(MODEL_RE) || modelId.matches(MODEL_PUBLIC_RE))) {
       logger.info("Wrong model id");
       return null;
     }
@@ -246,7 +246,7 @@ public class Model extends AbstractResource {
    *
    */
   public JSONObject delete(final String modelId) {
-    if (modelId == null || modelId.length() == 0 || !modelId.matches(MODEL_RE)) {
+    if (modelId == null || modelId.length() == 0 || !(modelId.matches(MODEL_RE) || modelId.matches(MODEL_PUBLIC_RE))) {
       logger.info("Wrong model id");
       return null;
     }

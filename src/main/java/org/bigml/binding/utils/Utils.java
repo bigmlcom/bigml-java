@@ -88,6 +88,9 @@ public class Utils {
     if (json.get(field) instanceof Long) {
       return (Long) json.get(field);
     }
+    if (json.get(field) instanceof Double) {
+        return (Double) json.get(field);
+      }
     json = (JSONObject) json.get(field);
 	
     if (json==null) {

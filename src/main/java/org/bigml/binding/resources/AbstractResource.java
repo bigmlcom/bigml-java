@@ -46,7 +46,9 @@ public abstract class AbstractResource {
   // Base Resource regular expressions
   static String SOURCE_RE = "^" + SOURCE_PATH + "/[a-f,0-9]{24}$";
   static String DATASET_RE = "^" + DATASET_PATH + "/[a-f,0-9]{24}$";
+  static String DATASET_PUBLIC_RE = "^public/" + DATASET_PATH + "/[a-f,0-9]{24}$";
   static String MODEL_RE = "^" + MODEL_PATH + "/[a-f,0-9]{24}$";
+  static String MODEL_PUBLIC_RE = "^public/" + MODEL_PATH + "/[a-f,0-9]{24}$";
   static String PREDICTION_RE = "^" + PREDICTION_PATH + "/[a-f,0-9]{24}$";
   static String EVALUATION_RE = "^" + EVALUATION_PATH + "/[a-f,0-9]{24}$";
   static String ENSEMBLE_RE = "^" + ENSEMBLE_PATH + "/[a-f,0-9]{24}$";
@@ -313,6 +315,7 @@ public abstract class AbstractResource {
     try {
       HttpClient httpclient = Utils.httpClient();
       HttpPut httpput = new HttpPut(urlString + bigmlAuth);
+      
       httpput.setHeader("Content-Type", JSON);
       StringEntity reqEntity = new StringEntity(json);
       httpput.setEntity(reqEntity);
@@ -353,7 +356,7 @@ public abstract class AbstractResource {
    */
   public JSONObject deleteResource(final String urlString) {
     int code = HTTP_INTERNAL_SERVER_ERROR;
-
+    
     JSONObject error = new JSONObject();
     JSONObject status = new JSONObject();
     status.put("code", code);

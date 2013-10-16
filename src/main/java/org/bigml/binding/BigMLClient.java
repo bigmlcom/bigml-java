@@ -85,7 +85,6 @@ public class BigMLClient {
     }
     return instance;
   }
-
   
   public static BigMLClient getInstance(final String apiUser, final String apiKey, final boolean devMode) throws AuthenticationException {
     if (instance == null) {
@@ -912,8 +911,8 @@ public class BigMLClient {
    * Host: bigml.io
    * Content-Type: application/json
    *
-   * @param modelId		a unique identifier in the form model/id where id is a string of 24
-   *                	alpha-numeric chars for the model to attach the evaluation.
+   * @param modelOrEnsembleId		a unique identifier in the form model/id or ensemble/id where id is a string of 24
+   *                	alpha-numeric chars for the model/ensemble to attach the evaluation.
    * @param datasetId	a unique identifier in the form dataset/id where id is a string of 24
    * 					alpha-numeric chars for the dataset to attach the evaluation.
    * @param args		set of parameters for the new evaluation. Optional
@@ -922,8 +921,8 @@ public class BigMLClient {
    * @param retries		number of times to try the operation. Optional
    *
    */
-  public JSONObject createEvaluation(final String modelId, final String datasetId, String args, Integer waitTime, Integer tries) {
-    return evaluation.create(modelId, datasetId, args, waitTime, tries);
+  public JSONObject createEvaluation(final String modelOrEnsembleId, final String datasetId, String args, Integer waitTime, Integer tries) {
+    return evaluation.create(modelOrEnsembleId, datasetId, args, waitTime, tries);
   }
 
  

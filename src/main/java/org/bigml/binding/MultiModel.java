@@ -108,6 +108,7 @@ public class MultiModel {
 			LocalPredictiveModel localModel = new LocalPredictiveModel(model);
 			
 			HashMap<String, Object> prediction = (HashMap<String, Object>) localModel.predict(inputData, byName, withConfidence);
+
 			HashMap<String, Integer> distributionHash = new HashMap<String, Integer>();
 			JSONArray predictionsArray = (JSONArray) prediction.get("distribution");
 			int count = 0;
@@ -119,6 +120,7 @@ public class MultiModel {
 			prediction.put("distribution", distributionHash);
 			prediction.put("count", count);
 			votes[i] = prediction;
+			
 		}
 		
 		return new MultiVote(votes);

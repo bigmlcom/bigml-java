@@ -3,9 +3,8 @@ Feature: Create Predictions
     I need to create a model first	
 	
   Scenario Outline: Successfully creating a prediction
-		
-		Given a instantiated BigML client
-    	And I create a data source uploading a "<data>" file
+		Given that I use development mode
+		Given I create a data source uploading a "<data>" file
         And I wait until the source is ready less than <time_1> secs
         And I create a dataset
         And I wait until the dataset is ready less than <time_2> secs
@@ -19,11 +18,8 @@ Feature: Create Predictions
         Then the prediction for "<objective>" is "<prediction>"
         When I create a prediction with ensemble by name=<by_name> for "<data_input>"
         Then the prediction with ensemble for "<objective>" is "<predictionEnsemble>"
-        
         Then test listing
         
-        Then delete test data
-
   Examples: 
         | data	| time_1  | time_2 | time_3 | time_4 | by_name    | data_input    | objective | prediction  | predictionEnsemble  |
         | data/iris.csv | 15      | 15     | 15     | 15     | true | {"petal width": 0.5} | 000004    | Iris-setosa | Iris-setosa |

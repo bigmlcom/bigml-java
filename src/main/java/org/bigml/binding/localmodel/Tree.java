@@ -265,7 +265,7 @@ public class Tree {
 	  // Checking Full Terms Only
 	  String tokenMode = (String) Utils.getJSONObject(this.fields, fieldLabel+".term_analysis.token_mode");
 	  if (tokenMode.equals("full_terms_only")) {
-		  return text.equals(term) ? 1 : 0;
+		  return text.equalsIgnoreCase(term) ? 1 : 0;
 	  }
 	  
 	  // All and Tokens only

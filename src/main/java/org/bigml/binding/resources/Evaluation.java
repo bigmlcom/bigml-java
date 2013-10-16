@@ -51,8 +51,8 @@ public class Evaluation extends AbstractResource {
    * Host: bigml.io
    * Content-Type: application/json
    *
-   * @param modelId		a unique identifier in the form model/id where id is a string of 24
-   *                	alpha-numeric chars for the model to attach the evaluation.
+   * @param modelOrEnsembleId		a unique identifier in the form model/id or ensemble/id where id is a string of 24
+   *                	alpha-numeric chars for the model/ensemble to attach the evaluation.
    * @param datasetId	a unique identifier in the form dataset/id where id is a string of 24
    * 					alpha-numeric chars for the dataset to attach the evaluation.
    * @param args		set of parameters for the new evaluation. Optional
@@ -61,8 +61,9 @@ public class Evaluation extends AbstractResource {
    * @param retries		number of times to try the operation. Optional
    * 
    */
-  public JSONObject create(final String modelId, final String datasetId, String args, Integer waitTime, Integer retries) {
-    if (modelId == null || modelId.length() == 0 || !modelId.matches(MODEL_RE)) {
+  public JSONObject create(final String modelOrEnsembleId, final String datasetId, String args, Integer waitTime, Integer retries) {
+    if (modelOrEnsembleId == null || modelOrEnsembleId.length() == 0 || 
+    	!(modelOrEnsembleId.matches(MODEL_RE) || modelOrEnsembleId.matches(ENSEMBLE_RE)) ) {
       logger.info("Wrong model id");
       return null;
     }
@@ -76,10 +77,20 @@ public class Evaluation extends AbstractResource {
       retries = retries != null ? retries : 10;
       if (waitTime > 0) {
     	int count = 0;
-        while (count<retries && !BigMLClient.getInstance(this.devMode).modelIsReady(modelId)) {
-          Thread.sleep(waitTime);
-          count++;
-        }
+    	
+    	if (modelOrEnsembleId.matches(MODEL_RE)) {
+	        while (count<retries && !BigMLClient.getInstance(this.devMode).modelIsReady(modelOrEnsembleId)) {
+	          Thread.sleep(waitTime);
+	          count++;
+	        }
+    	}
+    	
+    	if (modelOrEnsembleId.matches(ENSEMBLE_RE)) {
+	        while (count<retries && !BigMLClient.getInstance(this.devMode).ensembleIsReady(modelOrEnsembleId)) {
+	          Thread.sleep(waitTime);
+	          count++;
+	        }
+    	}
         
         count = 0;
         while (count<retries && !BigMLClient.getInstance(this.devMode).datasetIsReady(datasetId)) {
@@ -92,7 +103,13 @@ public class Evaluation extends AbstractResource {
       if (args != null) {
         requestObject = (JSONObject) JSONValue.parse(args);
       }
-      requestObject.put("model", modelId);
+      
+      if (modelOrEnsembleId.matches(MODEL_RE)) {
+    	  requestObject.put("model", modelOrEnsembleId);
+      }
+      if (modelOrEnsembleId.matches(ENSEMBLE_RE)) {
+    	  requestObject.put("ensemble", modelOrEnsembleId);
+      }
       requestObject.put("dataset", datasetId);
 
       return createResource(EVALUATION_URL, requestObject.toJSONString());

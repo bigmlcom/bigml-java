@@ -50,7 +50,7 @@ import org.json.simple.JSONValue;
  * Uses a BigML remote model to build a local version that can be used
  * to generate prediction locally.
  *
- */
+ */ 
 public class LocalPredictiveModel {
 	
  /**
@@ -102,11 +102,12 @@ public class LocalPredictiveModel {
       if (!BigMLClient.getInstance().modelIsReady(model)) {
         throw new Exception("The model isn't finished yet");
       }
-      this.fields = (JSONObject) Utils.getJSONObject(model, "object.model.fields");
-      this.root = (JSONObject) Utils.getJSONObject(model, "object.model.root");
+      String prefix = Utils.getJSONObject(model, "object")!=null ? "object." : "";
+      this.fields = (JSONObject) Utils.getJSONObject(model, prefix+"model.fields");
+      this.root = (JSONObject) Utils.getJSONObject(model, prefix+"model.root");
 			
       String objectiveField;
-      Object objectiveFields = Utils.getJSONObject(model, "object.objective_fields");  
+      Object objectiveFields = Utils.getJSONObject(model, prefix+"objective_fields");  
       objectiveField = objectiveFields instanceof JSONArray ?
     		  		(String) ((JSONArray) objectiveFields).get(0) :
     		  		(String) objectiveFields;
