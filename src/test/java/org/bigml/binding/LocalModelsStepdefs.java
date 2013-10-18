@@ -25,10 +25,6 @@ public class LocalModelsStepdefs {
   	
   	@Given("^I create a local model$")
     public void I_create_a_local_model() throws Exception {
-  		System.out.println("model: " + context.model);
-        System.out.println("model: ");
-  		
-  		
   	  predictiveModel = new LocalPredictiveModel(context.model);
       assertTrue("", predictiveModel != null);
     }
