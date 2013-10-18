@@ -231,6 +231,7 @@ public class MultiVote {
 	*/
     public HashMap<String, Object>[] probabilityWeight() {
     	int index, len, total, order, instances;
+    	
     	HashMap<String, Object> prediction = new HashMap<String, Object>();
     	HashMap<String, Object> distribution;
     	ArrayList predictionsList = new ArrayList();
@@ -242,7 +243,9 @@ public class MultiVote {
     	                      " distribution information is missing.");
     	    }
     		
-    		total = (Integer) prediction.get("count");
+    		total = prediction.get("count") instanceof Long ?  
+    					((Long) prediction.get("count")).intValue() : 
+    						(Integer) prediction.get("count");
   
     		if (total < 1) {
     	      throw new Error("Probability weighting is not available because" +
@@ -309,8 +312,8 @@ public class MultiVote {
     		    weight = (Double) prediction.get(weightLabel);
     		}
     		
-    		
     		category = (String) prediction.get("prediction");
+    		
     		HashMap<String, Object> categoryHash = new HashMap<String, Object>(); 
     		if (mode.get(category)!=null) {
     		 	categoryHash.put("count", ((Double)((HashMap)mode.get(category)).get("count"))+weight);
