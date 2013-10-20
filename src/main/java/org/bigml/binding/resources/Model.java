@@ -58,7 +58,7 @@ public class Model extends AbstractResource {
    *
    */
   public JSONObject create(final String datasetId, String args, Integer waitTime, Integer retries) {
-    if (datasetId == null || datasetId.length() == 0 || !(datasetId.matches(DATASET_RE) || datasetId.matches(DATASET_PUBLIC_RE))) {
+    if (datasetId == null || datasetId.length() == 0 || !(datasetId.matches(DATASET_RE))) {
       logger.info("Wrong dataset id");
       return null;
     }
@@ -98,12 +98,29 @@ public class Model extends AbstractResource {
    *
    */
   public JSONObject get(final String modelId) {
-    if (modelId == null || modelId.length() == 0 || !(modelId.matches(MODEL_RE) || modelId.matches(MODEL_PUBLIC_RE))) {
+    return get(modelId, null, null);
+  }
+  
+  
+  /**
+   * Retrieves a model.
+   *
+   * GET /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * Host: bigml.io
+   *
+   * @param modelId 	a unique identifier in the form model/id where id is a string of 24
+   * 					alpha-numeric chars.
+   * @param apiUser		API user
+   * @param apiKey		API key
+   *
+   */
+  public JSONObject get(final String modelId, final String apiUser, final String apiKey) {
+    if (modelId == null || modelId.length() == 0 || !(modelId.matches(MODEL_RE))) {
       logger.info("Wrong model id");
       return null;
     }
 
-    return getResource(BIGML_URL + modelId);
+    return getResource(BIGML_URL + modelId, null, apiUser, apiKey);
   }
 
   
@@ -118,7 +135,24 @@ public class Model extends AbstractResource {
    */
   public JSONObject get(final JSONObject model) {
     String resourceId = (String) model.get("resource");
-    return get(resourceId);
+    return get(resourceId, null, null);
+  }
+  
+  
+  /**
+   * Retrieves a model.
+   *
+   * GET /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * Host: bigml.io
+   *
+   * @param model	a model JSONObject
+   * @param apiUser		API user
+   * @param apiKey		API key
+   *
+   */
+  public JSONObject get(final JSONObject model, final String apiUser, final String apiKey) {
+    String resourceId = (String) model.get("resource");
+    return get(resourceId, apiUser, apiKey);
   }
   
   
@@ -134,12 +168,30 @@ public class Model extends AbstractResource {
    *
    */
   public JSONObject get(final String modelId, final String queryString) {
-    if (modelId == null || modelId.length() == 0 ||  !(modelId.matches(MODEL_RE) || modelId.matches(MODEL_PUBLIC_RE))) {
+    return get(modelId, queryString, null, null);
+  }
+  
+  
+  /**
+   * Retrieves a model.
+   *
+   * GET /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * Host: bigml.io
+   *
+   * @param modelId 	a unique identifier in the form model/id where id is a string of 24
+   * 					alpha-numeric chars.
+   * @param queryString query for filtering.
+   * @param apiUser		API user
+   * @param apiKey		API key
+   *
+   */
+  public JSONObject get(final String modelId, final String queryString, final String apiUser, final String apiKey) {
+    if (modelId == null || modelId.length() == 0 ||  !(modelId.matches(MODEL_RE))) {
       logger.info("Wrong model id");
       return null;
     }
 
-    return getResource(BIGML_URL + modelId, queryString);
+    return getResource(BIGML_URL + modelId, queryString, apiUser, apiKey);
   }
 
   
@@ -155,7 +207,25 @@ public class Model extends AbstractResource {
    */
   public JSONObject get(final JSONObject model, final String queryString) {
     String resourceId = (String) model.get("resource");
-    return get(resourceId, queryString);
+    return get(resourceId, queryString, null, null);
+  }
+  
+  
+  /**
+   * Retrieves a model.
+   *
+   * GET /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * Host: bigml.io
+   *
+   * @param model	a model JSONObject
+   * @param queryString query for filtering
+   * @param apiUser		API user
+   * @param apiKey		API key
+   *
+   */
+  public JSONObject get(final JSONObject model, final String queryString, final String apiUser, final String apiKey) {
+    String resourceId = (String) model.get("resource");
+    return get(resourceId, queryString, apiUser, apiKey);
   }
 
   
@@ -209,7 +279,7 @@ public class Model extends AbstractResource {
    *
    */
   public JSONObject update(final String modelId, final String changes) {
-    if (modelId == null || modelId.length() == 0 || !(modelId.matches(MODEL_RE) || modelId.matches(MODEL_PUBLIC_RE))) {
+    if (modelId == null || modelId.length() == 0 || !(modelId.matches(MODEL_RE))) {
       logger.info("Wrong model id");
       return null;
     }
@@ -246,7 +316,7 @@ public class Model extends AbstractResource {
    *
    */
   public JSONObject delete(final String modelId) {
-    if (modelId == null || modelId.length() == 0 || !(modelId.matches(MODEL_RE) || modelId.matches(MODEL_PUBLIC_RE))) {
+    if (modelId == null || modelId.length() == 0 || !(modelId.matches(MODEL_RE))) {
       logger.info("Wrong model id");
       return null;
     }

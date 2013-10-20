@@ -1,9 +1,7 @@
 package org.bigml.binding.resources;
 
-import java.lang.reflect.Field;
 import java.util.HashMap;
 
-import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -12,8 +10,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpParams;
 import org.bigml.binding.AuthenticationException;
 import org.bigml.binding.BigMLClient;
 import org.bigml.binding.utils.Utils;
@@ -45,10 +41,8 @@ public abstract class AbstractResource {
   
   // Base Resource regular expressions
   static String SOURCE_RE = "^" + SOURCE_PATH + "/[a-f,0-9]{24}$";
-  static String DATASET_RE = "^" + DATASET_PATH + "/[a-f,0-9]{24}$";
-  static String DATASET_PUBLIC_RE = "^public/" + DATASET_PATH + "/[a-f,0-9]{24}$";
-  static String MODEL_RE = "^" + MODEL_PATH + "/[a-f,0-9]{24}$";
-  static String MODEL_PUBLIC_RE = "^public/" + MODEL_PATH + "/[a-f,0-9]{24}$";
+  static String DATASET_RE = "^(public/|shared/|)" + DATASET_PATH + "/[a-f,0-9]{24}$";
+  static String MODEL_RE = "^(public/|)" + MODEL_PATH + "/[a-f,0-9]{24}$|^|shared/" + MODEL_PATH + "/[a-zA-Z0-9]{27}$";
   static String PREDICTION_RE = "^" + PREDICTION_PATH + "/[a-f,0-9]{24}$";
   static String EVALUATION_RE = "^" + EVALUATION_PATH + "/[a-f,0-9]{24}$";
   static String ENSEMBLE_RE = "^" + ENSEMBLE_PATH + "/[a-f,0-9]{24}$";
@@ -192,7 +186,7 @@ public abstract class AbstractResource {
    * Retrieve a resource.
    */
   public JSONObject getResource(final String urlString) {
-	return getResource(urlString, null);
+	return getResource(urlString, null, null, null);
   }
   
   
@@ -200,6 +194,14 @@ public abstract class AbstractResource {
    * Retrieve a resource.
    */
   public JSONObject getResource(final String urlString, final String queryString) {
+    return getResource(urlString, queryString, null, null);
+  }
+  
+  
+  /**
+   * Retrieve a resource.
+   */
+  public JSONObject getResource(final String urlString, final String queryString, final String apiUser, final String apiKey) {
     int code = HTTP_INTERNAL_SERVER_ERROR;
     JSONObject resource = null;
     String resourceId = null;
@@ -213,8 +215,12 @@ public abstract class AbstractResource {
 
     try {
       String query = queryString != null ? queryString : "";
+      String auth = apiUser!=null && apiKey!=null ? 
+    	  "?username=" + apiUser + ";api_key=" + apiKey + ";" :
+    	  bigmlAuth;
+      
       HttpClient httpclient = Utils.httpClient();
-      HttpGet httpget = new HttpGet(urlString + bigmlAuth + query);
+      HttpGet httpget = new HttpGet(urlString + auth + query);
       
       httpget.setHeader("Accept", JSON);
 
@@ -247,7 +253,8 @@ public abstract class AbstractResource {
     result.put("error", error);
     return result;
   }
-
+  
+  
   
   /**
    * List resources.

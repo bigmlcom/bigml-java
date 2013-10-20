@@ -108,7 +108,7 @@ public class Dataset extends AbstractResource {
    *
    */
   public JSONObject get(final String datasetId) {
-    if (datasetId == null || datasetId.length() == 0 || !(datasetId.matches(DATASET_RE) || datasetId.matches(DATASET_PUBLIC_RE))) {
+    if (datasetId == null || datasetId.length() == 0 || !(datasetId.matches(DATASET_RE))) {
       logger.info("Wrong dataset id");
       return null;
     }
@@ -184,7 +184,7 @@ public class Dataset extends AbstractResource {
    *
    */
   public JSONObject update(final String datasetId, final String changes) {
-    if (datasetId == null || datasetId.length() == 0 || !(datasetId.matches(DATASET_RE) || datasetId.matches(DATASET_PUBLIC_RE))) {
+    if (datasetId == null || datasetId.length() == 0 || !(datasetId.matches(DATASET_RE))) {
       logger.info("Wrong dataset id");
       return null;
     }
@@ -222,7 +222,7 @@ public class Dataset extends AbstractResource {
    *
    */
   public JSONObject delete(final String datasetId) {
-    if (datasetId == null || datasetId.length() == 0 || !(datasetId.matches(DATASET_RE) || datasetId.matches(DATASET_PUBLIC_RE))) {
+    if (datasetId == null || datasetId.length() == 0 || !(datasetId.matches(DATASET_RE))) {
       logger.info("Wrong dataset id");
       return null;
     }

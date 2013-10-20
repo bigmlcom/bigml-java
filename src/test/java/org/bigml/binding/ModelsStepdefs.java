@@ -30,6 +30,9 @@ public class ModelsStepdefs {
   	@Autowired
     private ContextRepository context;
   	
+  	private String sharedHash;
+  	private String sharedKey;
+  	
   	
   	@Given("^I create a model$")
 	public void I_create_a_model() throws AuthenticationException {
@@ -156,4 +159,48 @@ public class ModelsStepdefs {
 		assertEquals(code.intValue(), AbstractResource.HTTP_OK);
     }
     
+    
+    // ---------------------------------------------------------------------
+    // create_prediction_shared_model.feature
+    // ---------------------------------------------------------------------
+    
+    @Given("^I make the model shared$")
+    public void make_the_model_shared() throws Throwable {
+    	JSONObject changes = new JSONObject();
+		changes.put("shared", new Boolean(true));
+		
+		JSONObject resource = BigMLClient.getInstance().updateModel(context.model, changes);
+		context.status = (Integer) resource.get("code");
+	    context.location = (String) resource.get("location");
+	    context.model = (JSONObject) resource.get("object");
+	    commonSteps.the_resource_has_been_updated_with_status(context.status);   
+    }
+    
+    @Given("^I get the model sharing info$")
+    public void get_sharing_info() throws Throwable {
+    	sharedHash = (String) context.model.get("shared_hash");
+    	sharedKey = (String) context.model.get("sharing_key");
+    }
+    
+    @Given("^I check the model status using the model's shared url$")
+    public void model_from_shared_url() throws Throwable {
+    	JSONObject resource = BigMLClient.getInstance().getModel("shared/model/"+this.sharedHash);
+    	context.status = (Integer) resource.get("code");
+	    context.location = (String) resource.get("location");
+	    context.model = (JSONObject) resource;
+	    Integer code = (Integer) context.model.get("code");
+    	assertEquals(code.intValue(), AbstractResource.HTTP_OK);
+    }
+    
+    @Given("^I check the model status using the model's shared key$")
+    public void model_from_shared_key() throws Throwable {
+    	String apiUser = System.getProperty("BIGML_USERNAME");
+    	JSONObject resource = BigMLClient.getInstance().getModel("shared/model/"+this.sharedHash, apiUser, this.sharedKey);
+    	context.status = (Integer) resource.get("code");
+	    context.location = (String) resource.get("location");
+	    context.model = (JSONObject) resource;
+	    Integer code = (Integer) context.model.get("code");
+    	assertEquals(code.intValue(), AbstractResource.HTTP_OK);
+    	
+    }
 }

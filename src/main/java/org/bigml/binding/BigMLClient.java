@@ -586,9 +586,27 @@ public class BigMLClient {
    *
    */
   public JSONObject getModel(final String modelId) {
-    return model.get(modelId);
+    return getModel(modelId, null, null);
   }
-
+  
+  
+  /**
+   * Retrieves a model.
+   * 
+   *
+   * GET /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * Host: bigml.io
+   *
+   * @param modelId 	a unique identifier in the form model/id where id is a string of 24
+   * 					alpha-numeric chars.
+   * @param apiUser		API user
+   * @param apiKey		API key
+   *
+   */
+  public JSONObject getModel(final String modelId, final String apiUser, final String apiKey) {
+    return model.get(modelId, apiUser, apiKey);
+  }
+  
   
   /**
    * Retrieves a model.
@@ -600,7 +618,23 @@ public class BigMLClient {
    *
    */
   public JSONObject getModel(final JSONObject modelJSON) {
-    return model.get(modelJSON);
+    return getModel(modelJSON, null, null);
+  }
+  
+  
+  /**
+   * Retrieves a model.
+   *
+   * GET /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * Host: bigml.io
+   *
+   * @param modelJSON 	a model JSONObject
+   * @param apiUser		API user
+   * @param apiKey		API key
+   *
+   */
+  public JSONObject getModel(final JSONObject modelJSON, final String apiUser, final String apiKey) {
+    return model.get(modelJSON, apiUser, apiKey);
   }
   
   
@@ -617,7 +651,26 @@ public class BigMLClient {
    *
    */
   public JSONObject getModel(final String modelId, final String queryString) {
-    return model.get(modelId, queryString);
+    return getModel(modelId, queryString, null, null);
+  }
+  
+  
+  /**
+   * Retrieves a model.
+   * 
+   *
+   * GET /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * Host: bigml.io
+   *
+   * @param modelId 	a unique identifier in the form model/id where id is a string of 24
+   * 					alpha-numeric chars.
+   * @param queryString query for filtering.
+   * @param apiUser		API user
+   * @param apiKey		API key
+   *
+   */
+  public JSONObject getModel(final String modelId, final String queryString, final String apiUser, final String apiKey) {
+    return model.get(modelId, queryString, apiUser, apiKey);
   }
 
   
@@ -632,7 +685,24 @@ public class BigMLClient {
    *
    */
   public JSONObject getModel(final JSONObject modelJSON, final String queryString) {
-    return model.get(modelJSON, queryString);
+    return getModel(modelJSON, queryString, null, null);
+  }
+  
+  
+  /**
+   * Retrieves a model.
+   *
+   * GET /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * Host: bigml.io
+   *
+   * @param modelJSON 	a model JSONObject
+   * @param queryString query for filtering.
+   * @param apiUser		API user
+   * @param apiKey		API key
+   *
+   */
+  public JSONObject getModel(final JSONObject modelJSON, final String queryString, final String apiUser, final String apiKey) {
+    return model.get(modelJSON, queryString, apiUser, apiKey);
   }
 
   
