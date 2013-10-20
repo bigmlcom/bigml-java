@@ -33,7 +33,10 @@ model.java()
  */
 package org.bigml.binding;
 
+import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 
 import org.apache.log4j.Logger;
@@ -88,6 +91,7 @@ public class LocalPredictiveModel {
   private JSONObject fields;
   private JSONObject root;
   private Tree tree;
+  private String objectiveField;
   
   
  /** 
@@ -99,20 +103,50 @@ public class LocalPredictiveModel {
     super();
 
     try {
+      if (model.get("resource")==null) {
+    	  throw new Exception("Cannot create the Model instance. Could not find the 'model' key in the resource");
+      }
       if (!BigMLClient.getInstance().modelIsReady(model)) {
         throw new Exception("The model isn't finished yet");
       }
+      
       String prefix = Utils.getJSONObject(model, "object")!=null ? "object." : "";
+      
       this.fields = (JSONObject) Utils.getJSONObject(model, prefix+"model.fields");
+      if (Utils.getJSONObject(model, prefix+"model.model_fields")!=null) {
+    	  this.fields = (JSONObject) Utils.getJSONObject(model, prefix+"model.model_fields");
+    	  
+    	  JSONObject modelFields = (JSONObject) Utils.getJSONObject(model, prefix+"model.fields");
+    	  Iterator iter = this.fields.keySet().iterator();
+    	  while (iter.hasNext()) {
+			String key = (String) iter.next();
+			if (modelFields.get(key)==null) {
+				throw new Exception("Some fields are missing to generate a local model. Please, provide a model with the complete list of fields.");
+			}
+    	  }
+
+    	  iter = this.fields.keySet().iterator();
+    	  while (iter.hasNext()) {
+    		  String key = (String) iter.next();
+    		  JSONObject field = (JSONObject) this.fields.get(key);
+    		  JSONObject modelField = (JSONObject) modelFields.get(key);
+    		  field.put("summary", modelField.get("summary"));
+    		  field.put("name", modelField.get("name"));
+    	  }
+      }
+      
       this.root = (JSONObject) Utils.getJSONObject(model, prefix+"model.root");
-			
+		
       String objectiveField;
       Object objectiveFields = Utils.getJSONObject(model, prefix+"objective_fields");  
       objectiveField = objectiveFields instanceof JSONArray ?
     		  		(String) ((JSONArray) objectiveFields).get(0) :
     		  		(String) objectiveFields;
-			
-      this.tree = new Tree(root, fields, objectiveField);
+		
+      // Check duplicated field names		  		
+      uniquifyVarnames();	 		
+    		  		
+      this.tree = new Tree(root, this.fields, objectiveField);
     } catch (Exception e) {
       logger.error("Invalid model structure", e);
       throw new InvalidModelException();
@@ -226,5 +260,57 @@ public class LocalPredictiveModel {
 			  	methodParams,
 			  	tree.javaBody(1, methodReturn));
   }*/
+  
+  
+  
+  /*
+   * Tests if the fields names are unique. If they aren't, a 
+   * transformation is applied to ensure unicity.
+   */
+  private void uniquifyVarnames() {
+	  HashSet<String> uniqueNames = new HashSet<String>();
+	  Iterator iter = this.fields.keySet().iterator();
+	  while (iter.hasNext()) {
+		uniqueNames.add((String) iter.next());
+	  }
+	  if (uniqueNames.size()<this.fields.size()) {
+		  transformRepeatedNames();
+	  }
+	  return;
+  }
+  
+  /*
+   * If a field name is repeated, it will be transformed adding its
+   * column number. If that combination is also a field name, the
+   * field id will be added.
+   */
+  private void transformRepeatedNames() {
+	  // The objective field treated first to avoid changing it.
+	  String objectiveFieldId = (String) Utils.getJSONObject(this.fields, objectiveField+".name");
+	  HashSet<String> uniqueNames = new HashSet<String>();
+	  uniqueNames.add(objectiveFieldId);
+	  
+	  Iterator iter = this.fields.keySet().iterator();
+	  ArrayList<String> fieldIds = new ArrayList<String>();
+	  while (iter.hasNext()) {
+		String fieldId = (String) iter.next();
+		if (!fieldId.equals(objectiveFieldId)) {
+			fieldIds.add(fieldId);
+		}
+	  }
+	  
+	  for (String fieldId : fieldIds) {
+		JSONObject fieldJson = (JSONObject) Utils.getJSONObject(this.fields, fieldId);
+		String newName = (String) Utils.getJSONObject(fieldJson, "name");
+		if (uniqueNames.contains(newName)) {
+			newName = MessageFormat.format("{0}{1}", fieldJson.get("name"), fieldJson.get("column_number"));
+			if (uniqueNames.contains(newName)) {
+				newName = MessageFormat.format("{0}_{1}", newName, fieldId);
+			}
+			fieldJson.put("name", newName);
+		}
+		uniqueNames.add(newName);
+	  }
+  }
   
 }

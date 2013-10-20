@@ -2,6 +2,8 @@ package org.bigml.binding;
 
 import static org.junit.Assert.assertTrue;
 
+import org.bigml.binding.utils.Utils;
+import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,5 +51,16 @@ public class LocalModelsStepdefs {
       String prediction = (String) predictiveModel.predict(args, byName);
       assertTrue("", prediction!=null && prediction.equals(pred));
     }
+ 
     
+    @Then("^\"(.*)\" field\'s name is changed to \"(.*)\"$")
+    public void field_name_to_new_name(String fieldId, String newName) {
+    	JSONObject field = (JSONObject) Utils.getJSONObject((JSONObject) predictiveModel.fields(), fieldId);
+    	if (!field.get("name").equals(newName)) {
+    		field.put("name", newName);
+    	}
+    	assertTrue("", field.get("name").equals(newName));
+    }
+    
+   
 }
