@@ -17,7 +17,7 @@ public class MultiVote {
     public final static int CONFIDENCE = 1;
     public final static int PROBABILITY = 2;
     
-    public HashMap<String, Object>[] predictions;
+    public HashMap<Object, Object>[] predictions;
 
     
     /**
@@ -25,10 +25,10 @@ public class MultiVote {
      * @constructor
      * @param {array|object} predictions Array of model's predictions
      */
-    public MultiVote(HashMap<String, Object>[] predictionsArr) {
+    public MultiVote(HashMap<Object, Object>[] predictionsArr) {
         int i, len;
         if (predictionsArr == null) {
-        	predictionsArr = (HashMap<String, Object>[]) new HashMap[0];
+        	predictionsArr = (HashMap<Object, Object>[]) new HashMap[0];
         }
         predictions = predictionsArr;
 
@@ -53,10 +53,10 @@ public class MultiVote {
      */
     private boolean is_regression() {
         int index, len;
-        HashMap<String, Object> prediction;
+        HashMap<Object, Object> prediction;
         for (index = 0, len = this.predictions.length; index < len; index++) {
             prediction = this.predictions[index];
-            if (!(prediction.get("prediction") instanceof Double)) {
+            if (!(prediction.get("prediction") instanceof Number)) {
                 return false;
             }
         }
@@ -70,7 +70,7 @@ public class MultiVote {
      * @param {array} predictions Array of prediction objects
      * @param {array} keys Array of key strings
      */
-    private static boolean checkKeys(HashMap<String, Object>[] predictions, String[] keys) {
+    private static boolean checkKeys(HashMap<Object, Object>[] predictions, String[] keys) {
         HashMap prediction;
         String key;
         int index, kindex, len;
@@ -100,7 +100,7 @@ public class MultiVote {
      *         provided distribution
      * @param {float} z Percentile of the standard normal distribution
      */
-    private static double wsConfidence(String prediction, HashMap<String, Double> distribution, Integer n, Double z) {
+    private static double wsConfidence(Object prediction, HashMap<String, Double> distribution, Integer n, Double z) {
     	double norm, z2, n2, wsSqrt,
             p = distribution.get(prediction).doubleValue(), zDefault = 1.96d;
         if (z == null) {
@@ -137,14 +137,14 @@ public class MultiVote {
      * Average for regression models' predictions
      *
      */
-    private HashMap<String, Object> avg() {
+    private HashMap<Object, Object> avg() {
         int i, len, total = this.predictions.length;
         double result = 0.0d, confidence = 0.0d;
-        HashMap<String, Object> average = new HashMap<String, Object>();
+        HashMap<Object, Object> average = new HashMap<Object, Object>();
 
         for (i = 0, len = this.predictions.length; i < len; i++) {
-          result += ((Double) this.predictions[i].get("prediction")).doubleValue();
-          confidence += ((Double) this.predictions[i].get("confidence")).doubleValue();
+          result += ((Number) this.predictions[i].get("prediction")).doubleValue();
+          confidence += ((Number) this.predictions[i].get("confidence")).doubleValue();
         }
         average.put("prediction", new Double(result / total));
         average.put("confidence", new Double(confidence / total));
@@ -158,20 +158,23 @@ public class MultiVote {
      *         combined error is an average of the errors in the MultiVote
      *         predictions.
      */
-    public HashMap<String, Object> errorWeighted() {
-        this.checkKeys(this.predictions, new String[] {"confidence"});
+    public HashMap<Object, Object> errorWeighted() {
+    	this.checkKeys(this.predictions, new String[] {"confidence"});
         int index, len;
-        HashMap<String, Object> prediction = new HashMap<String, Object>(); 
+        HashMap<Object, Object> prediction = new HashMap<Object, Object>(); 
         Double combined_error = 0.0d, topRange = 10.0d,
             result = 0.0d, normalization_factor = this.normalizeError(topRange);
+        
         if (normalization_factor == 0.0d) {
             prediction.put("prediction", Double.NaN);
             prediction.put("confidence", 0.0d);
         }
         for (index = 0, len = this.predictions.length; index < len; index++) {
             prediction = this.predictions[index];
-            result += (Double) prediction.get("prediction") * (Double) prediction.get("errorWeight");
-            combined_error += (Double) prediction.get("confidence") * (Double) prediction.get("errorWeight");
+            result += ((Number) prediction.get("prediction")).doubleValue() * 
+            		  ((Number) prediction.get("errorWeight")).doubleValue();
+            combined_error += ((Number) prediction.get("confidence")).doubleValue() * 
+            				  ((Number) prediction.get("errorWeight")).doubleValue();
         }
         prediction.put("prediction", result / normalization_factor);
         prediction.put("confidence", combined_error / normalization_factor);
@@ -189,8 +192,8 @@ public class MultiVote {
     public Double normalizeError(Double topRange) {
       int  index, len;
       Double error, errorRange, delta, maxError = -1.0d,
-          minError = -1.0d, normalizeFactor = 0.0d;
-      HashMap<String, Object> prediction;
+          minError = Double.MAX_VALUE, normalizeFactor = 0.0d;
+      HashMap<Object, Object> prediction;
       for (index = 0, len = this.predictions.length; index < len; index++) {
           prediction = this.predictions[index];
           if (!prediction.containsKey("confidence")) {
@@ -210,8 +213,7 @@ public class MultiVote {
             for (index = 0, len = this.predictions.length; index < len; index++) {
                 prediction = this.predictions[index];
                 delta = (minError - (Double) prediction.get("confidence"));
-                this.predictions[index].put("errorWeight", Math.exp(delta / errorRange *
-                                                                    topRange));
+                this.predictions[index].put("errorWeight", Math.exp(delta / errorRange * topRange));
                 normalizeFactor += (Double) this.predictions[index].get("errorWeight");
             }
         } else {
@@ -229,10 +231,10 @@ public class MultiVote {
    /**
 	* Creates a new predictions array based on the training data probability
 	*/
-    public HashMap<String, Object>[] probabilityWeight() {
+    public HashMap<Object, Object>[] probabilityWeight() {
     	int index, len, total, order, instances;
     	
-    	HashMap<String, Object> prediction = new HashMap<String, Object>();
+    	HashMap<Object, Object> prediction = new HashMap<Object, Object>();
     	HashMap<String, Object> distribution;
     	ArrayList predictionsList = new ArrayList();
     	
@@ -267,9 +269,9 @@ public class MultiVote {
     			predictionsList.add(predictionHash);
     		}
     	}
-    	HashMap<String, Object>[] predictions = (HashMap<String, Object>[]) new HashMap[predictionsList.size()];
+    	HashMap<Object, Object>[] predictions = (HashMap<Object, Object>[]) new HashMap[predictionsList.size()];
     	for (index = 0, len = predictions.length; index < len; index++) {
-    		predictions[index] = (HashMap<String, Object>) predictionsList.get(index);
+    		predictions[index] = (HashMap<Object, Object>) predictionsList.get(index);
     	}
         return predictions;
     };
@@ -286,16 +288,16 @@ public class MultiVote {
      * Will also return the combined confidence, as a weighted average of
      * the confidences of the votes.
      */
-    public HashMap<String, Object> combineCategorical(String weightLabel, Boolean withConfidence) {
+    public HashMap<Object, Object> combineCategorical(Object weightLabel, Boolean withConfidence) {
     	if (withConfidence == null) {
     		withConfidence = false;
     	}
     	
     	int index, len;
     	double weight = 1.0;
-    	String category;
-    	HashMap<String, Object> prediction = new HashMap<String, Object>();
-    	HashMap<String, Object> mode = new HashMap<String, Object>();
+    	Object category;
+    	HashMap<Object, Object> prediction = new HashMap<Object, Object>();
+    	HashMap<Object, Object> mode = new HashMap<Object, Object>();
     	ArrayList tuples = new ArrayList();
     	
     	for (index = 0, len = this.predictions.length; index < len; index++) {
@@ -312,7 +314,7 @@ public class MultiVote {
     		    weight = (Double) prediction.get(weightLabel);
     		}
     		
-    		category = (String) prediction.get("prediction");
+    		category = prediction.get("prediction");
     		
     		HashMap<String, Object> categoryHash = new HashMap<String, Object>(); 
     		if (mode.get(category)!=null) {
@@ -326,7 +328,7 @@ public class MultiVote {
     		mode.put(category, categoryHash);
     	}
     	
-    	for (String key : mode.keySet()) {
+    	for (Object key : mode.keySet()) {
     		if (mode.get(key)!=null) {
     			Object[] tuple = new Object[]{key, mode.get(key)};
     			tuples.add(tuple);	
@@ -336,7 +338,7 @@ public class MultiVote {
     	
     	Collections.sort(tuples, new TupleComparator());
     	Object[] tuple = (Object[]) tuples.get(0);
-    	String predictionName = (String) tuple[0];
+    	Object predictionName = (Object) tuple[0];
     	
     	if (this.predictions[0].get("confidence")!=null) {
     		return this.weightedConfidence(predictionName, weightLabel);
@@ -347,12 +349,9 @@ public class MultiVote {
     	int count = (Integer) distributionInfo[1];
     	HashMap<String, Double>  distribution = (HashMap<String, Double>) distributionInfo[0];
     	
-    	
-    	
-    	
     	double combinedConfidence = wsConfidence(predictionName, distribution, count, null);
     	
-    	HashMap<String, Object> result = new HashMap<String, Object>();
+    	HashMap<Object, Object> result = new HashMap<Object, Object>();
     	result.put("prediction", predictionName);
     	result.put("confidence", combinedConfidence);
     	
@@ -367,12 +366,12 @@ public class MultiVote {
      * @param {string} weightLabel Label of the value in the prediction object
      *        that will be used to weight confidence
      */
-    public HashMap<String, Object> weightedConfidence(Object combinedPrediction, String weightLabel) {
+    public HashMap<Object, Object> weightedConfidence(Object combinedPrediction, Object weightLabel) {
     	int index, len;
     	Double finalConfidence = 0.0;
     	double weight = 1.0;
     	double totalWeight = 0.0;
-    	HashMap<String, Object> prediction = null;
+    	HashMap<Object, Object> prediction = null;
     	ArrayList predictionsList = new ArrayList();
     	
     	for (index = 0, len = this.predictions.length; index < len; index++) {
@@ -381,11 +380,10 @@ public class MultiVote {
     		}
     	}
     	// Convert to array
-    	HashMap<String, Object>[] predictions = (HashMap<String, Object>[]) new HashMap[predictionsList.size()];
+    	HashMap<Object, Object>[] predictions = (HashMap<Object, Object>[]) new HashMap[predictionsList.size()];
     	for (index = 0, len = predictions.length; index < len; index++) {
-    		predictions[index] = (HashMap<String, Object>) predictionsList.get(index);
+    		predictions[index] = (HashMap<Object, Object>) predictionsList.get(index);
     	}
-    	
     	
     	if (weightLabel != null) {
     		for (index = 0, len = this.predictions.length; index < len; index++) {
@@ -413,7 +411,7 @@ public class MultiVote {
     	    finalConfidence = null;
     	 }
     	
-    	 HashMap<String, Object> result = new HashMap<String, Object>();
+    	 HashMap<Object, Object> result = new HashMap<Object, Object>();
      	 result.put("prediction", combinedPrediction);
      	 result.put("confidence", finalConfidence);
 
@@ -427,10 +425,10 @@ public class MultiVote {
 	 * @param {string} weightLabel Label of the value in the prediction object
 	 *        whose sum will be used as count in the distribution
 	 */
-    public Object[] combineDistribution(String weightLabel) {
+    public Object[] combineDistribution(Object weightLabel) {
     	int index, len;
     	int total=0;
-    	HashMap<String, Object> prediction = new HashMap<String, Object>();
+    	HashMap<Object, Object> prediction = new HashMap<Object, Object>();
     	HashMap<String, Double> distribution = new HashMap<String, Double>();
     	Object[] combinedDistribution = new Object[2];
     	
@@ -465,7 +463,7 @@ public class MultiVote {
      *        confidence weighted or probability weighted).
      * @return {{"prediction": prediction, "confidence": combinedConfidence}}
      */
-    public HashMap<String, Object> combine(Integer method, Boolean withConfidence) {
+    public HashMap<Object, Object> combine(Integer method, Boolean withConfidence) {
         if (method == null) {
             method = PLURALITY;
         }
@@ -485,7 +483,7 @@ public class MultiVote {
         }
 
         if (this.is_regression()) {
-            if (method == CONFIDENCE) {
+        	if (method == CONFIDENCE) {
                 return this.errorWeighted();
             }
             return this.avg();

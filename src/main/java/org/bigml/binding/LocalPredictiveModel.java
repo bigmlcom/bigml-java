@@ -167,7 +167,7 @@ public class LocalPredictiveModel {
    *
    * The input fields must be keyed by field name.
    */
-   public Object predict(final String args) {
+   public Object predict(final String args) throws InputDataParseException {
     return predict(args, null);
    }
 
@@ -177,7 +177,7 @@ public class LocalPredictiveModel {
     *
     * The input fields must be keyed by field name.
     */
-   public Object predict(final String args, Boolean byName) {
+   public Object predict(final String args, Boolean byName) throws InputDataParseException {
 	   return predict(args, byName, null);
    }
    
@@ -187,7 +187,7 @@ public class LocalPredictiveModel {
    *
    * The input fields must be keyed by field name.
    */
-  public Object predict(final String args, Boolean byName, Boolean withConfidence) {
+  public Object predict(final String args, Boolean byName, Boolean withConfidence) throws InputDataParseException {
     if (byName == null) {
       byName = true;
     }
@@ -196,6 +196,9 @@ public class LocalPredictiveModel {
     }
     
     JSONObject argsData = (JSONObject) JSONValue.parse(args);
+    if (!args.equals("") && !args.equals("") && argsData==null) {
+    	throw new InputDataParseException("Input data format not valid");
+    }
     JSONObject inputData = argsData;
     
     if (!byName) {

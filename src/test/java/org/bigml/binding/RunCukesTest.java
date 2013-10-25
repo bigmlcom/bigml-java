@@ -19,7 +19,6 @@ import cucumber.junit.Cucumber;
 		"src/test/resources/create_public_dataset.feature",
 		"src/test/resources/createPredictionFromLocalModel.feature",
 		"src/test/resources/createPredictions.feature",
-		"src/test/resources/rename_duplicated_names.feature",
-		"src/test/resources/delete_all_dev_data.feature"})
+		"src/test/resources/rename_duplicated_names.feature"})
 public class RunCukesTest {
 }

@@ -120,7 +120,7 @@ public class LocalEnsemble {
      *    2 - probability weighted majority vote / average:
      *          PROBABILITY_CODE
 	 */
-	public HashMap<String, Object> predict(final String inputData, Boolean byName, Integer method, Boolean withConfidence) throws Exception {
+	public HashMap<Object, Object> predict(final String inputData, Boolean byName, Integer method, Boolean withConfidence) throws Exception {
 		if (method == null) {
 			method = MultiVote.PLURALITY;
 		}
@@ -132,7 +132,7 @@ public class LocalEnsemble {
 		}
 
 		MultiVote votes = this.multiModel.generateVotes(inputData, byName, withConfidence);
-		HashMap<String, Object> combinedPrediction = votes.combine(method, withConfidence);
+		HashMap<Object, Object> combinedPrediction = votes.combine(method, withConfidence);
 		
 	    return combinedPrediction;
 	}

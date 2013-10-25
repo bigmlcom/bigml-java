@@ -4,6 +4,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 
+
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -21,7 +22,7 @@ public class ComputeMultivotePredictionsStepdefs {
 	Logger logger = LoggerFactory.getLogger(ComputeMultivotePredictionsStepdefs.class);
 	
 	MultiVote multivote;
-	HashMap<String, Object> combinedPrediction;
+	HashMap<Object, Object> combinedPrediction;
 	
 	
 	@Given("^I create a MultiVote for the set of predictions in file (.*)$")
@@ -30,11 +31,11 @@ public class ComputeMultivotePredictionsStepdefs {
 	    	String json = Utils.readFile(predictionsFile);
 	    	JSONArray jsonArray =  (JSONArray) JSONValue.parse(json);
 	    
-	    	HashMap<String, Object>[] exampleArray = (HashMap<String, Object>[]) new HashMap[jsonArray.size()];
+	    	HashMap<Object, Object>[] exampleArray = (HashMap<Object, Object>[]) new HashMap[jsonArray.size()];
 	    	for (int i=0; i<jsonArray.size(); i++) {
 	    		JSONObject item = (JSONObject) jsonArray.get(i);
 	    		
-	    		HashMap <String, Object> prediction = new HashMap<String, Object>();
+	    		HashMap <Object, Object> prediction = new HashMap<Object, Object>();
 	    		prediction.put("prediction", item.get("prediction"));
 		        prediction.put("confidence", item.get("confidence"));
 		        prediction.put("count", item.get("count"));
@@ -71,6 +72,13 @@ public class ComputeMultivotePredictionsStepdefs {
 	@Then("^the combined prediction is \"([^\"]*)\"$")
 	public void the_combined_prediction_is(String prediction) throws Throwable {
 		assertTrue(combinedPrediction.get("prediction").equals(prediction));
+	}
+	
+	
+	@Then("^the numerical combined prediction is (.*)$")
+	public void the_numerical_combined_prediction_is(double prediction) throws Throwable {
+		String predictionValue = String.format("%.12g%n", ((Double)combinedPrediction.get("prediction")));
+		assertTrue(predictionValue.equals(String.format("%.12g%n", prediction)));
 	}
 	
 	

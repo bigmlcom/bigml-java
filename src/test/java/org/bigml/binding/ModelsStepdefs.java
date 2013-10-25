@@ -123,7 +123,7 @@ public class ModelsStepdefs {
     @Then("^the local multi prediction by name=(true|false) for \"(.*)\" is \"([^\"]*)\"$")
     public void the_local_multi_prediction_byname_for_is(String by_name, String args, String pred) throws Exception {
       Boolean byName = new Boolean(by_name);
-      HashMap<String, Object> prediction = (HashMap<String, Object>) multiModel.predict(args, byName, null, true);
+      HashMap<Object, Object> prediction = (HashMap<Object, Object>) multiModel.predict(args, byName, null, true);
       assertTrue("", prediction!=null && ((String) prediction.get("prediction")).equals(pred));
     }
     

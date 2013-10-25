@@ -73,7 +73,7 @@ public class MultiModel {
      *      2 - probability weighted majority vote / average:
      *             PROBABILITY_CODE
 	 */
-	public HashMap<String, Object> predict(final String inputData, Boolean byName, Integer method, Boolean withConfidence) throws Exception {
+	public HashMap<Object, Object> predict(final String inputData, Boolean byName, Integer method, Boolean withConfidence) throws Exception {
 		if (method == null) {
 			method = MultiVote.PLURALITY;
 		}
@@ -102,19 +102,19 @@ public class MultiModel {
 			withConfidence = false;
 		}
 
-		HashMap<String, Object>[] votes = (HashMap<String, Object>[]) new HashMap[models.size()];
+		HashMap<Object, Object>[] votes = (HashMap<Object, Object>[]) new HashMap[models.size()];
 		for (int i=0; i<models.size(); i++) {
 			JSONObject model = (JSONObject) models.get(i);
 			LocalPredictiveModel localModel = new LocalPredictiveModel(model);
 			
-			HashMap<String, Object> prediction = (HashMap<String, Object>) localModel.predict(inputData, byName, withConfidence);
+			HashMap<Object, Object> prediction = (HashMap<Object, Object>) localModel.predict(inputData, byName, withConfidence);
 
-			HashMap<String, Integer> distributionHash = new HashMap<String, Integer>();
+			HashMap<Object, Integer> distributionHash = new HashMap<Object, Integer>();
 			JSONArray predictionsArray = (JSONArray) prediction.get("distribution");
 			int count = 0;
 			for (int j=0; j<predictionsArray.size(); j++) {
 				JSONArray pred = (JSONArray) predictionsArray.get(j);
-				distributionHash.put((String) pred.get(0), ((Long) pred.get(1)).intValue());
+				distributionHash.put(pred.get(0), ((Long) pred.get(1)).intValue());
 				count += ((Long) pred.get(1)).intValue();
 			}
 			prediction.put("distribution", distributionHash);
