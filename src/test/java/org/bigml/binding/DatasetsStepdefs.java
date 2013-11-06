@@ -23,11 +23,11 @@ public class DatasetsStepdefs {
 	Logger logger = LoggerFactory.getLogger(DatasetsStepdefs.class);
 
 	CommonStepdefs commonSteps = new CommonStepdefs();
-	  	
+
   	@Autowired
     private ContextRepository context;
-  	
-  	
+
+
   	@Given("^I create a dataset$")
 	public void I_create_a_dataset() throws AuthenticationException {
 		String sourceId = (String) context.source.get("resource");
@@ -37,8 +37,8 @@ public class DatasetsStepdefs {
   	    context.dataset = (JSONObject) resource.get("object");
   	    commonSteps.the_resource_has_been_created_with_status(context.status);
 	}
-  	
-  	
+
+
   	@Given("^I create a dataset with \"(.*)\"$")
   	public void I_create_a_dataset_with_options(String args) throws Throwable {
   	    String sourceId = (String) context.source.get("resource");
@@ -48,8 +48,8 @@ public class DatasetsStepdefs {
 	    context.dataset = (JSONObject) resource.get("object");
 	    commonSteps.the_resource_has_been_created_with_status(context.status);
   	}
-  	
-	
+
+
 	@Given("^I wait until the dataset status code is either (\\d) or (\\d) less than (\\d+)")
 	public void I_wait_until_dataset_status_code_is(int code1, int code2, int secs) throws AuthenticationException {
   	    Long code = (Long) ((JSONObject) context.dataset.get("status")).get("code");
