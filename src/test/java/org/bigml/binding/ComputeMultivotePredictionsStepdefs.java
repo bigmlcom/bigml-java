@@ -68,23 +68,23 @@ public class ComputeMultivotePredictionsStepdefs {
 	    }
 	}
 
-	
+
 	@Then("^the combined prediction is \"([^\"]*)\"$")
 	public void the_combined_prediction_is(String prediction) throws Throwable {
 		assertTrue(combinedPrediction.get("prediction").equals(prediction));
 	}
-	
-	
+
+
 	@Then("^the numerical combined prediction is (.*)$")
 	public void the_numerical_combined_prediction_is(double prediction) throws Throwable {
 		String predictionValue = String.format("%.12g%n", ((Double)combinedPrediction.get("prediction")));
 		assertTrue(predictionValue.equals(String.format("%.12g%n", prediction)));
 	}
-	
-	
+
+
 	@Then("^the confidence for the combined prediction is (.*)$")
 	public void the_confidence_for_the_combined_prediction_is_(double confidence) throws Throwable {
-		String confidenceValue = String.format("%.12g%n", ((Double)combinedPrediction.get("confidence")));
+		String confidenceValue = String.format("%.12g%n", ((Number)combinedPrediction.get("confidence")).doubleValue());
 		assertTrue(confidenceValue.equals(String.format("%.12g%n", confidence)));
 	}
 

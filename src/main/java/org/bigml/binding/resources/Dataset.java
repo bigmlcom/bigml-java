@@ -19,7 +19,7 @@ public class Dataset extends AbstractResource {
   // Logging
   Logger logger = LoggerFactory.getLogger(Dataset.class);
 
-  
+
   /**
    * Constructor
    *
@@ -32,7 +32,7 @@ public class Dataset extends AbstractResource {
     super.init();
   }
 
-  
+
   /**
    * Constructor
    *
@@ -45,7 +45,7 @@ public class Dataset extends AbstractResource {
     super.init();
   }
 
-  
+
   /**
    * Creates a remote dataset.
    *
