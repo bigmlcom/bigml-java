@@ -25,10 +25,10 @@ public class EvaluationsStepdefs {
 	Logger logger = LoggerFactory.getLogger(EvaluationsStepdefs.class);
 
 	CommonStepdefs commonSteps = new CommonStepdefs();
-	  	
+
   	@Autowired
     private ContextRepository context;
-  	  	
+
   	@Given("^I create a evaluation$")
     public void I_create_a_evaluation() throws AuthenticationException {
       String modelId = (String) context.model.get("resource");
@@ -40,14 +40,14 @@ public class EvaluationsStepdefs {
       context.evaluation = (JSONObject) resource.get("object");
       commonSteps.the_resource_has_been_created_with_status(context.status);
     }
-  	
-  	
+
+
   	@When("^I create an evaluation for the model with the dataset$")
   	public void I_create_an_evaluation_for_the_model_with_the_dataset() throws Throwable {
   	    I_create_a_evaluation();
   	}
-  	
-  	
+
+
   	@When("^I create an evaluation for the ensemble with the dataset$")
     public void I_create_an_evaluation_for_the_ensemble_with_the_dataset() throws Throwable {
   		String ensembleId = (String) context.ensemble.get("resource");
@@ -59,8 +59,8 @@ public class EvaluationsStepdefs {
         context.evaluation = (JSONObject) resource.get("object");
         commonSteps.the_resource_has_been_created_with_status(context.status);
     }
-  	
-  	
+
+
     @Given("^I wait until the evaluation status code is either (\\d) or (\\d) less than (\\d+)")
     public void I_wait_until_evaluation_status_code_is(int code1, int code2, int secs) throws AuthenticationException {
       Long code = (Long) ((JSONObject) context.evaluation.get("status")).get("code");
@@ -69,7 +69,7 @@ public class EvaluationsStepdefs {
       Date end = start.getTime();
       while (code.intValue() != code1 && code.intValue() != code2) {
         try {
-          Thread.sleep(3);
+          Thread.sleep(3000);
         } catch (InterruptedException e) {
         }
         assertTrue("Time exceded ", end.after(new Date()));
@@ -79,13 +79,13 @@ public class EvaluationsStepdefs {
       assertEquals(code.intValue(), code1);
     }
 
-    
+
     @Given("^I wait until the evaluation is ready less than (\\d+) secs$")
     public void I_wait_until_the_evaluation_is_ready_less_than_secs(int secs) throws AuthenticationException {
       I_wait_until_evaluation_status_code_is(AbstractResource.FINISHED, AbstractResource.FAULTY, secs);
     }
 
-    
+
     @Given("^I get the evaluation \"(.*)\"")
     public void I_get_the_evaluation(String evaluationId) throws AuthenticationException {
       JSONObject resource = BigMLClient.getInstance().getEvaluation(evaluationId);
@@ -93,19 +93,19 @@ public class EvaluationsStepdefs {
       assertEquals(code.intValue(), AbstractResource.HTTP_OK);
       context.evaluation = (JSONObject) resource.get("object");
     }
-    
-    
+
+
     @Then("^the measured \"([^\"]*)\" is (\\d+)$")
     public void the_measured_is(String measure, float value) throws Throwable {
     	Long measureLong = (Long) Utils.getJSONObject(context.evaluation,  "result.model."+measure);
         assertTrue(measureLong.floatValue() == value);
     }
-    
-    
+
+
     @Then("^the measured \"([^\"]*)\" is greater than ([\\d,.]+)$")
     public void the_measured_is_greater_than(String measure, double value) throws Throwable {
     	double measureLong = (Double) Utils.getJSONObject(context.evaluation,  "result.model."+measure);
         assertTrue(measureLong > value);
     }
-    
+
 }

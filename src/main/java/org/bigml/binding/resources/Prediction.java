@@ -47,7 +47,7 @@ public class Prediction extends AbstractResource {
     super.init();
   }
 
-  
+
   /**
    * Creates a new prediction.
    *
@@ -56,12 +56,12 @@ public class Prediction extends AbstractResource {
    *
    * @param modelOrEnsembleId		a unique identifier in the form model/id  or ensembke/id where id is a string of 24
    * 								alpha-numeric chars for the nodel or ensemble to attach the prediction.
-   * @param inputData	an object with field's id/value pairs representing the instance you 
-   * 					want to create a prediction for. 
+   * @param inputData	an object with field's id/value pairs representing the instance you
+   * 					want to create a prediction for.
    * @param byName
-   * @param args		set of parameters for the new prediction. Required		
-   * @param waitTime	time to wait for next check of FINISHED status for model before to start to
-   * 					create the prediction. Optional
+   * @param args		set of parameters for the new prediction. Required
+   * @param waitTime	time (milliseconds) to wait for next check of FINISHED status for model
+   * 					before to start to create the prediction. Optional
    * @param retries		number of times to try the operation. Optional
    *
    */
@@ -70,10 +70,10 @@ public class Prediction extends AbstractResource {
 	JSONObject model = null;
 	String ensembleId = null;
 	String modelId = null;
-    
-	waitTime = waitTime != null ? waitTime : 3;
+
+	waitTime = waitTime != null ? waitTime : 3000;
     retries = retries != null ? retries : 10;
-	
+
     try {
     	ensemble = BigMLClient.getInstance(this.devMode).getEnsemble(modelOrEnsembleId);
     	if (ensemble!=null) {
@@ -93,18 +93,18 @@ public class Prediction extends AbstractResource {
     	        }
     	    }
     	}
-    	
-    } catch (Throwable e) {} 
-    
+
+    } catch (Throwable e) {}
+
     // No ensemble
     if (modelId == null) {
     	try {
     		model = BigMLClient.getInstance(this.devMode).getModel(modelOrEnsembleId);
     		modelId = modelOrEnsembleId;
     	} catch (Throwable ex) {}
-    	
+
     }
-    
+
     try {
     	if (model!=null) {
         	if (ensemble==null) {
@@ -117,7 +117,7 @@ public class Prediction extends AbstractResource {
         		}
         	}
         }
-      
+
       //Input data
       JSONObject inputDataJSON = null;
       if (inputData == null) {
@@ -125,7 +125,7 @@ public class Prediction extends AbstractResource {
       } else {
 	      if (byName) {
 	    	  JSONObject fields = (JSONObject) Utils.getJSONObject(model, "object.model.fields");
-	    	  
+
 		      JSONObject invertedFields = Utils.invertDictionary(fields);
 		      inputDataJSON = new JSONObject();
 		      Iterator iter = inputData.keySet().iterator();
@@ -139,28 +139,28 @@ public class Prediction extends AbstractResource {
 	    	  inputDataJSON = inputData;
 	      }
       }
-      
+
       JSONObject requestObject = new JSONObject();
       if (args != null) {
         requestObject = (JSONObject) JSONValue.parse(args);
       }
-      
+
       if (ensemble==null) {
     	  requestObject.put("model", modelId);
       } else {
     	  requestObject.put("ensemble", ensembleId);
       }
       requestObject.put("input_data", inputDataJSON);
-      
+
       return createResource(PREDICTION_URL, requestObject.toJSONString());
     } catch (Throwable e) {
       logger.error("Error creating prediction", e);
       return null;
     }
-    
+
   }
-  
-  
+
+
   /**
    * Retrieves a prediction.
    *
@@ -197,7 +197,7 @@ public class Prediction extends AbstractResource {
     return get(resourceId);
   }
 
-  
+
   /**
    * Checks whether a prediction's status is FINISHED.
    *
@@ -209,7 +209,7 @@ public class Prediction extends AbstractResource {
     return isResourceReady(get(predictionId));
   }
 
-  
+
   /**
    * Checks whether a prediction's status is FINISHED.
    *
@@ -225,7 +225,7 @@ public class Prediction extends AbstractResource {
   /**
    * Lists all your predictions.
    *
-   * GET /andromeda/prediction?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY; 
+   * GET /andromeda/prediction?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * Host: bigml.io
    *
    * @param queryString		query filtering the listing.
@@ -235,12 +235,12 @@ public class Prediction extends AbstractResource {
     return listResources(PREDICTION_URL, queryString);
   }
 
-  
+
   /**
    * Updates a prediction.
    *
    * PUT /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-   * HTTP/1.1 Host: bigml.io 
+   * HTTP/1.1 Host: bigml.io
    * Content-Type: application/json
    *
    * @param predictionId 	a unique identifier in the form prediction/id where id is a string of 24
@@ -256,12 +256,12 @@ public class Prediction extends AbstractResource {
     return updateResource(BIGML_URL + predictionId, changes);
   }
 
-  
+
   /**
    * Updates a prediction.
    *
    * PUT /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-   * HTTP/1.1 Host: bigml.io 
+   * HTTP/1.1 Host: bigml.io
    * Content-Type: application/json
    *
    * @param prediction 	a prediction JSONObject
@@ -273,7 +273,7 @@ public class Prediction extends AbstractResource {
     return update(resourceId, changes.toJSONString());
   }
 
-  
+
   /**
    * Deletes a prediction.
    *
@@ -292,8 +292,8 @@ public class Prediction extends AbstractResource {
     }
     return deleteResource(BIGML_URL + predictionId);
   }
-  
-  
+
+
   /**
    * Deletes a prediction.
    *
@@ -308,5 +308,5 @@ public class Prediction extends AbstractResource {
     String resourceId = (String) prediction.get("resource");
     return delete(resourceId);
   }
-  
+
 }

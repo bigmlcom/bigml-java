@@ -26,14 +26,14 @@ public class ModelsStepdefs {
 
 	MultiModel multiModel;
 	CommonStepdefs commonSteps = new CommonStepdefs();
-	  	
+
   	@Autowired
     private ContextRepository context;
-  	
+
   	private String sharedHash;
   	private String sharedKey;
-  	
-  	
+
+
   	@Given("^I create a model$")
 	public void I_create_a_model() throws AuthenticationException {
       String datasetId = (String) context.dataset.get("resource");
@@ -41,10 +41,10 @@ public class ModelsStepdefs {
       context.status = (Integer) resource.get("code");
       context.location = (String) resource.get("location");
       context.model = (JSONObject) resource.get("object");
-      commonSteps.the_resource_has_been_created_with_status(context.status); 
+      commonSteps.the_resource_has_been_created_with_status(context.status);
     }
 
-  	
+
     @Given("^I wait until the model status code is either (\\d) or (\\d) less than (\\d+)$")
     public void I_wait_until_model_status_code_is(int code1, int code2, int secs) throws AuthenticationException {
       Long code = (Long) ((JSONObject) context.model.get("status")).get("code");
@@ -53,7 +53,7 @@ public class ModelsStepdefs {
       Date end = start.getTime();
       while (code.intValue() != code1 && code.intValue() != code2) {
         try {
-          Thread.sleep(3);
+          Thread.sleep(3000);
         } catch (InterruptedException e) {
         }
         assertTrue("Time exceded ", end.after(new Date()));
@@ -63,20 +63,20 @@ public class ModelsStepdefs {
       assertEquals(code.intValue(), code1);
     }
 
-    
+
     @Given("^I wait until the model is ready less than (\\d+) secs$")
     public void I_wait_until_the_model_is_ready_less_than_secs(int secs) throws AuthenticationException {
       I_wait_until_model_status_code_is(AbstractResource.FINISHED, AbstractResource.FAULTY, secs);
     }
 
-    
+
     @Given("^I wait until the model is ready less than (\\d+) secs and I return it$")
     public JSONObject I_wait_until_the_model_is_ready_less_than_secs_and_return(int secs) throws AuthenticationException {
       I_wait_until_model_status_code_is(AbstractResource.FINISHED, AbstractResource.FAULTY, secs);
       return context.model;
     }
 
-    
+
     @Given("^I get the model \"(.*)\"")
     public void I_get_the_model(String modelId) throws AuthenticationException {
       JSONObject resource = BigMLClient.getInstance().getModel(modelId);
@@ -84,14 +84,14 @@ public class ModelsStepdefs {
       assertEquals(code.intValue(), AbstractResource.HTTP_OK);
       context.model = (JSONObject) resource.get("object");
     }
-	
-    
-    
-    
+
+
+
+
     // ---------------------------------------------------------------------
     // create_prediction_multi_model.feature
     // ---------------------------------------------------------------------
-    
+
     @Given("^I create a model with \"(.*)\"$")
   	public void I_create_a_model_with_params(String args) throws Throwable {
     	String datasetId = (String) context.dataset.get("resource");
@@ -101,8 +101,8 @@ public class ModelsStepdefs {
         context.model = (JSONObject) resource.get("object");
         commonSteps.the_resource_has_been_created_with_status(context.status);
   	}
-    
-    
+
+
     @Given("^I retrieve a list of remote models tagged with \"(.*)\"$")
   	public void I_cretrieve_a_list_of_remote_models_tagged_with(String tag) throws Throwable {
     	context.models = new JSONArray();
@@ -113,75 +113,75 @@ public class ModelsStepdefs {
     		context.models.add(resource);
     	}
   	}
-    
+
     @Given("^I create a local multi model$")
     public void I_create_a_local_multi_model() throws Exception {
     	multiModel = new MultiModel(context.models);
     	assertTrue("", multiModel != null);
     }
-    
+
     @Then("^the local multi prediction by name=(true|false) for \"(.*)\" is \"([^\"]*)\"$")
     public void the_local_multi_prediction_byname_for_is(String by_name, String args, String pred) throws Exception {
       Boolean byName = new Boolean(by_name);
       HashMap<Object, Object> prediction = (HashMap<Object, Object>) multiModel.predict(args, byName, null, true);
       assertTrue("", prediction!=null && ((String) prediction.get("prediction")).equals(pred));
     }
-    
-    
+
+
     // ---------------------------------------------------------------------
     // create_prediction_public_model.feature
     // ---------------------------------------------------------------------
-    
+
     @Given("^I make the model public$")
     public void I_make_the_model_public() throws Throwable {
     	JSONObject changes = new JSONObject();
 		changes.put("private", new Boolean(false));
 		changes.put("white_box", new Boolean(true));
-		
+
 		JSONObject resource = BigMLClient.getInstance().updateModel(context.model, changes);
 		context.status = (Integer) resource.get("code");
 	    context.location = (String) resource.get("location");
 	    context.model = (JSONObject) resource.get("object");
 	    commonSteps.the_resource_has_been_updated_with_status(context.status);
     }
-    
-    
+
+
     @Given("^I check the model status using the model's public url$")
     public void I_check_the_model_status_using_the_model_s_public_url() throws Throwable {
     	String modelId = (String) context.model.get("resource");
     	JSONObject resource = BigMLClient.getInstance().getModel("public/"+modelId);
-    	
+
     	context.status = (Integer) resource.get("code");
 	    context.location = (String) resource.get("location");
 	    context.model = (JSONObject) resource;
-	    
+
 	    Integer code = (Integer) context.model.get("code");
 		assertEquals(code.intValue(), AbstractResource.HTTP_OK);
     }
-    
-    
+
+
     // ---------------------------------------------------------------------
     // create_prediction_shared_model.feature
     // ---------------------------------------------------------------------
-    
+
     @Given("^I make the model shared$")
     public void make_the_model_shared() throws Throwable {
     	JSONObject changes = new JSONObject();
 		changes.put("shared", new Boolean(true));
-		
+
 		JSONObject resource = BigMLClient.getInstance().updateModel(context.model, changes);
 		context.status = (Integer) resource.get("code");
 	    context.location = (String) resource.get("location");
 	    context.model = (JSONObject) resource.get("object");
-	    commonSteps.the_resource_has_been_updated_with_status(context.status);   
+	    commonSteps.the_resource_has_been_updated_with_status(context.status);
     }
-    
+
     @Given("^I get the model sharing info$")
     public void get_sharing_info() throws Throwable {
     	sharedHash = (String) context.model.get("shared_hash");
     	sharedKey = (String) context.model.get("sharing_key");
     }
-    
+
     @Given("^I check the model status using the model's shared url$")
     public void model_from_shared_url() throws Throwable {
     	JSONObject resource = BigMLClient.getInstance().getModel("shared/model/"+this.sharedHash);
@@ -191,7 +191,7 @@ public class ModelsStepdefs {
 	    Integer code = (Integer) context.model.get("code");
     	assertEquals(code.intValue(), AbstractResource.HTTP_OK);
     }
-    
+
     @Given("^I check the model status using the model's shared key$")
     public void model_from_shared_key() throws Throwable {
     	String apiUser = System.getProperty("BIGML_USERNAME");
@@ -201,6 +201,6 @@ public class ModelsStepdefs {
 	    context.model = (JSONObject) resource;
 	    Integer code = (Integer) context.model.get("code");
     	assertEquals(code.intValue(), AbstractResource.HTTP_OK);
-    	
+
     }
 }

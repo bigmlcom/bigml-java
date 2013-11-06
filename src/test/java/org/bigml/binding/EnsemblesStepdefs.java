@@ -22,10 +22,10 @@ public class EnsemblesStepdefs {
 	Logger logger = LoggerFactory.getLogger(EnsemblesStepdefs.class);
 
 	CommonStepdefs commonSteps = new CommonStepdefs();
-	  	
+
   	@Autowired
     private ContextRepository context;
-  	  	
+
 
   	 @Given("^I create a ensemble$")
   	 public void I_create_a_ensemble() throws AuthenticationException {
@@ -36,8 +36,8 @@ public class EnsemblesStepdefs {
   	   context.ensemble = (JSONObject) resource.get("object");
   	   commonSteps.the_resource_has_been_created_with_status(context.status);
   	 }
-  	 
-  	 
+
+
   	@Given("^I create an ensemble of (\\d+) models and (\\d+) tlp$")
   	public void I_create_an_ensemble_of_models_and_tlp(int numberOfModels, int tlp) throws Throwable {
   		JSONObject args = new JSONObject();
@@ -52,7 +52,7 @@ public class EnsemblesStepdefs {
    	   	context.ensemble = (JSONObject) resource.get("object");
    	   	commonSteps.the_resource_has_been_created_with_status(context.status);
   	}
-  	
+
 
   	 @Given("^I wait until the ensemble status code is either (\\d) or (\\d) less than (\\d+)")
   	 public void I_wait_until_ensemble_status_code_is(int code1, int code2, int secs) throws AuthenticationException {
@@ -62,7 +62,7 @@ public class EnsemblesStepdefs {
   	   Date end = start.getTime();
   	   while (code.intValue() != code1 && code.intValue() != code2) {
   	     try {
-  	       Thread.sleep(3);
+  	       Thread.sleep(3000);
   	     } catch (InterruptedException e) {
   	     }
   	     assertTrue("Time exceded ", end.after(new Date()));
@@ -71,14 +71,14 @@ public class EnsemblesStepdefs {
   	   }
   	   assertEquals(code.intValue(), code1);
   	 }
-  	 
-  	 
+
+
   	 @Given("^I wait until the ensemble is ready less than (\\d+) secs$")
   	 public void I_wait_until_the_ensemble_is_ready_less_than_secs(int secs) throws AuthenticationException {
   	   I_wait_until_ensemble_status_code_is(AbstractResource.FINISHED, AbstractResource.FAULTY, secs);
   	 }
 
-  	 
+
   	 @Given("^I get the ensemble \"(.*)\"")
   	 public void I_get_the_ensemble(String ensembleId) throws AuthenticationException {
   	   JSONObject resource = BigMLClient.getInstance().getEnsemble(ensembleId);
