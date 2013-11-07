@@ -25,10 +25,10 @@ public class PredictionsStepdefs {
 	Logger logger = LoggerFactory.getLogger(PredictionsStepdefs.class);
 
 	CommonStepdefs commonSteps = new CommonStepdefs();
-	  	
+
   	@Autowired
     private ContextRepository context;
-  	
+
   	@When("^I create a prediction by name=(true|false) for \"(.*)\"$")
     public void I_create_a_prediction(String by_name, String inputData) throws AuthenticationException {
       String modelId = (String) context.model.get("resource");
@@ -40,7 +40,7 @@ public class PredictionsStepdefs {
       commonSteps.the_resource_has_been_created_with_status(context.status);
     }
 
-    
+
     @Given("^I get the prediction \"(.*)\"")
     public void I_get_the_prediction(String predictionId) throws AuthenticationException {
       JSONObject resource = BigMLClient.getInstance().getPrediction(predictionId);
@@ -49,16 +49,16 @@ public class PredictionsStepdefs {
       context.prediction = (JSONObject) resource.get("object");
     }
 
-    
+
     @Then("^the prediction for \"([^\"]*)\" is \"([^\"]*)\"$")
     public void the_prediction_for_is(String expected, String pred) {
       JSONObject obj = (JSONObject) context.prediction.get("prediction");
       String objective = (String) obj.get(expected);
       assertEquals(objective, pred);
     }
-  	  
+
     @When("^I create a prediction with ensemble by name=(true|false) for \"(.*)\"$")
-    public void I_create_a_prediction_with_ensemble_for(String by_name, String inputData) throws AuthenticationException {	  
+    public void I_create_a_prediction_with_ensemble_for(String by_name, String inputData) throws AuthenticationException {
   	  String ensembleId = (String) context.ensemble.get("resource");
   	  Boolean byName = new Boolean(by_name);
   	  JSONObject resource = BigMLClient.getInstance().createPrediction(ensembleId, (JSONObject) JSONValue.parse(inputData), byName, null, 5, null);
@@ -68,14 +68,14 @@ public class PredictionsStepdefs {
   	  commonSteps.the_resource_has_been_created_with_status(context.status);
     }
 
-    
+
     @Then("^the prediction with ensemble for \"([^\"]*)\" is \"([^\"]*)\"$")
     public void the_prediction_with_ensemble_for_is(String expected, String pred) {
   	  JSONObject obj = (JSONObject) context.prediction.get("prediction");
   	  String objective = (String) obj.get(expected);
   	  assertEquals(objective, pred);
     }
-    
+
     @Given("^I wait until the predition status code is either (\\d) or (\\d) less than (\\d+)")
 	public void I_wait_until_prediction_status_code_is(int code1, int code2, int secs) throws AuthenticationException {
   	    Long code = (Long) ((JSONObject) context.prediction.get("status")).get("code");
@@ -84,7 +84,7 @@ public class PredictionsStepdefs {
   	    Date end = start.getTime();
   	    while (code.intValue() != code1 && code.intValue() != code2) {
   	      try {
-  	        Thread.sleep(3);
+  	        Thread.sleep(3000);
   	      } catch (InterruptedException e) {
   	      }
   	      assertTrue("Time exceded ", end.after(new Date()));
@@ -94,7 +94,7 @@ public class PredictionsStepdefs {
   	    assertEquals(code.intValue(), code1);
 	}
 
-	
+
 	@Given("^I wait until the prediction is ready less than (\\d+) secs$")
 	public void I_wait_until_the_prediction_is_ready_less_than_secs(int secs) throws AuthenticationException {
   	    I_wait_until_prediction_status_code_is(AbstractResource.FINISHED, AbstractResource.FAULTY, secs);

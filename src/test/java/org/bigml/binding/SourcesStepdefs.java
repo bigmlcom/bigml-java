@@ -21,12 +21,12 @@ public class SourcesStepdefs {
 	// Logging
 	Logger logger = LoggerFactory.getLogger(SourcesStepdefs.class);
 
-	
+
   	CommonStepdefs commonSteps = new CommonStepdefs();
-  	
+
   	@Autowired
     private ContextRepository context;
-  		
+
 
 	@Given("^I create a data source uploading a \"([^\"]*)\" file$")
 	public void I_create_a_data_source_uploading_a_file(String fileName) throws AuthenticationException {
@@ -34,11 +34,11 @@ public class SourcesStepdefs {
 		context.status = (Integer) resource.get("code");
 		context.location = (String) resource.get("location");
 		context.source = (JSONObject) resource.get("object");
-		
+
 		commonSteps.the_resource_has_been_created_with_status(context.status);
 	}
-	
-	
+
+
 	@Given("^I create a data source using the url \"([^\"]*)\"$")
 	public void I_create_a_data_source_using_the_url(String url) throws AuthenticationException {
 	    JSONObject resource = BigMLClient.getInstance().createRemoteSource(url, null);
@@ -48,8 +48,8 @@ public class SourcesStepdefs {
 
 	    commonSteps.the_resource_has_been_created_with_status(context.status);
 	}
-	
-	
+
+
 	@Given("^I wait until the resource status code is either (\\d) or (\\d) less than (\\d+)")
 	public void I_wait_until_source_status_code_is(int code1, int code2, int secs) throws AuthenticationException {
 		Long code = (Long) ((JSONObject) context.source.get("status")).get("code");
@@ -59,7 +59,7 @@ public class SourcesStepdefs {
 
 		while (code.intValue() != code1 && code.intValue() != code2) {
 			try {
-				Thread.sleep(3);
+				Thread.sleep(3000);
 			} catch (InterruptedException e) {}
 			assertTrue("Time exceded ", end.after(new Date()));
 			I_get_the_source((String) context.source.get("resource"));
@@ -73,7 +73,7 @@ public class SourcesStepdefs {
 		I_wait_until_source_status_code_is(AbstractResource.FINISHED, AbstractResource.FAULTY, secs);
 	}
 
-	
+
 	@Given("^I get the source \"(.*)\"")
 	public void I_get_the_source(String sourceId) throws AuthenticationException {
 		JSONObject resource = BigMLClient.getInstance().getSource(sourceId);
@@ -81,5 +81,5 @@ public class SourcesStepdefs {
 		assertEquals(code.intValue(), AbstractResource.HTTP_OK);
 		context.source = (JSONObject) resource.get("object");
 	}
-  
+
 }

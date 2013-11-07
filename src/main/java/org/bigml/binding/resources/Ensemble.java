@@ -42,7 +42,7 @@ public class Ensemble extends AbstractResource {
     super.init();
   }
 
-  
+
   /**
    * Creates a new ensemble.
    *
@@ -52,8 +52,8 @@ public class Ensemble extends AbstractResource {
    * @param datsetId	a unique identifier in the form datset/id where id is a string of 24
    * 					alpha-numeric chars for the dataset to attach the ensemble.
    * @param args		set of parameters for the new ensemble. Optional
-   * @param waitTime	time to wait for next check of FINISHED status for dataset before to start to
-   * 					create the ensemble. Optional
+   * @param waitTime	time (milliseconds) to wait for next check of FINISHED status for dataset
+   * 					before to start to create the ensemble. Optional
    * @param retries		number of times to try the operation. Optional
    *
    */
@@ -64,7 +64,7 @@ public class Ensemble extends AbstractResource {
     }
 
     try {
-      waitTime = waitTime != null ? waitTime : 3;
+      waitTime = waitTime != null ? waitTime : 3000;
       retries = retries != null ? retries : 10;
       if (waitTime > 0) {
         int count = 0;
@@ -105,7 +105,7 @@ public class Ensemble extends AbstractResource {
     return getResource(BIGML_URL + ensembleId);
   }
 
-  
+
   /**
    * Retrieves an ensemble.
    *
@@ -119,10 +119,10 @@ public class Ensemble extends AbstractResource {
     String resourceId = (String) ensemble.get("resource");
     return get(resourceId);
   }
-  
-  
-  
-  
+
+
+
+
   /**
    * Retrieves an ensemble.
    *
@@ -142,7 +142,7 @@ public class Ensemble extends AbstractResource {
 
     return getResource(BIGML_URL + ensembleId, queryString);
   }
-  
+
   /**
    * Retrieves an ensemble.
    *
@@ -158,7 +158,7 @@ public class Ensemble extends AbstractResource {
     return get(resourceId, queryString);
   }
 
-  
+
   /**
    * Checks whether a ensemble's status is FINISHED.
    *
@@ -181,7 +181,7 @@ public class Ensemble extends AbstractResource {
     return isReady(resourceId);
   }
 
-  
+
   /**
    * Lists all your ensembles.
    *
@@ -193,13 +193,13 @@ public class Ensemble extends AbstractResource {
   public JSONObject list(final String queryString) {
     return listResources(ENSEMBLE_URL, queryString);
   }
-  
-  
+
+
   /**
    * Updates an ensemble.
    *
    * PUT /andromeda/ensemble/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-   * HTTP/1.1 Host: bigml.io 
+   * HTTP/1.1 Host: bigml.io
    * Content-Type: application/json
    *
    * @param ensembleId 	a unique identifier in the form ensemble/id where id is a string of 24
@@ -214,13 +214,13 @@ public class Ensemble extends AbstractResource {
 	}
     return updateResource(BIGML_URL + ensembleId, changes);
   }
-  
-  
+
+
   /**
    * Updates an ensemble.
    *
    * PUT /andromeda/ensemble/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-   * HTTP/1.1 Host: bigml.io 
+   * HTTP/1.1 Host: bigml.io
    * Content-Type: application/json
    *
    * @param ensemble	a ensemble JSONObject
@@ -232,7 +232,7 @@ public class Ensemble extends AbstractResource {
     return update(resourceId, changes.toJSONString());
   }
 
-  
+
   /**
    * Deletes an ensemble.
    *
@@ -252,7 +252,7 @@ public class Ensemble extends AbstractResource {
     return deleteResource(BIGML_URL + ensembleId);
   }
 
-        		  
+
   /**
    * Deletes an ensemble.
    *
@@ -267,5 +267,5 @@ public class Ensemble extends AbstractResource {
     String resourceId = (String) ensemble.get("resource");
     return delete(resourceId);
   }
-  
+
 }

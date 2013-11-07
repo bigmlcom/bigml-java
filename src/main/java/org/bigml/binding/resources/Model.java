@@ -42,7 +42,7 @@ public class Model extends AbstractResource {
     super.init();
   }
 
-  
+
   /**
    * Creates a new model.
    *
@@ -52,8 +52,8 @@ public class Model extends AbstractResource {
    * @param datsetId	a unique identifier in the form datset/id where id is a string of 24
    * 					alpha-numeric chars for the dataset to attach the model.
    * @param args		set of parameters for the new model. Optional
-   * @param waitTime	time to wait for next check of FINISHED status for source before to start to
-   * 					create the model. Optional
+   * @param waitTime	time (milliseconds) to wait for next check of FINISHED status for source
+   * 					before to start to create the model. Optional
    * @param retries		number of times to try the operation. Optional
    *
    */
@@ -64,7 +64,7 @@ public class Model extends AbstractResource {
     }
 
     try {
-      waitTime = waitTime != null ? waitTime : 3;
+      waitTime = waitTime != null ? waitTime : 3000;
       retries = retries != null ? retries : 10;
       if (waitTime > 0) {
         int count = 0;
@@ -86,7 +86,7 @@ public class Model extends AbstractResource {
     }
   }
 
-  
+
   /**
    * Retrieves a model.
    *
@@ -100,8 +100,8 @@ public class Model extends AbstractResource {
   public JSONObject get(final String modelId) {
     return get(modelId, null, null);
   }
-  
-  
+
+
   /**
    * Retrieves a model.
    *
@@ -123,7 +123,7 @@ public class Model extends AbstractResource {
     return getResource(BIGML_URL + modelId, null, apiUser, apiKey);
   }
 
-  
+
   /**
    * Retrieves a model.
    *
@@ -137,8 +137,8 @@ public class Model extends AbstractResource {
     String resourceId = (String) model.get("resource");
     return get(resourceId, null, null);
   }
-  
-  
+
+
   /**
    * Retrieves a model.
    *
@@ -154,8 +154,8 @@ public class Model extends AbstractResource {
     String resourceId = (String) model.get("resource");
     return get(resourceId, apiUser, apiKey);
   }
-  
-  
+
+
   /**
    * Retrieves a model.
    *
@@ -170,8 +170,8 @@ public class Model extends AbstractResource {
   public JSONObject get(final String modelId, final String queryString) {
     return get(modelId, queryString, null, null);
   }
-  
-  
+
+
   /**
    * Retrieves a model.
    *
@@ -194,7 +194,7 @@ public class Model extends AbstractResource {
     return getResource(BIGML_URL + modelId, queryString, apiUser, apiKey);
   }
 
-  
+
   /**
    * Retrieves a model.
    *
@@ -209,8 +209,8 @@ public class Model extends AbstractResource {
     String resourceId = (String) model.get("resource");
     return get(resourceId, queryString, null, null);
   }
-  
-  
+
+
   /**
    * Retrieves a model.
    *
@@ -228,7 +228,7 @@ public class Model extends AbstractResource {
     return get(resourceId, queryString, apiUser, apiKey);
   }
 
-  
+
   /**
    * Checks whether a model's status is FINISHED.
    *
@@ -240,7 +240,7 @@ public class Model extends AbstractResource {
     return isResourceReady(get(modelId));
   }
 
-  
+
   /**
    * Checks whether a model's status is FINISHED.
    *
@@ -252,7 +252,7 @@ public class Model extends AbstractResource {
     return isReady(resourceId);
   }
 
-  
+
   /**
    * Lists all your models.
    *
@@ -265,12 +265,12 @@ public class Model extends AbstractResource {
     return listResources(MODEL_URL, queryString);
   }
 
-  
+
   /**
    * Updates a model.
    *
    * PUT /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-   * HTTP/1.1 Host: bigml.io 
+   * HTTP/1.1 Host: bigml.io
    * Content-Type: application/json
    *
    * @param modelId 	a unique identifier in the form model/id where id is a string of 24
@@ -286,12 +286,12 @@ public class Model extends AbstractResource {
     return updateResource(BIGML_URL + modelId, changes);
   }
 
-  
+
   /**
    * Updates a model.
    *
    * PUT /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-   * HTTP/1.1 Host: bigml.io 
+   * HTTP/1.1 Host: bigml.io
    * Content-Type: application/json
    *
    * @param model		a model JSONObject
@@ -303,7 +303,7 @@ public class Model extends AbstractResource {
     return update(resourceId, changes.toJSONString());
   }
 
-  
+
   /**
    * Deletes a model.
    *
@@ -323,7 +323,7 @@ public class Model extends AbstractResource {
     return deleteResource(BIGML_URL + modelId);
   }
 
-        		  
+
   /**
    * Deletes a model.
    *
@@ -338,5 +338,5 @@ public class Model extends AbstractResource {
     String resourceId = (String) model.get("resource");
     return delete(resourceId);
   }
-  
+
 }

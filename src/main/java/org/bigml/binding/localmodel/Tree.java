@@ -17,17 +17,17 @@ import org.json.simple.JSONObject;
 
 /**
  * A tree-like predictive model.
- * 
+ *
  */
 public class Tree {
-	
+
  /**
   * Logging
   */
   static Logger logger = Logger.getLogger(Tree.class.getName());
-    
+
   final static String INDENT = "    ";
-  
+
   // Map operator str to its corresponding java operator
   static HashMap<String, String> JAVA_OPERATOR = new HashMap<String, String>();
   static {
@@ -52,8 +52,8 @@ public class Tree {
 	  JAVA_OPERATOR.put(Constants.OPTYPE_DATETIME+"-"+Constants.OPERATOR_GE, "\"{2}\".compareTo({3})>=0");
 	  JAVA_OPERATOR.put(Constants.OPTYPE_DATETIME+"-"+Constants.OPERATOR_GT, "\"{2}\".compareTo({3})>0");
   }
-  
-  
+
+
   private JSONObject fields;
   private JSONObject root;
   private String objectiveField;
@@ -63,30 +63,30 @@ public class Tree {
   private List<Tree> children;
   private Long count;
   private JSONArray distribution;
-  private double confidence;	
-    
+  private double confidence;
+
  /**
   * Constructor
   */
-  public Tree(final JSONObject root, 
-			  final JSONObject fields, 
+  public Tree(final JSONObject root,
+			  final JSONObject fields,
 			  final Object objective) {
 	super();
-	
+
 	this.fields = fields;
-	
+
 	if (objective!=null && objective instanceof List) {
 		this.objectiveField = (String) ((List) objective).get(0);
 	} else {
 		this.objectiveField = (String) objective;
 	}
-	
+
 	this.root = root;
 	this.output = root.get("output");
-	this.count = (Long) root.get("count"); 
-	this.confidence = (Double) root.get("confidence");
-	
-	
+	this.count = (Long) root.get("count");
+	this.confidence = ((Number) root.get("confidence")).doubleValue();
+
+
 	if (root.get("predicate") instanceof Boolean) {
 		isPredicate = true;
 	} else {
@@ -98,7 +98,7 @@ public class Tree {
 					(Object) predicateObj.get("value"),
 					(String) predicateObj.get("term"));
 	}
-	
+
 	children = new ArrayList<Tree>();
 	JSONArray childrenObj = (JSONArray) root.get("children");
 	if (childrenObj!=null) {
@@ -108,8 +108,8 @@ public class Tree {
 			children.add(childTree);
 		}
 	}
-	
-	
+
+
 	JSONArray distributionObj = (JSONArray) root.get("distribution");
 	if (distributionObj!=null) {
 		this.distribution = distributionObj;
@@ -128,60 +128,60 @@ public class Tree {
 					if (summary.get("categories")!=null) {
 						this.distribution = (JSONArray) summary.get("categories");
 					}
-					
+
 				}
-				
+
 			}
 		}
 	}
  }
 
-	
+
   /**
   * List a description of the model's fields.
-  * 
+  *
   */
   public JSONObject listFields() {
     return fields;
   }
-  
-  
-	
+
+
+
  public String getObjectiveField() {
 	return objectiveField;
   }
 
- 
+
  /**
   * Makes a prediction based on a number of field values.
-  * 
+  *
   * The input fields must be keyed by Id.
-  * 
+  *
   * .predict({"petal length": 1})
-  * 
+  *
   */
   public Object predict(final JSONObject inputData) {
 	  return predict(inputData, false);
-	  
+
   }
 
 /**
   * Makes a prediction based on a number of field values.
-  * 
+  *
   * The input fields must be keyed by Id.
-  * 
+  *
   * .predict({"petal length": 1})
-  * 
+  *
   */
   public Object predict(final JSONObject inputData, Boolean withConfidence) {
 	if (withConfidence == null) {
 		withConfidence = false;
-	}  
-	  
+	}
+
 	if (this.children!=null && this.children.size()>0) {
 	  for (int i=0; i<this.children.size(); i++) {
 		Tree child = (Tree) this.children.get(i);
-		
+
 		String field = child.predicate.getField();
 		Object inputValue = (Object) inputData.get(((JSONObject)fields.get(field)).get("name"));
 		if (inputValue==null) {
@@ -192,7 +192,7 @@ public class Tree {
 		String operator = child.predicate.getOperator();
 		Object value = (Object) child.predicate.getValue();
 		String term = child.predicate.getTerm();
-		
+
 		if (operator.equals(Constants.OPERATOR_EQ) && inputValue.equals(value)) {
 			return child.predict(inputData, withConfidence);
 		}
@@ -243,10 +243,10 @@ public class Tree {
 				return child.predict(inputData, withConfidence);
 			}
 		}
-				
+
 	  }
 	}
-	
+
 	if (withConfidence) {
 		HashMap<String, Object> result = new HashMap<String, Object>();
 		result.put("count", this.count);
@@ -255,51 +255,51 @@ public class Tree {
 		result.put("distribution", this.distribution);
 		return result;
 	}
-	
+
     return this.output;
   }
-  
-  
+
+
   private int termMatches(JSONObject inputData, String text, String fieldLabel, String term) {
-	  
+
 	  // Checking Full Terms Only
 	  String tokenMode = (String) Utils.getJSONObject(this.fields, fieldLabel+".term_analysis.token_mode");
 	  if (tokenMode.equals("full_terms_only")) {
 		  return text.equalsIgnoreCase(term) ? 1 : 0;
 	  }
-	  
+
 	  // All and Tokens only
-	  
+
 	  int flags = Pattern.CASE_INSENSITIVE;
 	  JSONObject termForms = (JSONObject) Utils.getJSONObject(this.fields, fieldLabel+".summary.term_forms");
-	  
+
 	  HashMap<String, Boolean> caseSensitive = new HashMap<String, Boolean>();
 	  Iterator iter = inputData.keySet().iterator();
 	  while (iter.hasNext()) {
 		String key = (String) iter.next();
 	    caseSensitive.put(key.toLowerCase(), false);
 	  }
-	 
+
 	  JSONArray relatedTerms = (JSONArray) termForms.get(term);
 	  String regexp = "(\\b|_)" + term + "(\\b|_)";
 	  for (int i=0; relatedTerms!=null && i<relatedTerms.size(); i++) {
 		  regexp +=  "|(\\b|_)" + (String) relatedTerms.get(i) + "(\\b|_)";
 	  }
-	  
+
 	  Pattern pattern = Pattern.compile(regexp, flags);
 	  Matcher matcher = pattern.matcher(text);
 	  int count = 0;
 	  while (matcher.find()) {
 		  count++;
 	  }
-	  
-	  return count;	  
+
+	  return count;
   }
-  
-	
+
+
  /**
   * Translates a tree model into a set of IF-THEN rules.
-  * 
+  *
   *  @param depth	controls the size of indentation
   */
   public String generateRules(final int depth) {
@@ -314,34 +314,34 @@ public class Tree {
 								child.predicate.getOperator(),
 								child.predicate.getValue(),
 								child.children!=null && child.children.size()>0 ? "AND" : "THEN");
-				
+
 			rules += child.generateRules(depth + 1);
     	}
     } else {
-      String fieldName = (String) Utils.getJSONObject(fields, objectiveField+".name"); 
+      String fieldName = (String) Utils.getJSONObject(fields, objectiveField+".name");
       rules += MessageFormat.format("{0} {1} = {2}\n",
     		  		StringUtils.repeat(INDENT, depth),
 					this.objectiveField!=null ? fieldName : "Prediction",
-					this.output);			
+					this.output);
     }
 
     return rules;
   }
-	
+
 
  /**
   * Prints out an IF-THEN rule version of the tree.
-  * 
+  *
   * @param depth	controls the size of indentation
   */
   public String rules(final int depth) {
     return generateRules(depth);
   }
-    
-  
+
+
   /**
    * Translate the model into a set of "if" java statements.
-   * 
+   *
    * @param depth	controls the size of indentation
    */
   public String javaBody(final int depth, final String methodReturn) {
@@ -350,14 +350,14 @@ public class Tree {
 	  for (int i=0; i<this.children.size(); i++) {
 		Tree child = (Tree) this.children.get(i);
 		String fieldName = (String) Utils.getJSONObject(fields, child.predicate.getField()+".name");
-		
+
 		String comparison = JAVA_OPERATOR.get(child.predicate.getOpType() + "-" + child.predicate.getOperator());
 		instructions += MessageFormat.format("{0}if ({1} != null && " + comparison + ") '{'\n",
 				StringUtils.repeat(INDENT, depth),
 				Utils.slugify(fieldName),
 				Utils.slugify(fieldName),
 				child.predicate.getValue()+"");
-		
+
 		instructions += child.javaBody(depth + 1, methodReturn);
 		instructions += StringUtils.repeat(INDENT, depth) + "}\n";
 	  }
@@ -372,13 +372,13 @@ public class Tree {
       if ( methodReturn.equals("Boolean")) {
     	  returnSentence = "{0} return new Boolean({1});\n";
       }
-      
+
       instructions += MessageFormat.format(returnSentence,
     		  StringUtils.repeat(INDENT, depth),
-    		  this.output);			
+    		  this.output);
     }
 
     return instructions;
   }
-  
+
 }

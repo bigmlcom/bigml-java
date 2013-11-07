@@ -4,7 +4,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 
-
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -20,26 +19,26 @@ public class ComputeMultivotePredictionsStepdefs {
 
 	// Logging
 	Logger logger = LoggerFactory.getLogger(ComputeMultivotePredictionsStepdefs.class);
-	
+
 	MultiVote multivote;
 	HashMap<Object, Object> combinedPrediction;
-	
-	
+
+
 	@Given("^I create a MultiVote for the set of predictions in file (.*)$")
 	public void i_create_a_multivote(String predictionsFile) throws Throwable {
 	    try {
 	    	String json = Utils.readFile(predictionsFile);
 	    	JSONArray jsonArray =  (JSONArray) JSONValue.parse(json);
-	    
+
 	    	HashMap<Object, Object>[] exampleArray = (HashMap<Object, Object>[]) new HashMap[jsonArray.size()];
 	    	for (int i=0; i<jsonArray.size(); i++) {
 	    		JSONObject item = (JSONObject) jsonArray.get(i);
-	    		
+
 	    		HashMap <Object, Object> prediction = new HashMap<Object, Object>();
 	    		prediction.put("prediction", item.get("prediction"));
 		        prediction.put("confidence", item.get("confidence"));
 		        prediction.put("count", item.get("count"));
-		        
+
 		        JSONArray distributionArray = (JSONArray) item.get("distribution");
 		        HashMap<Object, Integer> distributionHash = new HashMap<Object, Integer>();
 		        for (int j=0; j<distributionArray.size(); j++) {
@@ -47,18 +46,18 @@ public class ComputeMultivotePredictionsStepdefs {
 		    		distributionHash.put(dist.get(0), ((Long)dist.get(1)).intValue());
 		        }
 		        prediction.put("distribution", distributionHash);
-		        
+
 		        exampleArray[i] = prediction;
 	    	}
-	    	
+
 	        // build multivote
 	        multivote = new MultiVote(exampleArray);
 	    } catch (Exception e) {
 	    	e.printStackTrace();
 	    }
 	}
-	
-	
+
+
 	@When("^I compute the prediction with confidence using method \"([^\"]*)\"$")
 	public void I_compute_the_prediction_with_confidence_using_method(String method) throws Throwable {
 	    try {
@@ -68,23 +67,23 @@ public class ComputeMultivotePredictionsStepdefs {
 	    }
 	}
 
-	
+
 	@Then("^the combined prediction is \"([^\"]*)\"$")
 	public void the_combined_prediction_is(String prediction) throws Throwable {
 		assertTrue(combinedPrediction.get("prediction").equals(prediction));
 	}
-	
-	
+
+
 	@Then("^the numerical combined prediction is (.*)$")
 	public void the_numerical_combined_prediction_is(double prediction) throws Throwable {
 		String predictionValue = String.format("%.12g%n", ((Double)combinedPrediction.get("prediction")));
 		assertTrue(predictionValue.equals(String.format("%.12g%n", prediction)));
 	}
-	
-	
+
+
 	@Then("^the confidence for the combined prediction is (.*)$")
 	public void the_confidence_for_the_combined_prediction_is_(double confidence) throws Throwable {
-		String confidenceValue = String.format("%.12g%n", ((Double)combinedPrediction.get("confidence")));
+		String confidenceValue = String.format("%.12g%n", ((Number)combinedPrediction.get("confidence")).doubleValue());
 		assertTrue(confidenceValue.equals(String.format("%.12g%n", confidence)));
 	}
 

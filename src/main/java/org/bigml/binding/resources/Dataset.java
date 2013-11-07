@@ -19,7 +19,7 @@ public class Dataset extends AbstractResource {
   // Logging
   Logger logger = LoggerFactory.getLogger(Dataset.class);
 
-  
+
   /**
    * Constructor
    *
@@ -32,7 +32,7 @@ public class Dataset extends AbstractResource {
     super.init();
   }
 
-  
+
   /**
    * Constructor
    *
@@ -45,7 +45,7 @@ public class Dataset extends AbstractResource {
     super.init();
   }
 
-  
+
   /**
    * Creates a remote dataset.
    *
@@ -60,8 +60,8 @@ public class Dataset extends AbstractResource {
    * @param sourceId	a unique identifier in the form source/id where id is a string of 24
    * 					alpha-numeric chars for the source to attach the dataset.
    * @param args		set of parameters for the new dataset. Optional
-   * @param waitTime	time to wait for next check of FINISHED status for source before to start to
-   * 					create the dataset. Optional
+   * @param waitTime	time (milliseconds) to wait for next check of FINISHED status for source
+   * 					before to start to create the dataset. Optional
    * @param retries		number of times to try the operation. Optional
    *
    */
@@ -72,7 +72,7 @@ public class Dataset extends AbstractResource {
     }
 
     try {
-      waitTime = waitTime != null ? waitTime : 3;
+      waitTime = waitTime != null ? waitTime : 3000;
       retries = retries != null ? retries : 10;
       if (waitTime > 0) {
         int count = 0;
@@ -95,7 +95,7 @@ public class Dataset extends AbstractResource {
     }
   }
 
-  
+
   /**
    * Retrieves a dataset.
    *
@@ -116,7 +116,7 @@ public class Dataset extends AbstractResource {
     return getResource(BIGML_URL + datasetId);
   }
 
-  
+
   /**
    * Retrieves a dataset.
    *
@@ -132,7 +132,7 @@ public class Dataset extends AbstractResource {
     return get(resourceId);
   }
 
-  
+
   /**
    * Checks whether a dataset's status is FINISHED.
    *
@@ -144,7 +144,7 @@ public class Dataset extends AbstractResource {
     return isResourceReady(get(datasetId));
   }
 
-  
+
   /**
    * Checks whether a dataset's status is FINISHED.
    *
@@ -156,7 +156,7 @@ public class Dataset extends AbstractResource {
     return isReady(resourceId);
   }
 
-  
+
   /**
    * Lists all your datasources.
    *
@@ -169,13 +169,13 @@ public class Dataset extends AbstractResource {
     return listResources(DATASET_URL, queryString);
   }
 
-  
+
   /**
    * Updates a dataset.
    *
    * PUT
    * /andromeda/dataset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-   * HTTP/1.1 Host: bigml.io 
+   * HTTP/1.1 Host: bigml.io
    * Content-Type: application/json
    *
    * @param datasetId	a unique identifier in the form dataset/id where id is a string of 24
@@ -191,13 +191,13 @@ public class Dataset extends AbstractResource {
     return updateResource(BIGML_URL + datasetId, changes);
   }
 
-  
+
   /**
    * Updates a dataset.
    *
    * PUT
    * /andromeda/dataset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-   * HTTP/1.1 Host: bigml.io 
+   * HTTP/1.1 Host: bigml.io
    * Content-Type: application/json
    *
    * @param dataset 	a dataset JSONObject
@@ -209,7 +209,7 @@ public class Dataset extends AbstractResource {
     return update(resourceId, changes.toJSONString());
   }
 
-  
+
   /**
    * Deletes a dataset.
    *
@@ -229,7 +229,7 @@ public class Dataset extends AbstractResource {
     return deleteResource(BIGML_URL + datasetId);
   }
 
-  
+
   /**
    * Deletes a dataset.
    *
@@ -244,5 +244,5 @@ public class Dataset extends AbstractResource {
     String resourceId = (String) dataset.get("resource");
     return delete(resourceId);
   }
-  
+
 }

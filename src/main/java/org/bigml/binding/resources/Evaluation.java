@@ -18,7 +18,7 @@ public class Evaluation extends AbstractResource {
 
   // Logging
   Logger logger = LoggerFactory.getLogger(Evaluation.class);
-  
+
   /**
    * Constructor
    *
@@ -30,7 +30,7 @@ public class Evaluation extends AbstractResource {
     super.init();
   }
 
-  
+
   /**
    * Constructor
    *
@@ -42,8 +42,8 @@ public class Evaluation extends AbstractResource {
     this.devMode = devMode;
     super.init();
   }
-  
-  
+
+
   /**
    * Create a new evaluation.
    *
@@ -56,13 +56,13 @@ public class Evaluation extends AbstractResource {
    * @param datasetId	a unique identifier in the form dataset/id where id is a string of 24
    * 					alpha-numeric chars for the dataset to attach the evaluation.
    * @param args		set of parameters for the new evaluation. Optional
-   * @param waitTime	time to wait for next check of FINISHED status for model before to start to
-   * 					create the evaluation. Optional
+   * @param waitTime	time (milliseconds) to wait for next check of FINISHED status for model
+   * 					before to start to create the evaluation. Optional
    * @param retries		number of times to try the operation. Optional
-   * 
+   *
    */
   public JSONObject create(final String modelOrEnsembleId, final String datasetId, String args, Integer waitTime, Integer retries) {
-    if (modelOrEnsembleId == null || modelOrEnsembleId.length() == 0 || 
+    if (modelOrEnsembleId == null || modelOrEnsembleId.length() == 0 ||
     	!(modelOrEnsembleId.matches(MODEL_RE) || modelOrEnsembleId.matches(ENSEMBLE_RE)) ) {
       logger.info("Wrong model id");
       return null;
@@ -73,25 +73,25 @@ public class Evaluation extends AbstractResource {
     }
 
     try {
-      waitTime = waitTime != null ? waitTime : 3;
+      waitTime = waitTime != null ? waitTime : 3000;
       retries = retries != null ? retries : 10;
       if (waitTime > 0) {
     	int count = 0;
-    	
+
     	if (modelOrEnsembleId.matches(MODEL_RE)) {
 	        while (count<retries && !BigMLClient.getInstance(this.devMode).modelIsReady(modelOrEnsembleId)) {
 	          Thread.sleep(waitTime);
 	          count++;
 	        }
     	}
-    	
+
     	if (modelOrEnsembleId.matches(ENSEMBLE_RE)) {
 	        while (count<retries && !BigMLClient.getInstance(this.devMode).ensembleIsReady(modelOrEnsembleId)) {
 	          Thread.sleep(waitTime);
 	          count++;
 	        }
     	}
-        
+
         count = 0;
         while (count<retries && !BigMLClient.getInstance(this.devMode).datasetIsReady(datasetId)) {
           Thread.sleep(waitTime);
@@ -103,7 +103,7 @@ public class Evaluation extends AbstractResource {
       if (args != null) {
         requestObject = (JSONObject) JSONValue.parse(args);
       }
-      
+
       if (modelOrEnsembleId.matches(MODEL_RE)) {
     	  requestObject.put("model", modelOrEnsembleId);
       }
@@ -119,10 +119,10 @@ public class Evaluation extends AbstractResource {
     }
   }
 
-  
+
   /**
    * Retrieves an evaluation.
-   * 
+   *
    * An evaluation is an evolving object that is processed until it
    * reaches the FINISHED or FAULTY state, the method will return a
    * JSONObject that encloses the evaluation values and state info
@@ -131,7 +131,7 @@ public class Evaluation extends AbstractResource {
    * GET /andromeda/evaluation/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * HTTP/1.1 Host: bigml.io
    *
-   * @param evaluationId 	a unique identifier in the form evaluation/id where id 
+   * @param evaluationId 	a unique identifier in the form evaluation/id where id
    * 						is a string of 24 alpha-numeric chars.
    *
    */
@@ -144,10 +144,10 @@ public class Evaluation extends AbstractResource {
     return getResource(BIGML_URL + evaluationId);
   }
 
-  
+
   /**
    * Retrieves an evaluation.
-   * 
+   *
    * An evaluation is an evolving object that is processed until it
    * reaches the FINISHED or FAULTY state, the method will return a
    * JSONObject that encloses the evaluation values and state info
@@ -164,11 +164,11 @@ public class Evaluation extends AbstractResource {
     return get(evaluationId);
   }
 
-  
+
   /**
    * Check whether an evaluation's status is FINISHED.
    *
-   * @param evaluationId 	a unique identifier in the form evaluation/id where id 
+   * @param evaluationId 	a unique identifier in the form evaluation/id where id
    * 						is a string of 24 alpha-numeric chars.
    *
    */
@@ -176,7 +176,7 @@ public class Evaluation extends AbstractResource {
     return isResourceReady(get(evaluationId));
   }
 
-  
+
   /**
    * Check whether an evaluation's status is FINISHED.
    *
@@ -188,11 +188,11 @@ public class Evaluation extends AbstractResource {
     return isReady(resourceId);
   }
 
-  
+
   /**
    * Lists all your evaluations.
    *
-   * GET /andromeda/evaluation?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY; 
+   * GET /andromeda/evaluation?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * Host: bigml.io
    *
    * @param queryString	query filtering the listing.
@@ -202,15 +202,15 @@ public class Evaluation extends AbstractResource {
     return listResources(EVALUATION_URL, queryString);
   }
 
-  
+
   /**
    * Updates an evaluation.
    *
    * PUT /andromeda/evaluation/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-   * HTTP/1.1 Host: bigml.io 
+   * HTTP/1.1 Host: bigml.io
    * Content-Type: application/json
    *
-   * @param evaluationId 	a unique identifier in the form evaluation/id where id 
+   * @param evaluationId 	a unique identifier in the form evaluation/id where id
    * 						is a string of 24 alpha-numeric chars.
    * @param changes			set of parameters to update the evaluation. Optional
    *
@@ -223,12 +223,12 @@ public class Evaluation extends AbstractResource {
     return updateResource(BIGML_URL + evaluationId, changes);
   }
 
-  
+
   /**
    * Updates an evaluation.
    *
    * PUT /andromeda/evaluation/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-   * HTTP/1.1 Host: bigml.io 
+   * HTTP/1.1 Host: bigml.io
    * Content-Type: application/json
    *
    * @param evaluation 	an evaluation JSONObject
@@ -240,14 +240,14 @@ public class Evaluation extends AbstractResource {
     return update(resourceId, changes.toJSONString());
   }
 
-  
+
   /**
    * Deletes an evaluation.
    *
    * DELETE /andromeda/evaluation/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * HTTP/1.1
    *
-   * @param evaluationId 	a unique identifier in the form evaluation/id where id is a 
+   * @param evaluationId 	a unique identifier in the form evaluation/id where id is a
    * 						string of 24 alpha-numeric chars.
    *
    */
@@ -258,8 +258,8 @@ public class Evaluation extends AbstractResource {
     }
     return deleteResource(BIGML_URL + evaluationId);
   }
-  
-  
+
+
   /**
    * Deletes an evaluation.
    *
@@ -273,5 +273,5 @@ public class Evaluation extends AbstractResource {
     String resourceId = (String) evaluation.get("resource");
     return delete(resourceId);
   }
-  
+
 }
