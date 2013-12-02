@@ -25,7 +25,7 @@ import org.json.simple.JSONObject;
         location: Remote location of the resource
         object: The resource itself
         error: An error code and message
-        
+
     If left unspecified, `username` and `api_key` will default to the
     values of the `BIGML_USERNAME` and `BIGML_API_KEY` environment
     variables respectively.
@@ -35,17 +35,21 @@ import org.json.simple.JSONObject;
     charged any credits.
 
     If storage is set to a directory name, the resources obtained in
-    CRU operations will be stored in the given directory.    
+    CRU operations will be stored in the given directory.
  */
 public class BigMLClient {
+  // URLs below don't care about BigML.io version. They will hit last (current)
+  // BigML version
+  final public static String BIGML_URL = "https://bigml.io/";
+  final public static String BIGML_DEV_URL = "https://bigml.io/dev/";
 
   /**
    * Logging
    */
   static Logger logger = Logger.getLogger(BigMLClient.class.getName());
-  
+
   private static BigMLClient instance = null;
-  
+
   private String bigmlUrl;
   private String bigmlUser;
   private String bigmlApiKey;
@@ -69,7 +73,7 @@ public class BigMLClient {
     }
     return instance;
   }
-  
+
   public static BigMLClient getInstance(final String storage) throws AuthenticationException {
     if (instance == null) {
       instance = new BigMLClient();
@@ -77,7 +81,7 @@ public class BigMLClient {
     }
     return instance;
   }
-  
+
   public static BigMLClient getInstance(final boolean devMode) throws AuthenticationException {
     if (instance == null) {
       instance = new BigMLClient();
@@ -85,7 +89,7 @@ public class BigMLClient {
     }
     return instance;
   }
-  
+
   public static BigMLClient getInstance(final String apiUser, final String apiKey, final boolean devMode) throws AuthenticationException {
     if (instance == null) {
       instance = new BigMLClient();
@@ -93,7 +97,7 @@ public class BigMLClient {
     }
     return instance;
   }
-  
+
   public static BigMLClient getInstance(final String apiUser, final String apiKey, final boolean devMode, final String storage) throws AuthenticationException {
     if (instance == null) {
       instance = new BigMLClient();
@@ -102,7 +106,7 @@ public class BigMLClient {
     return instance;
   }
 
-  
+
   /**
    * Initialization object.
    */
@@ -146,7 +150,7 @@ public class BigMLClient {
 
     initResources();
   }
-  
+
   /**
    * Initialization object.
    */
@@ -169,7 +173,7 @@ public class BigMLClient {
 
     initResources();
   }
-  
+
 
   private void initConfiguration() {
     try {
@@ -178,10 +182,11 @@ public class BigMLClient {
       props.load(fis);
       fis.close();
 
-      bigmlUrl = this.devMode ? props.getProperty("BIGML_DEV_URL") : props.getProperty("BIGML_URL");
+      bigmlUrl = this.devMode ? props.getProperty("BIGML_DEV_URL",
+          BIGML_DEV_URL) : props.getProperty("BIGML_URL", BIGML_URL);
     } catch (Throwable e) {
       logger.error("Error loading configuration", e);
-      bigmlUrl = "https://bigml.io/andromeda/";
+      bigmlUrl = this.devMode ? BIGML_DEV_URL : BIGML_URL;
     }
   }
 
@@ -197,7 +202,7 @@ public class BigMLClient {
   public String getBigMLUrl() {
     return bigmlUrl;
   }
-  
+
 
   // ################################################################
   // #
@@ -205,7 +210,7 @@ public class BigMLClient {
   // # https://bigml.com/developers/sources
   // #
   // ################################################################
-  
+
   /**
    * Creates a new source.
    *
@@ -221,11 +226,11 @@ public class BigMLClient {
   public JSONObject createSource(final String fileName, String name, String sourceParser) {
     return source.createLocalSource(fileName, name, sourceParser);
   }
-  
-  
+
+
   /**
    * Creates a source using a URL.
-   * 
+   *
    * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY; HTTP/1.1
    * Host: bigml.io
    * Content-Type: application/json;
@@ -238,10 +243,10 @@ public class BigMLClient {
     return source.createRemoteSource(url, args);
   }
 
-  
+
   /**
    * Creates a source using a URL.
-   * 
+   *
    * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY; HTTP/1.1
    * Host: bigml.io
    * Content-Type: application/json;
@@ -253,8 +258,8 @@ public class BigMLClient {
   public JSONObject createInlineSource(final String data, final String args) {
     return source.createInlineSource(data, args);
   }
-  
-  
+
+
   /**
    * Retrieves a remote source.
    *
@@ -269,7 +274,7 @@ public class BigMLClient {
     return source.get(sourceId);
   }
 
-  
+
   /**
    * Retrieves a remote source.
    *
@@ -283,7 +288,7 @@ public class BigMLClient {
     return source.get(sourceJSON);
   }
 
-  
+
   /**
    * Checks whether a source's status is FINISHED.
    *
@@ -295,7 +300,7 @@ public class BigMLClient {
     return source.isReady(sourceId);
   }
 
-  
+
   /**
    * Checks whether a source's status is FINISHED.
    *
@@ -306,7 +311,7 @@ public class BigMLClient {
     return source.isReady(sourceJSON);
   }
 
-  
+
   /**
    * Lists all your remote sources.
    *
@@ -319,10 +324,10 @@ public class BigMLClient {
     return source.list(queryString);
   }
 
-  
+
   /**
    * Updates a source.
-   * 
+   *
    * Updates remote `source` with `changes'.
    *
    * POST
@@ -338,10 +343,10 @@ public class BigMLClient {
     return source.update(sourceId, changes);
   }
 
-  
+
   /**
    * Updates a source.
-   * 
+   *
    * Updates remote `source` with `changes'.
    *
    * POST
@@ -356,7 +361,7 @@ public class BigMLClient {
     return source.update(sourceJSON, json);
   }
 
-  
+
   /**
    * Deletes a remote source permanently.
    *
@@ -372,7 +377,7 @@ public class BigMLClient {
     return source.delete(sourceId);
   }
 
-  
+
   /**
    * Deletes a remote source permanently.
    *
@@ -387,7 +392,7 @@ public class BigMLClient {
     return source.delete(sourceJSON);
   }
 
-  
+
   // ################################################################
   // #
   // # Datasets
@@ -417,7 +422,7 @@ public class BigMLClient {
     return dataset.create(sourceId, args, waitTime, retries);
   }
 
-  
+
   /**
    * Retrieves a dataset.
    *
@@ -433,7 +438,7 @@ public class BigMLClient {
     return dataset.get(datasetId);
   }
 
-  
+
   /**
    * Retrieves a dataset.
    *
@@ -448,7 +453,7 @@ public class BigMLClient {
     return dataset.get(datasetJSON);
   }
 
-  
+
   /**
    * Check whether a dataset's status is FINISHED.
    *
@@ -460,7 +465,7 @@ public class BigMLClient {
     return dataset.isReady(datasetId);
   }
 
-  
+
   /**
    * Checks whether a dataset's status is FINISHED.
    *
@@ -471,7 +476,7 @@ public class BigMLClient {
     return dataset.isReady(datasetJSON);
   }
 
-  
+
   /**
    * Lists all your datasources.
    *
@@ -484,7 +489,7 @@ public class BigMLClient {
     return dataset.list(queryString);
   }
 
-  
+
   /**
    * Updates a dataset.
    *
@@ -501,7 +506,7 @@ public class BigMLClient {
     return dataset.update(datasetId, changes);
   }
 
-  
+
   /**
    * Updates a dataset.
    *
@@ -517,7 +522,7 @@ public class BigMLClient {
     return dataset.update(datasetJSON, changes);
   }
 
-  
+
   /**
    * Deletes a dataset.
    *
@@ -533,7 +538,7 @@ public class BigMLClient {
     return dataset.delete(datasetId);
   }
 
-  
+
   /**
    * Deletes a dataset.
    *
@@ -548,14 +553,14 @@ public class BigMLClient {
     return dataset.delete(datasetJSON);
   }
 
-  
+
   // ################################################################
   // #
   // # Models
   // # https://bigml.com/developers/models
   // #
   // ################################################################
-  
+
   /**
    * Creates a new model.
    *
@@ -574,10 +579,10 @@ public class BigMLClient {
     return model.create(datasetId, args, waitTime, retries);
   }
 
-  
+
   /**
    * Retrieves a model.
-   * 
+   *
    *
    * GET /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * Host: bigml.io
@@ -589,11 +594,11 @@ public class BigMLClient {
   public JSONObject getModel(final String modelId) {
     return getModel(modelId, null, null);
   }
-  
-  
+
+
   /**
    * Retrieves a model.
-   * 
+   *
    *
    * GET /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * Host: bigml.io
@@ -607,8 +612,8 @@ public class BigMLClient {
   public JSONObject getModel(final String modelId, final String apiUser, final String apiKey) {
     return model.get(modelId, apiUser, apiKey);
   }
-  
-  
+
+
   /**
    * Retrieves a model.
    *
@@ -621,8 +626,8 @@ public class BigMLClient {
   public JSONObject getModel(final JSONObject modelJSON) {
     return getModel(modelJSON, null, null);
   }
-  
-  
+
+
   /**
    * Retrieves a model.
    *
@@ -637,11 +642,11 @@ public class BigMLClient {
   public JSONObject getModel(final JSONObject modelJSON, final String apiUser, final String apiKey) {
     return model.get(modelJSON, apiUser, apiKey);
   }
-  
-  
+
+
   /**
    * Retrieves a model.
-   * 
+   *
    *
    * GET /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * Host: bigml.io
@@ -654,11 +659,11 @@ public class BigMLClient {
   public JSONObject getModel(final String modelId, final String queryString) {
     return getModel(modelId, queryString, null, null);
   }
-  
-  
+
+
   /**
    * Retrieves a model.
-   * 
+   *
    *
    * GET /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * Host: bigml.io
@@ -674,7 +679,7 @@ public class BigMLClient {
     return model.get(modelId, queryString, apiUser, apiKey);
   }
 
-  
+
   /**
    * Retrieves a model.
    *
@@ -688,8 +693,8 @@ public class BigMLClient {
   public JSONObject getModel(final JSONObject modelJSON, final String queryString) {
     return getModel(modelJSON, queryString, null, null);
   }
-  
-  
+
+
   /**
    * Retrieves a model.
    *
@@ -706,7 +711,7 @@ public class BigMLClient {
     return model.get(modelJSON, queryString, apiUser, apiKey);
   }
 
-  
+
   /**
    * Checks whether a model's status is FINISHED.
    *
@@ -718,7 +723,7 @@ public class BigMLClient {
     return model.isReady(modelId);
   }
 
-  
+
   /**
    * Checks whether a model's status is FINISHED.
    *
@@ -729,7 +734,7 @@ public class BigMLClient {
     return model.isReady(modelJSON);
   }
 
-  
+
   /**
    * Lists all your models.
    *
@@ -742,12 +747,12 @@ public class BigMLClient {
     return model.list(queryString);
   }
 
-  
+
   /**
    * Updates a model.
    *
    * PUT /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-   * HTTP/1.1 Host: bigml.io 
+   * HTTP/1.1 Host: bigml.io
    * Content-Type: application/json
    *
    * @param modelId 	a unique identifier in the form model/id where id is a string of 24
@@ -759,12 +764,12 @@ public class BigMLClient {
     return model.update(modelId, changes);
   }
 
-  
+
   /**
    * Updates a model.
    *
    * PUT /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-   * HTTP/1.1 Host: bigml.io 
+   * HTTP/1.1 Host: bigml.io
    * Content-Type: application/json
    *
    * @param model	modelJSON 	a model JSONObject
@@ -775,7 +780,7 @@ public class BigMLClient {
     return model.update(modelJSON, changes);
   }
 
-  
+
   /**
    * Deletes a model.
    *
@@ -791,7 +796,7 @@ public class BigMLClient {
     return model.delete(modelId);
   }
 
-  
+
   /**
    * Deletes a model.
    *
@@ -806,14 +811,14 @@ public class BigMLClient {
     return model.delete(modelJSON);
   }
 
-  
+
   // ################################################################
   // #
   // # Predictions
   // # https://bigml.com/developers/predictions
   // #
   // ################################################################
-  
+
   /**
    * Creates a new prediction.
    *
@@ -822,9 +827,9 @@ public class BigMLClient {
    *
    * @param modelOrEnsembleId		a unique identifier in the form model/id  or ensembke/id where id is a string of 24
    * 								alpha-numeric chars for the nodel or ensemble to attach the prediction.
-   * @param inputData	an object with field's id/value pairs representing the instance you 
-   * 					want to create a prediction for. 
-   * @param byName	
+   * @param inputData	an object with field's id/value pairs representing the instance you
+   * 					want to create a prediction for.
+   * @param byName
    * @param args		set of parameters for the new prediction. Required
    * @param waitTime	time to wait for next check of FINISHED status for model before to start to
    * 					create the prediction. Optional
@@ -835,7 +840,7 @@ public class BigMLClient {
     return prediction.create(modelOrEnsembleId, inputData, byName, args, waitTime, retries);
   }
 
-  
+
   /**
    * Retrieves a prediction.
    *
@@ -851,7 +856,7 @@ public class BigMLClient {
     return prediction.get(predictionId);
   }
 
-  
+
   /**
    * Retrieves a prediction.
    *
@@ -866,7 +871,7 @@ public class BigMLClient {
     return prediction.get(predictionJSON);
   }
 
-  
+
   /**
    * Checks whether a prediction's status is FINISHED.
    *
@@ -878,7 +883,7 @@ public class BigMLClient {
     return prediction.isReady(predictionId);
   }
 
-  
+
   /**
    * Checks whether a prediction's status is FINISHED.
    *
@@ -889,11 +894,11 @@ public class BigMLClient {
     return prediction.isReady(predictionJSON);
   }
 
-  
+
   /**
    * Lists all your predictions.
    *
-   * GET /andromeda/prediction?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY; 
+   * GET /andromeda/prediction?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * Host: bigml.io
    *
    * @param queryString	query filtering the listing.
@@ -903,12 +908,12 @@ public class BigMLClient {
     return prediction.list(queryString);
   }
 
-  
+
   /**
    * Updates a prediction.
    *
    * PUT /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-   * HTTP/1.1 Host: bigml.io 
+   * HTTP/1.1 Host: bigml.io
    * Content-Type: application/json
    *
    * @param predictionId 	a unique identifier in the form prediction/id where id is a string of 24
@@ -920,12 +925,12 @@ public class BigMLClient {
     return prediction.update(predictionId, changes);
   }
 
-  
+
   /**
    * Updates a prediction.
    *
    * PUT /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-   * HTTP/1.1 Host: bigml.io 
+   * HTTP/1.1 Host: bigml.io
    * Content-Type: application/json
    *
    * @param predictionJSON	a prediction JSONObject
@@ -936,7 +941,7 @@ public class BigMLClient {
     return prediction.update(predictionJSON, changes);
   }
 
-  
+
   /**
    * Deletes a prediction.
    *
@@ -951,8 +956,8 @@ public class BigMLClient {
   public JSONObject deletePrediction(final String predictionId) {
     return prediction.delete(predictionId);
   }
-  
-  
+
+
   /**
    * Deletes a prediction.
    *
@@ -966,8 +971,8 @@ public class BigMLClient {
   public JSONObject deletePrediction(final JSONObject predictionJSON) {
     return prediction.delete(predictionJSON);
   }
-  
-  
+
+
   // ################################################################
   // #
   // # Evaluations
@@ -996,10 +1001,10 @@ public class BigMLClient {
     return evaluation.create(modelOrEnsembleId, datasetId, args, waitTime, tries);
   }
 
- 
+
   /**
    * Retrieves an evaluation.
-   * 
+   *
    * An evaluation is an evolving object that is processed until it
    * reaches the FINISHED or FAULTY state, the method will return a
    * JSONObject that encloses the evaluation values and state info
@@ -1008,18 +1013,18 @@ public class BigMLClient {
    * GET /andromeda/evaluation/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * HTTP/1.1 Host: bigml.io
    *
-   * @param evaluationId 	a unique identifier in the form evaluation/id where id 
+   * @param evaluationId 	a unique identifier in the form evaluation/id where id
    * 						is a string of 24 alpha-numeric chars.
    *
    */
   public JSONObject getEvaluation(final String evaluationId) {
     return evaluation.get(evaluationId);
-  }        		  
- 
-  
+  }
+
+
   /**
    * Retrieves an evaluation.
-   * 
+   *
    * An evaluation is an evolving object that is processed until it
    * reaches the FINISHED or FAULTY state, the method will return a
    * JSONObject that encloses the evaluation values and state info
@@ -1035,11 +1040,11 @@ public class BigMLClient {
     return evaluation.get(evaluationJSON);
   }
 
- 
+
   /**
    * Check whether a evaluation' status is FINISHED.
    *
-   * @param evaluationId 	a unique identifier in the form evaluation/id where id 
+   * @param evaluationId 	a unique identifier in the form evaluation/id where id
    * 						is a string of 24 alpha-numeric chars.
    *
    */
@@ -1047,7 +1052,7 @@ public class BigMLClient {
     return evaluation.isReady(evaluationId);
   }
 
- 
+
   /**
    * Check whether a evaluation' status is FINISHED.
    *
@@ -1058,7 +1063,7 @@ public class BigMLClient {
     return evaluation.isReady(evaluationJSON);
   }
 
- 
+
   /**
    * Lists all your evaluations.
    *
@@ -1071,15 +1076,15 @@ public class BigMLClient {
     return evaluation.list(queryString);
   }
 
- 
+
   /**
    * Updates an evaluation.
    *
    * PUT /andromeda/evaluation/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-   * HTTP/1.1 Host: bigml.io 
+   * HTTP/1.1 Host: bigml.io
    * Content-Type: application/json
    *
-   * @param evaluationId	a unique identifier in the form evauation/id where id 
+   * @param evaluationId	a unique identifier in the form evauation/id where id
    * 						is a string of 24 alpha-numeric chars.
    * @param changes			set of parameters to update the evaluation. Optional
    *
@@ -1088,12 +1093,12 @@ public class BigMLClient {
     return evaluation.update(evaluationId, changes);
   }
 
- 
+
   /**
    * Updates an evaluation.
    *
    * PUT /andromeda/evaluation/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-   * HTTP/1.1 Host: bigml.io 
+   * HTTP/1.1 Host: bigml.io
    * Content-Type: application/json
    *
    * @param evaluationJSON	an evaluation JSONObject
@@ -1103,14 +1108,14 @@ public class BigMLClient {
     return evaluation.update(evaluationJSON, changes);
   }
 
- 
+
   /**
    * Deletes an evaluation.
    *
    * DELETE /andromeda/evaluation/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * HTTP/1.1
    *
-   * @param evaluationId 	a unique identifier in the form evaluation/id where id is a 
+   * @param evaluationId 	a unique identifier in the form evaluation/id where id is a
    * 						string of 24 alpha-numeric chars.
    *
    */
@@ -1118,7 +1123,7 @@ public class BigMLClient {
     return evaluation.delete(evaluationId);
   }
 
-  
+
   /**
    * Deletes an evaluation.
    *
@@ -1131,16 +1136,16 @@ public class BigMLClient {
   public JSONObject deleteEvaluation(final JSONObject evaluationJSON) {
     return evaluation.delete(evaluationJSON);
   }
- 
-  
-  
+
+
+
  //################################################################
  // #
  // # Ensembles
  // # https://bigml.com/developers/ensembles
  // #
  // ################################################################
-  
+
   /**
    * Creates a new ensemble.
    *
@@ -1159,11 +1164,11 @@ public class BigMLClient {
   public JSONObject createEnsemble(final String datasetId, String args, Integer waitTime, Integer tries) {
     return ensemble.create(datasetId, args, waitTime, tries);
   }
-  
-  
+
+
   /**
    * Retrieves an ensemble.
-   * 
+   *
    * An ensemble is an evolving object that is processed until it
    * reaches the FINISHED or FAULTY state, the method will return a
    * JSONObject that encloses the ensemble values and state info
@@ -1172,18 +1177,18 @@ public class BigMLClient {
    * GET /andromeda/ensemble/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * HTTP/1.1 Host: bigml.io
    *
-   * @param ensembleId 		a unique identifier in the form ensemble/id where id 
+   * @param ensembleId 		a unique identifier in the form ensemble/id where id
    * 						is a string of 24 alpha-numeric chars.
    *
    */
   public JSONObject getEnsemble(final String ensembleId) {
     return ensemble.get(ensembleId);
-  }        		  
- 
-  
+  }
+
+
   /**
    * Retrieves an ensemble.
-   * 
+   *
    * An ensemble is an evolving object that is processed until it
    * reaches the FINISHED or FAULTY state, the method will return a
    * JSONObject that encloses the ensemble values and state info
@@ -1198,20 +1203,20 @@ public class BigMLClient {
   public JSONObject getEnsemble(final JSONObject ensembleJSON) {
     return ensemble.get(ensembleJSON);
   }
-  
-  
-  
+
+
+
   /**
    * Check whether a ensemble's status is FINISHED.
    *
-   * @param ensembleId 		a unique identifier in the form ensemble/id where id 
+   * @param ensembleId 		a unique identifier in the form ensemble/id where id
    * 						is a string of 24 alpha-numeric chars.
    *
    */
   public boolean ensembleIsReady(final String ensembleId) {
     return ensemble.isReady(ensembleId);
   }
-  
+
   /**
    * Check whether a ensemble's status is FINISHED.
    *
@@ -1222,7 +1227,7 @@ public class BigMLClient {
     return ensemble.isReady(ensembleJSON);
   }
 
- 
+
   /**
    * Lists all your ensembles.
    *
@@ -1234,16 +1239,16 @@ public class BigMLClient {
   public JSONObject listEnsembles(final String queryString) {
     return ensemble.list(queryString);
   }
-  
-  
+
+
   /**
    * Updates an ensemble.
    *
    * PUT /andromeda/ensemble/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-   * HTTP/1.1 Host: bigml.io 
+   * HTTP/1.1 Host: bigml.io
    * Content-Type: application/json
    *
-   * @param ensembleId		a unique identifier in the form ensemble/id where id 
+   * @param ensembleId		a unique identifier in the form ensemble/id where id
    * 						is a string of 24 alpha-numeric chars.
    * @param changes			set of parameters to update the ensemble. Optional
    *
@@ -1252,12 +1257,12 @@ public class BigMLClient {
     return ensemble.update(ensembleId, changes);
   }
 
- 
+
   /**
    * Updates an ensemble.
    *
    * PUT /andromeda/ensemble/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-   * HTTP/1.1 Host: bigml.io 
+   * HTTP/1.1 Host: bigml.io
    * Content-Type: application/json
    *
    * @param ensembleJSON	an ensemble JSONObject
@@ -1266,22 +1271,22 @@ public class BigMLClient {
   public JSONObject updateEnsemble(final JSONObject ensembleJSON, final JSONObject changes) {
     return ensemble.update(ensembleJSON, changes);
   }
-  
-  
+
+
   /**
    * Deletes an ensemble.
    *
    * DELETE /andromeda/ensemble/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
    * HTTP/1.1
    *
-   * @param ensembleId 		a unique identifier in the form ensemble/id where id is a 
+   * @param ensembleId 		a unique identifier in the form ensemble/id where id is a
    * 						string of 24 alpha-numeric chars.
    *
    */
   public JSONObject deleteEnsemble(final String ensembleId) {
     return ensemble.delete(ensembleId);
   }
-  
+
   /**
    * Deletes an ensemble.
    *
@@ -1294,6 +1299,6 @@ public class BigMLClient {
   public JSONObject deleteEnsemble(final JSONObject ensembleJSON) {
     return ensemble.delete(ensembleJSON);
   }
-  
-  
+
+
 }
