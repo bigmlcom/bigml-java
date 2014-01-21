@@ -160,7 +160,7 @@ public class Tree {
   * .predict({"petal length": 1})
   *
   */
-  public Object predict(final JSONObject inputData) {
+  public HashMap<Object, Object> predict(final JSONObject inputData) {
 	  return predict(inputData, false);
 
   }
@@ -173,7 +173,7 @@ public class Tree {
   * .predict({"petal length": 1})
   *
   */
-  public Object predict(final JSONObject inputData, Boolean withConfidence) {
+  public HashMap<Object, Object> predict(final JSONObject inputData, Boolean withConfidence) {
 	if (withConfidence == null) {
 		withConfidence = false;
 	}
@@ -247,16 +247,12 @@ public class Tree {
 	  }
 	}
 
-	if (withConfidence) {
-		HashMap<String, Object> result = new HashMap<String, Object>();
-		result.put("count", this.count);
-		result.put("prediction", this.output);
-		result.put("confidence", this.confidence);
-		result.put("distribution", this.distribution);
-		return result;
-	}
-
-    return this.output;
+        HashMap<Object, Object> result = new HashMap<Object, Object>();
+        result.put("count", this.count);
+        result.put("prediction", this.output);
+        if (withConfidence) result.put("confidence", this.confidence);
+        result.put("distribution", this.distribution);
+        return result;
   }
 
 

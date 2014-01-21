@@ -53,16 +53,16 @@ import org.json.simple.JSONValue;
  * Uses a BigML remote model to build a local version that can be used
  * to generate prediction locally.
  *
- */ 
+ */
 public class LocalPredictiveModel {
-	
+
  /**
   * Logging
   */
   static Logger logger = Logger.getLogger(LocalPredictiveModel.class.getName());
-  
-  
-  
+
+
+
   // Map operator str to its corresponding java operator
   static HashMap<String, String> JAVA_TYPES = new HashMap<String, String>();
   static {
@@ -87,16 +87,16 @@ public class LocalPredictiveModel {
 	  JAVA_TYPES.put(Constants.OPTYPE_NUMERIC+"-day-of-month", "Integer");
 	  JAVA_TYPES.put(Constants.OPTYPE_NUMERIC+"-boolean", "Boolean");
   }
-  
+
   private JSONObject fields;
   private JSONObject root;
   private Tree tree;
   private String objectiveField;
-  
-  
- /** 
+
+
+ /**
   * Constructor
-  * 
+  *
   * @param model	the json representation for the remote model
   */
   public LocalPredictiveModel(JSONObject model) throws Exception {
@@ -109,13 +109,13 @@ public class LocalPredictiveModel {
       if (!BigMLClient.getInstance().modelIsReady(model)) {
         throw new Exception("The model isn't finished yet");
       }
-      
+
       String prefix = Utils.getJSONObject(model, "object")!=null ? "object." : "";
-      
+
       this.fields = (JSONObject) Utils.getJSONObject(model, prefix+"model.fields");
       if (Utils.getJSONObject(model, prefix+"model.model_fields")!=null) {
     	  this.fields = (JSONObject) Utils.getJSONObject(model, prefix+"model.model_fields");
-    	  
+
     	  JSONObject modelFields = (JSONObject) Utils.getJSONObject(model, prefix+"model.fields");
     	  Iterator iter = this.fields.keySet().iterator();
     	  while (iter.hasNext()) {
@@ -134,83 +134,83 @@ public class LocalPredictiveModel {
     		  field.put("name", modelField.get("name"));
     	  }
       }
-      
+
       this.root = (JSONObject) Utils.getJSONObject(model, prefix+"model.root");
-		
+
       String objectiveField;
-      Object objectiveFields = Utils.getJSONObject(model, prefix+"objective_fields");  
+      Object objectiveFields = Utils.getJSONObject(model, prefix+"objective_fields");
       objectiveField = objectiveFields instanceof JSONArray ?
     		  		(String) ((JSONArray) objectiveFields).get(0) :
     		  		(String) objectiveFields;
-		
-      // Check duplicated field names		  		
-      uniquifyVarnames();	 		
-    		  		
+
+      // Check duplicated field names
+      uniquifyVarnames();
+
       this.tree = new Tree(root, this.fields, objectiveField);
     } catch (Exception e) {
       logger.error("Invalid model structure", e);
       throw new InvalidModelException();
     }
   }
-	
-  
+
+
  /**
   * Describes and return the fields for this model.
   */
   public JSONObject fields() {
     return tree.listFields();
   }
- 
-  
+
+
   /**
    * Makes a prediction based on a number of field values.
    *
    * The input fields must be keyed by field name.
    */
-   public Object predict(final String args) throws InputDataParseException {
+   public HashMap<Object, Object> predict(final String args) throws InputDataParseException {
     return predict(args, null);
    }
 
-   
+
    /**
     * Makes a prediction based on a number of field values.
     *
     * The input fields must be keyed by field name.
     */
-   public Object predict(final String args, Boolean byName) throws InputDataParseException {
+   public HashMap<Object, Object> predict(final String args, Boolean byName) throws InputDataParseException {
 	   return predict(args, byName, null);
    }
-   
-   
+
+
   /**
    * Makes a prediction based on a number of field values.
    *
    * The input fields must be keyed by field name.
    */
-  public Object predict(final String args, Boolean byName, Boolean withConfidence) throws InputDataParseException {
+   public HashMap<Object, Object> predict(final String args, Boolean byName, Boolean withConfidence) throws InputDataParseException {
     if (byName == null) {
       byName = true;
     }
     if (withConfidence == null) {
     	withConfidence = false;
     }
-    
+
     JSONObject argsData = (JSONObject) JSONValue.parse(args);
     if (!args.equals("") && !args.equals("") && argsData==null) {
     	throw new InputDataParseException("Input data format not valid");
     }
     JSONObject inputData = argsData;
-    
+
     if (!byName) {
       inputData = new JSONObject();
       Iterator iter = argsData.keySet().iterator();
       while (iter.hasNext()) {
         String key = (String) iter.next();
-        String fieldName = (String) Utils.getJSONObject(fields, key+".name"); 
+        String fieldName = (String) Utils.getJSONObject(fields, key+".name");
         inputData.put(fieldName, argsData.get(key));
       }
     }
-    
+
     return tree.predict(inputData, withConfidence);
   }
 
@@ -223,7 +223,7 @@ public class LocalPredictiveModel {
   public String rules(final int depth) {
     return tree.rules(depth);
   }
-  
+
 
   /**
    * Writes a java method that implements the model.
@@ -238,36 +238,36 @@ public class LocalPredictiveModel {
     String methodReturn = "Object";
     String methodName = "";
     String objectiveFieldName = (String) Utils.getJSONObject(fields, tree.getObjectiveField()+".name");
-    
+
     String methodParams = "";
     while (iter.hasNext()) {
       String key = (String) iter.next();
-      
+
       String dataType = (String) Utils.getJSONObject(fields, key+".datatype");
       String opType = (String) Utils.getJSONObject(fields, key+".optype");
       String name = (String) Utils.getJSONObject(fields, key+".name");
-      
+
       if (objectiveFieldName.equals(name)) {
     	  methodName = objectiveFieldName;
     	  methodReturn = JAVA_TYPES.get(opType+"-"+dataType);
       } else {
           methodParams += "final " + JAVA_TYPES.get(opType+"-"+dataType) + " " + Utils.slugify(name) + ", ";
       }
-      
+
     }
     methodParams = methodParams.substring(0, methodParams.length()-2);
-	  
+
     return MessageFormat.format("public {0} predict_{1}({2}) '{'\n{3}\n    return null;\n'}'\n",
 			  	methodReturn,
 			  	Utils.slugify(methodName),
 			  	methodParams,
 			  	tree.javaBody(1, methodReturn));
   }*/
-  
-  
-  
+
+
+
   /*
-   * Tests if the fields names are unique. If they aren't, a 
+   * Tests if the fields names are unique. If they aren't, a
    * transformation is applied to ensure unicity.
    */
   private void uniquifyVarnames() {
@@ -281,7 +281,7 @@ public class LocalPredictiveModel {
 	  }
 	  return;
   }
-  
+
   /*
    * If a field name is repeated, it will be transformed adding its
    * column number. If that combination is also a field name, the
@@ -292,7 +292,7 @@ public class LocalPredictiveModel {
 	  String objectiveFieldId = (String) Utils.getJSONObject(this.fields, objectiveField+".name");
 	  HashSet<String> uniqueNames = new HashSet<String>();
 	  uniqueNames.add(objectiveFieldId);
-	  
+
 	  Iterator iter = this.fields.keySet().iterator();
 	  ArrayList<String> fieldIds = new ArrayList<String>();
 	  while (iter.hasNext()) {
@@ -301,7 +301,7 @@ public class LocalPredictiveModel {
 			fieldIds.add(fieldId);
 		}
 	  }
-	  
+
 	  for (String fieldId : fieldIds) {
 		JSONObject fieldJson = (JSONObject) Utils.getJSONObject(this.fields, fieldId);
 		String newName = (String) Utils.getJSONObject(fieldJson, "name");
@@ -315,5 +315,5 @@ public class LocalPredictiveModel {
 		uniqueNames.add(newName);
 	  }
   }
-  
+
 }

@@ -2,6 +2,8 @@ package org.bigml.binding;
 
 import static org.junit.Assert.assertTrue;
 
+import java.util.HashMap;
+
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
@@ -19,52 +21,56 @@ public class LocalModelsStepdefs {
 
 	LocalPredictiveModel predictiveModel;
 	CommonStepdefs commonSteps = new CommonStepdefs();
-	
-	
+
+
   	@Autowired
     private ContextRepository context;
-  	
-  	
+
+
   	@Given("^I create a local model$")
     public void I_create_a_local_model() throws Exception {
-  	  predictiveModel = new LocalPredictiveModel(context.model);
-      assertTrue("", predictiveModel != null);
+            predictiveModel = new LocalPredictiveModel(context.model);
+            assertTrue("", predictiveModel != null);
     }
-  	
-  	
+
+
   	@Then("^the local prediction by name for \"(.*)\" is \"([^\"]*)\"$")
     public void the_local_prediction_by_name_for_is(String args, String pred) {
   	  try {
-  		  String prediction = (String) predictiveModel.predict(args, false);
-  		  assertTrue("", prediction!=null && prediction.equals(pred));
+              HashMap<Object, Object> p =  predictiveModel.predict(args, false);
+              String prediction = (String) p.get("prediction");
+              assertTrue("", prediction!=null && prediction.equals(pred));
   	  } catch (InputDataParseException parseException) {
-  		  assertTrue("", false);
+              assertTrue("", false);
   	  }
     }
 
     @Then("^the local prediction for \"(.*)\" is \"([^\"]*)\"$")
     public void the_local_prediction_for_is(String args, String pred) {
     	try {
-    		String prediction = (String) predictiveModel.predict(args, null);
-    		assertTrue("", prediction!=null && prediction.equals(pred));
+            HashMap<Object, Object> p =  predictiveModel.predict(args, null);
+            String prediction = (String) p.get("prediction");
+            assertTrue("", prediction!=null && prediction.equals(pred));
     	} catch (InputDataParseException parseException) {
-    		assertTrue("", false);
-  	  	}
+            assertTrue("", false);
+        }
     }
-    
+
 
     @Then("^the local prediction by name=(true|false) for \"(.*)\" is \"([^\"]*)\"$")
     public void the_local_prediction_byname_for_is(String by_name, String args, String pred) {
     	try {
     		Boolean byName = new Boolean(by_name);
-    		String prediction = (String) predictiveModel.predict(args, byName);
+                HashMap<Object, Object> p =
+                    predictiveModel.predict(args, byName);
+    		String prediction = (String) p.get("prediction");
     		assertTrue("", prediction!=null && prediction.equals(pred));
     	} catch (InputDataParseException parseException) {
     		assertTrue("", false);
   	  	}
     }
- 
-    
+
+
     @Then("^\"(.*)\" field\'s name is changed to \"(.*)\"$")
     public void field_name_to_new_name(String fieldId, String newName) {
     	JSONObject field = (JSONObject) Utils.getJSONObject((JSONObject) predictiveModel.fields(), fieldId);
@@ -73,6 +79,6 @@ public class LocalModelsStepdefs {
     	}
     	assertTrue("", field.get("name").equals(newName));
     }
-    
-   
+
+
 }
