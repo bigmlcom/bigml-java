@@ -31,14 +31,14 @@ public abstract class AbstractResource {
 
   // Logging
   Logger logger = LoggerFactory.getLogger(AbstractResource.class);
-  
+
   public final static String SOURCE_PATH = "source";
   public final static String DATASET_PATH = "dataset";
   public final static String MODEL_PATH = "model";
   public final static String PREDICTION_PATH = "prediction";
   public final static String EVALUATION_PATH = "evaluation";
   public final static String ENSEMBLE_PATH = "ensemble";
-  
+
   // Base Resource regular expressions
   static String SOURCE_RE = "^" + SOURCE_PATH + "/[a-f,0-9]{24}$";
   static String DATASET_RE = "^(public/|shared/|)" + DATASET_PATH + "/[a-f,0-9]{24}$";
@@ -46,10 +46,10 @@ public abstract class AbstractResource {
   static String PREDICTION_RE = "^" + PREDICTION_PATH + "/[a-f,0-9]{24}$";
   static String EVALUATION_RE = "^" + EVALUATION_PATH + "/[a-f,0-9]{24}$";
   static String ENSEMBLE_RE = "^" + ENSEMBLE_PATH + "/[a-f,0-9]{24}$";
-  
+
   // Headers
   static String JSON = "application/json";
-  
+
   // HTTP Status Codes from https://bigml.com/developers/status_codes
   public static int HTTP_OK = 200;
   public static int HTTP_CREATED = 201;
@@ -66,7 +66,7 @@ public abstract class AbstractResource {
   public static int HTTP_UNSUPPORTED_MEDIA_TPE = 415;
   public static int HTTP_INTERNAL_SERVER_ERROR = 500;
   public static int HTTP_SERVICE_UNAVAILABLE = 500;
-  
+
   // Resource status codes
   public static int WAITING = 0;
   public static int QUEUED = 1;
@@ -78,8 +78,8 @@ public abstract class AbstractResource {
   public static int FAULTY = -1;
   public static int UNKNOWN = -2;
   public static int RUNNABLE = -3;
-  
-  
+
+
   static HashMap<Integer, String> STATUSES = new HashMap<Integer, String>();
   static {
     STATUSES.put(WAITING, "WAITING");
@@ -93,27 +93,27 @@ public abstract class AbstractResource {
     STATUSES.put(UNKNOWN, "UNKNOWN");
     STATUSES.put(RUNNABLE, "RUNNABLE");
   }
-  
+
 //  BIGML_USERNAME=xxxx
 //  BIGML_API_KEY=yyyyyyyyyyy
 //  BIGML_AUTH="username=$BIGML_USERNAME;api_key=$BIGML_API_KEY"
   protected String bigmlUser;
   protected String bigmlApiKey;
   protected String bigmlAuth;
-  
+
   protected boolean devMode;
-  
+
   //Base URL
   protected String BIGML_URL;
-  
+
   protected String SOURCE_URL;
   protected String DATASET_URL;
   protected String MODEL_URL;
   protected String PREDICTION_URL;
   protected String EVALUATION_URL;
   protected String ENSEMBLE_URL;
-  
-  
+
+
   protected void init() {
 	  try {
 		  BIGML_URL = BigMLClient.getInstance(devMode).getBigMLUrl();
@@ -124,10 +124,10 @@ public abstract class AbstractResource {
 		  EVALUATION_URL = BIGML_URL + EVALUATION_PATH;
 		  ENSEMBLE_URL = BIGML_URL + ENSEMBLE_PATH;
 	  } catch (AuthenticationException ae) {
-		  
+
 	  }
   }
-  
+
 
   /**
    * Create a new resource.
@@ -146,12 +146,12 @@ public abstract class AbstractResource {
 
     try {
       HttpClient httpclient = Utils.httpClient();
-      HttpPost httppost = new HttpPost(urlString + bigmlAuth); 
+      HttpPost httppost = new HttpPost(urlString + bigmlAuth);
       httppost.setHeader("Content-Type", JSON);
 
       StringEntity reqEntity = new StringEntity(json);
       httppost.setEntity(reqEntity);
-      
+
       HttpResponse response = httpclient.execute(httppost);
       HttpEntity resEntity = response.getEntity();
       code = response.getStatusLine().getStatusCode();
@@ -181,23 +181,23 @@ public abstract class AbstractResource {
     return result;
   }
 
-  
+
   /**
    * Retrieve a resource.
    */
   public JSONObject getResource(final String urlString) {
 	return getResource(urlString, null, null, null);
   }
-  
-  
+
+
   /**
    * Retrieve a resource.
    */
   public JSONObject getResource(final String urlString, final String queryString) {
     return getResource(urlString, queryString, null, null);
   }
-  
-  
+
+
   /**
    * Retrieve a resource.
    */
@@ -215,13 +215,13 @@ public abstract class AbstractResource {
 
     try {
       String query = queryString != null ? queryString : "";
-      String auth = apiUser!=null && apiKey!=null ? 
+      String auth = apiUser!=null && apiKey!=null ?
     	  "?username=" + apiUser + ";api_key=" + apiKey + ";" :
     	  bigmlAuth;
-      
+
       HttpClient httpclient = Utils.httpClient();
       HttpGet httpget = new HttpGet(urlString + auth + query);
-      
+
       httpget.setHeader("Accept", JSON);
 
       HttpResponse response = httpclient.execute(httpget);
@@ -253,9 +253,9 @@ public abstract class AbstractResource {
     result.put("error", error);
     return result;
   }
-  
-  
-  
+
+
+
   /**
    * List resources.
    */
@@ -304,7 +304,7 @@ public abstract class AbstractResource {
     return result;
   }
 
-  
+
   /**
    * Update a resource.
    */
@@ -322,7 +322,7 @@ public abstract class AbstractResource {
     try {
       HttpClient httpclient = Utils.httpClient();
       HttpPut httpput = new HttpPut(urlString + bigmlAuth);
-      
+
       httpput.setHeader("Content-Type", JSON);
       StringEntity reqEntity = new StringEntity(json);
       httpput.setEntity(reqEntity);
@@ -357,13 +357,13 @@ public abstract class AbstractResource {
     return result;
   }
 
-  
+
   /**
    * Delete a resource.
    */
   public JSONObject deleteResource(final String urlString) {
     int code = HTTP_INTERNAL_SERVER_ERROR;
-    
+
     JSONObject error = new JSONObject();
     JSONObject status = new JSONObject();
     status.put("code", code);
@@ -397,7 +397,7 @@ public abstract class AbstractResource {
     return result;
   }
 
-  
+
   /**
    * Return a dictionary of fields
    *
@@ -408,9 +408,9 @@ public abstract class AbstractResource {
       logger.info("Wrong resource id");
       return null;
     }
-    
+
     JSONObject resource = get(BIGML_URL + resourceId);
-    
+
     JSONObject obj = (JSONObject) resource.get("object");
     if (obj == null) {
       obj = (JSONObject) resource.get("error");
@@ -427,7 +427,7 @@ public abstract class AbstractResource {
     return null;
   }
 
-  
+
   /**
    * Maps status code to string.
    *
@@ -452,7 +452,7 @@ public abstract class AbstractResource {
     }
   }
 
-  
+
   /**
    * Check whether a resource' status is FINISHED.
    *
@@ -467,17 +467,20 @@ public abstract class AbstractResource {
     if (obj == null) {
       obj = (JSONObject) resource.get("error");
     }
+
+    if (obj == null) return false;
+
     JSONObject status = (JSONObject) obj.get("status");
     return ((Integer) resource.get("code") == HTTP_OK && (Long) status.get("code") == FINISHED);
   }
-   
-  
+
+
   // ################################################################
   // #
   // # Abstract methods
   // #
   // ################################################################
-  
+
   /**
    * Retrieve a resource.
    *
@@ -531,5 +534,5 @@ public abstract class AbstractResource {
    *
    */
   abstract public JSONObject delete(final JSONObject resource);
-  
+
 }
