@@ -200,50 +200,37 @@ public class Tree {
 			return child.predict(inputData, withConfidence);
 		}
 		if (operator.equals(Constants.OPERATOR_LT)) {
-			if (opType.equals(Constants.OPTYPE_DATETIME) && ((String) inputValue).compareTo((String) value)<0) {
-				return child.predict(inputData, withConfidence);
-			}
-			if (opType.equals(Constants.OPTYPE_TEXT) && termMatches(inputData, (String) inputValue, field, term) < ((Number)value).doubleValue()) {
-				return child.predict(inputData, withConfidence);
-			}
-			if (!opType.equals(Constants.OPTYPE_DATETIME) && !opType.equals(Constants.OPTYPE_TEXT) && ((Number)inputValue).doubleValue()<((Number)value).doubleValue()) {
-				return child.predict(inputData, withConfidence);
-			}
+                    if (opType.equals(Constants.OPTYPE_NUMERIC) && ((Number)inputValue).doubleValue()<((Number)value).doubleValue()) {
+                        return child.predict(inputData, withConfidence);
+                    }
+                    if (opType.equals(Constants.OPTYPE_TEXT) && termMatches(inputData, (String) inputValue, field, term) < ((Number)value).doubleValue()) {
+                        return child.predict(inputData, withConfidence);
+                    }
 		}
 		if (operator.equals(Constants.OPERATOR_LE)) {
-			if (opType.equals(Constants.OPTYPE_DATETIME) && ((String) inputValue).compareTo((String) value)<=0) {
-				return child.predict(inputData, withConfidence);
-			}
-			if (opType.equals(Constants.OPTYPE_TEXT) && termMatches(inputData, (String) inputValue,field, term)<=((Number)value).doubleValue()) {
-				return child.predict(inputData, withConfidence);
-			}
-			if (!opType.equals(Constants.OPTYPE_DATETIME) && !opType.equals(Constants.OPTYPE_TEXT) && ((Number)inputValue).doubleValue()<=((Number)value).doubleValue()) {
-				return child.predict(inputData, withConfidence);
-			}
+                    if (opType.equals(Constants.OPTYPE_NUMERIC) && ((Number)inputValue).doubleValue()<=((Number)value).doubleValue()) {
+                        return child.predict(inputData, withConfidence);
+                    }
+                    if (opType.equals(Constants.OPTYPE_TEXT) && termMatches(inputData, (String) inputValue,field, term)<=((Number)value).doubleValue()) {
+                        return child.predict(inputData, withConfidence);
+                    }
 		}
 		if (operator.equals(Constants.OPERATOR_GE)) {
-			if (opType.equals(Constants.OPTYPE_DATETIME) && ((String) inputValue).compareTo((String) value)>=0) {
-				return child.predict(inputData, withConfidence);
-			}
-			if (opType.equals(Constants.OPTYPE_TEXT) && termMatches(inputData, (String) inputValue, field, term)>=((Number)value).doubleValue()) {
-				return child.predict(inputData);
-			}
-			if (!opType.equals(Constants.OPTYPE_DATETIME) && !opType.equals(Constants.OPTYPE_TEXT) && ((Number)inputValue).doubleValue()>=((Number)value).doubleValue()) {
-				return child.predict(inputData, withConfidence);
-			}
+                    if (opType.equals(Constants.OPTYPE_NUMERIC) && ((Number)inputValue).doubleValue()>=((Number)value).doubleValue()) {
+                        return child.predict(inputData, withConfidence);
+                    }
+                    if (opType.equals(Constants.OPTYPE_TEXT) && termMatches(inputData, (String) inputValue, field, term)>=((Number)value).doubleValue()) {
+                        return child.predict(inputData, withConfidence);
+                    }
 		}
 		if (operator.equals(Constants.OPERATOR_GT)) {
-			if (opType.equals(Constants.OPTYPE_DATETIME) && ((String) inputValue).compareTo((String) value)>0) {
-				return child.predict(inputData, withConfidence);
-			}
-			if (opType.equals(Constants.OPTYPE_TEXT) && termMatches(inputData, (String) inputValue, field, term) > ((Number)value).doubleValue()) {
-				return child.predict(inputData, withConfidence);
-			}
-			if (!opType.equals(Constants.OPTYPE_DATETIME) && !opType.equals(Constants.OPTYPE_TEXT) && ((Number)inputValue).doubleValue()>((Number)value).doubleValue()) {
-				return child.predict(inputData, withConfidence);
-			}
+                    if (opType.equals(Constants.OPTYPE_NUMERIC) && ((Number)inputValue).doubleValue()>((Number)value).doubleValue()) {
+                        return child.predict(inputData, withConfidence);
+                    }
+                    if (opType.equals(Constants.OPTYPE_TEXT) && termMatches(inputData, (String) inputValue, field, term) > ((Number)value).doubleValue()) {
+                        return child.predict(inputData, withConfidence);
+                    }
 		}
-
 	  }
 	}
 

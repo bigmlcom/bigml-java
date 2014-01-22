@@ -22,6 +22,7 @@ public class CSVReaderTest extends TestCase {
                 CSVReaderTest.class.getResource("/iris-fields.json").getFile();
             FileReader r = new FileReader(new File(fn));
             irisFields = (JSONObject) JSONValue.parse(r);
+            r.close();
             assertNotNull(irisFields);
         }
     }
