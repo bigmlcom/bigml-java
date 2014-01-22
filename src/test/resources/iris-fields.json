@@ -22,7 +22,7 @@
     "name" : "sepal length",
     "column_number" : 0
   },
-  "0000001": {
+  "000001": {
     "id" : "000001",
     "preferred" : true,
     "summary" : {

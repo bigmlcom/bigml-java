@@ -53,6 +53,11 @@ public class LocalEnsemble {
     private MultiModel multiModel;
 
 
+    public LocalEnsemble(JSONObject ensemble, String storage, int max)
+        throws Exception {
+        this(ensemble);
+    }
+
     /**
      * Constructor
      *
@@ -127,7 +132,7 @@ public class LocalEnsemble {
      * field ids or names to their values as Java objects.  See also
      * predict(String, Boolean, Integer, Boolean).
      */
-    public Map<Object, Object> predict(Map<Object, Object> inputs,
+    public Map<Object, Object> predict(Map<String, Object> inputs,
                                        Boolean byName,
                                        Integer method,
                                        Boolean conf) throws Exception {

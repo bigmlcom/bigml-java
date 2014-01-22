@@ -10,24 +10,27 @@ import java.io.FileReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 
 import org.json.simple.JSONObject;
-import org.supercsv.io.CsvListReader;
-import org.supercsv.io.ICsvListReader;
-import org.supercsv.prefs.CsvPreference;
 import org.supercsv.cellprocessor.ift.CellProcessor;
+import org.supercsv.cellprocessor.Optional;
 import org.supercsv.cellprocessor.ParseDouble;
 import org.supercsv.cellprocessor.ParseLong;
+import org.supercsv.exception.SuperCsvCellProcessorException;
+import org.supercsv.io.CsvMapReader;
+import org.supercsv.io.ICsvMapReader;
+import org.supercsv.prefs.CsvPreference;
 
 import org.bigml.binding.utils.Utils;
 
 /**
  * Reading input values from a CSV.
  */
-public class CSVReader {
+public class CSVReader implements Iterator<Map<String, Object>> {
 
     public CSVReader(String filename, JSONObject fields)
         throws IOException, FileNotFoundException {
@@ -43,31 +46,37 @@ public class CSVReader {
                      String[] names, CsvPreference prefs)
         throws IOException, FileNotFoundException {
         try {
-            this.listreader =
-                new CsvListReader(new FileReader(filename), prefs);
+            this.reader =
+                new CsvMapReader(new FileReader(filename), prefs);
 
             if (names == null) {
-                this.header = listreader.getHeader(true);
+                this.header = reader.getHeader(true);
             } else {
                 this.header = names;
             }
             createProcessors(fields);
             readNext();
         } catch (IOException e) {
-            if( this.listreader != null ) {
-                this.listreader.close();
-            }
+            close();
             throw e;
         }
     }
 
-    public Map<Object, Object> next() {
+    public void close() throws IOException {
+        if( this.reader != null ) {
+            this.reader.close();
+        }
+    }
+
+    public Map<String, Object> next() {
         if (this.nextLine == null) return null;
-        Map<Object, Object> result = new HashMap<Object, Object>();
-        for (int i = 0; i < this.header.length; i++)
-            result.put(this.header[i], this.nextLine.get(i));
+        Map<String, Object> result = nextLine;
         readNext();
         return result;
+    }
+
+    public void remove() {
+        throw new UnsupportedOperationException();
     }
 
     public boolean hasNext() {
@@ -87,46 +96,53 @@ public class CSVReader {
                 String msg = "Cannot find field name or id " + col;
                 throw new IllegalArgumentException(msg);
             }
-            processors[i] = createProcessor(field);
+            this.processors[i] = createProcessor(field);
         }
     }
 
     private static CellProcessor createProcessor(final JSONObject field) {
         String datatype = (String) field.get("datatype");
-        CellProcessor p = null;
         if (datatype == null) {
             String msg = "Invalid field: " + field;
             throw new IllegalArgumentException(msg);
         }
-        if (datatype == "int8" || datatype == "int16"
-            || datatype == "int32" || datatype == "int64"
-            || datatype == "integer") {
-            p = new ParseLong();
-        } else if (datatype == "float" || datatype == "double") {
-            p = new ParseDouble();
+        if (datatype.equals("int8") || datatype.equals("int16")
+            || datatype.equals("int32") || datatype.equals("int64")
+            || datatype.equals("integer")) {
+            return new Optional(new ParseLong());
+        } else if (datatype.equals("float") || datatype.equals("double")) {
+            return new Optional(new ParseDouble());
         }
 
-        return p;
+        return new Optional();
+    }
+
+    private Map<String, Object> readLine() throws IOException {
+        try {
+            return this.reader.read(this.header, this.processors);
+        } catch (SuperCsvCellProcessorException e) {
+            return new HashMap<String, Object>();
+        }
     }
 
     private void readNext() {
         this.nextLine = null;
-        List<Object> line = null;
+        Map<String, Object> line = null;
         try {
-            while ((line = this.listreader.read(this.processors)) != null) {
+            while ((line = readLine()) != null) {
                 if (line.size() == this.header.length) {
                     this.nextLine = line;
                     return;
                 }
             }
-            if (line == null) this.listreader.close();
+            if (line == null) this.reader.close();
         } catch (IOException e) {
             this.nextLine = null;
         }
     }
 
-    private ICsvListReader listreader;
+    private ICsvMapReader reader;
     private CellProcessor[] processors;
     private String[] header;
-    private List<Object> nextLine;
+    private Map<String, Object> nextLine;
 }
