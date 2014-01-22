@@ -89,11 +89,22 @@ public class LocalEnsemble {
 
     /**
      * Accessor to the full list of fields used by this ensemble.
-     * It's obtained from the first model in the ensemble.
+     * It's obtained from the union of fields in all models of the
+     * ensemble.
      */
     public JSONObject getFields() {
-        JSONObject model = (JSONObject) this.models.get(0);
-        return (JSONObject) Utils.getJSONObject(model, "object.model.fields");
+        JSONObject result = new JSONObject();
+        for (int i = 0; i < this.modelsIds.length; i++) {
+            JSONObject model = (JSONObject) this.models.get(i);
+            JSONObject fields =
+                (JSONObject) Utils.getJSONObject(model, "object.model.fields");
+                for (Object k : fields.keySet()) {
+                    if (null == result.get(k)) {
+                        result.put(k, fields.get(k));
+                    }
+                }
+        }
+        return result;
     }
 
     /**
