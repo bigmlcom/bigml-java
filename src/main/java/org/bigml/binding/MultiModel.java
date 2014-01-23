@@ -27,24 +27,24 @@ import org.json.simple.JSONObject;
 
 
 public class MultiModel {
-	
+
 	/**
 	 * Logging
 	 */
 	static Logger logger = Logger.getLogger(MultiModel.class.getName());
-	
+
 	private JSONArray models;
 	private MultiVote votes;
-	
-	
-	/** 
+
+
+	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param ensemble	the json representation for the remote ensemble
 	 */
 	public MultiModel(Object models) throws Exception {
 		super();
-		
+
 		if (models instanceof JSONArray) {
 			this.models = (JSONArray) models;
 		} else {
@@ -52,16 +52,16 @@ public class MultiModel {
 			this.models.add(models);
 		}
 	}
-	
-	
+
+
 	/**
 	 * Lists all the model/ids that compound the multi model.
 	 */
 	public JSONArray listModels() {
 		return this.models;
 	}
-	
-	
+
+
 	/**
 	 * Makes a prediction based on the prediction made by every model.
 	 *
@@ -83,13 +83,13 @@ public class MultiModel {
 		if (withConfidence == null) {
 			withConfidence = false;
 		}
-		
+
 		votes = this.generateVotes(inputData, byName, withConfidence);
 
 	    return votes.combine(method, withConfidence);
 	}
-	
-	
+
+
 	/**
 	 * Generates a MultiVote object that contains the predictions
 	 * made by each of the models.
@@ -106,8 +106,8 @@ public class MultiModel {
 		for (int i=0; i<models.size(); i++) {
 			JSONObject model = (JSONObject) models.get(i);
 			LocalPredictiveModel localModel = new LocalPredictiveModel(model);
-			
-			HashMap<Object, Object> prediction = (HashMap<Object, Object>) localModel.predict(inputData, byName, withConfidence);
+
+			HashMap<Object, Object> prediction = localModel.predict(inputData, byName, withConfidence);
 
 			HashMap<Object, Integer> distributionHash = new HashMap<Object, Integer>();
 			JSONArray predictionsArray = (JSONArray) prediction.get("distribution");
@@ -120,10 +120,10 @@ public class MultiModel {
 			prediction.put("distribution", distributionHash);
 			prediction.put("count", count);
 			votes[i] = prediction;
-			
+
 		}
-		
+
 		return new MultiVote(votes);
 	}
-	
+
 }

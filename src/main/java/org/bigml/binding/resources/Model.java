@@ -248,8 +248,7 @@ public class Model extends AbstractResource {
    *
    */
   public boolean isReady(final JSONObject model) {
-    String resourceId = (String) model.get("resource");
-    return isReady(resourceId);
+    return isResourceReady(model) || isReady((String) model.get("resource"));
   }
 
 
