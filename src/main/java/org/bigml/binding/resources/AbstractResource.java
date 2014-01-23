@@ -471,8 +471,10 @@ public abstract class AbstractResource {
     if (obj == null) return false;
 
     JSONObject status = (JSONObject) obj.get("status");
-    return ((Long) resource.get("code") == HTTP_OK &&
-            (Long) status.get("code") == FINISHED);
+    Number code = (Number) resource.get("code");
+    Number statusCode = (Number) status.get("code");
+    return (code != null && code.intValue() == HTTP_OK
+            && statusCode != null && statusCode.intValue() == FINISHED);
   }
 
 
