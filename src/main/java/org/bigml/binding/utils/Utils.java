@@ -26,17 +26,17 @@ import org.json.simple.JSONObject;
 public class Utils {
 
   /**
-   * 	
+   *
    */
   public static DefaultHttpClient httpClient() throws Exception {
 	  SchemeRegistry schemeRegistry = new SchemeRegistry();
  	  schemeRegistry.register(new Scheme("http", 80, PlainSocketFactory.getSocketFactory()));
 	  schemeRegistry.register(new Scheme("https", 443, new MockSSLSocketFactory()));
 	  ClientConnectionManager cm = new SingleClientConnManager(schemeRegistry);
-	  return new DefaultHttpClient(cm);	
+	  return new DefaultHttpClient(cm);
   }
-  
-	
+
+
   /**
    * Converts a InputStream to a String.
    *
@@ -55,8 +55,8 @@ public class Utils {
     br.close();
     return sb.toString();
   }
-  
-  
+
+
   /**
    * Reads the contect of a file
    */
@@ -75,7 +75,7 @@ public class Utils {
      return content;
   }
 
-  
+
   /**
    * Returns True if value is a valid URL.
    *
@@ -88,7 +88,7 @@ public class Utils {
     	return false;
     }
   }
-  
+
 
   /**
    * Returns JSONObject child.
@@ -99,21 +99,24 @@ public class Utils {
     if (path.indexOf(".")!=-1) {
       field = path.substring(0, path.indexOf("."));
     }
-	 
+
     if (json.get(field) instanceof JSONArray) {
-      return (JSONArray) json.get(field);
+      return json.get(field);
     }
     if (json.get(field) instanceof String) {
-      return (String) json.get(field);
+      return json.get(field);
     }
     if (json.get(field) instanceof Long) {
-      return (Long) json.get(field);
+      return json.get(field);
     }
     if (json.get(field) instanceof Double) {
-        return (Double) json.get(field);
+        return json.get(field);
       }
+    if (json.get(field) instanceof Boolean) {
+      return json.get(field);
+    }
     json = (JSONObject) json.get(field);
-	
+
     if (json==null) {
       return null;
     }
@@ -129,11 +132,11 @@ public class Utils {
 
     return null;
   }
-  
-  
+
+
   /**
    * Inverts a dictionary changing keys per values
-   * 
+   *
    * @param json	the json object to invert
    * @return
    */
@@ -142,26 +145,26 @@ public class Utils {
 	  Iterator iter = json.keySet().iterator();
       while (iter.hasNext()) {
         String key = (String) iter.next();
-        String fieldName = (String) Utils.getJSONObject(json, key+".name"); 
+        String fieldName = (String) Utils.getJSONObject(json, key+".name");
         JSONObject jsonObj = (JSONObject) json.get(key);
         jsonObj.put("fieldID", key);
         invertedObject.put(fieldName, jsonObj);
       }
       return invertedObject;
   }
-  
-  
-  private static final Pattern NONLATIN = Pattern.compile("[^\\w]");  
-  private static final Pattern WHITESPACE = Pattern.compile("[\\s]");  
+
+
+  private static final Pattern NONLATIN = Pattern.compile("[^\\w]");
+  private static final Pattern WHITESPACE = Pattern.compile("[\\s]");
 
   /**
    * Translates a field name into a variable name.
    */
-  public static String slugify(String input) {  
-    String nowhitespace = WHITESPACE.matcher(input).replaceAll("_");  
-    String normalized = Normalizer.normalize(nowhitespace, Form.NFD);  
-    String slug = NONLATIN.matcher(normalized).replaceAll("");  
-    return slug.toLowerCase(Locale.ENGLISH);  
-  } 
+  public static String slugify(String input) {
+    String nowhitespace = WHITESPACE.matcher(input).replaceAll("_");
+    String normalized = Normalizer.normalize(nowhitespace, Form.NFD);
+    String slug = NONLATIN.matcher(normalized).replaceAll("");
+    return slug.toLowerCase(Locale.ENGLISH);
+  }
 
 }
