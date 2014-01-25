@@ -35,10 +35,10 @@ package org.bigml.binding;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.bigml.binding.localmodel.Tree;
@@ -163,31 +163,93 @@ public class LocalPredictiveModel {
     }
 
 
+
     /**
-     * Makes a prediction based on a number of field values.
-     *
-     * The input fields must be keyed by field name.
-     */
-    public HashMap<Object, Object> predict(final String args) throws InputDataParseException {
+   * Makes a prediction based on a number of field values.
+   * 
+   * The input fields must be keyed by field name.
+   *
+   */
+  @Deprecated
+  public HashMap<Object, Object> predict(final String args)
+      throws InputDataParseException {
+    return predict(args, null);
+  }
+
+  /**
+   * Makes a prediction based on a number of field values.
+   *
+   * The input fields must be keyed by field name.
+   */
+  public HashMap<Object, Object> predict(final JSONObject args)
+      throws InputDataParseException {
         return predict(args, null);
     }
 
 
     /**
-     * Makes a prediction based on a number of field values.
-     *
-     * The input fields must be keyed by field name.
-     */
-    public HashMap<Object, Object> predict(final String args, Boolean byName) throws InputDataParseException {
+   * Makes a prediction based on a number of field values.
+   *
+   * The input fields must be keyed by field name.
+   *
+   */
+  @Deprecated
+  public HashMap<Object, Object> predict(final String args, Boolean byName)
+      throws InputDataParseException {
+    return predict(args, byName, null);
+  }
+
+  /**
+   * Makes a prediction based on a number of field values.
+   *
+   * The input fields must be keyed by field name.
+   */
+  public HashMap<Object, Object> predict(final JSONObject args, Boolean byName)
+      throws InputDataParseException {
         return predict(args, byName, null);
     }
 
 
+
     /**
-     * Makes a prediction based on a number of field values.
-     *
-     */
-    public HashMap<Object, Object> predict(final String args, Boolean byName, Boolean withConfidence) throws InputDataParseException {
+   * Makes a prediction based on a number of field values.
+   *
+   */
+  @Deprecated
+  public HashMap<Object, Object> predict(final String args, Boolean byName,
+      Boolean withConfidence) throws InputDataParseException {
+    if (byName == null) {
+      byName = true;
+    }
+    if (withConfidence == null) {
+      withConfidence = false;
+    }
+
+    JSONObject argsData = (JSONObject) JSONValue.parse(args);
+    if (!args.equals("") && !args.equals("") && argsData == null) {
+      throw new InputDataParseException("Input data format not valid");
+    }
+    JSONObject inputData = argsData;
+
+    if (!byName) {
+      inputData = new JSONObject();
+      Iterator iter = argsData.keySet().iterator();
+      while (iter.hasNext()) {
+        String key = (String) iter.next();
+        String fieldName = (String) Utils.getJSONObject(fields, key + ".name");
+        inputData.put(fieldName, argsData.get(key));
+      }
+    }
+
+    return tree.predict(inputData, withConfidence);
+  }
+
+  /**
+   * Makes a prediction based on a number of field values.
+   *
+   */
+  public HashMap<Object, Object> predict(final JSONObject args, Boolean byName,
+      Boolean withConfidence) throws InputDataParseException {
         if (byName == null) {
             byName = true;
         }
@@ -195,19 +257,18 @@ public class LocalPredictiveModel {
             withConfidence = false;
         }
 
-        JSONObject argsData = (JSONObject) JSONValue.parse(args);
-        if (!args.equals("") && !args.equals("") && argsData==null) {
+    if (args == null) {
             throw new InputDataParseException("Input data format not valid");
         }
-        JSONObject inputData = argsData;
+    JSONObject inputData = args;
 
         if (!byName) {
             inputData = new JSONObject();
-            Iterator iter = argsData.keySet().iterator();
+      Iterator iter = args.keySet().iterator();
             while (iter.hasNext()) {
                 String key = (String) iter.next();
                 String fieldName = (String) Utils.getJSONObject(fields, key+".name");
-                inputData.put(fieldName, argsData.get(key));
+        inputData.put(fieldName, args.get(key));
             }
         }
 
@@ -219,22 +280,29 @@ public class LocalPredictiveModel {
      * field ids or names to their values as Java objects.  See also
      * predict(String, Boolean, Integer, Boolean).
      */
-    public HashMap<Object, Object> predict(final Map<String, Object> inputs,
+  public HashMap<Object, Object> predictWithMap(
+      final Map<String, Object> inputs,
                                            Boolean byName,
                                            Boolean conf)
         throws InputDataParseException {
-        return predict(JSONValue.toJSONString(inputs), byName, conf);
+
+    JSONObject inputObj = (JSONObject) JSONValue.parse(JSONValue
+        .toJSONString(inputs));
+    return predict(inputObj, byName,
+        conf);
     }
 
-    public HashMap<Object, Object> predict(final Map<String, Object> inputs,
+
+  public HashMap<Object, Object> predictWithMap(
+      final Map<String, Object> inputs,
                                            Boolean byName)
         throws InputDataParseException {
-        return predict(inputs, byName, null);
+    return predictWithMap(inputs, byName, null);
     }
 
-    public HashMap<Object, Object> predict(final Map<String, Object> inputs)
+  public HashMap<Object, Object> predictWithMap(final Map<String, Object> inputs)
         throws InputDataParseException {
-        return predict(inputs, null, null);
+    return predictWithMap(inputs, null, null);
     }
 
     /**

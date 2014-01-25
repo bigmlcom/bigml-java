@@ -11,6 +11,7 @@ import java.util.HashMap;
 import org.bigml.binding.resources.AbstractResource;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -123,7 +124,8 @@ public class ModelsStepdefs {
     @Then("^the local multi prediction by name=(true|false) for \"(.*)\" is \"([^\"]*)\"$")
     public void the_local_multi_prediction_byname_for_is(String by_name, String args, String pred) throws Exception {
       Boolean byName = new Boolean(by_name);
-      HashMap<Object, Object> prediction = (HashMap<Object, Object>) multiModel.predict(args, byName, null, true);
+      JSONObject inputObj = (JSONObject) JSONValue.parse(args);
+      HashMap<Object, Object> prediction = (HashMap<Object, Object>) multiModel.predict(inputObj, byName, null, true);
       assertTrue("", prediction!=null && ((String) prediction.get("prediction")).equals(pred));
     }
 

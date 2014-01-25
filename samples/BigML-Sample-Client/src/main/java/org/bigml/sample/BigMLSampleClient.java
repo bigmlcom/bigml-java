@@ -3,12 +3,12 @@
  * You can get it from: {@link https://github.com/javinp/bigml-java}
  * 	- Clone it: <code>git clone https://github.com/javinp/bigml-java.git</code>
  * 	- Or download it from: {@link https://github.com/javinp/bigml-java/archive/master.zip}
- * 
+ *
  * Once you have the source code, you can install it using Maven:
  * 	<code>mvn install</code>
- * 
+ *
  * or just include it in your project class path.
- * 
+ *
  */
 package org.bigml.sample;
 
@@ -22,15 +22,19 @@ import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONObject;
 
 public class BigMLSampleClient {
+
 	// BigML's DEV mode enabled
 	private static final boolean DEV_MODE = true;
+
 	// BigML's credentials
-	private static final String BIGML_USERNAME = "set-your-bigml-username";
-	private static final String BIGML_API_KEY = "set-your-bigml-api-key";
+  private static final String BIGML_USERNAME = "set-your-bigml-username";
+  private static final String BIGML_API_KEY = "set-your-bigml-api-key";
+
+
 
 	/**
 	 * A simple Java Class to integrate the BigML API
-	 * 
+	 *
 	 * @param args
 	 */
 	@SuppressWarnings("unchecked")
@@ -90,20 +94,19 @@ public class BigMLSampleClient {
 		 * created model. A LocalPredictiveModel allow you to predict faster,
 		 * you're predicting without HTTPS round trips, and for FREE, this won't
 		 * consume BigML's credits.
-		 * 
+		 *
 		 * @see org.bigml.binding.LocalPredictiveModel
 		 */
 		// Retrieve the model that should be Finished and ready to predict with
 		// it
 		model = bigml.getModel(model);
 		LocalPredictiveModel localModel = null;
-		HashMap<String, Object> localPrediction = null;
+    HashMap<Object, Object> localPrediction = null;
 		try {
 			localModel = new LocalPredictiveModel(
 					(JSONObject) model.get("object"));
 
-			localPrediction = (HashMap<String, Object>) localModel.predict(
-					inputData.toJSONString(), byName, true);
+      localPrediction = localModel.predict(inputData, byName, true);
 
 			System.out.println("Prediction result: "
 					+ localPrediction.get("prediction") + ". With confidence: "

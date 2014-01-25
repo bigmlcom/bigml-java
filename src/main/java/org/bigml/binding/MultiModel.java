@@ -73,57 +73,126 @@ public class MultiModel {
      *      2 - probability weighted majority vote / average:
      *             PROBABILITY_CODE
 	 */
-	public HashMap<Object, Object> predict(final String inputData, Boolean byName, Integer method, Boolean withConfidence) throws Exception {
-		if (method == null) {
-			method = MultiVote.PLURALITY;
-		}
-		if (byName == null) {
-			byName = true;
-		}
-		if (withConfidence == null) {
-			withConfidence = false;
-		}
+  @Deprecated
+  public HashMap<Object, Object> predict(final String inputData,
+      Boolean byName, Integer method, Boolean withConfidence) throws Exception {
+    if (method == null) {
+      method = MultiVote.PLURALITY;
+    }
+    if (byName == null) {
+      byName = true;
+    }
+    if (withConfidence == null) {
+      withConfidence = false;
+    }
 
-		votes = this.generateVotes(inputData, byName, withConfidence);
+    votes = this.generateVotes(inputData, byName, withConfidence);
 
-	    return votes.combine(method, withConfidence);
-	}
+    return votes.combine(method, withConfidence);
+  }
+
+  /**
+   * Makes a prediction based on the prediction made by every model.
+   *
+   * The method parameter is a numeric key to the following combination methods
+   * in classifications/regressions: 0 - majority vote (plurality)/ average:
+   * PLURALITY_CODE 1 - confidence weighted majority vote / error weighted:
+   * CONFIDENCE_CODE 2 - probability weighted majority vote / average:
+   * PROBABILITY_CODE
+   */
+  public HashMap<Object, Object> predict(final JSONObject inputData,
+      Boolean byName, Integer method, Boolean withConfidence) throws Exception {
+    if (method == null) {
+      method = MultiVote.PLURALITY;
+    }
+    if (byName == null) {
+      byName = true;
+    }
+    if (withConfidence == null) {
+      withConfidence = false;
+    }
+
+    votes = this.generateVotes(inputData, byName, withConfidence);
+
+    return votes.combine(method, withConfidence);
+  }
 
 
 	/**
 	 * Generates a MultiVote object that contains the predictions
 	 * made by each of the models.
 	 */
-	public MultiVote generateVotes(final String inputData, Boolean byName, Boolean withConfidence) throws Exception {
-		if (byName == null) {
-			byName = true;
-		}
-		if (withConfidence == null) {
-			withConfidence = false;
-		}
+  @Deprecated
+  public MultiVote generateVotes(final String inputData, Boolean byName,
+      Boolean withConfidence) throws Exception {
+    if (byName == null) {
+      byName = true;
+    }
+    if (withConfidence == null) {
+      withConfidence = false;
+    }
 
-		HashMap<Object, Object>[] votes = (HashMap<Object, Object>[]) new HashMap[models.size()];
-		for (int i=0; i<models.size(); i++) {
-			JSONObject model = (JSONObject) models.get(i);
-			LocalPredictiveModel localModel = new LocalPredictiveModel(model);
+    HashMap<Object, Object>[] votes = new HashMap[models.size()];
+    for (int i = 0; i < models.size(); i++) {
+      JSONObject model = (JSONObject) models.get(i);
+      LocalPredictiveModel localModel = new LocalPredictiveModel(model);
 
-			HashMap<Object, Object> prediction = localModel.predict(inputData, byName, withConfidence);
+      HashMap<Object, Object> prediction = localModel.predict(inputData,
+          byName, withConfidence);
 
-			HashMap<Object, Integer> distributionHash = new HashMap<Object, Integer>();
-			JSONArray predictionsArray = (JSONArray) prediction.get("distribution");
-			int count = 0;
-			for (int j=0; j<predictionsArray.size(); j++) {
-				JSONArray pred = (JSONArray) predictionsArray.get(j);
-				distributionHash.put(pred.get(0), ((Long) pred.get(1)).intValue());
-				count += ((Long) pred.get(1)).intValue();
-			}
-			prediction.put("distribution", distributionHash);
-			prediction.put("count", count);
-			votes[i] = prediction;
+      HashMap<Object, Integer> distributionHash = new HashMap<Object, Integer>();
+      JSONArray predictionsArray = (JSONArray) prediction.get("distribution");
+      int count = 0;
+      for (int j = 0; j < predictionsArray.size(); j++) {
+        JSONArray pred = (JSONArray) predictionsArray.get(j);
+        distributionHash.put(pred.get(0), ((Long) pred.get(1)).intValue());
+        count += ((Long) pred.get(1)).intValue();
+      }
+      prediction.put("distribution", distributionHash);
+      prediction.put("count", count);
+      votes[i] = prediction;
 
-		}
+    }
 
-		return new MultiVote(votes);
-	}
+    return new MultiVote(votes);
+  }
+
+  /**
+   * Generates a MultiVote object that contains the predictions made by each of
+   * the models.
+   */
+  public MultiVote generateVotes(final JSONObject inputData, Boolean byName,
+      Boolean withConfidence) throws Exception {
+    if (byName == null) {
+      byName = true;
+    }
+    if (withConfidence == null) {
+      withConfidence = false;
+    }
+
+    HashMap<Object, Object>[] votes = new HashMap[models.size()];
+    for (int i = 0; i < models.size(); i++) {
+      JSONObject model = (JSONObject) models.get(i);
+      LocalPredictiveModel localModel = new LocalPredictiveModel(model);
+
+      HashMap<Object, Object> prediction = localModel.predict(inputData,
+          byName, withConfidence);
+
+      HashMap<Object, Integer> distributionHash = new HashMap<Object, Integer>();
+      JSONArray predictionsArray = (JSONArray) prediction.get("distribution");
+      int count = 0;
+      for (int j = 0; j < predictionsArray.size(); j++) {
+        JSONArray pred = (JSONArray) predictionsArray.get(j);
+        distributionHash.put(pred.get(0), ((Long) pred.get(1)).intValue());
+        count += ((Long) pred.get(1)).intValue();
+      }
+      prediction.put("distribution", distributionHash);
+      prediction.put("count", count);
+      votes[i] = prediction;
+
+    }
+
+    return new MultiVote(votes);
+  }
 
 }
