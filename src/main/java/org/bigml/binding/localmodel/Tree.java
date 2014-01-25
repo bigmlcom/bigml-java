@@ -54,16 +54,16 @@ public class Tree {
   }
 
 
-  private JSONObject fields;
-  private JSONObject root;
+  private final JSONObject fields;
+  private final JSONObject root;
   private String objectiveField;
-  private Object output;
+  private final Object output;
   private boolean isPredicate;
   private Predicate predicate;
-  private List<Tree> children;
-  private Long count;
+  private final List<Tree> children;
+  private final Long count;
   private JSONArray distribution;
-  private double confidence;
+  private final double confidence;
 
  /**
   * Constructor
@@ -95,7 +95,7 @@ public class Tree {
 					(String) Utils.getJSONObject(fields, predicateObj.get("field")+".optype"),
 					(String) predicateObj.get("operator"),
 					(String) predicateObj.get("field"),
-					(Object) predicateObj.get("value"),
+					predicateObj.get("value"),
 					(String) predicateObj.get("term"));
 	}
 
@@ -180,17 +180,17 @@ public class Tree {
 
 	if (this.children!=null && this.children.size()>0) {
 	  for (int i=0; i<this.children.size(); i++) {
-		Tree child = (Tree) this.children.get(i);
+		Tree child = this.children.get(i);
 
 		String field = child.predicate.getField();
-		Object inputValue = (Object) inputData.get(((JSONObject)fields.get(field)).get("name"));
+		Object inputValue = inputData.get(((JSONObject)fields.get(field)).get("name"));
 		if (inputValue==null) {
 			continue;
 		}
 
 		String opType = child.predicate.getOpType();
 		String operator = child.predicate.getOperator();
-		Object value = (Object) child.predicate.getValue();
+		Object value = child.predicate.getValue();
 		String term = child.predicate.getTerm();
 
 		if (operator.equals(Constants.OPERATOR_EQ) && inputValue.equals(value)) {
@@ -245,16 +245,21 @@ public class Tree {
 
   private int termMatches(JSONObject inputData, String text, String fieldLabel, String term) {
 
+
 	  // Checking Full Terms Only
 	  String tokenMode = (String) Utils.getJSONObject(this.fields, fieldLabel+".term_analysis.token_mode");
 	  if (tokenMode.equals("full_terms_only")) {
 		  return text.equalsIgnoreCase(term) ? 1 : 0;
 	  }
 
-	  // All and Tokens only
 
-	  int flags = Pattern.CASE_INSENSITIVE;
-	  JSONObject termForms = (JSONObject) Utils.getJSONObject(this.fields, fieldLabel+".summary.term_forms");
+	  // All and Tokens only
+    Boolean isCaseSensitive = (Boolean) Utils.getJSONObject(this.fields,
+        fieldLabel + ".term_analysis.case_sensitive");
+    int flags = isCaseSensitive ? 0 : Pattern.CASE_INSENSITIVE;
+
+    JSONObject termForms = (JSONObject) Utils.getJSONObject(this.fields,
+        fieldLabel + ".summary.term_forms");
 
 	  HashMap<String, Boolean> caseSensitive = new HashMap<String, Boolean>();
 	  Iterator iter = inputData.keySet().iterator();
@@ -289,7 +294,7 @@ public class Tree {
     String rules = "";
     if (this.children!=null && this.children.size()>0) {
     	for (int i=0; i<this.children.size(); i++) {
-			Tree child = (Tree) this.children.get(i);
+			Tree child = this.children.get(i);
 			String fieldName = (String) Utils.getJSONObject(fields, child.predicate.getField()+".name");
 			rules += MessageFormat.format("{0} IF {1} {2} {3} {4}\n",
 								StringUtils.repeat(INDENT, depth),
@@ -331,7 +336,7 @@ public class Tree {
     String instructions = "";
     if (this.children!=null && this.children.size()>0) {
 	  for (int i=0; i<this.children.size(); i++) {
-		Tree child = (Tree) this.children.get(i);
+		Tree child = this.children.get(i);
 		String fieldName = (String) Utils.getJSONObject(fields, child.predicate.getField()+".name");
 
 		String comparison = JAVA_OPERATOR.get(child.predicate.getOpType() + "-" + child.predicate.getOperator());
