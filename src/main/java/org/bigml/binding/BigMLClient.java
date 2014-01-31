@@ -185,7 +185,7 @@ public class BigMLClient {
       bigmlUrl = this.devMode ? props.getProperty("BIGML_DEV_URL",
           BIGML_DEV_URL) : props.getProperty("BIGML_URL", BIGML_URL);
     } catch (Throwable e) {
-      logger.error("Error loading configuration", e);
+      // logger.error("Error loading configuration", e);
       bigmlUrl = this.devMode ? BIGML_DEV_URL : BIGML_URL;
     }
   }
