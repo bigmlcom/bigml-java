@@ -21,7 +21,6 @@ public class CommonStepdefs {
 	@Autowired
     private ContextRepository context;
 
-
 	@Given("^that I use production mode$")
 	public void that_I_use_production_mode() throws Throwable {
     	BigMLClient.getInstance(false);
@@ -49,11 +48,18 @@ public class CommonStepdefs {
 	    assertEquals(((Integer) listing.get("code")).intValue(), AbstractResource.HTTP_OK);
 	    listing = BigMLClient.getInstance().listPredictions("");
 	    assertEquals(((Integer) listing.get("code")).intValue(), AbstractResource.HTTP_OK);
+    listing = BigMLClient.getInstance().listBatchPredictions("");
+    assertEquals(((Integer) listing.get("code")).intValue(),
+        AbstractResource.HTTP_OK);
 	}
 
 
 	@Then("^delete test data$")
 	public void delete_test_data() throws AuthenticationException {
+    if (context.batchPrediction != null) {
+      BigMLClient.getInstance().deleteBatchPrediction(
+          (String) context.batchPrediction.get("resource"));
+    }
 	    if (context.prediction != null) {
 	      BigMLClient.getInstance().deletePrediction((String) context.prediction.get("resource"));
 	    }
@@ -90,6 +96,15 @@ public class CommonStepdefs {
 
 	@Then("^delete dev data$")
 	public void delete_dev_data() throws AuthenticationException {
+    // Batch predictions
+    JSONArray batchPredictions = (JSONArray) BigMLClient.getInstance()
+        .listBatchPredictions("").get("objects");
+    for (int i = 0; i < batchPredictions.size(); i++) {
+      JSONObject batchPrediction = (JSONObject) batchPredictions.get(i);
+      BigMLClient.getInstance().deleteBatchPrediction(
+          (String) batchPrediction.get("resource"));
+    }
+
 		// Predictions
 		JSONArray predictions = (JSONArray) BigMLClient.getInstance().listPredictions("").get("objects");
 		for (int i=0; i<predictions.size(); i++) {

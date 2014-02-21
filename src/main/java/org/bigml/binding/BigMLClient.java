@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+import org.bigml.binding.resources.BatchPrediction;
 import org.bigml.binding.resources.Dataset;
 import org.bigml.binding.resources.Ensemble;
 import org.bigml.binding.resources.Evaluation;
@@ -59,6 +60,7 @@ public class BigMLClient {
   private Prediction prediction;
   private Evaluation evaluation;
   private Ensemble ensemble;
+  private BatchPrediction batchPrediction;
   private Properties props;
   private Boolean devMode = false;
   private String storage;
@@ -197,6 +199,8 @@ public class BigMLClient {
     prediction = new Prediction(this.bigmlUser, this.bigmlApiKey, this.devMode);
     evaluation = new Evaluation(this.bigmlUser, this.bigmlApiKey, this.devMode);
     ensemble = new Ensemble(this.bigmlUser, this.bigmlApiKey, this.devMode);
+    batchPrediction = new BatchPrediction(this.bigmlUser, this.bigmlApiKey,
+        this.devMode);
   }
 
   public String getBigMLUrl() {
@@ -1300,5 +1304,217 @@ public class BigMLClient {
     return ensemble.delete(ensembleJSON);
   }
 
+
+  // ################################################################
+  // #
+  // # Batch predictions
+  // # https://bigml.com/developers/batch_predictions
+  // #
+  // ################################################################
+
+  /**
+   * Creates a new batch prediction.
+   *
+   * POST /andromeda/batchprediction?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY; HTTP/1.1
+   * Host: bigml.io
+   * Content-Type: application/json
+   *
+   * @param modelOrEnsembleId  a unique identifier in the form model/id or ensemble/id where id is a string of 24
+   *                            alpha-numeric chars for the model/ensemble to attach the evaluation.
+   * @param datasetId           a unique identifier in the form dataset/id where id is a string of 24
+   *                            alpha-numeric chars for the dataset to attach the evaluation.
+   * @param args                set of parameters for the new batch prediction. Optional
+   * @param waitTime            time (milliseconds) to wait for next check of FINISHED status for model
+   *                            before to start to create the batch prediction. Optional
+   * @param retries             number of times to try the operation. Optional
+   *
+   */
+  public JSONObject createBatchPrediction(final String modelOrEnsembleId, final String datasetId, String args, Integer waitTime, Integer retries) {
+    return batchPrediction.create(modelOrEnsembleId, datasetId, args, waitTime,
+        retries);
+  }
+
+  /**
+   * Retrieves a batch prediction.
+   *
+   * The batch_prediction parameter should be a string containing the
+   * batch_prediction id or the dict returned by create_batch_prediction. As
+   * batch_prediction is an evolving object that is processed until it reaches
+   * the FINISHED or FAULTY state, the function will return a dict that encloses
+   * the batch_prediction values and state info available at the time it is
+   * called.
+   *
+   * GET /andromeda/batchprediction/id?username=$BIGML_USERNAME;api_key=
+   * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
+   *
+   * @param batchPredictionId
+   *          a unique identifier in the form batchPrediction/id where id is a
+   *          string of 24 alpha-numeric chars.
+   *
+   */
+  public JSONObject getBatchPrediction(final String batchPredictionId) {
+    return batchPrediction.get(batchPredictionId);
+  }
+
+
+  /**
+   * Retrieves a batch prediction.
+   *
+   * The batch_prediction parameter should be a string containing the
+   * batch_prediction id or the dict returned by create_batch_prediction. As
+   * batch_prediction is an evolving object that is processed until it reaches
+   * the FINISHED or FAULTY state, the function will return a dict that encloses
+   * the batch_prediction values and state info available at the time it is
+   * called.
+   *
+   * GET /andromeda/batchprediction/id?username=$BIGML_USERNAME;api_key=
+   * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
+   *
+   * @param batchPredictionJSON
+   *          a batch prediction JSONObject.
+   *
+   */
+  public JSONObject getBatchPrediction(final JSONObject batchPredictionJSON) {
+    return batchPrediction.get(batchPredictionJSON);
+  }
+
+  /**
+   * Retrieves the batch predictions file.
+   *
+   * Downloads predictions, that are stored in a remote CSV file. If a path is
+   * given in filename, the contents of the file are downloaded and saved
+   * locally. A file-like object is returned otherwise.
+   *
+   * @param batchPredictionId
+   *          a unique identifier in the form batchPrediction/id where id is a
+   *          string of 24 alpha-numeric chars.
+   * @param filename
+   *          Path to save file locally
+   *
+   */
+  public JSONObject downloadBatchPrediction(final String batchPredictionId,
+      final String filename) {
+    return batchPrediction.downloadBatchPrediction(batchPredictionId, filename);
+  }
+
+  /**
+   * Retrieves the batch predictions file.
+   *
+   * Downloads predictions, that are stored in a remote CSV file. If a path is
+   * given in filename, the contents of the file are downloaded and saved
+   * locally. A file-like object is returned otherwise.
+   *
+   * @param batchPredictionJSON
+   *          a batch prediction JSONObject.
+   * @param filename
+   *          Path to save file locally
+   *
+   */
+  public JSONObject downloadBatchPrediction(
+      final JSONObject batchPredictionJSON,
+      final String filename) {
+    return batchPrediction.downloadBatchPrediction(batchPredictionJSON,
+        filename);
+  }
+
+  /**
+   * Check whether a batch prediction's status is FINISHED.
+   *
+   * @param batchPredictionId
+   *          a unique identifier in the form batchPrediction/id where id is a
+   *          string of 24 alpha-numeric chars.
+   *
+   */
+  public boolean batchPredictionIsReady(final String batchPredictionId) {
+    return batchPrediction.isReady(batchPredictionId);
+  }
+
+  /**
+   * Check whether a batch prediction's status is FINISHED.
+   *
+   * @param batchPredictionJSON
+   *          a batchPrediction JSONObject.
+   *
+   */
+  public boolean batchPredictionIsReady(final JSONObject batchPredictionJSON) {
+    return batchPrediction.isReady(batchPredictionJSON);
+  }
+
+  /**
+   * Lists all your batch predictions.
+   *
+   * GET /andromeda/batchprediction?username=$BIGML_USERNAME;api_key=
+   * $BIGML_API_KEY; Host: bigml.io
+   *
+   * @param queryString
+   *          query filtering the listing.
+   *
+   */
+  public JSONObject listBatchPredictions(final String queryString) {
+    return batchPrediction.list(queryString);
+  }
+
+  /**
+   * Updates a batch prediction.
+   *
+   * PUT /andromeda/batchprediction/id?username=$BIGML_USERNAME;api_key=
+   * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
+   *
+   * @param batchPredictionId
+   *          a unique identifier in the form batchPrediction/id where id is a
+   *          string of 24 alpha-numeric chars.
+   * @param changes
+   *          set of parameters to update the batch prediction. Optional
+   *
+   */
+  public JSONObject updateBatchPrediction(final String batchPredictionId,
+      final String changes) {
+    return batchPrediction.update(batchPredictionId, changes);
+  }
+
+  /**
+   * Updates a batch prediction.
+   *
+   * PUT /andromeda/batchprediction/id?username=$BIGML_USERNAME;api_key=
+   * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
+   *
+   * @param batchpredictionJSON
+   *          a batch prediction JSONObject
+   * @param changes
+   *          set of parameters to update the batch prediction. Optional
+   */
+  public JSONObject updateBatchPrediction(final JSONObject batchpredictionJSON,
+      final JSONObject changes) {
+    return batchPrediction.update(batchpredictionJSON, changes);
+  }
+
+  /**
+   * Deletes a batch prediction.
+   *
+   * DELETE /andromeda/batchprediction/id?username=$BIGML_USERNAME;api_key=
+   * $BIGML_API_KEY; HTTP/1.1
+   *
+   * @param batchPredictionId
+   *          a unique identifier in the form batchPrediction/id where id is a
+   *          string of 24 alpha-numeric chars.
+   *
+   */
+  public JSONObject deleteBatchPrediction(final String batchPredictionId) {
+    return batchPrediction.delete(batchPredictionId);
+  }
+
+  /**
+   * Deletes a batch prediction.
+   *
+   * DELETE /andromeda/batchprediction/id?username=$BIGML_USERNAME;api_key=
+   * $BIGML_API_KEY; HTTP/1.1
+   *
+   * @param batchPredictionJSON
+   *          a batch prediction JSONObject.
+   *
+   */
+  public JSONObject deleteBatchPrediction(final JSONObject batchPredictionJSON) {
+    return batchPrediction.delete(batchPredictionJSON);
+  }
 
 }

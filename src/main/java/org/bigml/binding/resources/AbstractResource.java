@@ -38,6 +38,7 @@ public abstract class AbstractResource {
   public final static String PREDICTION_PATH = "prediction";
   public final static String EVALUATION_PATH = "evaluation";
   public final static String ENSEMBLE_PATH = "ensemble";
+  public final static String BATCH_PREDICTION_PATH = "batchprediction";
 
   // Base Resource regular expressions
   static String SOURCE_RE = "^" + SOURCE_PATH + "/[a-f,0-9]{24}$";
@@ -46,6 +47,8 @@ public abstract class AbstractResource {
   static String PREDICTION_RE = "^" + PREDICTION_PATH + "/[a-f,0-9]{24}$";
   static String EVALUATION_RE = "^" + EVALUATION_PATH + "/[a-f,0-9]{24}$";
   static String ENSEMBLE_RE = "^" + ENSEMBLE_PATH + "/[a-f,0-9]{24}$";
+  static String BATCH_PREDICTION_RE = "^" + BATCH_PREDICTION_PATH
+      + "/[a-f,0-9]{24}$";
 
   // Headers
   static String JSON = "application/json";
@@ -112,7 +115,7 @@ public abstract class AbstractResource {
   protected String PREDICTION_URL;
   protected String EVALUATION_URL;
   protected String ENSEMBLE_URL;
-
+  protected String BATCH_PREDICTION_URL;
 
   protected void init() {
 	  try {
@@ -123,6 +126,7 @@ public abstract class AbstractResource {
 		  PREDICTION_URL = BIGML_URL + PREDICTION_PATH;
 		  EVALUATION_URL = BIGML_URL + EVALUATION_PATH;
 		  ENSEMBLE_URL = BIGML_URL + ENSEMBLE_PATH;
+      BATCH_PREDICTION_URL = BIGML_URL + BATCH_PREDICTION_PATH;
 	  } catch (AuthenticationException ae) {
 
 	  }
@@ -156,7 +160,7 @@ public abstract class AbstractResource {
       HttpEntity resEntity = response.getEntity();
       code = response.getStatusLine().getStatusCode();
       if (code == HTTP_CREATED) {
-        location = (String) response.getHeaders("location")[0].getValue();
+        location = response.getHeaders("location")[0].getValue();
         resource = (JSONObject) JSONValue.parse(Utils.inputStreamAsString(resEntity.getContent()));
         resourceId = (String) resource.get("resource");
         error = new JSONObject();
