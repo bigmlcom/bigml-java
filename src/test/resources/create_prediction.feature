@@ -34,3 +34,22 @@ Feature: Create Predictions
         Examples:
         | url                | time_1  | time_2 | time_3 | by_name | data_input    | objective | prediction  |
         | s3://bigml-public/csv/iris.csv | 10      | 10     | 10     | true     | {"petal width": 0.5} | 000004    | Iris-setosa |
+        
+        
+    Scenario Outline: Successfully creating a centroid and the associated dataset:
+    	Given that I use development mode
+        Given I create a data source uploading a "<data>" file
+        And I wait until the source is ready less than <time_1> secs
+        And I create a dataset
+        And I wait until the dataset is ready less than <time_2> secs
+		And I create a cluster
+        And I wait until the cluster is ready less than <time_3> secs
+        When I create a centroid for "<data_input>"
+        And I check the centroid is ok
+        Then the centroid is "<centroid>"
+        Then delete test data
+
+        Examples:
+        | data                | time_1  | time_2 | time_3 | data_input    | centroid  |
+        | data/iris.csv | 10      | 10     | 10     | {"petal width": 0.5, "petal length": 0.1, "sepal length": 0.5, "sepal width": 0.2, "species": "Iris-setosa"} | Cluster 0 |
+    

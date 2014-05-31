@@ -104,6 +104,9 @@ public class EvaluationsStepdefs {
 
     @Then("^the measured \"([^\"]*)\" is greater than ([\\d,.]+)$")
     public void the_measured_is_greater_than(String measure, double value) throws Throwable {
+    	
+    	System.out.println("1 ...... " + Utils.getJSONObject(context.evaluation,  "result.model."+measure));
+    	
     	double measureLong = (Double) Utils.getJSONObject(context.evaluation,  "result.model."+measure);
         assertTrue(measureLong > value);
     }
