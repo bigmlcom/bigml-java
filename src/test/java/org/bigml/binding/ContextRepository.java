@@ -15,7 +15,10 @@ public class ContextRepository {
 	JSONObject evaluation = null;
 	JSONObject ensemble = null;
 	JSONArray models = null;
-  JSONObject batchPrediction = null;
+	JSONObject batchPrediction = null;
+	JSONObject cluster = null;
+	JSONObject centroid = null;
+	JSONObject batchCentroid = null;
 
 	public int getStatus() {
 		return status;
@@ -88,12 +91,36 @@ public class ContextRepository {
 		this.models = models;
 	}
 
-  public JSONObject getBatchPrediction() {
-    return batchPrediction;
-  }
+	public JSONObject getBatchPrediction() {
+		return batchPrediction;
+	}
 
-  public void setBatchPrediction(JSONObject batchPrediction) {
-    this.batchPrediction = batchPrediction;
-  }
+	public void setBatchPrediction(JSONObject batchPrediction) {
+	  this.batchPrediction = batchPrediction;
+	}
+  
+	public JSONObject getCluster() {
+		return cluster;
+	}
+
+	public void setCluster(JSONObject cluster) {
+	    this.cluster = cluster;
+	}
+	
+	public JSONObject getCentroid() {
+		return centroid;
+	}
+
+	public void setCentroid(JSONObject centroid) {
+	    this.centroid = centroid;
+	}
+	
+	public JSONObject getBatchCentroid() {
+		return batchCentroid;
+	}
+
+	public void setBatchCentroid(JSONObject batchCentroid) {
+	    this.batchCentroid = batchCentroid;
+	}
 
 }

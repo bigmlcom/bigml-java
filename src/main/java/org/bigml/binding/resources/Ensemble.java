@@ -1,5 +1,7 @@
 package org.bigml.binding.resources;
 
+import java.util.List;
+
 import org.bigml.binding.BigMLClient;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -58,32 +60,36 @@ public class Ensemble extends AbstractResource {
    *
    */
   public JSONObject create(final String datasetId, String args, Integer waitTime, Integer retries) {
-    if (datasetId == null || datasetId.length() == 0 || !datasetId.matches(DATASET_RE)) {
-      logger.info("Wrong dataset id");
-      return null;
-    }
+	  String[] datasetsIds = { datasetId };
+	    JSONObject requestObject = createFromDatasets(datasetsIds, args, waitTime,
+	        retries, null);
+	    return createResource(ENSEMBLE_URL, requestObject.toJSONString());
+  }
+  
+  /**
+   * Creates an ensemble from a list of `datasets`.
+   * 
+   * POST /andromeda/ensemble?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+   * HTTP/1.1 Host: bigml.io Content-Type: application/json
+   * 
+   * @param datasetsIds
+   *          list of identifiers in the form dataset/id where id is a string of
+   *          24 alpha-numeric chars for the dataset to attach the ensemble.
+   * @param args
+   *          set of parameters for the new ensemble. Optional
+   * @param waitTime
+   *          time (milliseconds) to wait for next check of FINISHED status for
+   *          source before to start to create the ensemble. Optional
+   * @param retries
+   *          number of times to try the operation. Optional
+   * 
+   */
+  public JSONObject create(final List datasetsIds, String args,
+      Integer waitTime, Integer retries) {
 
-    try {
-      waitTime = waitTime != null ? waitTime : 3000;
-      retries = retries != null ? retries : 10;
-      if (waitTime > 0) {
-        int count = 0;
-        while (count<retries && !BigMLClient.getInstance(this.devMode).datasetIsReady(datasetId)) {
-          Thread.sleep(waitTime);
-          count++;
-        }
-      }
-
-      JSONObject requestObject = new JSONObject();
-      if (args != null) {
-        requestObject = (JSONObject) JSONValue.parse(args);
-      }
-      requestObject.put("dataset", datasetId);
-      return createResource(ENSEMBLE_URL, requestObject.toJSONString());
-    } catch (Throwable e) {
-      logger.error("Error creating ensemble");
-      return null;
-    }
+    JSONObject requestObject = createFromDatasets(
+        (String[]) datasetsIds.toArray(), args, waitTime, retries, null);
+    return createResource(ENSEMBLE_URL, requestObject.toJSONString());
   }
 
   /**

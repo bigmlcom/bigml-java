@@ -1,6 +1,8 @@
 package org.bigml.binding.resources;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -20,12 +22,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Entry point to create, retrieve, list, update, and delete sources, datasets, models and
- * predictions.
- *
- * Full API documentation on the API can be found from BigML at: https://bigml.com/developers
- *
- *
+ * Entry point to create, retrieve, list, update, and delete sources, datasets,
+ * models and predictions.
+ * 
+ * Full API documentation on the API can be found from BigML at:
+ * https://bigml.com/developers
+ * 
+ * 
  */
 public abstract class AbstractResource {
 
@@ -39,16 +42,25 @@ public abstract class AbstractResource {
   public final static String EVALUATION_PATH = "evaluation";
   public final static String ENSEMBLE_PATH = "ensemble";
   public final static String BATCH_PREDICTION_PATH = "batchprediction";
+  public final static String CLUSTER_PATH = "cluster";
+  public final static String CENTROID_PATH = "centroid";
+  public final static String BATCH_CENTROID_PATH = "batchcentroid";
 
   // Base Resource regular expressions
   static String SOURCE_RE = "^" + SOURCE_PATH + "/[a-f,0-9]{24}$";
-  static String DATASET_RE = "^(public/|shared/|)" + DATASET_PATH + "/[a-f,0-9]{24}$";
-  static String MODEL_RE = "^(public/|)" + MODEL_PATH + "/[a-f,0-9]{24}$|^|shared/" + MODEL_PATH + "/[a-zA-Z0-9]{27}$";
+  static String DATASET_RE = "^(public/|shared/|)" + DATASET_PATH
+      + "/[a-f,0-9]{24}$";
+  static String MODEL_RE = "^(public/|)" + MODEL_PATH
+      + "/[a-f,0-9]{24}$|^|shared/" + MODEL_PATH + "/[a-zA-Z0-9]{27}$";
   static String PREDICTION_RE = "^" + PREDICTION_PATH + "/[a-f,0-9]{24}$";
   static String EVALUATION_RE = "^" + EVALUATION_PATH + "/[a-f,0-9]{24}$";
   static String ENSEMBLE_RE = "^" + ENSEMBLE_PATH + "/[a-f,0-9]{24}$";
   static String BATCH_PREDICTION_RE = "^" + BATCH_PREDICTION_PATH
       + "/[a-f,0-9]{24}$";
+  static String CLUSTER_RE = "^(public/|shared/|)" + CLUSTER_PATH
+      + "/[a-f,0-9]{24}$";
+  static String CENTROID_RE = "^" + CENTROID_PATH + "/[a-f,0-9]{24}$";
+  static String BATCH_CENTROID_RE = "^" + BATCH_CENTROID_PATH + "/[a-f,0-9]{24}$";
 
   // Headers
   static String JSON = "application/json";
@@ -67,6 +79,7 @@ public abstract class AbstractResource {
   public static int HTTP_LENGTH_REQUIRED = 411;
   public static int HTTP_REQUEST_ENTITY_TOO_LARGE = 413;
   public static int HTTP_UNSUPPORTED_MEDIA_TPE = 415;
+  public static int HTTP_TOO_MANY_REQUESTS = 429;
   public static int HTTP_INTERNAL_SERVER_ERROR = 500;
   public static int HTTP_SERVICE_UNAVAILABLE = 500;
 
@@ -82,7 +95,6 @@ public abstract class AbstractResource {
   public static int UNKNOWN = -2;
   public static int RUNNABLE = -3;
 
-
   static HashMap<Integer, String> STATUSES = new HashMap<Integer, String>();
   static {
     STATUSES.put(WAITING, "WAITING");
@@ -97,16 +109,16 @@ public abstract class AbstractResource {
     STATUSES.put(RUNNABLE, "RUNNABLE");
   }
 
-//  BIGML_USERNAME=xxxx
-//  BIGML_API_KEY=yyyyyyyyyyy
-//  BIGML_AUTH="username=$BIGML_USERNAME;api_key=$BIGML_API_KEY"
+  // BIGML_USERNAME=xxxx
+  // BIGML_API_KEY=yyyyyyyyyyy
+  // BIGML_AUTH="username=$BIGML_USERNAME;api_key=$BIGML_API_KEY"
   protected String bigmlUser;
   protected String bigmlApiKey;
   protected String bigmlAuth;
 
   protected boolean devMode;
 
-  //Base URL
+  // Base URL
   protected String BIGML_URL;
 
   protected String SOURCE_URL;
@@ -116,22 +128,27 @@ public abstract class AbstractResource {
   protected String EVALUATION_URL;
   protected String ENSEMBLE_URL;
   protected String BATCH_PREDICTION_URL;
+  protected String CLUSTER_URL;
+  protected String CENTROID_URL;
+  protected String BATCH_CENTROID_URL;
 
   protected void init() {
-	  try {
-		  BIGML_URL = BigMLClient.getInstance(devMode).getBigMLUrl();
-		  SOURCE_URL = BIGML_URL + SOURCE_PATH;
-		  DATASET_URL = BIGML_URL + DATASET_PATH;
-		  MODEL_URL = BIGML_URL + MODEL_PATH;
-		  PREDICTION_URL = BIGML_URL + PREDICTION_PATH;
-		  EVALUATION_URL = BIGML_URL + EVALUATION_PATH;
-		  ENSEMBLE_URL = BIGML_URL + ENSEMBLE_PATH;
+    try {
+      BIGML_URL = BigMLClient.getInstance(devMode).getBigMLUrl();
+      SOURCE_URL = BIGML_URL + SOURCE_PATH;
+      DATASET_URL = BIGML_URL + DATASET_PATH;
+      MODEL_URL = BIGML_URL + MODEL_PATH;
+      PREDICTION_URL = BIGML_URL + PREDICTION_PATH;
+      EVALUATION_URL = BIGML_URL + EVALUATION_PATH;
+      ENSEMBLE_URL = BIGML_URL + ENSEMBLE_PATH;
       BATCH_PREDICTION_URL = BIGML_URL + BATCH_PREDICTION_PATH;
-	  } catch (AuthenticationException ae) {
+      CLUSTER_URL = BIGML_URL + CLUSTER_PATH;
+      CENTROID_URL = BIGML_URL + CENTROID_PATH;
+      BATCH_CENTROID_URL = BIGML_URL + BATCH_CENTROID_PATH;
+    } catch (AuthenticationException ae) {
 
-	  }
+    }
   }
-
 
   /**
    * Create a new resource.
@@ -161,12 +178,16 @@ public abstract class AbstractResource {
       code = response.getStatusLine().getStatusCode();
       if (code == HTTP_CREATED) {
         location = response.getHeaders("location")[0].getValue();
-        resource = (JSONObject) JSONValue.parse(Utils.inputStreamAsString(resEntity.getContent()));
+
+        resource = (JSONObject) JSONValue.parse(Utils
+            .inputStreamAsString(resEntity.getContent()));
         resourceId = (String) resource.get("resource");
         error = new JSONObject();
       } else {
-        if (code == HTTP_BAD_REQUEST || code == HTTP_UNAUTHORIZED || code == HTTP_PAYMENT_REQUIRED || code == HTTP_NOT_FOUND) {
-          error = (JSONObject) JSONValue.parse(Utils.inputStreamAsString(resEntity.getContent()));
+        if (code == HTTP_BAD_REQUEST || code == HTTP_UNAUTHORIZED
+            || code == HTTP_PAYMENT_REQUIRED || code == HTTP_NOT_FOUND) {
+          error = (JSONObject) JSONValue.parse(Utils
+              .inputStreamAsString(resEntity.getContent()));
         } else {
           logger.info("Unexpected error (" + code + ")");
           code = HTTP_INTERNAL_SERVER_ERROR;
@@ -185,14 +206,12 @@ public abstract class AbstractResource {
     return result;
   }
 
-
   /**
    * Retrieve a resource.
    */
   public JSONObject getResource(final String urlString) {
-	return getResource(urlString, null, null, null);
+    return getResource(urlString, null, null, null);
   }
-
 
   /**
    * Retrieve a resource.
@@ -201,11 +220,11 @@ public abstract class AbstractResource {
     return getResource(urlString, queryString, null, null);
   }
 
-
   /**
    * Retrieve a resource.
    */
-  public JSONObject getResource(final String urlString, final String queryString, final String apiUser, final String apiKey) {
+  public JSONObject getResource(final String urlString,
+      final String queryString, final String apiUser, final String apiKey) {
     int code = HTTP_INTERNAL_SERVER_ERROR;
     JSONObject resource = null;
     String resourceId = null;
@@ -219,9 +238,8 @@ public abstract class AbstractResource {
 
     try {
       String query = queryString != null ? queryString : "";
-      String auth = apiUser!=null && apiKey!=null ?
-    	  "?username=" + apiUser + ";api_key=" + apiKey + ";" :
-    	  bigmlAuth;
+      String auth = apiUser != null && apiKey != null ? "?username=" + apiUser
+          + ";api_key=" + apiKey + ";" : bigmlAuth;
 
       HttpClient httpclient = Utils.httpClient();
       HttpGet httpget = new HttpGet(urlString + auth + query);
@@ -233,12 +251,15 @@ public abstract class AbstractResource {
       code = response.getStatusLine().getStatusCode();
 
       if (code == HTTP_OK) {
-        resource = (JSONObject) JSONValue.parse(Utils.inputStreamAsString(resEntity.getContent()));
+        resource = (JSONObject) JSONValue.parse(Utils
+            .inputStreamAsString(resEntity.getContent()));
         resourceId = (String) resource.get("resource");
         error = new JSONObject();
       } else {
-        if (code == HTTP_BAD_REQUEST || code == HTTP_UNAUTHORIZED || code == HTTP_NOT_FOUND) {
-          error = (JSONObject) JSONValue.parse(Utils.inputStreamAsString(resEntity.getContent()));
+        if (code == HTTP_BAD_REQUEST || code == HTTP_UNAUTHORIZED
+            || code == HTTP_NOT_FOUND) {
+          error = (JSONObject) JSONValue.parse(Utils
+              .inputStreamAsString(resEntity.getContent()));
         } else {
           logger.info("Unexpected error (" + code + ")");
           code = HTTP_INTERNAL_SERVER_ERROR;
@@ -258,12 +279,11 @@ public abstract class AbstractResource {
     return result;
   }
 
-
-
   /**
    * List resources.
    */
-  public JSONObject listResources(final String urlString, final String queryString) {
+  public JSONObject listResources(final String urlString,
+      final String queryString) {
     int code = HTTP_INTERNAL_SERVER_ERROR;
     JSONObject meta = null;
     JSONArray resources = null;
@@ -284,13 +304,16 @@ public abstract class AbstractResource {
       code = response.getStatusLine().getStatusCode();
 
       if (code == HTTP_OK) {
-        JSONObject resource = (JSONObject) JSONValue.parse(Utils.inputStreamAsString(resEntity.getContent()));
+        JSONObject resource = (JSONObject) JSONValue.parse(Utils
+            .inputStreamAsString(resEntity.getContent()));
         meta = (JSONObject) resource.get("meta");
         resources = (JSONArray) resource.get("objects");
         error = new JSONObject();
       } else {
-        if (code == HTTP_BAD_REQUEST || code == HTTP_UNAUTHORIZED || code == HTTP_NOT_FOUND) {
-          error = (JSONObject) JSONValue.parse(Utils.inputStreamAsString(resEntity.getContent()));
+        if (code == HTTP_BAD_REQUEST || code == HTTP_UNAUTHORIZED
+            || code == HTTP_NOT_FOUND) {
+          error = (JSONObject) JSONValue.parse(Utils
+              .inputStreamAsString(resEntity.getContent()));
         } else {
           logger.info("Unexpected error (" + code + ")");
           code = HTTP_INTERNAL_SERVER_ERROR;
@@ -307,7 +330,6 @@ public abstract class AbstractResource {
     result.put("error", error);
     return result;
   }
-
 
   /**
    * Update a resource.
@@ -336,12 +358,15 @@ public abstract class AbstractResource {
       code = response.getStatusLine().getStatusCode();
 
       if (code == HTTP_ACCEPTED) {
-        resource = (JSONObject) JSONValue.parse(Utils.inputStreamAsString(resEntity.getContent()));
+        resource = (JSONObject) JSONValue.parse(Utils
+            .inputStreamAsString(resEntity.getContent()));
         resourceId = (String) resource.get("resource");
         error = new JSONObject();
       } else {
-        if (code == HTTP_UNAUTHORIZED || code == HTTP_PAYMENT_REQUIRED || code == HTTP_METHOD_NOT_ALLOWED) {
-          error = (JSONObject) JSONValue.parse(Utils.inputStreamAsString(resEntity.getContent()));
+        if (code == HTTP_UNAUTHORIZED || code == HTTP_PAYMENT_REQUIRED
+            || code == HTTP_METHOD_NOT_ALLOWED) {
+          error = (JSONObject) JSONValue.parse(Utils
+              .inputStreamAsString(resEntity.getContent()));
         } else {
           logger.info("Unexpected error (" + code + ")");
           code = HTTP_INTERNAL_SERVER_ERROR;
@@ -360,7 +385,6 @@ public abstract class AbstractResource {
     result.put("error", error);
     return result;
   }
-
 
   /**
    * Delete a resource.
@@ -384,8 +408,10 @@ public abstract class AbstractResource {
       if (code == HTTP_NO_CONTENT) {
         error = new JSONObject();
       } else {
-        if (code == HTTP_BAD_REQUEST || code == HTTP_UNAUTHORIZED || code == HTTP_NOT_FOUND) {
-          error = (JSONObject) JSONValue.parse(Utils.inputStreamAsString(resEntity.getContent()));
+        if (code == HTTP_BAD_REQUEST || code == HTTP_UNAUTHORIZED
+            || code == HTTP_NOT_FOUND) {
+          error = (JSONObject) JSONValue.parse(Utils
+              .inputStreamAsString(resEntity.getContent()));
         } else {
           logger.info("Unexpected error (" + code + ")");
           code = HTTP_INTERNAL_SERVER_ERROR;
@@ -401,14 +427,16 @@ public abstract class AbstractResource {
     return result;
   }
 
-
   /**
    * Return a dictionary of fields
-   *
+   * 
    */
   public JSONObject getFields(final String resourceId) {
-    if (resourceId == null || resourceId.length() == 0
-            || !(resourceId.matches(SOURCE_RE) || resourceId.matches(DATASET_RE) || resourceId.matches(MODEL_RE) || resourceId.matches(PREDICTION_RE))) {
+    if (resourceId == null
+        || resourceId.length() == 0
+        || !(resourceId.matches(SOURCE_RE) || resourceId.matches(DATASET_RE)
+            || resourceId.matches(MODEL_RE) || resourceId
+              .matches(PREDICTION_RE))) {
       logger.info("Wrong resource id");
       return null;
     }
@@ -431,14 +459,16 @@ public abstract class AbstractResource {
     return null;
   }
 
-
   /**
    * Maps status code to string.
-   *
+   * 
    */
   public String status(final String resourceId) {
-    if (resourceId == null || resourceId.length() == 0
-            || !(resourceId.matches(SOURCE_RE) || resourceId.matches(DATASET_RE) || resourceId.matches(MODEL_RE) || resourceId.matches(PREDICTION_RE))) {
+    if (resourceId == null
+        || resourceId.length() == 0
+        || !(resourceId.matches(SOURCE_RE) || resourceId.matches(DATASET_RE)
+            || resourceId.matches(MODEL_RE) || resourceId
+              .matches(PREDICTION_RE))) {
       logger.info("Wrong resource id");
       return null;
     }
@@ -456,12 +486,12 @@ public abstract class AbstractResource {
     }
   }
 
-
   /**
    * Check whether a resource' status is FINISHED.
-   *
-   * @param resource a resource
-   *
+   * 
+   * @param resource
+   *          a resource
+   * 
    */
   public boolean isResourceReady(final JSONObject resource) {
     if (resource == null) {
@@ -472,15 +502,15 @@ public abstract class AbstractResource {
       obj = (JSONObject) resource.get("error");
     }
 
-    if (obj == null) return false;
+    if (obj == null)
+      return false;
 
     JSONObject status = (JSONObject) obj.get("status");
     Number code = (Number) resource.get("code");
     Number statusCode = (Number) status.get("code");
-    return (code != null && code.intValue() == HTTP_OK
-            && statusCode != null && statusCode.intValue() == FINISHED);
+    return (code != null && code.intValue() == HTTP_OK && statusCode != null && statusCode
+        .intValue() == FINISHED);
   }
-
 
   // ################################################################
   // #
@@ -490,56 +520,117 @@ public abstract class AbstractResource {
 
   /**
    * Retrieve a resource.
-   *
+   * 
    */
   abstract JSONObject get(final String resourceId);
 
   /**
    * Retrieve a resource.
-   *
+   * 
    */
   abstract JSONObject get(final JSONObject resource);
 
   /**
    * Check whether a resource' status is FINISHED.
-   *
+   * 
    */
   abstract boolean isReady(final String resourceId);
 
   /**
    * Check whether a resource' status is FINISHED.
-   *
+   * 
    */
   abstract boolean isReady(final JSONObject resource);
 
   /**
    * List all your resource.
-   *
+   * 
    */
   abstract public JSONObject list(final String queryString);
 
   /**
    * Update a resource.
-   *
+   * 
    */
   abstract public JSONObject update(final String resourceId, final String json);
 
   /**
    * Update a resource.
-   *
+   * 
    */
-  abstract public JSONObject update(final JSONObject resource, final JSONObject json);
+  abstract public JSONObject update(final JSONObject resource,
+      final JSONObject json);
 
   /**
    * Delete a resource.
-   *
+   * 
    */
   abstract public JSONObject delete(final String resourceId);
 
   /**
    * Delete a resource.
-   *
+   * 
    */
   abstract public JSONObject delete(final JSONObject resource);
+
+  // ################################################################
+  // #
+  // # Protected methods
+  // #
+  // ################################################################
+
+  /**
+   * Builds args dictionary for the create call from a `dataset` or a list of
+   * `datasets`
+   */
+  protected JSONObject createFromDatasets(final String[] datasets, String args,
+      Integer waitTime, Integer retries, String key) {
+
+    JSONObject createArgs = new JSONObject();
+    if (args != null) {
+      createArgs = (JSONObject) JSONValue.parse(args);
+    }
+
+    List<String> datasetsIds = new ArrayList<String>();
+
+    for (String datasetId : datasets) {
+      // Checking valid datasetId
+      if (datasetId == null || datasetId.length() == 0
+          || !(datasetId.matches(DATASET_RE))) {
+        logger.info("Wrong dataset id");
+        return null;
+      }
+
+      // Checking status
+      try {
+        waitTime = waitTime != null ? waitTime : 3000;
+        retries = retries != null ? retries : 10;
+        if (waitTime > 0) {
+          int count = 0;
+          while (count < retries
+              && !BigMLClient.getInstance(this.devMode).datasetIsReady(
+                  datasetId)) {
+            Thread.sleep(waitTime);
+            count++;
+          }
+        }
+        datasetsIds.add(datasetId);
+      } catch (Throwable e) {
+        logger.error("Error creating object");
+        return null;
+      }
+
+    }
+
+    if (datasetsIds.size() == 1) {
+      key = (key == null || key.equals("") ? "dataset" : key);
+      createArgs.put(key, (String) datasetsIds.get(0));
+    } else {
+      key = (key == null || key.equals("") ? "datasets" : key);
+      createArgs.put(key, datasetsIds);
+    }
+
+    return createArgs;
+  }
 
 }
