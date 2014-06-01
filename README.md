@@ -3,7 +3,8 @@
 In this repository you'll find an open source Java client that gives
 you a simple binding to interact with [BigML](https://bigml.io). You
 can use it to easily create, retrieve, list, update, and delete BigML
-resources (i.e., sources, datasets, models and, predictions).
+resources (i.e., sources, datasets, models, ensembles, clusters, 
+predictions, centroids, batch predictions, batch centroids, evaluations).
 
 This client is licensed under the
 [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html).
@@ -19,7 +20,7 @@ in [Campfire chatroom](https://bigmlinc.campfirenow.com/f20a0)
 
 ## Requirements
 
-You will find the `binding.properties` file where to setup your BigML credentials
+You will find in the `binding.properties` file where to setup your BigML credentials
 `BIGML_USERNAME` and `BIGML_API_KEY`. They can be overwritten passing
 the values as JVM variables with `-D`.
 
@@ -27,7 +28,7 @@ The project uses Maven as project manager.
 
 ## Running the Tests
 
-There is available a test suite using [Cucumber](http://cukes.info/),
+There is a test suite using [Cucumber](http://cukes.info/) available,
 you may want to run it by execute:
 
 ```bash
