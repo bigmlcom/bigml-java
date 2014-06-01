@@ -1,11 +1,10 @@
 package org.bigml.binding;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-
-import org.apache.commons.lang.ArrayUtils;
 
 public class MultiVote {
 
@@ -304,7 +303,7 @@ public class MultiVote {
     		prediction = this.predictions[index];
 
     		if (weightLabel!=null && !weightLabel.equals("plurality")) {
-    			if (ArrayUtils.indexOf(WEIGHT_LABELS, weightLabel) == -1) {
+    			if (Arrays.asList(WEIGHT_LABELS).indexOf(weightLabel) == -1) {
     		        throw new Error("Wrong weightLabel value.");
     		    }
     			if (prediction.get(weightLabel)==null) {

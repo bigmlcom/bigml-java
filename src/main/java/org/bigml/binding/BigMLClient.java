@@ -17,7 +17,6 @@ import org.bigml.binding.resources.Model;
 import org.bigml.binding.resources.Prediction;
 import org.bigml.binding.resources.Source;
 import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
 
 /**
  * Entry point to create, retrieve, list, update, and delete sources, datasets,
@@ -2294,4 +2293,5 @@ public class BigMLClient {
   public JSONObject deleteBatchCentroid(final JSONObject batchCentroidJSON) {
     return batchCentroid.delete(batchCentroidJSON);
   }
+  
 }

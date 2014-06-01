@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.bigml.binding.Constants;
 import org.bigml.binding.utils.Utils;
@@ -297,7 +296,7 @@ public class Tree {
 			Tree child = this.children.get(i);
 			String fieldName = (String) Utils.getJSONObject(fields, child.predicate.getField()+".name");
 			rules += MessageFormat.format("{0} IF {1} {2} {3} {4}\n",
-								StringUtils.repeat(INDENT, depth),
+								new String(new char[depth]).replace("\0", INDENT),								
 								fieldName,
 								child.predicate.getOperator(),
 								child.predicate.getValue(),
@@ -308,7 +307,7 @@ public class Tree {
     } else {
       String fieldName = (String) Utils.getJSONObject(fields, objectiveField+".name");
       rules += MessageFormat.format("{0} {1} = {2}\n",
-    		  		StringUtils.repeat(INDENT, depth),
+    		  		new String(new char[depth]).replace("\0", INDENT),
 					this.objectiveField!=null ? fieldName : "Prediction",
 					this.output);
     }
@@ -341,13 +340,13 @@ public class Tree {
 
 		String comparison = JAVA_OPERATOR.get(child.predicate.getOpType() + "-" + child.predicate.getOperator());
 		instructions += MessageFormat.format("{0}if ({1} != null && " + comparison + ") '{'\n",
-				StringUtils.repeat(INDENT, depth),
+				new String(new char[depth]).replace("\0", INDENT),
 				Utils.slugify(fieldName),
 				Utils.slugify(fieldName),
 				child.predicate.getValue()+"");
 
 		instructions += child.javaBody(depth + 1, methodReturn);
-		instructions += StringUtils.repeat(INDENT, depth) + "}\n";
+		instructions += new String(new char[depth]).replace("\0", INDENT) + "}\n";
 	  }
     } else {
       String returnSentence = "{0} return {1};\n";
@@ -362,7 +361,7 @@ public class Tree {
       }
 
       instructions += MessageFormat.format(returnSentence,
-    		  StringUtils.repeat(INDENT, depth),
+    		  new String(new char[depth]).replace("\0", INDENT),
     		  this.output);
     }
 
