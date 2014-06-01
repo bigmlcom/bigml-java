@@ -33,4 +33,6 @@ you may want to run it by execute:
 ```bash
 $ mvn test
 ```
+## Generated JAR file of the bindings
 
+Since version 1.1 the name of the JAR file is _bigml-binding_.
