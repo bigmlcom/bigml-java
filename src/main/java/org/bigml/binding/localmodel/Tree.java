@@ -16,7 +16,7 @@ import org.json.simple.JSONObject;
 
 /**
  * A tree-like predictive model.
- *
+ * 
  */
 public class Tree {
 
@@ -30,28 +30,47 @@ public class Tree {
     // Map operator str to its corresponding java operator
     static HashMap<String, String> JAVA_OPERATOR = new HashMap<String, String>();
     static {
-        JAVA_OPERATOR.put(Constants.OPTYPE_NUMERIC+"-"+Constants.OPERATOR_LT, "{2} < {3}");
-        JAVA_OPERATOR.put(Constants.OPTYPE_NUMERIC+"-"+Constants.OPERATOR_LE, "{2} <= {3}");
-        JAVA_OPERATOR.put(Constants.OPTYPE_NUMERIC+"-"+Constants.OPERATOR_EQ, "{2} = {3}");
-        JAVA_OPERATOR.put(Constants.OPTYPE_NUMERIC+"-"+Constants.OPERATOR_NE, "{2} != {3}");
-        JAVA_OPERATOR.put(Constants.OPTYPE_NUMERIC+"-"+Constants.OPERATOR_NE2, "{2} != {3}");
-        JAVA_OPERATOR.put(Constants.OPTYPE_NUMERIC+"-"+Constants.OPERATOR_GE, "{2} >= {3}");
-        JAVA_OPERATOR.put(Constants.OPTYPE_NUMERIC+"-"+Constants.OPERATOR_GT, "{2} > {3}");
-        JAVA_OPERATOR.put(Constants.OPTYPE_CATEGORICAL+"-"+Constants.OPERATOR_EQ, "\"{2}\".equals({3})");
-        JAVA_OPERATOR.put(Constants.OPTYPE_CATEGORICAL+"-"+Constants.OPERATOR_NE, "!\"{2}\".equals({3})");
-        JAVA_OPERATOR.put(Constants.OPTYPE_CATEGORICAL+"-"+Constants.OPERATOR_NE2, "!\"{2}\".equals({3})");
-        JAVA_OPERATOR.put(Constants.OPTYPE_TEXT+"-"+Constants.OPERATOR_EQ, "\"{2}\".equals({3})");
-        JAVA_OPERATOR.put(Constants.OPTYPE_TEXT+"-"+Constants.OPERATOR_NE, "!\"{2}\".equals({3})");
-        JAVA_OPERATOR.put(Constants.OPTYPE_TEXT+"-"+Constants.OPERATOR_NE2, "!\"{2}\".equals({3})");
-        JAVA_OPERATOR.put(Constants.OPTYPE_DATETIME+"-"+Constants.OPERATOR_EQ, "\"{2}\".equals({3})");
-        JAVA_OPERATOR.put(Constants.OPTYPE_DATETIME+"-"+Constants.OPERATOR_NE, "!\"{2}\".equals({3})");
-        JAVA_OPERATOR.put(Constants.OPTYPE_DATETIME+"-"+Constants.OPERATOR_NE2, "!\"{2}\".equals({3})");
-        JAVA_OPERATOR.put(Constants.OPTYPE_DATETIME+"-"+Constants.OPERATOR_LT, "\"{2}\".compareTo({3})<0");
-        JAVA_OPERATOR.put(Constants.OPTYPE_DATETIME+"-"+Constants.OPERATOR_LE, "\"{2}\".compareTo({3})<=0");
-        JAVA_OPERATOR.put(Constants.OPTYPE_DATETIME+"-"+Constants.OPERATOR_GE, "\"{2}\".compareTo({3})>=0");
-        JAVA_OPERATOR.put(Constants.OPTYPE_DATETIME+"-"+Constants.OPERATOR_GT, "\"{2}\".compareTo({3})>0");
+        JAVA_OPERATOR.put(Constants.OPTYPE_NUMERIC + "-"
+                + Constants.OPERATOR_LT, "{2} < {3}");
+        JAVA_OPERATOR.put(Constants.OPTYPE_NUMERIC + "-"
+                + Constants.OPERATOR_LE, "{2} <= {3}");
+        JAVA_OPERATOR.put(Constants.OPTYPE_NUMERIC + "-"
+                + Constants.OPERATOR_EQ, "{2} = {3}");
+        JAVA_OPERATOR.put(Constants.OPTYPE_NUMERIC + "-"
+                + Constants.OPERATOR_NE, "{2} != {3}");
+        JAVA_OPERATOR.put(Constants.OPTYPE_NUMERIC + "-"
+                + Constants.OPERATOR_NE2, "{2} != {3}");
+        JAVA_OPERATOR.put(Constants.OPTYPE_NUMERIC + "-"
+                + Constants.OPERATOR_GE, "{2} >= {3}");
+        JAVA_OPERATOR.put(Constants.OPTYPE_NUMERIC + "-"
+                + Constants.OPERATOR_GT, "{2} > {3}");
+        JAVA_OPERATOR.put(Constants.OPTYPE_CATEGORICAL + "-"
+                + Constants.OPERATOR_EQ, "\"{2}\".equals({3})");
+        JAVA_OPERATOR.put(Constants.OPTYPE_CATEGORICAL + "-"
+                + Constants.OPERATOR_NE, "!\"{2}\".equals({3})");
+        JAVA_OPERATOR.put(Constants.OPTYPE_CATEGORICAL + "-"
+                + Constants.OPERATOR_NE2, "!\"{2}\".equals({3})");
+        JAVA_OPERATOR.put(Constants.OPTYPE_TEXT + "-" + Constants.OPERATOR_EQ,
+                "\"{2}\".equals({3})");
+        JAVA_OPERATOR.put(Constants.OPTYPE_TEXT + "-" + Constants.OPERATOR_NE,
+                "!\"{2}\".equals({3})");
+        JAVA_OPERATOR.put(Constants.OPTYPE_TEXT + "-" + Constants.OPERATOR_NE2,
+                "!\"{2}\".equals({3})");
+        JAVA_OPERATOR.put(Constants.OPTYPE_DATETIME + "-"
+                + Constants.OPERATOR_EQ, "\"{2}\".equals({3})");
+        JAVA_OPERATOR.put(Constants.OPTYPE_DATETIME + "-"
+                + Constants.OPERATOR_NE, "!\"{2}\".equals({3})");
+        JAVA_OPERATOR.put(Constants.OPTYPE_DATETIME + "-"
+                + Constants.OPERATOR_NE2, "!\"{2}\".equals({3})");
+        JAVA_OPERATOR.put(Constants.OPTYPE_DATETIME + "-"
+                + Constants.OPERATOR_LT, "\"{2}\".compareTo({3})<0");
+        JAVA_OPERATOR.put(Constants.OPTYPE_DATETIME + "-"
+                + Constants.OPERATOR_LE, "\"{2}\".compareTo({3})<=0");
+        JAVA_OPERATOR.put(Constants.OPTYPE_DATETIME + "-"
+                + Constants.OPERATOR_GE, "\"{2}\".compareTo({3})>=0");
+        JAVA_OPERATOR.put(Constants.OPTYPE_DATETIME + "-"
+                + Constants.OPERATOR_GT, "\"{2}\".compareTo({3})>0");
     }
-
 
     private final JSONObject fields;
     private final JSONObject root;
@@ -67,14 +86,13 @@ public class Tree {
     /**
      * Constructor
      */
-    public Tree(final JSONObject root,
-            final JSONObject fields,
+    public Tree(final JSONObject root, final JSONObject fields,
             final Object objective) {
         super();
 
         this.fields = fields;
 
-        if (objective!=null && objective instanceof List) {
+        if (objective != null && objective instanceof List) {
             this.objectiveField = (String) ((List) objective).get(0);
         } else {
             this.objectiveField = (String) objective;
@@ -85,13 +103,12 @@ public class Tree {
         this.count = (Long) root.get("count");
         this.confidence = ((Number) root.get("confidence")).doubleValue();
 
-
         if (root.get("predicate") instanceof Boolean) {
             isPredicate = true;
         } else {
             JSONObject predicateObj = (JSONObject) root.get("predicate");
-            predicate = new Predicate(
-                    (String) Utils.getJSONObject(fields, predicateObj.get("field")+".optype"),
+            predicate = new Predicate((String) Utils.getJSONObject(fields,
+                    predicateObj.get("field") + ".optype"),
                     (String) predicateObj.get("operator"),
                     (String) predicateObj.get("field"),
                     predicateObj.get("value"),
@@ -100,32 +117,36 @@ public class Tree {
 
         children = new ArrayList<Tree>();
         JSONArray childrenObj = (JSONArray) root.get("children");
-        if (childrenObj!=null) {
-            for (int i=0; i<childrenObj.size(); i++) {
+        if (childrenObj != null) {
+            for (int i = 0; i < childrenObj.size(); i++) {
                 JSONObject child = (JSONObject) childrenObj.get(i);
                 Tree childTree = new Tree(child, fields, objectiveField);
                 children.add(childTree);
             }
         }
 
-
         JSONArray distributionObj = (JSONArray) root.get("distribution");
-        if (distributionObj!=null) {
+        if (distributionObj != null) {
             this.distribution = distributionObj;
         } else {
-            JSONObject objectiveSummaryObj = (JSONObject) root.get("objective_summary");
-            if (objectiveSummaryObj!=null && objectiveSummaryObj.get("categories")!=null) {
-                this.distribution = (JSONArray) objectiveSummaryObj.get("categories");
+            JSONObject objectiveSummaryObj = (JSONObject) root
+                    .get("objective_summary");
+            if (objectiveSummaryObj != null
+                    && objectiveSummaryObj.get("categories") != null) {
+                this.distribution = (JSONArray) objectiveSummaryObj
+                        .get("categories");
             } else {
-                JSONObject summary = (JSONObject) Utils.getJSONObject(fields, objectiveField+".summary");
-                if (summary.get("bins")!=null) {
+                JSONObject summary = (JSONObject) Utils.getJSONObject(fields,
+                        objectiveField + ".summary");
+                if (summary.get("bins") != null) {
                     this.distribution = (JSONArray) summary.get("bins");
                 } else {
-                    if (summary.get("counts")!=null) {
+                    if (summary.get("counts") != null) {
                         this.distribution = (JSONArray) summary.get("counts");
                     } else {
-                        if (summary.get("categories")!=null) {
-                            this.distribution = (JSONArray) summary.get("categories");
+                        if (summary.get("categories") != null) {
+                            this.distribution = (JSONArray) summary
+                                    .get("categories");
                         }
 
                     }
@@ -135,29 +156,25 @@ public class Tree {
         }
     }
 
-
     /**
      * List a description of the model's fields.
-     *
+     * 
      */
     public JSONObject listFields() {
         return fields;
     }
 
-
-
     public String getObjectiveField() {
         return objectiveField;
     }
 
-
     /**
      * Makes a prediction based on a number of field values.
-     *
+     * 
      * The input fields must be keyed by Id.
-     *
+     * 
      * .predict({"petal length": 1})
-     *
+     * 
      */
     public HashMap<Object, Object> predict(final JSONObject inputData) {
         return predict(inputData, false);
@@ -166,24 +183,26 @@ public class Tree {
 
     /**
      * Makes a prediction based on a number of field values.
-     *
+     * 
      * The input fields must be keyed by Id.
-     *
+     * 
      * .predict({"petal length": 1})
-     *
+     * 
      */
-    public HashMap<Object, Object> predict(final JSONObject inputData, Boolean withConfidence) {
+    public HashMap<Object, Object> predict(final JSONObject inputData,
+            Boolean withConfidence) {
         if (withConfidence == null) {
             withConfidence = false;
         }
 
-        if (this.children!=null && this.children.size()>0) {
-            for (int i=0; i<this.children.size(); i++) {
+        if (this.children != null && this.children.size() > 0) {
+            for (int i = 0; i < this.children.size(); i++) {
                 Tree child = this.children.get(i);
 
                 String field = child.predicate.getField();
-                Object inputValue = inputData.get(((JSONObject)fields.get(field)).get("name"));
-                if (inputValue==null) {
+                Object inputValue = inputData.get(((JSONObject) fields
+                        .get(field)).get("name"));
+                if (inputValue == null) {
                     continue;
                 }
 
@@ -192,41 +211,64 @@ public class Tree {
                 Object value = child.predicate.getValue();
                 String term = child.predicate.getTerm();
 
-                if (operator.equals(Constants.OPERATOR_EQ) && inputValue.equals(value)) {
+                if (operator.equals(Constants.OPERATOR_EQ)
+                        && inputValue.equals(value)) {
                     return child.predict(inputData, withConfidence);
                 }
-                if ((operator.equals(Constants.OPERATOR_NE) || operator.equals(Constants.OPERATOR_NE2)) && !inputValue.equals(value)) {
+                if ((operator.equals(Constants.OPERATOR_NE) || operator
+                        .equals(Constants.OPERATOR_NE2))
+                        && !inputValue.equals(value)) {
                     return child.predict(inputData, withConfidence);
                 }
                 if (operator.equals(Constants.OPERATOR_LT)) {
-                    if (opType.equals(Constants.OPTYPE_NUMERIC) && ((Number)inputValue).doubleValue()<((Number)value).doubleValue()) {
+                    if (opType.equals(Constants.OPTYPE_NUMERIC)
+                            && ((Number) inputValue).doubleValue() < ((Number) value)
+                                    .doubleValue()) {
                         return child.predict(inputData, withConfidence);
                     }
-                    if (opType.equals(Constants.OPTYPE_TEXT) && termMatches(inputData, (String) inputValue, field, term) < ((Number)value).doubleValue()) {
+                    if (opType.equals(Constants.OPTYPE_TEXT)
+                            && termMatches(inputData, (String) inputValue,
+                                    field, term) < ((Number) value)
+                                    .doubleValue()) {
                         return child.predict(inputData, withConfidence);
                     }
                 }
                 if (operator.equals(Constants.OPERATOR_LE)) {
-                    if (opType.equals(Constants.OPTYPE_NUMERIC) && ((Number)inputValue).doubleValue()<=((Number)value).doubleValue()) {
+                    if (opType.equals(Constants.OPTYPE_NUMERIC)
+                            && ((Number) inputValue).doubleValue() <= ((Number) value)
+                                    .doubleValue()) {
                         return child.predict(inputData, withConfidence);
                     }
-                    if (opType.equals(Constants.OPTYPE_TEXT) && termMatches(inputData, (String) inputValue,field, term)<=((Number)value).doubleValue()) {
+                    if (opType.equals(Constants.OPTYPE_TEXT)
+                            && termMatches(inputData, (String) inputValue,
+                                    field, term) <= ((Number) value)
+                                    .doubleValue()) {
                         return child.predict(inputData, withConfidence);
                     }
                 }
                 if (operator.equals(Constants.OPERATOR_GE)) {
-                    if (opType.equals(Constants.OPTYPE_NUMERIC) && ((Number)inputValue).doubleValue()>=((Number)value).doubleValue()) {
+                    if (opType.equals(Constants.OPTYPE_NUMERIC)
+                            && ((Number) inputValue).doubleValue() >= ((Number) value)
+                                    .doubleValue()) {
                         return child.predict(inputData, withConfidence);
                     }
-                    if (opType.equals(Constants.OPTYPE_TEXT) && termMatches(inputData, (String) inputValue, field, term)>=((Number)value).doubleValue()) {
+                    if (opType.equals(Constants.OPTYPE_TEXT)
+                            && termMatches(inputData, (String) inputValue,
+                                    field, term) >= ((Number) value)
+                                    .doubleValue()) {
                         return child.predict(inputData, withConfidence);
                     }
                 }
                 if (operator.equals(Constants.OPERATOR_GT)) {
-                    if (opType.equals(Constants.OPTYPE_NUMERIC) && ((Number)inputValue).doubleValue()>((Number)value).doubleValue()) {
+                    if (opType.equals(Constants.OPTYPE_NUMERIC)
+                            && ((Number) inputValue).doubleValue() > ((Number) value)
+                                    .doubleValue()) {
                         return child.predict(inputData, withConfidence);
                     }
-                    if (opType.equals(Constants.OPTYPE_TEXT) && termMatches(inputData, (String) inputValue, field, term) > ((Number)value).doubleValue()) {
+                    if (opType.equals(Constants.OPTYPE_TEXT)
+                            && termMatches(inputData, (String) inputValue,
+                                    field, term) > ((Number) value)
+                                    .doubleValue()) {
                         return child.predict(inputData, withConfidence);
                     }
                 }
@@ -236,21 +278,21 @@ public class Tree {
         HashMap<Object, Object> result = new HashMap<Object, Object>();
         result.put("count", this.count);
         result.put("prediction", this.output);
-        if (withConfidence) result.put("confidence", this.confidence);
+        if (withConfidence)
+            result.put("confidence", this.confidence);
         result.put("distribution", this.distribution);
         return result;
     }
 
-
-    private int termMatches(JSONObject inputData, String text, String fieldLabel, String term) {
-
+    private int termMatches(JSONObject inputData, String text,
+            String fieldLabel, String term) {
 
         // Checking Full Terms Only
-        String tokenMode = (String) Utils.getJSONObject(this.fields, fieldLabel+".term_analysis.token_mode");
+        String tokenMode = (String) Utils.getJSONObject(this.fields, fieldLabel
+                + ".term_analysis.token_mode");
         if (tokenMode.equals("full_terms_only")) {
             return text.equalsIgnoreCase(term) ? 1 : 0;
         }
-
 
         // All and Tokens only
         Boolean isCaseSensitive = (Boolean) Utils.getJSONObject(this.fields,
@@ -269,8 +311,8 @@ public class Tree {
 
         JSONArray relatedTerms = (JSONArray) termForms.get(term);
         String regexp = "(\\b|_)" + Pattern.quote(term) + "(\\b|_)";
-        for (int i=0; relatedTerms!=null && i<relatedTerms.size(); i++) {
-            regexp +=  "|(\\b|_)" + (String) relatedTerms.get(i) + "(\\b|_)";
+        for (int i = 0; relatedTerms != null && i < relatedTerms.size(); i++) {
+            regexp += "|(\\b|_)" + (String) relatedTerms.get(i) + "(\\b|_)";
         }
 
         Pattern pattern = Pattern.compile(regexp, flags);
@@ -283,86 +325,89 @@ public class Tree {
         return count;
     }
 
-
     /**
      * Translates a tree model into a set of IF-THEN rules.
-     *
-     *  @param depth	controls the size of indentation
+     * 
+     * @param depth
+     *            controls the size of indentation
      */
     public String generateRules(final int depth) {
         String rules = "";
-        if (this.children!=null && this.children.size()>0) {
-            for (int i=0; i<this.children.size(); i++) {
+        if (this.children != null && this.children.size() > 0) {
+            for (int i = 0; i < this.children.size(); i++) {
                 Tree child = this.children.get(i);
-                String fieldName = (String) Utils.getJSONObject(fields, child.predicate.getField()+".name");
+                String fieldName = (String) Utils.getJSONObject(fields,
+                        child.predicate.getField() + ".name");
                 rules += MessageFormat.format("{0} IF {1} {2} {3} {4}\n",
                         new String(new char[depth]).replace("\0", INDENT),
-                        fieldName,
-                        child.predicate.getOperator(),
-                        child.predicate.getValue(),
-                        child.children!=null && child.children.size()>0 ? "AND" : "THEN");
+                        fieldName, child.predicate.getOperator(),
+                        child.predicate.getValue(), child.children != null
+                                && child.children.size() > 0 ? "AND" : "THEN");
 
                 rules += child.generateRules(depth + 1);
             }
         } else {
-            String fieldName = (String) Utils.getJSONObject(fields, objectiveField+".name");
-            rules += MessageFormat.format("{0} {1} = {2}\n",
-                    new String(new char[depth]).replace("\0", INDENT),
-                    this.objectiveField!=null ? fieldName : "Prediction",
-                            this.output);
+            String fieldName = (String) Utils.getJSONObject(fields,
+                    objectiveField + ".name");
+            rules += MessageFormat.format("{0} {1} = {2}\n", new String(
+                    new char[depth]).replace("\0", INDENT),
+                    this.objectiveField != null ? fieldName : "Prediction",
+                    this.output);
         }
 
         return rules;
     }
 
-
     /**
      * Prints out an IF-THEN rule version of the tree.
-     *
-     * @param depth	controls the size of indentation
+     * 
+     * @param depth
+     *            controls the size of indentation
      */
     public String rules(final int depth) {
         return generateRules(depth);
     }
 
-
     /**
      * Translate the model into a set of "if" java statements.
-     *
-     * @param depth	controls the size of indentation
+     * 
+     * @param depth
+     *            controls the size of indentation
      */
     public String javaBody(final int depth, final String methodReturn) {
         String instructions = "";
-        if (this.children!=null && this.children.size()>0) {
-            for (int i=0; i<this.children.size(); i++) {
+        if (this.children != null && this.children.size() > 0) {
+            for (int i = 0; i < this.children.size(); i++) {
                 Tree child = this.children.get(i);
-                String fieldName = (String) Utils.getJSONObject(fields, child.predicate.getField()+".name");
+                String fieldName = (String) Utils.getJSONObject(fields,
+                        child.predicate.getField() + ".name");
 
-                String comparison = JAVA_OPERATOR.get(child.predicate.getOpType() + "-" + child.predicate.getOperator());
-                instructions += MessageFormat.format("{0}if ({1} != null && " + comparison + ") '{'\n",
+                String comparison = JAVA_OPERATOR.get(child.predicate
+                        .getOpType() + "-" + child.predicate.getOperator());
+                instructions += MessageFormat.format("{0}if ({1} != null && "
+                        + comparison + ") '{'\n",
                         new String(new char[depth]).replace("\0", INDENT),
-                        Utils.slugify(fieldName),
-                        Utils.slugify(fieldName),
-                        child.predicate.getValue()+"");
+                        Utils.slugify(fieldName), Utils.slugify(fieldName),
+                        child.predicate.getValue() + "");
 
                 instructions += child.javaBody(depth + 1, methodReturn);
-                instructions += new String(new char[depth]).replace("\0", INDENT) + "}\n";
+                instructions += new String(new char[depth]).replace("\0",
+                        INDENT) + "}\n";
             }
         } else {
             String returnSentence = "{0} return {1};\n";
-            if ( methodReturn.equals("String")) {
+            if (methodReturn.equals("String")) {
                 returnSentence = "{0} return \"{1}\";\n";
             }
-            if ( methodReturn.equals("Float")) {
+            if (methodReturn.equals("Float")) {
                 returnSentence = "{0} return {1}F;\n";
             }
-            if ( methodReturn.equals("Boolean")) {
+            if (methodReturn.equals("Boolean")) {
                 returnSentence = "{0} return new Boolean({1});\n";
             }
 
-            instructions += MessageFormat.format(returnSentence,
-                    new String(new char[depth]).replace("\0", INDENT),
-                    this.output);
+            instructions += MessageFormat.format(returnSentence, new String(
+                    new char[depth]).replace("\0", INDENT), this.output);
         }
 
         return instructions;

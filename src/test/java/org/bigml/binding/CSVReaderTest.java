@@ -18,8 +18,8 @@ public class CSVReaderTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         if (irisFields == null) {
-            String fn =
-                CSVReaderTest.class.getResource("/iris-fields.json").getFile();
+            String fn = CSVReaderTest.class.getResource("/iris-fields.json")
+                    .getFile();
             FileReader r = new FileReader(new File(fn));
             irisFields = (JSONObject) JSONValue.parse(r);
             r.close();
@@ -46,7 +46,7 @@ public class CSVReaderTest extends TestCase {
 
     public void testIds() throws Exception {
         String iris = this.getClass().getResource("/iris.csv").getFile();
-        String ids[] = {"000000", "000001", "000002", "000003", "000004"};
+        String ids[] = { "000000", "000001", "000002", "000003", "000004" };
         CSVReader reader = new CSVReader(iris, irisFields, ids);
         int n = 0;
         while (reader.hasNext()) {

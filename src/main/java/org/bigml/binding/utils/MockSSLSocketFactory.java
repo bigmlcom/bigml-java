@@ -17,37 +17,39 @@ import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.conn.ssl.X509HostnameVerifier;
 
 public class MockSSLSocketFactory extends SSLSocketFactory {
-	
-	public MockSSLSocketFactory() throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException, UnrecoverableKeyException {
-	    super(trustStrategy, hostnameVerifier);
-	}
 
-	private static final X509HostnameVerifier hostnameVerifier = new X509HostnameVerifier() {
+    public MockSSLSocketFactory() throws NoSuchAlgorithmException,
+            KeyManagementException, KeyStoreException,
+            UnrecoverableKeyException {
+        super(trustStrategy, hostnameVerifier);
+    }
 
-	    public void verify(String host, SSLSocket ssl) throws IOException {
-	        // Do nothing
-	    }
+    private static final X509HostnameVerifier hostnameVerifier = new X509HostnameVerifier() {
 
+        public void verify(String host, SSLSocket ssl) throws IOException {
+            // Do nothing
+        }
 
-	    public void verify(String host, X509Certificate cert) throws SSLException {
-	        //Do nothing
-	    }
+        public void verify(String host, X509Certificate cert)
+                throws SSLException {
+            // Do nothing
+        }
 
+        public void verify(String host, String[] cns, String[] subjectAlts)
+                throws SSLException {
+            // Do nothing
+        }
 
-	    public void verify(String host, String[] cns, String[] subjectAlts) throws SSLException {
-	        //Do nothing
-	    }
+        public boolean verify(String s, SSLSession sslSession) {
+            return true;
+        }
+    };
 
+    private static final TrustStrategy trustStrategy = new TrustStrategy() {
+        public boolean isTrusted(X509Certificate[] chain, String authType)
+                throws CertificateException {
+            return true;
+        }
+    };
 
-	    public boolean verify(String s, SSLSession sslSession) {
-	        return true; 
-	    }
-	};
-
-	private static final TrustStrategy trustStrategy = new TrustStrategy() {
-	    public boolean isTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-	        return true;
-	    }
-	};
-	
 }

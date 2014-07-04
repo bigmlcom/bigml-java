@@ -60,7 +60,8 @@ public abstract class AbstractResource {
     static String CLUSTER_RE = "^(public/|shared/|)" + CLUSTER_PATH
             + "/[a-f,0-9]{24}$";
     static String CENTROID_RE = "^" + CENTROID_PATH + "/[a-f,0-9]{24}$";
-    static String BATCH_CENTROID_RE = "^" + BATCH_CENTROID_PATH + "/[a-f,0-9]{24}$";
+    static String BATCH_CENTROID_RE = "^" + BATCH_CENTROID_PATH
+            + "/[a-f,0-9]{24}$";
 
     // Headers
     static String JSON = "application/json";
@@ -185,7 +186,8 @@ public abstract class AbstractResource {
                 error = new JSONObject();
             } else {
                 if (code == HTTP_BAD_REQUEST || code == HTTP_UNAUTHORIZED
-                        || code == HTTP_PAYMENT_REQUIRED || code == HTTP_NOT_FOUND) {
+                        || code == HTTP_PAYMENT_REQUIRED
+                        || code == HTTP_NOT_FOUND) {
                     error = (JSONObject) JSONValue.parse(Utils
                             .inputStreamAsString(resEntity.getContent()));
                 } else {
@@ -216,7 +218,8 @@ public abstract class AbstractResource {
     /**
      * Retrieve a resource.
      */
-    public JSONObject getResource(final String urlString, final String queryString) {
+    public JSONObject getResource(final String urlString,
+            final String queryString) {
         return getResource(urlString, queryString, null, null);
     }
 
@@ -238,8 +241,8 @@ public abstract class AbstractResource {
 
         try {
             String query = queryString != null ? queryString : "";
-            String auth = apiUser != null && apiKey != null ? "?username=" + apiUser
-                    + ";api_key=" + apiKey + ";" : bigmlAuth;
+            String auth = apiUser != null && apiKey != null ? "?username="
+                    + apiUser + ";api_key=" + apiKey + ";" : bigmlAuth;
 
             HttpClient httpclient = Utils.httpClient();
             HttpGet httpget = new HttpGet(urlString + auth + query);
@@ -434,9 +437,10 @@ public abstract class AbstractResource {
     public JSONObject getFields(final String resourceId) {
         if (resourceId == null
                 || resourceId.length() == 0
-                || !(resourceId.matches(SOURCE_RE) || resourceId.matches(DATASET_RE)
+                || !(resourceId.matches(SOURCE_RE)
+                        || resourceId.matches(DATASET_RE)
                         || resourceId.matches(MODEL_RE) || resourceId
-                        .matches(PREDICTION_RE))) {
+                            .matches(PREDICTION_RE))) {
             logger.info("Wrong resource id");
             return null;
         }
@@ -466,9 +470,10 @@ public abstract class AbstractResource {
     public String status(final String resourceId) {
         if (resourceId == null
                 || resourceId.length() == 0
-                || !(resourceId.matches(SOURCE_RE) || resourceId.matches(DATASET_RE)
+                || !(resourceId.matches(SOURCE_RE)
+                        || resourceId.matches(DATASET_RE)
                         || resourceId.matches(MODEL_RE) || resourceId
-                        .matches(PREDICTION_RE))) {
+                            .matches(PREDICTION_RE))) {
             logger.info("Wrong resource id");
             return null;
         }
@@ -490,7 +495,7 @@ public abstract class AbstractResource {
      * Check whether a resource' status is FINISHED.
      * 
      * @param resource
-     *          a resource
+     *            a resource
      * 
      */
     public boolean isResourceReady(final JSONObject resource) {
@@ -508,8 +513,8 @@ public abstract class AbstractResource {
         JSONObject status = (JSONObject) obj.get("status");
         Number code = (Number) resource.get("code");
         Number statusCode = (Number) status.get("code");
-        return (code != null && code.intValue() == HTTP_OK && statusCode != null && statusCode
-                .intValue() == FINISHED);
+        return (code != null && code.intValue() == HTTP_OK
+                && statusCode != null && statusCode.intValue() == FINISHED);
     }
 
     // ################################################################
@@ -583,8 +588,8 @@ public abstract class AbstractResource {
      * Builds args dictionary for the create call from a `dataset` or a list of
      * `datasets`
      */
-    protected JSONObject createFromDatasets(final String[] datasets, String args,
-            Integer waitTime, Integer retries, String key) {
+    protected JSONObject createFromDatasets(final String[] datasets,
+            String args, Integer waitTime, Integer retries, String key) {
 
         JSONObject createArgs = new JSONObject();
         if (args != null) {
@@ -608,8 +613,8 @@ public abstract class AbstractResource {
                 if (waitTime > 0) {
                     int count = 0;
                     while (count < retries
-                            && !BigMLClient.getInstance(this.devMode).datasetIsReady(
-                                    datasetId)) {
+                            && !BigMLClient.getInstance(this.devMode)
+                                    .datasetIsReady(datasetId)) {
                         Thread.sleep(waitTime);
                         count++;
                     }

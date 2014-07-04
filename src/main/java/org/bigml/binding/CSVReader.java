@@ -1,7 +1,7 @@
 /*
   Utility class for reading CSV input files and parsing them as rows
   of a dataset.
-*/
+ */
 
 package org.bigml.binding;
 
@@ -32,22 +32,20 @@ import org.bigml.binding.utils.Utils;
  */
 public class CSVReader implements Iterator<Map<String, Object>> {
 
-    public CSVReader(String filename, JSONObject fields)
-        throws IOException, FileNotFoundException {
+    public CSVReader(String filename, JSONObject fields) throws IOException,
+            FileNotFoundException {
         this(filename, fields, null);
     }
 
     public CSVReader(String filename, JSONObject fields, String[] cols)
-        throws IOException, FileNotFoundException {
+            throws IOException, FileNotFoundException {
         this(filename, fields, cols, CsvPreference.STANDARD_PREFERENCE);
     }
 
-    public CSVReader(String filename, JSONObject fields,
-                     String[] names, CsvPreference prefs)
-        throws IOException, FileNotFoundException {
+    public CSVReader(String filename, JSONObject fields, String[] names,
+            CsvPreference prefs) throws IOException, FileNotFoundException {
         try {
-            this.reader =
-                new CsvMapReader(new FileReader(filename), prefs);
+            this.reader = new CsvMapReader(new FileReader(filename), prefs);
 
             if (names == null) {
                 this.header = reader.getHeader(true);
@@ -63,13 +61,14 @@ public class CSVReader implements Iterator<Map<String, Object>> {
     }
 
     public void close() throws IOException {
-        if( this.reader != null ) {
+        if (this.reader != null) {
             this.reader.close();
         }
     }
 
     public Map<String, Object> next() {
-        if (this.nextLine == null) return null;
+        if (this.nextLine == null)
+            return null;
         Map<String, Object> result = nextLine;
         readNext();
         return result;
@@ -107,8 +106,8 @@ public class CSVReader implements Iterator<Map<String, Object>> {
             throw new IllegalArgumentException(msg);
         }
         if (datatype.equals("int8") || datatype.equals("int16")
-            || datatype.equals("int32") || datatype.equals("int64")
-            || datatype.equals("integer")) {
+                || datatype.equals("int32") || datatype.equals("int64")
+                || datatype.equals("integer")) {
             return new Optional(new ParseLong());
         } else if (datatype.equals("float") || datatype.equals("double")) {
             return new Optional(new ParseDouble());
@@ -135,7 +134,8 @@ public class CSVReader implements Iterator<Map<String, Object>> {
                     return;
                 }
             }
-            if (line == null) this.reader.close();
+            if (line == null)
+                this.reader.close();
         } catch (IOException e) {
             this.nextLine = null;
         }
