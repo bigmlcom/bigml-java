@@ -20,7 +20,7 @@ Feature: Compare Predictions
 
         Examples:
         | data             | time_1  | time_2 | time_3 | source_options | by_name | options | data_input                             | objective | prediction  |
-        | data/spam.csv | 20      | 20     | 30     | {"fields": {"000001": {"optype": "text"}}} | true     | {"fields": {"000001": {"term_analysis": {"case_sensitive": false, "stem_words": false, "use_stopwords": false}}}} |{"Message": "Mobiles calls"}          | 000000    | spam    |
+        | data/spam.csv | 20      | 20     | 30     | {"fields": {"000001": {"optype": "text"}}} | true     | {"fields": {"000001": {"term_analysis": {"language":"en", "case_sensitive": false, "stem_words": false, "use_stopwords": false}}}} |{"Message": "Mobiles calls"}          | 000000    | spam    |
         
 	
     Scenario Outline: Successfully comparing predictions:
@@ -64,13 +64,13 @@ Feature: Compare Predictions
 
         Examples:
         | data             | time_1  | time_2 | time_3 | source_options | by_name | options | data_input                             | objective | prediction  |
-        | data/spam.csv | 20      | 20     | 30     | {"fields": {"000001": {"optype": "text"}}} | true     | {"fields": {"000001": {"term_analysis": {"case_sensitive": true, "stem_words": true, "use_stopwords": false}}}} |{"Message": "Mobile call"}             | 000000    | ham    |
-        | data/spam.csv | 20      | 20     | 30     | {"fields": {"000001": {"optype": "text"}}} | true     | {"fields": {"000001": {"term_analysis": {"case_sensitive": true, "stem_words": true, "use_stopwords": false}}}} |{"Message": "A normal message"}        | 000000    | ham     |
-        | data/spam.csv | 20      | 20     | 30     | {"fields": {"000001": {"optype": "text"}}} | true     | {"fields": {"000001": {"term_analysis": {"case_sensitive": false, "stem_words": false, "use_stopwords": false}}}} |{"Message": "A normal message"}       | 000000    | ham     |
-        | data/spam.csv | 20      | 20     | 30     | {"fields": {"000001": {"optype": "text"}}} | true     | {"fields": {"000001": {"term_analysis": {"case_sensitive": false, "stem_words": true, "use_stopwords": true}}}} |{"Message": "Mobile call"}            | 000000    | spam    |
-        | data/spam.csv | 20      | 20     | 30     | {"fields": {"000001": {"optype": "text"}}} | true     | {"fields": {"000001": {"term_analysis": {"case_sensitive": false, "stem_words": true, "use_stopwords": true}}}} |{"Message": "A normal message"}       | 000000    | ham     |
-        | data/spam.csv | 20      | 20     | 30     | {"fields": {"000001": {"optype": "text"}}} | true     | {"fields": {"000001": {"term_analysis": {"token_mode": "full_terms_only"}}}} |{"Message": "FREE for 1st week! No1 Nokia tone 4 ur mob every week just txt NOKIA to 87077 Get txting and tell ur mates. zed POBox 36504 W45WQ norm150p/tone 16+"}       | 000000    | spam     |
-        | data/spam.csv | 20      | 20     | 30     | {"fields": {"000001": {"optype": "text"}}} | true     | {"fields": {"000001": {"term_analysis": {"token_mode": "full_terms_only"}}}} |{"Message": "Ok"}       | 000000    | ham     |
+        | data/spam.csv | 20      | 20     | 30     | {"fields": {"000001": {"optype": "text"}}} | true     | {"fields": {"000001": {"term_analysis": {"language":"en", "case_sensitive": true, "stem_words": true, "use_stopwords": false}}}} |{"Message": "Mobile call"}             | 000000    | ham    |
+        | data/spam.csv | 20      | 20     | 30     | {"fields": {"000001": {"optype": "text"}}} | true     | {"fields": {"000001": {"term_analysis": {"language":"en", "case_sensitive": true, "stem_words": true, "use_stopwords": false}}}} |{"Message": "A normal message"}        | 000000    | ham     |
+        | data/spam.csv | 20      | 20     | 30     | {"fields": {"000001": {"optype": "text"}}} | true     | {"fields": {"000001": {"term_analysis": {"language":"en", "case_sensitive": false, "stem_words": false, "use_stopwords": false}}}} |{"Message": "A normal message"}       | 000000    | ham     |
+        | data/spam.csv | 20      | 20     | 30     | {"fields": {"000001": {"optype": "text"}}} | true     | {"fields": {"000001": {"term_analysis": {"language":"en", "case_sensitive": false, "stem_words": true, "use_stopwords": true}}}} |{"Message": "Mobile call"}            | 000000    | spam    |
+        | data/spam.csv | 20      | 20     | 30     | {"fields": {"000001": {"optype": "text"}}} | true     | {"fields": {"000001": {"term_analysis": {"language":"en", "case_sensitive": false, "stem_words": true, "use_stopwords": true}}}} |{"Message": "A normal message"}       | 000000    | ham     |
+        | data/spam.csv | 20      | 20     | 30     | {"fields": {"000001": {"optype": "text"}}} | true     | {"fields": {"000001": {"term_analysis": {"language":"en", "token_mode": "full_terms_only"}}}} |{"Message": "FREE for 1st week! No1 Nokia tone 4 ur mob every week just txt NOKIA to 87077 Get txting and tell ur mates. zed POBox 36504 W45WQ norm150p/tone 16+"}       | 000000    | spam     |
+        | data/spam.csv | 20      | 20     | 30     | {"fields": {"000001": {"optype": "text"}}} | true     | {"fields": {"000001": {"term_analysis": {"language":"en", "token_mode": "full_terms_only"}}}} |{"Message": "Ok"}       | 000000    | ham     |
   	
   	
   	
