@@ -37,7 +37,7 @@ public class ModelsStepdefs {
     public void I_create_a_model() throws AuthenticationException {
         String datasetId = (String) context.dataset.get("resource");
         JSONObject resource = BigMLClient.getInstance().createModel(datasetId,
-                null, 5, null);
+                new JSONObject(), 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.model = (JSONObject) resource.get("object");
@@ -95,8 +95,9 @@ public class ModelsStepdefs {
     @Given("^I create a model with \"(.*)\"$")
     public void I_create_a_model_with_params(String args) throws Throwable {
         String datasetId = (String) context.dataset.get("resource");
+        JSONObject argsJSON = (JSONObject) JSONValue.parse(args);
         JSONObject resource = BigMLClient.getInstance().createModel(datasetId,
-                args, 5, null);
+                argsJSON, 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.model = (JSONObject) resource.get("object");
@@ -128,8 +129,8 @@ public class ModelsStepdefs {
             String args, String pred) throws Exception {
         Boolean byName = new Boolean(by_name);
         JSONObject inputObj = (JSONObject) JSONValue.parse(args);
-        HashMap<Object, Object> prediction = (HashMap<Object, Object>) multiModel
-                .predict(inputObj, byName, null, true);
+        HashMap<Object, Object> prediction = multiModel.predict(inputObj,
+                byName, null, true);
         assertTrue(
                 "",
                 prediction != null
@@ -163,7 +164,7 @@ public class ModelsStepdefs {
 
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
-        context.model = (JSONObject) resource;
+        context.model = resource;
 
         Integer code = (Integer) context.model.get("code");
         assertEquals(code.intValue(), AbstractResource.HTTP_OK);
@@ -198,7 +199,7 @@ public class ModelsStepdefs {
                 "shared/model/" + this.sharedHash);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
-        context.model = (JSONObject) resource;
+        context.model = resource;
         Integer code = (Integer) context.model.get("code");
         assertEquals(code.intValue(), AbstractResource.HTTP_OK);
     }
@@ -210,7 +211,7 @@ public class ModelsStepdefs {
                 "shared/model/" + this.sharedHash, apiUser, this.sharedKey);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
-        context.model = (JSONObject) resource;
+        context.model = resource;
         Integer code = (Integer) context.model.get("code");
         assertEquals(code.intValue(), AbstractResource.HTTP_OK);
 

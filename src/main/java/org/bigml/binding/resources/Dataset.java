@@ -72,7 +72,41 @@ public class Dataset extends AbstractResource {
      *            number of times to try the operation. Optional
      * 
      */
+    @Deprecated
     public JSONObject create(final String sourceId, String args,
+            Integer waitTime, Integer retries) {
+
+        JSONObject argsJSON = args != null ? (JSONObject) JSONValue.parse(args)
+                : null;
+        return create(sourceId, argsJSON, waitTime, retries);
+
+    }
+
+    /**
+     * Creates a remote dataset.
+     * 
+     * Uses remote `source` to create a new dataset using the arguments in
+     * `args`. If `wait_time` is higher than 0 then the dataset creation request
+     * is not sent until the `source` has been created successfuly.
+     * 
+     * 
+     * POST /andromeda/dataset?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     * 
+     * @param sourceId
+     *            a unique identifier in the form source/id where id is a string
+     *            of 24 alpha-numeric chars for the source to attach the
+     *            dataset.
+     * @param args
+     *            set of parameters for the new dataset. Optional
+     * @param waitTime
+     *            time (milliseconds) to wait for next check of FINISHED status
+     *            for source before to start to create the dataset. Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     * 
+     */
+    public JSONObject create(final String sourceId, JSONObject args,
             Integer waitTime, Integer retries) {
         if (sourceId == null || sourceId.length() == 0
                 || !sourceId.matches(SOURCE_RE)) {
@@ -95,7 +129,7 @@ public class Dataset extends AbstractResource {
 
             JSONObject requestObject = new JSONObject();
             if (args != null) {
-                requestObject = (JSONObject) JSONValue.parse(args);
+                requestObject = args;
             }
             requestObject.put("source", sourceId);
 
@@ -118,6 +152,7 @@ public class Dataset extends AbstractResource {
      *            of 24 alpha-numeric chars.
      * 
      */
+    @Override
     public JSONObject get(final String datasetId) {
         if (datasetId == null || datasetId.length() == 0
                 || !(datasetId.matches(DATASET_RE))) {
@@ -139,6 +174,7 @@ public class Dataset extends AbstractResource {
      *            a dataset JSONObject
      * 
      */
+    @Override
     public JSONObject get(final JSONObject dataset) {
         String resourceId = (String) dataset.get("resource");
         return get(resourceId);
@@ -152,6 +188,7 @@ public class Dataset extends AbstractResource {
      *            string of 24 alpha-numeric chars.
      * 
      */
+    @Override
     public boolean isReady(final String datasetId) {
         return isResourceReady(get(datasetId));
     }
@@ -163,6 +200,7 @@ public class Dataset extends AbstractResource {
      *            a dataset JSONObject
      * 
      */
+    @Override
     public boolean isReady(final JSONObject dataset) {
         String resourceId = (String) dataset.get("resource");
         return isReady(resourceId);
@@ -178,6 +216,7 @@ public class Dataset extends AbstractResource {
      *            query filtering the listing.
      * 
      */
+    @Override
     public JSONObject list(final String queryString) {
         return listResources(DATASET_URL, queryString);
     }
@@ -196,6 +235,7 @@ public class Dataset extends AbstractResource {
      *            set of parameters to update the source. Optional
      * 
      */
+    @Override
     public JSONObject update(final String datasetId, final String changes) {
         if (datasetId == null || datasetId.length() == 0
                 || !(datasetId.matches(DATASET_RE))) {
@@ -218,6 +258,7 @@ public class Dataset extends AbstractResource {
      *            set of parameters to update the source. Optional
      * 
      */
+    @Override
     public JSONObject update(final JSONObject dataset, final JSONObject changes) {
         String resourceId = (String) dataset.get("resource");
         return update(resourceId, changes.toJSONString());
@@ -235,6 +276,7 @@ public class Dataset extends AbstractResource {
      *            string of 24 alpha-numeric chars.
      * 
      */
+    @Override
     public JSONObject delete(final String datasetId) {
         if (datasetId == null || datasetId.length() == 0
                 || !(datasetId.matches(DATASET_RE))) {
@@ -255,6 +297,7 @@ public class Dataset extends AbstractResource {
      *            a dataset JSONObject
      * 
      */
+    @Override
     public JSONObject delete(final JSONObject dataset) {
         String resourceId = (String) dataset.get("resource");
         return delete(resourceId);

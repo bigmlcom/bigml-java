@@ -20,6 +20,7 @@ import cucumber.annotation.en.Given;
 import cucumber.annotation.en.Then;
 import cucumber.annotation.en.When;
 
+
 public class BatchPredictionsStepdefs {
 
     // Logging
@@ -37,7 +38,7 @@ public class BatchPredictionsStepdefs {
         String datasetId = (String) context.dataset.get("resource");
 
         JSONObject resource = BigMLClient.getInstance().createBatchPrediction(
-                modelId, datasetId, null, 5, 3);
+                modelId, datasetId, new JSONObject(), 5, 3);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.batchPrediction = (JSONObject) resource.get("object");
@@ -51,7 +52,7 @@ public class BatchPredictionsStepdefs {
         String datasetId = (String) context.dataset.get("resource");
 
         JSONObject resource = BigMLClient.getInstance().createBatchPrediction(
-                ensembleId, datasetId, null, 5, 3);
+                ensembleId, datasetId, new JSONObject(), 5, 3);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.batchPrediction = (JSONObject) resource.get("object");

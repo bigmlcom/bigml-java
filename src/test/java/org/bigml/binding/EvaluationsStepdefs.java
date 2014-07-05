@@ -34,7 +34,7 @@ public class EvaluationsStepdefs {
         String datasetId = (String) context.dataset.get("resource");
 
         JSONObject resource = BigMLClient.getInstance().createEvaluation(
-                modelId, datasetId, null, 5, 3);
+                modelId, datasetId, new JSONObject(), 5, 3);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.evaluation = (JSONObject) resource.get("object");
@@ -54,7 +54,7 @@ public class EvaluationsStepdefs {
         String datasetId = (String) context.dataset.get("resource");
 
         JSONObject resource = BigMLClient.getInstance().createEvaluation(
-                ensembleId, datasetId, null, 5, 3);
+                ensembleId, datasetId, new JSONObject(), 5, 3);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.evaluation = (JSONObject) resource.get("object");

@@ -65,8 +65,33 @@ public class Centroid extends AbstractResource {
      *            number of times to try the operation. Optional
      * 
      */
+    @Deprecated
     public JSONObject create(final String clusterId, JSONObject inputDataJSON,
             String args, Integer waitTime, Integer retries) {
+        return create(clusterId, inputDataJSON,
+                (JSONObject) JSONValue.parse(args), waitTime, retries);
+    }
+
+    /**
+     * Creates a new centroid.
+     * 
+     * POST /andromeda/centroid?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     * 
+     * @param clusterId
+     *            a unique identifier in the form cluster/id where id is a
+     *            string of 24 alpha-numeric chars for the cluster.
+     * @param args
+     *            set of parameters for the new centroid. Optional
+     * @param waitTime
+     *            time (milliseconds) to wait for next check of FINISHED status
+     *            for centroid before to start to create the centroid. Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     * 
+     */
+    public JSONObject create(final String clusterId, JSONObject inputDataJSON,
+            JSONObject args, Integer waitTime, Integer retries) {
         if (clusterId == null || clusterId.length() == 0
                 || !(clusterId.matches(CLUSTER_RE))) {
             logger.info("Wrong cluster id");
@@ -88,7 +113,7 @@ public class Centroid extends AbstractResource {
 
             JSONObject requestObject = new JSONObject();
             if (args != null) {
-                requestObject = (JSONObject) JSONValue.parse(args);
+                requestObject = args;
             }
             requestObject.put("cluster", clusterId);
             requestObject.put("input_data", inputDataJSON);
@@ -117,6 +142,7 @@ public class Centroid extends AbstractResource {
      *            string of 24 alpha-numeric chars.
      * 
      */
+    @Override
     public JSONObject get(final String centroidId) {
         if (centroidId == null || centroidId.length() == 0
                 || !centroidId.matches(CENTROID_RE)) {
@@ -143,6 +169,7 @@ public class Centroid extends AbstractResource {
      *            a centroid JSONObject.
      * 
      */
+    @Override
     public JSONObject get(final JSONObject centroid) {
         String centroidId = (String) centroid.get("resource");
         return get(centroidId);
@@ -156,6 +183,7 @@ public class Centroid extends AbstractResource {
      *            string of 24 alpha-numeric chars.
      * 
      */
+    @Override
     public boolean isReady(final String centroidId) {
         return isResourceReady(get(centroidId));
     }
@@ -167,6 +195,7 @@ public class Centroid extends AbstractResource {
      *            a centroid JSONObject.
      * 
      */
+    @Override
     public boolean isReady(final JSONObject centroid) {
         String resourceId = (String) centroid.get("resource");
         return isReady(resourceId);
@@ -182,6 +211,7 @@ public class Centroid extends AbstractResource {
      *            query filtering the listing.
      * 
      */
+    @Override
     public JSONObject list(final String queryString) {
         return listResources(CENTROID_URL, queryString);
     }
@@ -200,6 +230,7 @@ public class Centroid extends AbstractResource {
      *            set of parameters to update the centroid. Optional
      * 
      */
+    @Override
     public JSONObject update(final String centroidId, final String changes) {
         if (centroidId == null || centroidId.length() == 0
                 || !centroidId.matches(CENTROID_RE)) {
@@ -222,6 +253,7 @@ public class Centroid extends AbstractResource {
      *            set of parameters to update the centroid. Optional
      * 
      */
+    @Override
     public JSONObject update(final JSONObject centroid, final JSONObject changes) {
         String resourceId = (String) centroid.get("resource");
         return update(resourceId, changes.toJSONString());
@@ -239,6 +271,7 @@ public class Centroid extends AbstractResource {
      *            string of 24 alpha-numeric chars.
      * 
      */
+    @Override
     public JSONObject delete(final String centroidId) {
         if (centroidId == null || centroidId.length() == 0
                 || !centroidId.matches(CENTROID_RE)) {
@@ -259,6 +292,7 @@ public class Centroid extends AbstractResource {
      *            an centroid JSONObject.
      * 
      */
+    @Override
     public JSONObject delete(final JSONObject centroid) {
         String resourceId = (String) centroid.get("resource");
         return delete(resourceId);

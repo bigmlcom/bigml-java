@@ -9,6 +9,7 @@ import java.util.GregorianCalendar;
 
 import org.bigml.binding.resources.AbstractResource;
 import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ public class DatasetsStepdefs {
     public void I_create_a_dataset() throws AuthenticationException {
         String sourceId = (String) context.source.get("resource");
         JSONObject resource = BigMLClient.getInstance().createDataset(sourceId,
-                null, 5, null);
+                new JSONObject(), 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.dataset = (JSONObject) resource.get("object");
@@ -40,8 +41,10 @@ public class DatasetsStepdefs {
     @Given("^I create a dataset with \"(.*)\"$")
     public void I_create_a_dataset_with_options(String args) throws Throwable {
         String sourceId = (String) context.source.get("resource");
+        JSONObject argsJSON = args != null ? (JSONObject) JSONValue.parse(args)
+                : null;
         JSONObject resource = BigMLClient.getInstance().createDataset(sourceId,
-                args, 5, null);
+                argsJSON, 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.dataset = (JSONObject) resource.get("object");

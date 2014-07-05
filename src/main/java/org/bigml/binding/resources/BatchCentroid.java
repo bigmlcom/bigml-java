@@ -81,8 +81,37 @@ public class BatchCentroid extends AbstractResource {
      *            number of times to try the operation. Optional
      * 
      */
+    @Deprecated
     public JSONObject create(final String clusterId, final String datasetId,
             String args, Integer waitTime, Integer retries) {
+        return create(clusterId, datasetId, (JSONObject) JSONValue.parse(args),
+                waitTime, retries);
+    }
+
+    /**
+     * Creates a new batchbatchcentroid.
+     * 
+     * POST /andromeda/batchbatchcentroid?username=$BIGML_USERNAME;api_key=
+     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
+     * 
+     * @param clusterId
+     *            a unique identifier in the form cluster/id where id is a
+     *            string of 24 alpha-numeric chars for the cluster.
+     * @param datasetId
+     *            a unique identifier in the form dataset/id where id is a
+     *            string of 24 alpha-numeric chars for the dataset.
+     * @param args
+     *            set of parameters for the new batchbatchcentroid. Optional
+     * @param waitTime
+     *            time (milliseconds) to wait for next check of FINISHED status
+     *            for batchbatchcentroid before to start to create the
+     *            batchbatchcentroid. Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     * 
+     */
+    public JSONObject create(final String clusterId, final String datasetId,
+            JSONObject args, Integer waitTime, Integer retries) {
         if (clusterId == null || clusterId.length() == 0
                 || !(clusterId.matches(CLUSTER_RE))) {
             logger.info("Wrong cluster id");
@@ -120,7 +149,7 @@ public class BatchCentroid extends AbstractResource {
 
             JSONObject requestObject = new JSONObject();
             if (args != null) {
-                requestObject = (JSONObject) JSONValue.parse(args);
+                requestObject = args;
             }
             requestObject.put("cluster", clusterId);
             requestObject.put("dataset", datasetId);
@@ -149,6 +178,7 @@ public class BatchCentroid extends AbstractResource {
      *            string of 24 alpha-numeric chars.
      * 
      */
+    @Override
     public JSONObject get(final String batchcentroidId) {
         if (batchcentroidId == null || batchcentroidId.length() == 0
                 || !batchcentroidId.matches(BATCH_CENTROID_RE)) {
@@ -226,6 +256,7 @@ public class BatchCentroid extends AbstractResource {
      *            a batchcentroid JSONObject.
      * 
      */
+    @Override
     public JSONObject get(final JSONObject batchcentroid) {
         String batchcentroidId = (String) batchcentroid.get("resource");
         return get(batchcentroidId);
@@ -239,6 +270,7 @@ public class BatchCentroid extends AbstractResource {
      *            string of 24 alpha-numeric chars.
      * 
      */
+    @Override
     public boolean isReady(final String batchcentroidId) {
         return isResourceReady(get(batchcentroidId));
     }
@@ -250,6 +282,7 @@ public class BatchCentroid extends AbstractResource {
      *            a batchcentroid JSONObject.
      * 
      */
+    @Override
     public boolean isReady(final JSONObject batchcentroid) {
         String resourceId = (String) batchcentroid.get("resource");
         return isReady(resourceId);
@@ -265,6 +298,7 @@ public class BatchCentroid extends AbstractResource {
      *            query filtering the listing.
      * 
      */
+    @Override
     public JSONObject list(final String queryString) {
         return listResources(BATCH_CENTROID_URL, queryString);
     }
@@ -282,6 +316,7 @@ public class BatchCentroid extends AbstractResource {
      *            set of parameters to update the batchcentroid. Optional
      * 
      */
+    @Override
     public JSONObject update(final String batchcentroidId, final String changes) {
         if (batchcentroidId == null || batchcentroidId.length() == 0
                 || !batchcentroidId.matches(BATCH_CENTROID_RE)) {
@@ -303,6 +338,7 @@ public class BatchCentroid extends AbstractResource {
      *            set of parameters to update the batchcentroid. Optional
      * 
      */
+    @Override
     public JSONObject update(final JSONObject batchcentroid,
             final JSONObject changes) {
         String resourceId = (String) batchcentroid.get("resource");
@@ -320,6 +356,7 @@ public class BatchCentroid extends AbstractResource {
      *            string of 24 alpha-numeric chars.
      * 
      */
+    @Override
     public JSONObject delete(final String batchcentroidId) {
         if (batchcentroidId == null || batchcentroidId.length() == 0
                 || !batchcentroidId.matches(BATCH_CENTROID_RE)) {
@@ -339,6 +376,7 @@ public class BatchCentroid extends AbstractResource {
      *            an batchcentroid JSONObject.
      * 
      */
+    @Override
     public JSONObject delete(final JSONObject batchcentroid) {
         String resourceId = (String) batchcentroid.get("resource");
         return delete(resourceId);

@@ -34,8 +34,8 @@ public class PredictionsStepdefs {
         String modelId = (String) context.model.get("resource");
         Boolean byName = new Boolean(by_name);
         JSONObject resource = BigMLClient.getInstance().createPrediction(
-                modelId, (JSONObject) JSONValue.parse(inputData), byName, null,
-                5, null);
+                modelId, (JSONObject) JSONValue.parse(inputData), byName,
+                new JSONObject(), 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.prediction = (JSONObject) resource.get("object");
@@ -66,7 +66,7 @@ public class PredictionsStepdefs {
         Boolean byName = new Boolean(by_name);
         JSONObject resource = BigMLClient.getInstance().createPrediction(
                 ensembleId, (JSONObject) JSONValue.parse(inputData), byName,
-                null, 5, null);
+                new JSONObject(), 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.prediction = (JSONObject) resource.get("object");

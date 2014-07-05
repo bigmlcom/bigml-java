@@ -66,7 +66,35 @@ public class Model extends AbstractResource {
      *            number of times to try the operation. Optional
      * 
      */
+    @Deprecated
     public JSONObject create(final String datasetId, String args,
+            Integer waitTime, Integer retries) {
+
+        String[] datasetsIds = { datasetId };
+        JSONObject requestObject = createFromDatasets(datasetsIds, args,
+                waitTime, retries, null);
+        return createResource(MODEL_URL, requestObject.toJSONString());
+    }
+
+    /**
+     * Creates a new model.
+     * 
+     * POST /andromeda/model?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     * 
+     * @param datsetId
+     *            a unique identifier in the form datset/id where id is a string
+     *            of 24 alpha-numeric chars for the dataset to attach the model.
+     * @param args
+     *            set of parameters for the new model. Optional
+     * @param waitTime
+     *            time (milliseconds) to wait for next check of FINISHED status
+     *            for source before to start to create the model. Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     * 
+     */
+    public JSONObject create(final String datasetId, JSONObject args,
             Integer waitTime, Integer retries) {
 
         String[] datasetsIds = { datasetId };
@@ -94,7 +122,35 @@ public class Model extends AbstractResource {
      *            number of times to try the operation. Optional
      * 
      */
+    @Deprecated
     public JSONObject create(final List datasetsIds, String args,
+            Integer waitTime, Integer retries) {
+
+        JSONObject requestObject = createFromDatasets(
+                (String[]) datasetsIds.toArray(), args, waitTime, retries, null);
+        return createResource(MODEL_URL, requestObject.toJSONString());
+    }
+
+    /**
+     * Creates a mdel from a list of `datasets`.
+     * 
+     * POST /andromeda/mdel?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     * 
+     * @param datasetsIds
+     *            list of identifiers in the form dataset/id where id is a
+     *            string of 24 alpha-numeric chars for the dataset to attach the
+     *            mdel.
+     * @param args
+     *            set of parameters for the new mdel. Optional
+     * @param waitTime
+     *            time (milliseconds) to wait for next check of FINISHED status
+     *            for source before to start to create the mdel. Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     * 
+     */
+    public JSONObject create(final List datasetsIds, JSONObject args,
             Integer waitTime, Integer retries) {
 
         JSONObject requestObject = createFromDatasets(
@@ -113,6 +169,7 @@ public class Model extends AbstractResource {
      *            of 24 alpha-numeric chars.
      * 
      */
+    @Override
     public JSONObject get(final String modelId) {
         return get(modelId, null, null);
     }
@@ -153,6 +210,7 @@ public class Model extends AbstractResource {
      *            a model JSONObject
      * 
      */
+    @Override
     public JSONObject get(final JSONObject model) {
         String resourceId = (String) model.get("resource");
         return get(resourceId, null, null);
@@ -270,6 +328,7 @@ public class Model extends AbstractResource {
      *            of 24 alpha-numeric chars.
      * 
      */
+    @Override
     public boolean isReady(final String modelId) {
         return isResourceReady(get(modelId));
     }
@@ -281,6 +340,7 @@ public class Model extends AbstractResource {
      *            a model JSONObject
      * 
      */
+    @Override
     public boolean isReady(final JSONObject model) {
         return isResourceReady(model)
                 || isReady((String) model.get("resource"));
@@ -296,6 +356,7 @@ public class Model extends AbstractResource {
      *            query filtering the listing.
      * 
      */
+    @Override
     public JSONObject list(final String queryString) {
         return listResources(MODEL_URL, queryString);
     }
@@ -313,6 +374,7 @@ public class Model extends AbstractResource {
      *            set of parameters to update the source. Optional
      * 
      */
+    @Override
     public JSONObject update(final String modelId, final String changes) {
         if (modelId == null || modelId.length() == 0
                 || !(modelId.matches(MODEL_RE))) {
@@ -334,6 +396,7 @@ public class Model extends AbstractResource {
      *            set of parameters to update the source. Optional
      * 
      */
+    @Override
     public JSONObject update(final JSONObject model, final JSONObject changes) {
         String resourceId = (String) model.get("resource");
         return update(resourceId, changes.toJSONString());
@@ -351,6 +414,7 @@ public class Model extends AbstractResource {
      *            of 24 alpha-numeric chars.
      * 
      */
+    @Override
     public JSONObject delete(final String modelId) {
         if (modelId == null || modelId.length() == 0
                 || !(modelId.matches(MODEL_RE))) {
@@ -371,6 +435,7 @@ public class Model extends AbstractResource {
      *            a model JSONObject
      * 
      */
+    @Override
     public JSONObject delete(final JSONObject model) {
         String resourceId = (String) model.get("resource");
         return delete(resourceId);

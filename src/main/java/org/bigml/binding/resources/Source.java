@@ -70,10 +70,33 @@ public class Source extends AbstractResource {
      *            the name you want to give to the new source. Optional
      * @param sourceParser
      *            set of parameters to parse the source. Optional
+     */
+    @Deprecated
+    public JSONObject createLocalSource(final String fileName, String name,
+            String sourceParser) {
+        JSONObject sourceParserJson = (JSONObject) JSONValue
+                .parse(sourceParser);
+        return this.createLocalSource(fileName, name, sourceParserJson);
+    }
+
+    /**
+     * Creates a source using a local file.
+     * 
+     * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: multipart/form-data;
+     * 
+     * @param fileName
+     *            file containing your data in csv format. It can be compressed,
+     *            gzipped, or zipped. Required multipart/form-data;
+     *            charset=utf-8
+     * @param name
+     *            the name you want to give to the new source. Optional
+     * @param sourceParser
+     *            set of parameters to parse the source. Optional
      * 
      */
     public JSONObject createLocalSource(final String fileName, String name,
-            String sourceParser) {
+            JSONObject sourceParser) {
         int code = HTTP_INTERNAL_SERVER_ERROR;
         String resourceId = null;
         JSONObject resource = null;
@@ -102,8 +125,8 @@ public class Source extends AbstractResource {
 
             // Source parser
             if (sourceParser != null) {
-                reqEntity
-                        .addPart("source_parser", new StringBody(sourceParser));
+                reqEntity.addPart("source_parser",
+                        new StringBody(sourceParser.toJSONString()));
             }
 
             httppost.setEntity(reqEntity);
@@ -113,8 +136,7 @@ public class Source extends AbstractResource {
             code = response.getStatusLine().getStatusCode();
 
             if (code == HTTP_CREATED) {
-                location = (String) response.getHeaders("location")[0]
-                        .getValue();
+                location = response.getHeaders("location")[0].getValue();
                 resource = (JSONObject) JSONValue.parse(Utils
                         .inputStreamAsString(resEntity.getContent()));
                 resourceId = (String) resource.get("resource");
@@ -152,15 +174,36 @@ public class Source extends AbstractResource {
      * 
      * @param url
      *            url for remote source
-     * @param args
+     * @param sourceParser
      *            set of parameters to create the source. Optional
      * 
      */
-    public JSONObject createRemoteSource(final String url, final String args) {
+    @Deprecated
+    public JSONObject createRemoteSource(final String url,
+            final String sourceParser) {
+        JSONObject requestObject = sourceParser != null ? (JSONObject) JSONValue
+                .parse(sourceParser) : null;
+        return createRemoteSource(url, requestObject);
+    }
+
+    /**
+     * Creates a source using a URL.
+     * 
+     * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json;
+     * 
+     * @param url
+     *            url for remote source
+     * @param sourceParser
+     *            set of parameters to create the source. Optional
+     * 
+     */
+    public JSONObject createRemoteSource(final String url,
+            final JSONObject sourceParser) {
         try {
             JSONObject requestObject = new JSONObject();
-            if (args != null) {
-                requestObject = (JSONObject) JSONValue.parse(args);
+            if (sourceParser != null) {
+                requestObject = sourceParser;
             }
             requestObject.put("remote", url);
 
@@ -179,15 +222,37 @@ public class Source extends AbstractResource {
      * 
      * @param data
      *            inline data for source
-     * @param args
+     * @param sourceParser
      *            set of parameters to create the source. Optional
      * 
      */
-    public JSONObject createInlineSource(final String data, final String args) {
+    @Deprecated
+    public JSONObject createInlineSource(final String data,
+            final String sourceParser) {
+
+        JSONObject requestObject = sourceParser != null ? (JSONObject) JSONValue
+                .parse(sourceParser) : null;
+        return createInlineSource(data, requestObject);
+    }
+
+    /**
+     * Creates a source using inline data.
+     * 
+     * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json;
+     * 
+     * @param data
+     *            inline data for source
+     * @param sourceParser
+     *            set of parameters to create the source. Optional
+     * 
+     */
+    public JSONObject createInlineSource(final String data,
+            final JSONObject sourceParser) {
         try {
             JSONObject requestObject = new JSONObject();
-            if (args != null) {
-                requestObject = (JSONObject) JSONValue.parse(args);
+            if (sourceParser != null) {
+                requestObject = sourceParser;
             }
             requestObject.put("data", data);
             return createResource(SOURCE_URL, requestObject.toJSONString());
@@ -208,6 +273,7 @@ public class Source extends AbstractResource {
      *            of 24 alpha-numeric chars.
      * 
      */
+    @Override
     public JSONObject get(final String sourceId) {
         if (sourceId == null || sourceId.length() == 0
                 || !sourceId.matches(SOURCE_RE)) {
@@ -228,6 +294,7 @@ public class Source extends AbstractResource {
      *            a source JSONObject.
      * 
      */
+    @Override
     public JSONObject get(final JSONObject source) {
         String resourceId = (String) source.get("resource");
         return get(resourceId);
@@ -241,6 +308,7 @@ public class Source extends AbstractResource {
      *            of 24 alpha-numeric chars.
      * 
      */
+    @Override
     public boolean isReady(final String sourceId) {
         return isResourceReady(get(sourceId));
     }
@@ -252,6 +320,7 @@ public class Source extends AbstractResource {
      *            a source JSONObject
      * 
      */
+    @Override
     public boolean isReady(final JSONObject source) {
         String resourceId = (String) source.get("resource");
         return isReady(resourceId);
@@ -267,6 +336,7 @@ public class Source extends AbstractResource {
      *            query filtering the listing.
      * 
      */
+    @Override
     public JSONObject list(final String queryString) {
         return listResources(SOURCE_URL, queryString);
     }
@@ -287,6 +357,7 @@ public class Source extends AbstractResource {
      *            set of parameters to update the source. Optional
      * 
      */
+    @Override
     public JSONObject update(final String sourceId, final String changes) {
         if (sourceId == null || sourceId.length() == 0
                 || !sourceId.matches(SOURCE_RE)) {
@@ -311,6 +382,7 @@ public class Source extends AbstractResource {
      *            set of parameters to update the source. Optional
      * 
      */
+    @Override
     public JSONObject update(final JSONObject source, final JSONObject changes) {
         String resourceId = (String) source.get("resource");
         return update(resourceId, changes.toJSONString());
@@ -328,6 +400,7 @@ public class Source extends AbstractResource {
      *            of 24 alpha-numeric chars.
      * 
      */
+    @Override
     public JSONObject delete(final String sourceId) {
         if (sourceId == null || sourceId.length() == 0
                 || !sourceId.matches(SOURCE_RE)) {
@@ -348,6 +421,7 @@ public class Source extends AbstractResource {
      *            a source JSONObject
      * 
      */
+    @Override
     public JSONObject delete(final JSONObject source) {
         String resourceId = (String) source.get("resource");
         return delete(resourceId);

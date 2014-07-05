@@ -76,8 +76,41 @@ public class Prediction extends AbstractResource {
      *            number of times to try the operation. Optional
      * 
      */
+    @Deprecated
     public JSONObject create(final String modelOrEnsembleId,
             JSONObject inputData, Boolean byName, String args,
+            Integer waitTime, Integer retries) {
+        JSONObject argsJSON = (JSONObject) JSONValue.parse(args);
+        return create(modelOrEnsembleId, inputData, byName, argsJSON, waitTime,
+                retries);
+    }
+
+    /**
+     * Creates a new prediction.
+     * 
+     * POST
+     * /andromeda/prediction?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     * 
+     * @param modelOrEnsembleId
+     *            a unique identifier in the form model/id or ensembke/id where
+     *            id is a string of 24 alpha-numeric chars for the nodel or
+     *            ensemble to attach the prediction.
+     * @param inputData
+     *            an object with field's id/value pairs representing the
+     *            instance you want to create a prediction for.
+     * @param byName
+     * @param args
+     *            set of parameters for the new prediction. Required
+     * @param waitTime
+     *            time (milliseconds) to wait for next check of FINISHED status
+     *            for model before to start to create the prediction. Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     * 
+     */
+    public JSONObject create(final String modelOrEnsembleId,
+            JSONObject inputData, Boolean byName, JSONObject args,
             Integer waitTime, Integer retries) {
         JSONObject ensemble = null;
         JSONObject model = null;
@@ -170,7 +203,7 @@ public class Prediction extends AbstractResource {
 
             JSONObject requestObject = new JSONObject();
             if (args != null) {
-                requestObject = (JSONObject) JSONValue.parse(args);
+                requestObject = args;
             }
 
             if (ensemble == null) {
@@ -199,6 +232,7 @@ public class Prediction extends AbstractResource {
      *            string of 24 alpha-numeric chars.
      * 
      */
+    @Override
     public JSONObject get(final String predictionId) {
         if (predictionId == null || predictionId.length() == 0
                 || !predictionId.matches(PREDICTION_RE)) {
@@ -219,6 +253,7 @@ public class Prediction extends AbstractResource {
      *            an prediction JSONObject
      * 
      */
+    @Override
     public JSONObject get(final JSONObject prediction) {
         String resourceId = (String) prediction.get("resource");
         return get(resourceId);
@@ -232,6 +267,7 @@ public class Prediction extends AbstractResource {
      *            string of 24 alpha-numeric chars.
      * 
      */
+    @Override
     public boolean isReady(final String predictionId) {
         return isResourceReady(get(predictionId));
     }
@@ -243,6 +279,7 @@ public class Prediction extends AbstractResource {
      *            a prediction JSONObject
      * 
      */
+    @Override
     public boolean isReady(final JSONObject prediction) {
         String resourceId = (String) prediction.get("resource");
         return isReady(resourceId);
@@ -259,6 +296,7 @@ public class Prediction extends AbstractResource {
      *            query filtering the listing.
      * 
      */
+    @Override
     public JSONObject list(final String queryString) {
         return listResources(PREDICTION_URL, queryString);
     }
@@ -276,6 +314,7 @@ public class Prediction extends AbstractResource {
      *            set of parameters to update the source. Optional
      * 
      */
+    @Override
     public JSONObject update(final String predictionId, final String changes) {
         if (predictionId == null || predictionId.length() == 0
                 || !predictionId.matches(PREDICTION_RE)) {
@@ -297,6 +336,7 @@ public class Prediction extends AbstractResource {
      *            set of parameters to update the source. Optional
      * 
      */
+    @Override
     public JSONObject update(final JSONObject prediction,
             final JSONObject changes) {
         String resourceId = (String) prediction.get("resource");
@@ -314,6 +354,7 @@ public class Prediction extends AbstractResource {
      *            string of 24 alpha-numeric chars
      * 
      */
+    @Override
     public JSONObject delete(final String predictionId) {
         if (predictionId == null || predictionId.length() == 0
                 || !predictionId.matches(PREDICTION_RE)) {
@@ -333,6 +374,7 @@ public class Prediction extends AbstractResource {
      *            a prediction JSONObject
      * 
      */
+    @Override
     public JSONObject delete(final JSONObject prediction) {
         String resourceId = (String) prediction.get("resource");
         return delete(resourceId);

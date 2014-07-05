@@ -29,7 +29,7 @@ public class EnsemblesStepdefs {
     public void I_create_a_ensemble() throws AuthenticationException {
         String datasetId = (String) context.dataset.get("resource");
         JSONObject resource = BigMLClient.getInstance().createEnsemble(
-                datasetId, null, 5, null);
+                datasetId, new JSONObject(), 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.ensemble = (JSONObject) resource.get("object");
@@ -46,7 +46,7 @@ public class EnsemblesStepdefs {
 
         String datasetId = (String) context.dataset.get("resource");
         JSONObject resource = BigMLClient.getInstance().createEnsemble(
-                datasetId, args.toJSONString(), 20, null);
+                datasetId, args, 20, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.ensemble = (JSONObject) resource.get("object");

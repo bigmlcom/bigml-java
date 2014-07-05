@@ -71,8 +71,40 @@ public class Evaluation extends AbstractResource {
      *            number of times to try the operation. Optional
      * 
      */
+    @Deprecated
     public JSONObject create(final String modelOrEnsembleId,
             final String datasetId, String args, Integer waitTime,
+            Integer retries) {
+        JSONObject argsJSON = (JSONObject) JSONValue.parse(args);
+        return create(modelOrEnsembleId, datasetId, argsJSON, waitTime, retries);
+    }
+
+    /**
+     * Create a new evaluation.
+     * 
+     * POST
+     * /andromeda/evaluation?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     * 
+     * @param modelOrEnsembleId
+     *            a unique identifier in the form model/id or ensemble/id where
+     *            id is a string of 24 alpha-numeric chars for the
+     *            model/ensemble to attach the evaluation.
+     * @param datasetId
+     *            a unique identifier in the form dataset/id where id is a
+     *            string of 24 alpha-numeric chars for the dataset to attach the
+     *            evaluation.
+     * @param args
+     *            set of parameters for the new evaluation. Optional
+     * @param waitTime
+     *            time (milliseconds) to wait for next check of FINISHED status
+     *            for model before to start to create the evaluation. Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     * 
+     */
+    public JSONObject create(final String modelOrEnsembleId,
+            final String datasetId, JSONObject args, Integer waitTime,
             Integer retries) {
         if (modelOrEnsembleId == null
                 || modelOrEnsembleId.length() == 0
@@ -122,7 +154,7 @@ public class Evaluation extends AbstractResource {
 
             JSONObject requestObject = new JSONObject();
             if (args != null) {
-                requestObject = (JSONObject) JSONValue.parse(args);
+                requestObject = args;
             }
 
             if (modelOrEnsembleId.matches(MODEL_RE)) {
@@ -156,6 +188,7 @@ public class Evaluation extends AbstractResource {
      *            string of 24 alpha-numeric chars.
      * 
      */
+    @Override
     public JSONObject get(final String evaluationId) {
         if (evaluationId == null || evaluationId.length() == 0
                 || !evaluationId.matches(EVALUATION_RE)) {
@@ -181,6 +214,7 @@ public class Evaluation extends AbstractResource {
      *            an evaluation JSONObject.
      * 
      */
+    @Override
     public JSONObject get(final JSONObject evaluation) {
         String evaluationId = (String) evaluation.get("resource");
         return get(evaluationId);
@@ -194,6 +228,7 @@ public class Evaluation extends AbstractResource {
      *            string of 24 alpha-numeric chars.
      * 
      */
+    @Override
     public boolean isReady(final String evaluationId) {
         return isResourceReady(get(evaluationId));
     }
@@ -205,6 +240,7 @@ public class Evaluation extends AbstractResource {
      *            an evaluation JSONObject.
      * 
      */
+    @Override
     public boolean isReady(final JSONObject evaluation) {
         String resourceId = (String) evaluation.get("resource");
         return isReady(resourceId);
@@ -221,6 +257,7 @@ public class Evaluation extends AbstractResource {
      *            query filtering the listing.
      * 
      */
+    @Override
     public JSONObject list(final String queryString) {
         return listResources(EVALUATION_URL, queryString);
     }
@@ -238,6 +275,7 @@ public class Evaluation extends AbstractResource {
      *            set of parameters to update the evaluation. Optional
      * 
      */
+    @Override
     public JSONObject update(final String evaluationId, final String changes) {
         if (evaluationId == null || evaluationId.length() == 0
                 || !evaluationId.matches(EVALUATION_RE)) {
@@ -259,6 +297,7 @@ public class Evaluation extends AbstractResource {
      *            set of parameters to update the evaluation. Optional
      * 
      */
+    @Override
     public JSONObject update(final JSONObject evaluation,
             final JSONObject changes) {
         String resourceId = (String) evaluation.get("resource");
@@ -276,6 +315,7 @@ public class Evaluation extends AbstractResource {
      *            string of 24 alpha-numeric chars.
      * 
      */
+    @Override
     public JSONObject delete(final String evaluationId) {
         if (evaluationId == null || evaluationId.length() == 0
                 || !evaluationId.matches(EVALUATION_RE)) {
@@ -295,6 +335,7 @@ public class Evaluation extends AbstractResource {
      *            an evaluation JSONObject.
      * 
      */
+    @Override
     public JSONObject delete(final JSONObject evaluation) {
         String resourceId = (String) evaluation.get("resource");
         return delete(resourceId);

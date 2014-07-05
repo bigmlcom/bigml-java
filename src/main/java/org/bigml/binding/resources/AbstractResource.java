@@ -590,12 +590,24 @@ public abstract class AbstractResource {
      * Builds args dictionary for the create call from a `dataset` or a list of
      * `datasets`
      */
+    @Deprecated
     protected JSONObject createFromDatasets(final String[] datasets,
             String args, Integer waitTime, Integer retries, String key) {
 
+        return createFromDatasets(datasets, (JSONObject) JSONValue.parse(args),
+                waitTime, retries, key);
+    }
+
+    /**
+     * Builds args dictionary for the create call from a `dataset` or a list of
+     * `datasets`
+     */
+    protected JSONObject createFromDatasets(final String[] datasets,
+            JSONObject args, Integer waitTime, Integer retries, String key) {
+
         JSONObject createArgs = new JSONObject();
         if (args != null) {
-            createArgs = (JSONObject) JSONValue.parse(args);
+            createArgs = args;
         }
 
         List<String> datasetsIds = new ArrayList<String>();

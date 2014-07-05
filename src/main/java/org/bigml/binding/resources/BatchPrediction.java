@@ -82,8 +82,40 @@ public class BatchPrediction extends AbstractResource {
      *            number of times to try the operation. Optional
      * 
      */
+    @Deprecated
     public JSONObject create(final String modelOrEnsembleId,
             final String datasetId, String args, Integer waitTime,
+            Integer retries) {
+        JSONObject argsJSON = (JSONObject) JSONValue.parse(args);
+        return create(modelOrEnsembleId, datasetId, argsJSON, waitTime, retries);
+    }
+
+    /**
+     * Creates a new batch prediction.
+     * 
+     * POST /andromeda/batchprediction?username=$BIGML_USERNAME;api_key=
+     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
+     * 
+     * @param modelOrEnsembleId
+     *            a unique identifier in the form model/id or ensemble/id where
+     *            id is a string of 24 alpha-numeric chars for the
+     *            model/ensemble to attach the evaluation.
+     * @param datasetId
+     *            a unique identifier in the form dataset/id where id is a
+     *            string of 24 alpha-numeric chars for the dataset to attach the
+     *            evaluation.
+     * @param args
+     *            set of parameters for the new batch prediction. Optional
+     * @param waitTime
+     *            time (milliseconds) to wait for next check of FINISHED status
+     *            for model before to start to create the batch prediction.
+     *            Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     * 
+     */
+    public JSONObject create(final String modelOrEnsembleId,
+            final String datasetId, JSONObject args, Integer waitTime,
             Integer retries) {
         if (modelOrEnsembleId == null
                 || modelOrEnsembleId.length() == 0
@@ -133,7 +165,7 @@ public class BatchPrediction extends AbstractResource {
 
             JSONObject requestObject = new JSONObject();
             if (args != null) {
-                requestObject = (JSONObject) JSONValue.parse(args);
+                requestObject = args;
             }
 
             if (modelOrEnsembleId.matches(MODEL_RE)) {

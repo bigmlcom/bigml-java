@@ -1,27 +1,17 @@
 package org.bigml.binding;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 
 import org.bigml.binding.resources.AbstractResource;
 import org.bigml.binding.utils.Utils;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import cucumber.annotation.en.Given;
-import cucumber.annotation.en.Then;
-import cucumber.annotation.en.When;
 
 public class ClustersStepdefs {
 
@@ -42,7 +32,7 @@ public class ClustersStepdefs {
     public void I_create_a_cluster() throws AuthenticationException {
         String datasetId = (String) context.dataset.get("resource");
         JSONObject resource = BigMLClient.getInstance().createCluster(
-                datasetId, null, 5, null);
+                datasetId, new JSONObject(), 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.cluster = (JSONObject) resource.get("object");
@@ -100,8 +90,8 @@ public class ClustersStepdefs {
         String clusterId = (String) context.cluster.get("resource");
 
         JSONObject resource = BigMLClient.getInstance().createCentroid(
-                clusterId, (JSONObject) JSONValue.parse(inputData), null, 5,
-                null);
+                clusterId, (JSONObject) JSONValue.parse(inputData),
+                new JSONObject(), 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.centroid = (JSONObject) resource.get("object");
@@ -142,7 +132,7 @@ public class ClustersStepdefs {
         String datasetId = (String) context.dataset.get("resource");
 
         JSONObject resource = BigMLClient.getInstance().createBatchCentroid(
-                clusterId, datasetId, null, 5, null);
+                clusterId, datasetId, new JSONObject(), 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.batchCentroid = (JSONObject) resource.get("object");
@@ -203,9 +193,6 @@ public class ClustersStepdefs {
         FileInputStream downloadFis = new FileInputStream(new File(
                 downloadedFile));
         FileInputStream checkFis = new FileInputStream(new File(checkFile));
-
-        logger.info("downloadFis ........ " + downloadFis);
-        logger.info("checkFis ........ " + checkFis);
 
         String localCvs = Utils.inputStreamAsString(downloadFis);
         String checkCvs = Utils.inputStreamAsString(checkFis);

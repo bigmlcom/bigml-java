@@ -67,7 +67,36 @@ public class Cluster extends AbstractResource {
      *            number of times to try the operation. Optional
      * 
      */
+    @Deprecated
     public JSONObject create(final String datasetId, String args,
+            Integer waitTime, Integer retries) {
+
+        String[] datasetsIds = { datasetId };
+        JSONObject requestObject = createFromDatasets(datasetsIds, args,
+                waitTime, retries, null);
+        return createResource(CLUSTER_URL, requestObject.toJSONString());
+    }
+
+    /**
+     * Creates a cluster from a `dataset`.
+     * 
+     * POST /andromeda/cluster?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     * 
+     * @param datasetId
+     *            a unique identifier in the form dataset/id where id is a
+     *            string of 24 alpha-numeric chars for the dataset to attach the
+     *            cluster.
+     * @param args
+     *            set of parameters for the new cluster. Optional
+     * @param waitTime
+     *            time (milliseconds) to wait for next check of FINISHED status
+     *            for source before to start to create the cluster. Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     * 
+     */
+    public JSONObject create(final String datasetId, JSONObject args,
             Integer waitTime, Integer retries) {
 
         String[] datasetsIds = { datasetId };
@@ -95,7 +124,35 @@ public class Cluster extends AbstractResource {
      *            number of times to try the operation. Optional
      * 
      */
+    @Deprecated
     public JSONObject create(final List datasetsIds, String args,
+            Integer waitTime, Integer retries) {
+
+        JSONObject requestObject = createFromDatasets(
+                (String[]) datasetsIds.toArray(), args, waitTime, retries, null);
+        return createResource(CLUSTER_URL, requestObject.toJSONString());
+    }
+
+    /**
+     * Creates a cluster from a list of `datasets`.
+     * 
+     * POST /andromeda/cluster?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     * 
+     * @param datasetsIds
+     *            list of identifiers in the form dataset/id where id is a
+     *            string of 24 alpha-numeric chars for the dataset to attach the
+     *            cluster.
+     * @param args
+     *            set of parameters for the new cluster. Optional
+     * @param waitTime
+     *            time (milliseconds) to wait for next check of FINISHED status
+     *            for source before to start to create the cluster. Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     * 
+     */
+    public JSONObject create(final List datasetsIds, JSONObject args,
             Integer waitTime, Integer retries) {
 
         JSONObject requestObject = createFromDatasets(
@@ -115,6 +172,7 @@ public class Cluster extends AbstractResource {
      *            string of 24 alpha-numeric chars.
      * 
      */
+    @Override
     public JSONObject get(final String clusterId) {
         return get(clusterId, null, null);
     }
@@ -157,6 +215,7 @@ public class Cluster extends AbstractResource {
      *            a cluster JSONObject
      * 
      */
+    @Override
     public JSONObject get(final JSONObject cluster) {
         String resourceId = (String) cluster.get("resource");
         return get(resourceId, null, null);
@@ -279,6 +338,7 @@ public class Cluster extends AbstractResource {
      *            string of 24 alpha-numeric chars.
      * 
      */
+    @Override
     public boolean isReady(final String clusterId) {
         return isResourceReady(get(clusterId));
     }
@@ -290,6 +350,7 @@ public class Cluster extends AbstractResource {
      *            a cluster JSONObject
      * 
      */
+    @Override
     public boolean isReady(final JSONObject cluster) {
         return isResourceReady(cluster)
                 || isReady((String) cluster.get("resource"));
@@ -305,6 +366,7 @@ public class Cluster extends AbstractResource {
      *            query filtering the listing.
      * 
      */
+    @Override
     public JSONObject list(final String queryString) {
         return listResources(CLUSTER_URL, queryString);
     }
@@ -323,6 +385,7 @@ public class Cluster extends AbstractResource {
      *            set of parameters to update the cluster. Optional
      * 
      */
+    @Override
     public JSONObject update(final String clusterId, final String changes) {
         if (clusterId == null || clusterId.length() == 0
                 || !(clusterId.matches(CLUSTER_RE))) {
@@ -345,6 +408,7 @@ public class Cluster extends AbstractResource {
      *            set of parameters to update the cluster. Optional
      * 
      */
+    @Override
     public JSONObject update(final JSONObject cluster, final JSONObject changes) {
         String resourceId = (String) cluster.get("resource");
         return update(resourceId, changes.toJSONString());
@@ -362,6 +426,7 @@ public class Cluster extends AbstractResource {
      *            string of 24 alpha-numeric chars.
      * 
      */
+    @Override
     public JSONObject delete(final String clusterId) {
         if (clusterId == null || clusterId.length() == 0
                 || !(clusterId.matches(CLUSTER_RE))) {
@@ -382,6 +447,7 @@ public class Cluster extends AbstractResource {
      *            a cluster JSONObject
      * 
      */
+    @Override
     public JSONObject delete(final JSONObject cluster) {
         String resourceId = (String) cluster.get("resource");
         return delete(resourceId);

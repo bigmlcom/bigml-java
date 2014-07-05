@@ -29,7 +29,7 @@ public class SourcesStepdefs {
     public void I_create_a_data_source_uploading_a_file(String fileName)
             throws AuthenticationException {
         JSONObject resource = BigMLClient.getInstance().createSource(fileName,
-                "new source", null);
+                "new source", new JSONObject());
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.source = (JSONObject) resource.get("object");
@@ -41,7 +41,7 @@ public class SourcesStepdefs {
     public void I_create_a_data_source_using_the_url(String url)
             throws AuthenticationException {
         JSONObject resource = BigMLClient.getInstance().createRemoteSource(url,
-                null);
+                new JSONObject());
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.source = (JSONObject) resource.get("object");
