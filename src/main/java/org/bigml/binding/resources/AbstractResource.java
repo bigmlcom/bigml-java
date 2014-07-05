@@ -48,8 +48,9 @@ public abstract class AbstractResource {
 
     // Base Resource regular expressions
     static String SOURCE_RE = "^" + SOURCE_PATH + "/[a-f,0-9]{24}$";
-    static String DATASET_RE = "^(public/|shared/|)" + DATASET_PATH
-            + "/[a-f,0-9]{24}$";
+    static String DATASET_RE = "^(public/|)" + DATASET_PATH
+            + "/[a-f,0-9]{24}$|^shared/" + DATASET_PATH
+            + "/[a-zA-Z0-9]{26,27}$";
     static String MODEL_RE = "^(public/|)" + MODEL_PATH
             + "/[a-f,0-9]{24}$|^shared/" + MODEL_PATH + "/[a-zA-Z0-9]{26,27}$";
     static String PREDICTION_RE = "^" + PREDICTION_PATH + "/[a-f,0-9]{24}$";
@@ -57,8 +58,9 @@ public abstract class AbstractResource {
     static String ENSEMBLE_RE = "^" + ENSEMBLE_PATH + "/[a-f,0-9]{24}$";
     static String BATCH_PREDICTION_RE = "^" + BATCH_PREDICTION_PATH
             + "/[a-f,0-9]{24}$";
-    static String CLUSTER_RE = "^(public/|shared/|)" + CLUSTER_PATH
-            + "/[a-f,0-9]{24}$";
+    static String CLUSTER_RE = "^(public/|)" + CLUSTER_PATH
+            + "/[a-f,0-9]{24}$|^shared/" + CLUSTER_PATH
+            + "/[a-zA-Z0-9]{26,27}$";
     static String CENTROID_RE = "^" + CENTROID_PATH + "/[a-f,0-9]{24}$";
     static String BATCH_CENTROID_RE = "^" + BATCH_CENTROID_PATH
             + "/[a-f,0-9]{24}$";
