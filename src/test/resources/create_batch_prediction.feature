@@ -55,5 +55,5 @@ Feature: Create Batch Predictions
 		
         Examples:
         | data             | time_1  | time_2 | time_3 | time_4 | local_file | predictions_file       |
-        | data/iris.csv | 30      | 30     | 50     | 50     | data/downloaded_batch_predictions_c.csv |data/batch_predictions_c.csv |
+        | data/diabetes.csv | 30      | 30     | 50     | 50     | data/downloaded_batch_predictions_c.csv |data/batch_predictions_c.csv |
         
