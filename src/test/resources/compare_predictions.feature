@@ -71,7 +71,6 @@ Feature: Compare Predictions
         | data/spam.csv | 20      | 20     | 30     | {"fields": {"000001": {"optype": "text"}}} | true     | {"fields": {"000001": {"term_analysis": {"language":"en", "case_sensitive": false, "stem_words": true, "use_stopwords": true}}}} |{"Message": "A normal message"}       | 000000    | ham     |
         | data/spam.csv | 20      | 20     | 30     | {"fields": {"000001": {"optype": "text"}}} | true     | {"fields": {"000001": {"term_analysis": {"language":"en", "token_mode": "full_terms_only"}}}} |{"Message": "FREE for 1st week! No1 Nokia tone 4 ur mob every week just txt NOKIA to 87077 Get txting and tell ur mates. zed POBox 36504 W45WQ norm150p/tone 16+"}       | 000000    | spam     |
         | data/spam.csv | 20      | 20     | 30     | {"fields": {"000001": {"optype": "text"}}} | true     | {"fields": {"000001": {"term_analysis": {"language":"en", "token_mode": "full_terms_only"}}}} |{"Message": "Ok"}       | 000000    | ham     |
-  		| data/diabetes.csv | 20      | 20     | 30     | {"fields": {}} |{"pregnancies": 0, "plasma glucose": 118, "blood pressure": 84, "triceps skin thickness": 47, "insulin": 230, "bmi": 45.8, "diabetes pedigree": 0.551, "age": 31, "diabetes": "true"}       | Cluster 4    | 0.454110207355     |
-  		
+  		| data/diabetes.csv | 20      | 20     | 30     | {"fields": {}} | true | {} | {"pregnancies": 0, "plasma glucose": 118, "blood pressure": 84, "triceps skin thickness": 47, "insulin": 230, "bmi": 45.8, "diabetes pedigree": 0.551, "age": 31, "diabetes": "true"}       | 000008    | true     |
   	
   	
