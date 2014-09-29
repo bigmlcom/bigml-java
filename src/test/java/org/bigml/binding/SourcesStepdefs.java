@@ -68,7 +68,7 @@ public class SourcesStepdefs {
             code = (Long) ((JSONObject) context.source.get("status"))
                     .get("code");
         }
-        assertEquals(code.intValue(), code1);
+        assertEquals(code1, code.intValue());
     }
 
     @Given("^I wait until the source is ready less than (\\d+) secs$")
@@ -83,7 +83,7 @@ public class SourcesStepdefs {
             throws AuthenticationException {
         JSONObject resource = BigMLClient.getInstance().getSource(sourceId);
         Integer code = (Integer) resource.get("code");
-        assertEquals(code.intValue(), AbstractResource.HTTP_OK);
+        assertEquals(AbstractResource.HTTP_OK, code.intValue());
         context.source = (JSONObject) resource.get("object");
     }
 

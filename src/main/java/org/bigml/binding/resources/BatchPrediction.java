@@ -3,11 +3,8 @@ package org.bigml.binding.resources;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.net.HttpURLConnection;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
 import org.bigml.binding.BigMLClient;
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONObject;
@@ -407,15 +404,20 @@ public class BatchPrediction extends AbstractResource {
         JSONObject error = new JSONObject();
         String csv = "";
         try {
-            HttpClient httpclient = Utils.httpClient();
-            HttpGet httpget = new HttpGet(url + bigmlAuth);
-            httpget.setHeader("Accept", JSON);
+            HttpURLConnection connection = Utils.processGET(url + bigmlAuth);
 
-            HttpResponse response = httpclient.execute(httpget);
-            HttpEntity resEntity = response.getEntity();
-            code = response.getStatusLine().getStatusCode();
+            code = connection.getResponseCode();
 
-            csv = Utils.inputStreamAsString(resEntity.getContent());
+//            HttpClient httpclient = Utils.httpClient();
+//            HttpGet httpget = new HttpGet(url + bigmlAuth);
+//            httpget.setHeader("Accept", JSON);
+//
+//            HttpResponse response = httpclient.execute(httpget);
+//            HttpEntity resEntity = response.getEntity();
+//            code = response.getStatusLine().getStatusCode();
+
+            csv = Utils.inputStreamAsString(connection.getInputStream(), "UTF-8");
+//            csv = Utils.inputStreamAsString(resEntity.getContent());
             if (code == HTTP_OK) {
                 if (fileName != null) {
                     File file = new File(fileName);
@@ -431,7 +433,10 @@ public class BatchPrediction extends AbstractResource {
                 if (code == HTTP_BAD_REQUEST || code == HTTP_UNAUTHORIZED
                         || code == HTTP_NOT_FOUND) {
                     error = (JSONObject) JSONValue.parse(Utils
-                            .inputStreamAsString(resEntity.getContent()));
+                            .inputStreamAsString(connection.getInputStream(), "UTF-8"));
+
+//                    error = (JSONObject) JSONValue.parse(Utils
+//                            .inputStreamAsString(resEntity.getContent()));
                     logger.info("Error downloading:" + code);
                 } else {
                     logger.info("Unexpected error (" + code + ")");

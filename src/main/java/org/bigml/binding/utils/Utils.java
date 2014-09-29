@@ -1,51 +1,172 @@
 package org.bigml.binding.utils;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.conn.scheme.PlainSocketFactory;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.SingleClientConnManager;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+
 public class Utils {
 
-    /**
-   *
-   */
-    public static DefaultHttpClient httpClient() throws Exception {
-        SchemeRegistry schemeRegistry = new SchemeRegistry();
-        schemeRegistry.register(new Scheme("http", 80, PlainSocketFactory
-                .getSocketFactory()));
-        schemeRegistry.register(new Scheme("https", 443,
-                new MockSSLSocketFactory()));
-        ClientConnectionManager cm = new SingleClientConnManager(schemeRegistry);
-        return new DefaultHttpClient(cm);
+    // Headers
+    static String JSON = "application/json";
+
+//    /**
+//   *
+//   */
+//    public static DefaultHttpClient httpClient() throws Exception {
+//        SchemeRegistry schemeRegistry = new SchemeRegistry();
+//        schemeRegistry.register(new Scheme("http", 80, PlainSocketFactory
+//                .getSocketFactory()));
+//        schemeRegistry.register(new Scheme("https", 443,
+//                new MockSSLSocketFactory()));
+//        ClientConnectionManager cm = new SingleClientConnManager(schemeRegistry);
+//        return new DefaultHttpClient(cm);
+//    }
+
+
+    public static HttpURLConnection processPOST(String urlString, String json) throws NoSuchAlgorithmException, KeyManagementException, IOException {
+        HttpURLConnection connection;
+
+        // We need to disable the VERIFY of the certificate until we decide how to use it
+        TrustManager[] trustAllCerts = new TrustManager[] { new MockX509TrustManager() };
+        // Install the all-trusting trust manager
+        final SSLContext sc = SSLContext.getInstance("SSL");
+        sc.init(null, trustAllCerts, new SecureRandom());
+        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+        // Install the all-trusting host verifier
+        HttpsURLConnection.setDefaultHostnameVerifier(new MockHostnameVerifier());
+
+        URL url = new URL(urlString);
+        connection = (HttpURLConnection) url.openConnection();
+
+        connection.addRequestProperty("Content-Type", JSON);
+
+        connection.setRequestMethod("POST");
+
+        // Let the run-time system (RTS) know that we want input.
+        connection.setDoInput (true);
+
+        // Let the RTS know that we want to do output.
+        connection.setDoOutput (true);
+
+        // No caching, we want the real thing.
+        connection.setUseCaches (false);
+
+        // Sending the body to the server
+        DataOutputStream output = new DataOutputStream(connection.getOutputStream());
+        output.writeBytes(json);
+        output.flush();
+        output.close();
+
+        return connection;
     }
+
+    public static HttpURLConnection processPUT(String urlString, String json) throws NoSuchAlgorithmException, KeyManagementException, IOException {
+        HttpURLConnection connection;
+
+        // We need to disable the VERIFY of the certificate until we decide how to use it
+        TrustManager[] trustAllCerts = new TrustManager[] { new MockX509TrustManager() };
+        // Install the all-trusting trust manager
+        final SSLContext sc = SSLContext.getInstance("SSL");
+        sc.init(null, trustAllCerts, new SecureRandom());
+        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+        // Install the all-trusting host verifier
+        HttpsURLConnection.setDefaultHostnameVerifier(new MockHostnameVerifier());
+
+        URL url = new URL(urlString);
+        connection = (HttpURLConnection) url.openConnection();
+
+        connection.addRequestProperty("Content-Type", JSON);
+
+        connection.setRequestMethod("PUT");
+
+        // Let the run-time system (RTS) know that we want input.
+        connection.setDoInput (true);
+
+        // Let the RTS know that we want to do output.
+        connection.setDoOutput (true);
+
+        // No caching, we want the real thing.
+        connection.setUseCaches (false);
+
+        // Sending the body to the server
+        DataOutputStream output = new DataOutputStream(connection.getOutputStream());
+        output.writeBytes(json);
+        output.flush();
+        output.close();
+
+        return connection;
+    }
+
+    public static HttpURLConnection processGET(String urlString) throws NoSuchAlgorithmException, KeyManagementException, IOException {
+        HttpURLConnection connection;
+
+        // We need to disable the VERIFY of the certificate until we decide how to use it
+        TrustManager[] trustAllCerts = new TrustManager[] { new MockX509TrustManager() };
+        // Install the all-trusting trust manager
+        final SSLContext sc = SSLContext.getInstance("SSL");
+        sc.init(null, trustAllCerts, new SecureRandom());
+        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+        // Install the all-trusting host verifier
+        HttpsURLConnection.setDefaultHostnameVerifier(new MockHostnameVerifier());
+
+        URL url = new URL(urlString);
+        connection = (HttpURLConnection) url.openConnection();
+
+        connection.addRequestProperty("Content-Type", JSON);
+        connection.addRequestProperty("Accept", JSON);
+
+        connection.setRequestMethod("GET");
+
+        return connection;
+    }
+
+    public static HttpURLConnection processDELETE(String urlString) throws NoSuchAlgorithmException, KeyManagementException, IOException {
+        HttpURLConnection connection;
+
+        // We need to disable the VERIFY of the certificate until we decide how to use it
+        TrustManager[] trustAllCerts = new TrustManager[] { new MockX509TrustManager() };
+        // Install the all-trusting trust manager
+        final SSLContext sc = SSLContext.getInstance("SSL");
+        sc.init(null, trustAllCerts, new SecureRandom());
+        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+        // Install the all-trusting host verifier
+        HttpsURLConnection.setDefaultHostnameVerifier(new MockHostnameVerifier());
+
+        URL url = new URL(urlString);
+        connection = (HttpURLConnection) url.openConnection();
+
+        connection.addRequestProperty("Content-Type", JSON);
+
+        connection.setRequestMethod("DELETE");
+
+        return connection;
+    }
+
 
     /**
      * Converts a InputStream to a String.
      * 
      */
-    public static String inputStreamAsString(InputStream stream)
+    public static String inputStreamAsString(InputStream stream, String encoding)
             throws IOException {
 
-        BufferedReader br = new BufferedReader(new InputStreamReader(stream));
+        BufferedReader br = new BufferedReader(new InputStreamReader(stream, encoding));
         StringBuilder sb = new StringBuilder();
         String line = null;
 

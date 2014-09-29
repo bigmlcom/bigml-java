@@ -36,35 +36,25 @@ public class CommonStepdefs {
     @Then("^test listing$")
     public void test_listing() throws AuthenticationException {
         JSONObject listing = BigMLClient.getInstance().listSources("");
-        assertEquals(((Integer) listing.get("code")).intValue(),
-                AbstractResource.HTTP_OK);
+        assertEquals(AbstractResource.HTTP_OK, ((Integer) listing.get("code")).intValue());
         listing = BigMLClient.getInstance().listDatasets("");
-        assertEquals(((Integer) listing.get("code")).intValue(),
-                AbstractResource.HTTP_OK);
+        assertEquals(AbstractResource.HTTP_OK, ((Integer) listing.get("code")).intValue());
         listing = BigMLClient.getInstance().listModels("");
-        assertEquals(((Integer) listing.get("code")).intValue(),
-                AbstractResource.HTTP_OK);
+        assertEquals(AbstractResource.HTTP_OK, ((Integer) listing.get("code")).intValue());
         listing = BigMLClient.getInstance().listClusters("");
-        assertEquals(((Integer) listing.get("code")).intValue(),
-                AbstractResource.HTTP_OK);
+        assertEquals(AbstractResource.HTTP_OK, ((Integer) listing.get("code")).intValue());
         listing = BigMLClient.getInstance().listEnsembles("");
-        assertEquals(((Integer) listing.get("code")).intValue(),
-                AbstractResource.HTTP_OK);
+        assertEquals(AbstractResource.HTTP_OK, ((Integer) listing.get("code")).intValue());
         listing = BigMLClient.getInstance().listEvaluations("");
-        assertEquals(((Integer) listing.get("code")).intValue(),
-                AbstractResource.HTTP_OK);
+        assertEquals(AbstractResource.HTTP_OK, ((Integer) listing.get("code")).intValue());
         listing = BigMLClient.getInstance().listPredictions("");
-        assertEquals(((Integer) listing.get("code")).intValue(),
-                AbstractResource.HTTP_OK);
+        assertEquals(AbstractResource.HTTP_OK, ((Integer) listing.get("code")).intValue());
         listing = BigMLClient.getInstance().listBatchPredictions("");
-        assertEquals(((Integer) listing.get("code")).intValue(),
-                AbstractResource.HTTP_OK);
+        assertEquals(AbstractResource.HTTP_OK, ((Integer) listing.get("code")).intValue());
         listing = BigMLClient.getInstance().listCentroids("");
-        assertEquals(((Integer) listing.get("code")).intValue(),
-                AbstractResource.HTTP_OK);
+        assertEquals(AbstractResource.HTTP_OK, ((Integer) listing.get("code")).intValue());
         listing = BigMLClient.getInstance().listBatchCentroids("");
-        assertEquals(((Integer) listing.get("code")).intValue(),
-                AbstractResource.HTTP_OK);
+        assertEquals(AbstractResource.HTTP_OK, ((Integer) listing.get("code")).intValue());
 
     }
 

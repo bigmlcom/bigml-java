@@ -69,7 +69,7 @@ public class DatasetsStepdefs {
             code = (Long) ((JSONObject) context.dataset.get("status"))
                     .get("code");
         }
-        assertEquals(code.intValue(), code1);
+        assertEquals(code1, code.intValue());
     }
 
     @Given("^I wait until the dataset is ready less than (\\d+) secs$")
@@ -84,7 +84,7 @@ public class DatasetsStepdefs {
             throws AuthenticationException {
         JSONObject resource = BigMLClient.getInstance().getDataset(datasetId);
         Integer code = (Integer) resource.get("code");
-        assertEquals(code.intValue(), AbstractResource.HTTP_OK);
+        assertEquals(AbstractResource.HTTP_OK, code.intValue());
         context.dataset = (JSONObject) resource.get("object");
     }
 
@@ -151,7 +151,7 @@ public class DatasetsStepdefs {
     public void dataset_status_finished() {
         Long code = (Long) ((JSONObject) context.dataset.get("status"))
                 .get("code");
-        assertEquals(code.intValue(), AbstractResource.FINISHED);
+        assertEquals(AbstractResource.FINISHED, code.intValue());
     }
 
 }

@@ -21,16 +21,17 @@ package org.bigml.binding;
 
 import java.util.HashMap;
 
-import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MultiModel {
 
     /**
      * Logging
      */
-    static Logger logger = Logger.getLogger(MultiModel.class.getName());
+    static Logger logger = LoggerFactory.getLogger(MultiModel.class.getName());
 
     private JSONArray models;
     private MultiVote votes;
@@ -38,8 +39,8 @@ public class MultiModel {
     /**
      * Constructor
      * 
-     * @param ensemble
-     *            the json representation for the remote ensemble
+     * @param models
+     *              the json representation for the remote models
      */
     public MultiModel(Object models) throws Exception {
         super();

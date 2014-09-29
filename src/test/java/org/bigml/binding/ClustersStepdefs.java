@@ -65,7 +65,7 @@ public class ClustersStepdefs {
             code = (Long) ((JSONObject) context.cluster.get("status"))
                     .get("code");
         }
-        assertEquals(code.intValue(), code1);
+        assertEquals(code1, code.intValue());
     }
 
     @Given("^I wait until the cluster is ready less than (\\d+) secs$")
@@ -126,12 +126,12 @@ public class ClustersStepdefs {
             code = (Long) ((JSONObject) context.cluster.get("status"))
                     .get("code");
         }
-        assertEquals(code.intValue(), AbstractResource.FINISHED);
+        assertEquals(AbstractResource.FINISHED, code.intValue());
     }
 
     @Then("the centroid is \"(.*)\"$")
     public void the_centroid_is(String result) throws AuthenticationException {
-        assertEquals(context.centroid.get("centroid_name"), result);
+        assertEquals(result, context.centroid.get("centroid_name"));
     }
 
     @When("^I create a batch centroid for the dataset$")
@@ -153,7 +153,7 @@ public class ClustersStepdefs {
         JSONObject resource = BigMLClient.getInstance().getBatchCentroid(
                 batchCentroidId);
         Integer code = (Integer) resource.get("code");
-        assertEquals(code.intValue(), AbstractResource.HTTP_OK);
+        assertEquals(AbstractResource.HTTP_OK, code.intValue());
         context.batchCentroid = (JSONObject) resource.get("object");
     }
 
@@ -183,7 +183,7 @@ public class ClustersStepdefs {
             code = (Long) ((JSONObject) context.batchCentroid.get("status"))
                     .get("code");
         }
-        assertEquals(code.intValue(), code1);
+        assertEquals(code1, code.intValue());
     }
 
     @When("^I download the created centroid file to \"([^\"]*)\"$")
@@ -202,8 +202,8 @@ public class ClustersStepdefs {
                 downloadedFile));
         FileInputStream checkFis = new FileInputStream(new File(checkFile));
 
-        String localCvs = Utils.inputStreamAsString(downloadFis);
-        String checkCvs = Utils.inputStreamAsString(checkFis);
+        String localCvs = Utils.inputStreamAsString(downloadFis, "UTF-8");
+        String checkCvs = Utils.inputStreamAsString(checkFis, "UTF-8");
 
         if (!localCvs.equals(checkCvs)) {
             throw new Exception();
