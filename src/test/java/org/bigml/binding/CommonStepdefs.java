@@ -23,12 +23,14 @@ public class CommonStepdefs {
 
     @Given("^that I use production mode$")
     public void that_I_use_production_mode() throws Throwable {
+        BigMLClient.resetInstance();
         BigMLClient.getInstance(false);
         assertTrue("", BigMLClient.getInstance(false) != null);
     }
 
     @Given("^that I use development mode$")
     public void that_I_use_development_mode() throws Throwable {
+        BigMLClient.resetInstance();
         BigMLClient.getInstance(true);
         assertTrue("", BigMLClient.getInstance(true) != null);
     }
@@ -36,35 +38,25 @@ public class CommonStepdefs {
     @Then("^test listing$")
     public void test_listing() throws AuthenticationException {
         JSONObject listing = BigMLClient.getInstance().listSources("");
-        assertEquals(((Integer) listing.get("code")).intValue(),
-                AbstractResource.HTTP_OK);
+        assertEquals(AbstractResource.HTTP_OK, ((Integer) listing.get("code")).intValue());
         listing = BigMLClient.getInstance().listDatasets("");
-        assertEquals(((Integer) listing.get("code")).intValue(),
-                AbstractResource.HTTP_OK);
+        assertEquals(AbstractResource.HTTP_OK, ((Integer) listing.get("code")).intValue());
         listing = BigMLClient.getInstance().listModels("");
-        assertEquals(((Integer) listing.get("code")).intValue(),
-                AbstractResource.HTTP_OK);
+        assertEquals(AbstractResource.HTTP_OK, ((Integer) listing.get("code")).intValue());
         listing = BigMLClient.getInstance().listClusters("");
-        assertEquals(((Integer) listing.get("code")).intValue(),
-                AbstractResource.HTTP_OK);
+        assertEquals(AbstractResource.HTTP_OK, ((Integer) listing.get("code")).intValue());
         listing = BigMLClient.getInstance().listEnsembles("");
-        assertEquals(((Integer) listing.get("code")).intValue(),
-                AbstractResource.HTTP_OK);
+        assertEquals(AbstractResource.HTTP_OK, ((Integer) listing.get("code")).intValue());
         listing = BigMLClient.getInstance().listEvaluations("");
-        assertEquals(((Integer) listing.get("code")).intValue(),
-                AbstractResource.HTTP_OK);
+        assertEquals(AbstractResource.HTTP_OK, ((Integer) listing.get("code")).intValue());
         listing = BigMLClient.getInstance().listPredictions("");
-        assertEquals(((Integer) listing.get("code")).intValue(),
-                AbstractResource.HTTP_OK);
+        assertEquals(AbstractResource.HTTP_OK, ((Integer) listing.get("code")).intValue());
         listing = BigMLClient.getInstance().listBatchPredictions("");
-        assertEquals(((Integer) listing.get("code")).intValue(),
-                AbstractResource.HTTP_OK);
+        assertEquals(AbstractResource.HTTP_OK, ((Integer) listing.get("code")).intValue());
         listing = BigMLClient.getInstance().listCentroids("");
-        assertEquals(((Integer) listing.get("code")).intValue(),
-                AbstractResource.HTTP_OK);
+        assertEquals(AbstractResource.HTTP_OK, ((Integer) listing.get("code")).intValue());
         listing = BigMLClient.getInstance().listBatchCentroids("");
-        assertEquals(((Integer) listing.get("code")).intValue(),
-                AbstractResource.HTTP_OK);
+        assertEquals(AbstractResource.HTTP_OK, ((Integer) listing.get("code")).intValue());
 
     }
 
@@ -73,42 +65,52 @@ public class CommonStepdefs {
         if (context.batchCentroid != null) {
             BigMLClient.getInstance().deleteBatchCentroid(
                     (String) context.batchCentroid.get("resource"));
+            context.batchCentroid = null;
         }
         if (context.centroid != null) {
             BigMLClient.getInstance().deleteCentroid(
                     (String) context.centroid.get("resource"));
+            context.centroid = null;
         }
         if (context.batchPrediction != null) {
             BigMLClient.getInstance().deleteBatchPrediction(
                     (String) context.batchPrediction.get("resource"));
+            context.batchPrediction = null;
         }
         if (context.prediction != null) {
             BigMLClient.getInstance().deletePrediction(
                     (String) context.prediction.get("resource"));
+            context.prediction = null;
         }
         if (context.evaluation != null) {
             BigMLClient.getInstance().deleteEvaluation(
                     (String) context.evaluation.get("resource"));
+            context.evaluation = null;
         }
         if (context.cluster != null) {
             BigMLClient.getInstance().deleteCluster(
                     (String) context.cluster.get("resource"));
+            context.cluster = null;
         }
         if (context.model != null) {
             BigMLClient.getInstance().deleteModel(
                     (String) context.model.get("resource"));
+            context.model = null;
         }
         if (context.ensemble != null) {
             BigMLClient.getInstance().deleteEnsemble(
                     (String) context.ensemble.get("resource"));
+            context.ensemble = null;
         }
         if (context.dataset != null) {
             BigMLClient.getInstance().deleteDataset(
                     (String) context.dataset.get("resource"));
+            context.dataset = null;
         }
         if (context.source != null) {
             BigMLClient.getInstance().deleteSource(
                     (String) context.source.get("resource"));
+            context.source = null;
         }
     }
 

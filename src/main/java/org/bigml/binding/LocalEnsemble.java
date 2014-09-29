@@ -24,11 +24,12 @@ package org.bigml.binding;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A local predictive Ensemble.
@@ -42,7 +43,7 @@ public class LocalEnsemble {
     /**
      * Logging
      */
-    static Logger logger = Logger.getLogger(LocalEnsemble.class.getName());
+    static Logger logger = LoggerFactory.getLogger(LocalEnsemble.class.getName());
 
     private String ensembleId;
 

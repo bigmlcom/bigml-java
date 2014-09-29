@@ -1,14 +1,9 @@
 package org.bigml.binding.resources;
 
 import java.io.File;
+import java.net.HttpURLConnection;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.bigml.binding.utils.MultipartUtility;
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -109,36 +104,49 @@ public class Source extends AbstractResource {
         error.put("status", status);
 
         try {
-            DefaultHttpClient httpclient = Utils.httpClient();
-            HttpPost httppost = new HttpPost(SOURCE_URL + bigmlAuth);
+            MultipartUtility multipartUtility = new MultipartUtility(SOURCE_URL + bigmlAuth, "UTF-8");
 
-            MultipartEntity reqEntity = new MultipartEntity();
+            multipartUtility.addFilePart("bin", new File(fileName));
 
-            // Source file
-            FileBody bin = new FileBody(new File(fileName));
-            reqEntity.addPart("bin", bin);
+//            DefaultHttpClient httpclient = Utils.httpClient();
+//            HttpPost httppost = new HttpPost(SOURCE_URL + bigmlAuth);
+//
+//            MultipartEntity reqEntity = new MultipartEntity();
+//
+//            // Source file
+//            FileBody bin = new FileBody(new File(fileName));
+//            reqEntity.addPart("bin", bin);
 
             // Source name
             if (name != null) {
-                reqEntity.addPart("name", new StringBody(name));
+                multipartUtility.addFormField("name", name);
+//                reqEntity.addPart("name", new StringBody(name));
             }
 
             // Source parser
             if (sourceParser != null) {
-                reqEntity.addPart("source_parser",
-                        new StringBody(sourceParser.toJSONString()));
+                multipartUtility.addFormField("source_parser", sourceParser.toJSONString());
+//                reqEntity.addPart("source_parser",
+//                        new StringBody(sourceParser.toJSONString()));
             }
 
-            httppost.setEntity(reqEntity);
+            HttpURLConnection connection = multipartUtility.finish();
+            code = connection.getResponseCode();
 
-            HttpResponse response = httpclient.execute(httppost);
-            HttpEntity resEntity = response.getEntity();
-            code = response.getStatusLine().getStatusCode();
+//            httppost.setEntity(reqEntity);
+//
+//            HttpResponse response = httpclient.execute(httppost);
+//            HttpEntity resEntity = response.getEntity();
+//            code = response.getStatusLine().getStatusCode();
 
             if (code == HTTP_CREATED) {
-                location = response.getHeaders("location")[0].getValue();
+                location = connection.getHeaderField(location);
+//                location = connection.getHeaderFields().get("location").get(0);
+//                location = response.getHeaders("location")[0].getValue();
                 resource = (JSONObject) JSONValue.parse(Utils
-                        .inputStreamAsString(resEntity.getContent()));
+                        .inputStreamAsString(connection.getInputStream(), "UTF-8"));
+//                resource = (JSONObject) JSONValue.parse(Utils
+//                        .inputStreamAsString(resEntity.getContent()));
                 resourceId = (String) resource.get("resource");
                 error = new JSONObject();
             } else {
@@ -146,7 +154,9 @@ public class Source extends AbstractResource {
                         || code == HTTP_PAYMENT_REQUIRED
                         || code == HTTP_NOT_FOUND) {
                     error = (JSONObject) JSONValue.parse(Utils
-                            .inputStreamAsString(resEntity.getContent()));
+                            .inputStreamAsString(connection.getInputStream(), "UTF-8"));
+//                    error = (JSONObject) JSONValue.parse(Utils
+//                            .inputStreamAsString(resEntity.getContent()));
                 } else {
                     logger.info("Unexpected error (" + code + ")");
                     code = HTTP_INTERNAL_SERVER_ERROR;

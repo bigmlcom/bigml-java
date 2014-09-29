@@ -2,10 +2,10 @@ package org.bigml.binding;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.security.SecureRandom;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
 import org.bigml.binding.resources.BatchCentroid;
 import org.bigml.binding.resources.BatchPrediction;
 import org.bigml.binding.resources.Centroid;
@@ -16,7 +16,15 @@ import org.bigml.binding.resources.Evaluation;
 import org.bigml.binding.resources.Model;
 import org.bigml.binding.resources.Prediction;
 import org.bigml.binding.resources.Source;
+import org.bigml.binding.utils.MockHostnameVerifier;
+import org.bigml.binding.utils.MockX509TrustManager;
 import org.json.simple.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
 
 /**
  * Entry point to create, retrieve, list, update, and delete sources, datasets,
@@ -49,7 +57,7 @@ public class BigMLClient {
     /**
      * Logging
      */
-    static Logger logger = Logger.getLogger(BigMLClient.class.getName());
+    static Logger logger = LoggerFactory.getLogger(BigMLClient.class.getName());
 
     private static BigMLClient instance = null;
 
@@ -119,6 +127,10 @@ public class BigMLClient {
         return instance;
     }
 
+    public static void resetInstance() {
+        instance = null;
+    }
+
     /**
      * Initialization object.
      */
@@ -136,7 +148,7 @@ public class BigMLClient {
                     || this.bigmlApiKey == null || this.bigmlApiKey.equals("")) {
                 AuthenticationException ex = new AuthenticationException(
                         "Missing authentication information.");
-                logger.info(instance, ex);
+                logger.info(instance.toString(), ex);
                 throw ex;
             }
         }
@@ -164,7 +176,7 @@ public class BigMLClient {
                     || this.bigmlApiKey == null || this.bigmlApiKey.equals("")) {
                 AuthenticationException ex = new AuthenticationException(
                         "Missing authentication information.");
-                logger.info(instance, ex);
+                logger.info(instance.toString(), ex);
                 throw ex;
             }
         }
@@ -194,7 +206,7 @@ public class BigMLClient {
                     || this.bigmlApiKey == null || this.bigmlApiKey.equals("")) {
                 AuthenticationException ex = new AuthenticationException(
                         "Missing authentication information.");
-                logger.info(instance, ex);
+                logger.info(instance.toString(), ex);
                 throw ex;
             }
         }
@@ -204,6 +216,15 @@ public class BigMLClient {
 
     private void initConfiguration() {
         try {
+            // We need to disable the VERIFY of the certificate until we decide how to use it
+            TrustManager[] trustAllCerts = new TrustManager[] { new MockX509TrustManager() };
+            // Install the all-trusting trust manager
+            final SSLContext sc = SSLContext.getInstance("SSL");
+            sc.init(null, trustAllCerts, new SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+            // Install the all-trusting host verifier
+            HttpsURLConnection.setDefaultHostnameVerifier(new MockHostnameVerifier());
+
             props = new Properties();
             FileInputStream fis = new FileInputStream(new File(
                     "src/main/resources/binding.properties"));
@@ -459,8 +480,8 @@ public class BigMLClient {
      * 
      */
     public JSONObject updateSource(final JSONObject sourceJSON,
-            final JSONObject json) {
-        return source.update(sourceJSON, json);
+            final JSONObject changes) {
+        return source.update(sourceJSON, changes);
     }
 
     /**
@@ -706,7 +727,7 @@ public class BigMLClient {
      * POST /andromeda/model?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      * 
-     * @param datsetId
+     * @param datasetId
      *            a unique identifier in the form datset/id where id is a string
      *            of 24 alpha-numeric chars for the dataset to attach the model.
      * @param args
@@ -730,7 +751,7 @@ public class BigMLClient {
      * POST /andromeda/model?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      * 
-     * @param datsetId
+     * @param datasetId
      *            a unique identifier in the form datset/id where id is a string
      *            of 24 alpha-numeric chars for the dataset to attach the model.
      * @param args
@@ -1084,7 +1105,7 @@ public class BigMLClient {
      * PUT /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      * 
-     * @param model
+     * @param modelJSON
      *            modelJSON a model JSONObject
      * @param changes
      *            set of parameters to update the source. Optional
@@ -1360,9 +1381,9 @@ public class BigMLClient {
      */
     @Deprecated
     public JSONObject createEvaluation(final String modelOrEnsembleId,
-            final String datasetId, String args, Integer waitTime, Integer tries) {
+            final String datasetId, String args, Integer waitTime, Integer retries) {
         return evaluation.create(modelOrEnsembleId, datasetId, args, waitTime,
-                tries);
+                retries);
     }
 
     /**
@@ -1391,9 +1412,9 @@ public class BigMLClient {
      */
     public JSONObject createEvaluation(final String modelOrEnsembleId,
             final String datasetId, JSONObject args, Integer waitTime,
-            Integer tries) {
+            Integer retries) {
         return evaluation.create(modelOrEnsembleId, datasetId, args, waitTime,
-                tries);
+                retries);
     }
 
     /**
@@ -1564,8 +1585,8 @@ public class BigMLClient {
      */
     @Deprecated
     public JSONObject createEnsemble(final String datasetId, String args,
-            Integer waitTime, Integer tries) {
-        return ensemble.create(datasetId, args, waitTime, tries);
+            Integer waitTime, Integer retries) {
+        return ensemble.create(datasetId, args, waitTime, retries);
     }
 
     /**
@@ -1588,8 +1609,8 @@ public class BigMLClient {
      * 
      */
     public JSONObject createEnsemble(final String datasetId, JSONObject args,
-            Integer waitTime, Integer tries) {
-        return ensemble.create(datasetId, args, waitTime, tries);
+            Integer waitTime, Integer retries) {
+        return ensemble.create(datasetId, args, waitTime, retries);
     }
 
     /**
@@ -2066,8 +2087,8 @@ public class BigMLClient {
      */
     @Deprecated
     public JSONObject createCluster(final String datasetId, String args,
-            Integer waitTime, Integer tries) {
-        return cluster.create(datasetId, args, waitTime, tries);
+            Integer waitTime, Integer retries) {
+        return cluster.create(datasetId, args, waitTime, retries);
     }
 
     /**
@@ -2090,8 +2111,8 @@ public class BigMLClient {
      * 
      */
     public JSONObject createCluster(final String datasetId, JSONObject args,
-            Integer waitTime, Integer tries) {
-        return cluster.create(datasetId, args, waitTime, tries);
+            Integer waitTime, Integer retries) {
+        return cluster.create(datasetId, args, waitTime, retries);
     }
 
     /**
@@ -2378,7 +2399,7 @@ public class BigMLClient {
      * /andromeda/centroid/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io
      * 
-     * @param centroid
+     * @param centroidJSON
      *            a centroid JSONObject.
      * 
      */
@@ -2401,7 +2422,7 @@ public class BigMLClient {
     /**
      * Check whether a centroid's status is FINISHED.
      * 
-     * @param centroid
+     * @param centroidJSON
      *            a centroid JSONObject.
      * 
      */
@@ -2449,7 +2470,7 @@ public class BigMLClient {
      * /andromeda/centroid/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      * 
-     * @param centroid
+     * @param centroidJSON
      *            an centroid JSONObject
      * @param changes
      *            set of parameters to update the centroid. Optional
@@ -2483,7 +2504,7 @@ public class BigMLClient {
      * /andromeda/centroid/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1
      * 
-     * @param centroid
+     * @param centroidJSON
      *            an centroid JSONObject.
      * 
      */
@@ -2694,7 +2715,7 @@ public class BigMLClient {
      * PUT /andromeda/batch_centroid/id?username=$BIGML_USERNAME;api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
      * 
-     * @param batchCentroid
+     * @param batchCentroidJSON
      *            an batch_centroid JSONObject
      * @param changes
      *            set of parameters to update the batch_centroid. Optional
@@ -2726,7 +2747,7 @@ public class BigMLClient {
      * DELETE /andromeda/batch_centroid/id?username=$BIGML_USERNAME;api_key=
      * $BIGML_API_KEY; HTTP/1.1
      * 
-     * @param batchCentroid
+     * @param batchCentroidJSON
      *            an batch_centroid JSONObject.
      * 
      */

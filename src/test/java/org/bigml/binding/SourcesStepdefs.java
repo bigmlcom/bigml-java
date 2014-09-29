@@ -29,7 +29,7 @@ public class SourcesStepdefs {
     public void I_create_a_data_source_uploading_a_file(String fileName)
             throws AuthenticationException {
         JSONObject resource = BigMLClient.getInstance().createSource(fileName,
-                "new source", new JSONObject());
+                "unitTest Source", new JSONObject());
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.source = (JSONObject) resource.get("object");
@@ -40,8 +40,10 @@ public class SourcesStepdefs {
     @Given("^I create a data source using the url \"([^\"]*)\"$")
     public void I_create_a_data_source_using_the_url(String url)
             throws AuthenticationException {
+        JSONObject args = new JSONObject();
+        args.put("name", "unitTest Source");
         JSONObject resource = BigMLClient.getInstance().createRemoteSource(url,
-                new JSONObject());
+                args);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.source = (JSONObject) resource.get("object");
@@ -68,7 +70,7 @@ public class SourcesStepdefs {
             code = (Long) ((JSONObject) context.source.get("status"))
                     .get("code");
         }
-        assertEquals(code.intValue(), code1);
+        assertEquals(code1, code.intValue());
     }
 
     @Given("^I wait until the source is ready less than (\\d+) secs$")
@@ -83,7 +85,7 @@ public class SourcesStepdefs {
             throws AuthenticationException {
         JSONObject resource = BigMLClient.getInstance().getSource(sourceId);
         Integer code = (Integer) resource.get("code");
-        assertEquals(code.intValue(), AbstractResource.HTTP_OK);
+        assertEquals(AbstractResource.HTTP_OK, code.intValue());
         context.source = (JSONObject) resource.get("object");
     }
 

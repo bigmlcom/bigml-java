@@ -48,7 +48,7 @@ public class PredictionsStepdefs {
         JSONObject resource = BigMLClient.getInstance().getPrediction(
                 predictionId);
         Integer code = (Integer) resource.get("code");
-        assertEquals(code.intValue(), AbstractResource.HTTP_OK);
+        assertEquals(AbstractResource.HTTP_OK, code.intValue());
         context.prediction = (JSONObject) resource.get("object");
     }
 
@@ -77,7 +77,7 @@ public class PredictionsStepdefs {
     public void the_prediction_with_ensemble_for_is(String expected, String pred) {
         JSONObject obj = (JSONObject) context.prediction.get("prediction");
         String objective = (String) obj.get(expected);
-        assertEquals(objective, pred);
+        assertEquals(pred, objective);
     }
 
     @Given("^I wait until the predition status code is either (\\d) or (\\d) less than (\\d+)")
@@ -98,7 +98,7 @@ public class PredictionsStepdefs {
             code = (Long) ((JSONObject) context.prediction.get("status"))
                     .get("code");
         }
-        assertEquals(code.intValue(), code1);
+        assertEquals(code1, code.intValue());
     }
 
     @Given("^I wait until the prediction is ready less than (\\d+) secs$")

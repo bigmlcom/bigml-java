@@ -71,7 +71,7 @@ public class EnsemblesStepdefs {
             code = (Long) ((JSONObject) context.ensemble.get("status"))
                     .get("code");
         }
-        assertEquals(code.intValue(), code1);
+        assertEquals(code1, code.intValue());
     }
 
     @Given("^I wait until the ensemble is ready less than (\\d+) secs$")
@@ -86,7 +86,7 @@ public class EnsemblesStepdefs {
             throws AuthenticationException {
         JSONObject resource = BigMLClient.getInstance().getEnsemble(ensembleId);
         Integer code = (Integer) resource.get("code");
-        assertEquals(code.intValue(), AbstractResource.HTTP_OK);
+        assertEquals(AbstractResource.HTTP_OK, code.intValue());
         context.ensemble = (JSONObject) resource.get("object");
     }
 }

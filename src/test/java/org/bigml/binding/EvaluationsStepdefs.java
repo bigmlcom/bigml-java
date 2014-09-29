@@ -79,7 +79,7 @@ public class EvaluationsStepdefs {
             code = (Long) ((JSONObject) context.evaluation.get("status"))
                     .get("code");
         }
-        assertEquals(code.intValue(), code1);
+        assertEquals(code1, code.intValue());
     }
 
     @Given("^I wait until the evaluation is ready less than (\\d+) secs$")
@@ -95,7 +95,7 @@ public class EvaluationsStepdefs {
         JSONObject resource = BigMLClient.getInstance().getEvaluation(
                 evaluationId);
         Integer code = (Integer) resource.get("code");
-        assertEquals(code.intValue(), AbstractResource.HTTP_OK);
+        assertEquals(AbstractResource.HTTP_OK, code.intValue());
         context.evaluation = (JSONObject) resource.get("object");
     }
 

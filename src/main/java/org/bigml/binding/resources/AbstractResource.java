@@ -1,25 +1,30 @@
 package org.bigml.binding.resources;
 
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.entity.StringEntity;
 import org.bigml.binding.AuthenticationException;
 import org.bigml.binding.BigMLClient;
+import org.bigml.binding.utils.MockHostnameVerifier;
+import org.bigml.binding.utils.MockX509TrustManager;
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
 
 /**
  * Entry point to create, retrieve, list, update, and delete sources, datasets,
@@ -169,21 +174,30 @@ public abstract class AbstractResource {
         error.put("status", status);
 
         try {
-            HttpClient httpclient = Utils.httpClient();
-            HttpPost httppost = new HttpPost(urlString + bigmlAuth);
-            httppost.setHeader("Content-Type", JSON);
+            HttpURLConnection connection = Utils.processPOST(urlString + bigmlAuth, json);
 
-            StringEntity reqEntity = new StringEntity(json);
-            httppost.setEntity(reqEntity);
+            code = connection.getResponseCode();
 
-            HttpResponse response = httpclient.execute(httppost);
-            HttpEntity resEntity = response.getEntity();
-            code = response.getStatusLine().getStatusCode();
+
+//            HttpClient httpclient = Utils.httpClient();
+//            HttpPost httppost = new HttpPost(urlString + bigmlAuth);
+//            httppost.setHeader("Content-Type", JSON);
+//
+//            StringEntity reqEntity = new StringEntity(json);
+//            httppost.setEntity(reqEntity);
+//
+//            HttpResponse response = httpclient.execute(httppost);
+//            HttpEntity resEntity = response.getEntity();
+//            code = response.getStatusLine().getStatusCode();
             if (code == HTTP_CREATED) {
-                location = response.getHeaders("location")[0].getValue();
+                location = connection.getHeaderField(location);
+//                location = connection.getHeaderFields().get("location").get(0);
+//                location = response.getHeaders("location")[0].getValue();
 
                 resource = (JSONObject) JSONValue.parse(Utils
-                        .inputStreamAsString(resEntity.getContent()));
+                        .inputStreamAsString(connection.getInputStream(), "UTF-8"));
+//                resource = (JSONObject) JSONValue.parse(Utils
+//                        .inputStreamAsString(resEntity.getContent()));
                 resourceId = (String) resource.get("resource");
                 error = new JSONObject();
             } else {
@@ -191,7 +205,9 @@ public abstract class AbstractResource {
                         || code == HTTP_PAYMENT_REQUIRED
                         || code == HTTP_NOT_FOUND) {
                     error = (JSONObject) JSONValue.parse(Utils
-                            .inputStreamAsString(resEntity.getContent()));
+                            .inputStreamAsString(connection.getInputStream(), "UTF-8"));
+//                    error = (JSONObject) JSONValue.parse(Utils
+//                            .inputStreamAsString(resEntity.getContent()));
                 } else {
                     logger.info("Unexpected error (" + code + ")");
                     code = HTTP_INTERNAL_SERVER_ERROR;
@@ -246,25 +262,35 @@ public abstract class AbstractResource {
             String auth = apiUser != null && apiKey != null ? "?username="
                     + apiUser + ";api_key=" + apiKey + ";" : bigmlAuth;
 
-            HttpClient httpclient = Utils.httpClient();
-            HttpGet httpget = new HttpGet(urlString + auth + query);
+            HttpURLConnection connection = Utils.processGET(urlString + auth + query);
 
-            httpget.setHeader("Accept", JSON);
+            code = connection.getResponseCode();
 
-            HttpResponse response = httpclient.execute(httpget);
-            HttpEntity resEntity = response.getEntity();
-            code = response.getStatusLine().getStatusCode();
+//            HttpClient httpclient = Utils.httpClient();
+//            HttpGet httpget = new HttpGet(urlString + auth + query);
+//
+//            httpget.setHeader("Accept", JSON);
+//
+//            HttpResponse response = httpclient.execute(httpget);
+//            HttpEntity resEntity = response.getEntity();
+//            code = response.getStatusLine().getStatusCode();
 
             if (code == HTTP_OK) {
                 resource = (JSONObject) JSONValue.parse(Utils
-                        .inputStreamAsString(resEntity.getContent()));
+                        .inputStreamAsString(connection.getInputStream(), "UTF-8"));
+
+//                resource = (JSONObject) JSONValue.parse(Utils
+//                        .inputStreamAsString(resEntity.getContent()));
                 resourceId = (String) resource.get("resource");
                 error = new JSONObject();
             } else {
                 if (code == HTTP_BAD_REQUEST || code == HTTP_UNAUTHORIZED
                         || code == HTTP_NOT_FOUND) {
                     error = (JSONObject) JSONValue.parse(Utils
-                            .inputStreamAsString(resEntity.getContent()));
+                            .inputStreamAsString(connection.getInputStream(), "UTF-8"));
+
+//                    error = (JSONObject) JSONValue.parse(Utils
+//                            .inputStreamAsString(resEntity.getContent()));
                 } else {
                     logger.info("Unexpected error (" + code + ")");
                     code = HTTP_INTERNAL_SERVER_ERROR;
@@ -301,16 +327,24 @@ public abstract class AbstractResource {
 
         try {
             String query = queryString != null ? queryString : "";
-            HttpClient httpclient = Utils.httpClient();
-            HttpGet httpget = new HttpGet(urlString + bigmlAuth + query);
 
-            HttpResponse response = httpclient.execute(httpget);
-            HttpEntity resEntity = response.getEntity();
-            code = response.getStatusLine().getStatusCode();
+            HttpURLConnection connection = Utils.processGET(urlString + bigmlAuth + query);
+
+            code = connection.getResponseCode();
+
+//            HttpClient httpclient = Utils.httpClient();
+//            HttpGet httpget = new HttpGet(urlString + bigmlAuth + query);
+//
+//            HttpResponse response = httpclient.execute(httpget);
+//            HttpEntity resEntity = response.getEntity();
+//            code = response.getStatusLine().getStatusCode();
 
             if (code == HTTP_OK) {
                 JSONObject resource = (JSONObject) JSONValue.parse(Utils
-                        .inputStreamAsString(resEntity.getContent()));
+                        .inputStreamAsString(connection.getInputStream(), "UTF-8"));
+
+//                JSONObject resource = (JSONObject) JSONValue.parse(Utils
+//                        .inputStreamAsString(resEntity.getContent()));
                 meta = (JSONObject) resource.get("meta");
                 resources = (JSONArray) resource.get("objects");
                 error = new JSONObject();
@@ -318,7 +352,10 @@ public abstract class AbstractResource {
                 if (code == HTTP_BAD_REQUEST || code == HTTP_UNAUTHORIZED
                         || code == HTTP_NOT_FOUND) {
                     error = (JSONObject) JSONValue.parse(Utils
-                            .inputStreamAsString(resEntity.getContent()));
+                            .inputStreamAsString(connection.getInputStream(), "UTF-8"));
+
+//                    error = (JSONObject) JSONValue.parse(Utils
+//                            .inputStreamAsString(resEntity.getContent()));
                 } else {
                     logger.info("Unexpected error (" + code + ")");
                     code = HTTP_INTERNAL_SERVER_ERROR;
@@ -351,27 +388,37 @@ public abstract class AbstractResource {
         error.put("status", status);
 
         try {
-            HttpClient httpclient = Utils.httpClient();
-            HttpPut httpput = new HttpPut(urlString + bigmlAuth);
+            HttpURLConnection connection = Utils.processPUT(urlString + bigmlAuth, json);
 
-            httpput.setHeader("Content-Type", JSON);
-            StringEntity reqEntity = new StringEntity(json);
-            httpput.setEntity(reqEntity);
+            code = connection.getResponseCode();
 
-            HttpResponse response = httpclient.execute(httpput);
-            HttpEntity resEntity = response.getEntity();
-            code = response.getStatusLine().getStatusCode();
+//            HttpClient httpclient = Utils.httpClient();
+//            HttpPut httpput = new HttpPut(urlString + bigmlAuth);
+//
+//            httpput.setHeader("Content-Type", JSON);
+//            StringEntity reqEntity = new StringEntity(json);
+//            httpput.setEntity(reqEntity);
+//
+//            HttpResponse response = httpclient.execute(httpput);
+//            HttpEntity resEntity = response.getEntity();
+//            code = response.getStatusLine().getStatusCode();
 
             if (code == HTTP_ACCEPTED) {
                 resource = (JSONObject) JSONValue.parse(Utils
-                        .inputStreamAsString(resEntity.getContent()));
+                        .inputStreamAsString(connection.getInputStream(), "UTF-8"));
+
+//                resource = (JSONObject) JSONValue.parse(Utils
+//                        .inputStreamAsString(resEntity.getContent()));
                 resourceId = (String) resource.get("resource");
                 error = new JSONObject();
             } else {
                 if (code == HTTP_UNAUTHORIZED || code == HTTP_PAYMENT_REQUIRED
                         || code == HTTP_METHOD_NOT_ALLOWED) {
                     error = (JSONObject) JSONValue.parse(Utils
-                            .inputStreamAsString(resEntity.getContent()));
+                            .inputStreamAsString(connection.getInputStream(), "UTF-8"));
+
+//                    error = (JSONObject) JSONValue.parse(Utils
+//                            .inputStreamAsString(resEntity.getContent()));
                 } else {
                     logger.info("Unexpected error (" + code + ")");
                     code = HTTP_INTERNAL_SERVER_ERROR;
@@ -404,11 +451,15 @@ public abstract class AbstractResource {
         error.put("status", status);
 
         try {
-            HttpClient httpclient = Utils.httpClient();
-            HttpDelete httpdelete = new HttpDelete(urlString + bigmlAuth);
-            HttpResponse response = httpclient.execute(httpdelete);
-            HttpEntity resEntity = response.getEntity();
-            code = response.getStatusLine().getStatusCode();
+            HttpURLConnection connection = Utils.processDELETE(urlString + bigmlAuth);
+
+            code = connection.getResponseCode();
+//
+//            HttpClient httpclient = Utils.httpClient();
+//            HttpDelete httpdelete = new HttpDelete(urlString + bigmlAuth);
+//            HttpResponse response = httpclient.execute(httpdelete);
+//            HttpEntity resEntity = response.getEntity();
+//            code = response.getStatusLine().getStatusCode();
 
             if (code == HTTP_NO_CONTENT) {
                 error = new JSONObject();
@@ -416,7 +467,10 @@ public abstract class AbstractResource {
                 if (code == HTTP_BAD_REQUEST || code == HTTP_UNAUTHORIZED
                         || code == HTTP_NOT_FOUND) {
                     error = (JSONObject) JSONValue.parse(Utils
-                            .inputStreamAsString(resEntity.getContent()));
+                            .inputStreamAsString(connection.getInputStream(), "UTF-8"));
+
+//                    error = (JSONObject) JSONValue.parse(Utils
+//                            .inputStreamAsString(resEntity.getContent()));
                 } else {
                     logger.info("Unexpected error (" + code + ")");
                     code = HTTP_INTERNAL_SERVER_ERROR;

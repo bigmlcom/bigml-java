@@ -62,7 +62,7 @@ public class ModelsStepdefs {
             code = (Long) ((JSONObject) context.model.get("status"))
                     .get("code");
         }
-        assertEquals(code.intValue(), code1);
+        assertEquals(code1, code.intValue());
     }
 
     @Given("^I wait until the model is ready less than (\\d+) secs$")
@@ -84,7 +84,7 @@ public class ModelsStepdefs {
     public void I_get_the_model(String modelId) throws AuthenticationException {
         JSONObject resource = BigMLClient.getInstance().getModel(modelId);
         Integer code = (Integer) resource.get("code");
-        assertEquals(code.intValue(), AbstractResource.HTTP_OK);
+        assertEquals(AbstractResource.HTTP_OK, code.intValue());
         context.model = (JSONObject) resource.get("object");
     }
 
@@ -167,7 +167,7 @@ public class ModelsStepdefs {
         context.model = resource;
 
         Integer code = (Integer) context.model.get("code");
-        assertEquals(code.intValue(), AbstractResource.HTTP_OK);
+        assertEquals(AbstractResource.HTTP_OK, code.intValue());
     }
 
     // ---------------------------------------------------------------------
@@ -201,7 +201,7 @@ public class ModelsStepdefs {
         context.location = (String) resource.get("location");
         context.model = resource;
         Integer code = (Integer) context.model.get("code");
-        assertEquals(code.intValue(), AbstractResource.HTTP_OK);
+        assertEquals(AbstractResource.HTTP_OK, code.intValue());
     }
 
     @Given("^I check the model status using the model's shared key$")
@@ -213,7 +213,7 @@ public class ModelsStepdefs {
         context.location = (String) resource.get("location");
         context.model = resource;
         Integer code = (Integer) context.model.get("code");
-        assertEquals(code.intValue(), AbstractResource.HTTP_OK);
+        assertEquals(AbstractResource.HTTP_OK, code.intValue());
 
     }
 }

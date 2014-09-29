@@ -78,7 +78,7 @@ public class BatchPredictionsStepdefs {
             code = (Long) ((JSONObject) context.batchPrediction.get("status"))
                     .get("code");
         }
-        assertEquals(code.intValue(), code1);
+        assertEquals(code1, code.intValue());
     }
 
     @When("^I wait until the batch prediction is ready less than (\\d+) secs$")
@@ -94,7 +94,7 @@ public class BatchPredictionsStepdefs {
         JSONObject resource = BigMLClient.getInstance().getBatchPrediction(
                 batchPredictionId);
         Integer code = (Integer) resource.get("code");
-        assertEquals(code.intValue(), AbstractResource.HTTP_OK);
+        assertEquals(AbstractResource.HTTP_OK, code.intValue());
         context.batchPrediction = (JSONObject) resource.get("object");
     }
 
@@ -114,8 +114,8 @@ public class BatchPredictionsStepdefs {
                 downloadedFile));
         FileInputStream checkFis = new FileInputStream(new File(checkFile));
 
-        String localCvs = Utils.inputStreamAsString(downloadFis);
-        String checkCvs = Utils.inputStreamAsString(checkFis);
+        String localCvs = Utils.inputStreamAsString(downloadFis, "UTF-8");
+        String checkCvs = Utils.inputStreamAsString(checkFis, "UTF-8");
 
         if (!localCvs.equals(checkCvs)) {
             throw new Exception();
