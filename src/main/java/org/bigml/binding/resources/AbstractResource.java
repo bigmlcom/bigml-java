@@ -1,20 +1,7 @@
 package org.bigml.binding.resources;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import org.bigml.binding.AuthenticationException;
 import org.bigml.binding.BigMLClient;
-import org.bigml.binding.utils.MockHostnameVerifier;
-import org.bigml.binding.utils.MockX509TrustManager;
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -22,9 +9,10 @@ import org.json.simple.JSONValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
+import java.net.HttpURLConnection;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Entry point to create, retrieve, list, update, and delete sources, datasets,

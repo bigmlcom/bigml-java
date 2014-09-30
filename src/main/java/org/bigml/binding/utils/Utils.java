@@ -1,24 +1,19 @@
 package org.bigml.binding.utils;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.regex.Pattern;
-
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
 
 public class Utils {
 
@@ -115,7 +110,6 @@ public class Utils {
 
         return connection;
     }
-
 
     /**
      * Converts a InputStream to a String.
