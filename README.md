@@ -18,6 +18,27 @@ Discussions about the different bindings take place in the general
 [BigML mailing list](http://groups.google.com/group/bigml). Or join us
 in [Campfire chatroom](https://bigmlinc.campfirenow.com/f20a0)
 
+## Integrating Maven
+
+Add the following dependency to your project's pom.xml file:
+
+    <dependency>
+        <groupId>org.bigml</groupId>
+        <artifactId>bigml-binding</artifactId>
+        <version>1.2</version>
+    </dependency>
+
+Add the following lines to your project's pom.xml file if you want to use the SNAPSHOT versions of the library:
+
+    <repositories>
+        <repository>
+            <id>osshr-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <snapshots><enabled>true</enabled></snapshots>
+            <releases><enabled>false</enabled></releases>
+        </repository>
+    </repositories>
+
 ## Requirements
 
 You will find in the `binding.properties` file where to setup your BigML credentials

@@ -206,7 +206,7 @@ public class Utils {
      * 
      * @param json
      *            the json object to invert
-     * @return
+     * @return the dictionary inverting keys per values
      */
     public static JSONObject invertDictionary(JSONObject json) {
         JSONObject invertedObject = new JSONObject();

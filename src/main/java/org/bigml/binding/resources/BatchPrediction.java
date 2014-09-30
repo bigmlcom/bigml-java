@@ -318,7 +318,7 @@ public class BatchPrediction extends AbstractResource {
      * PUT /andromeda/batchprediction/id?username=$BIGML_USERNAME;api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
      * 
-     * @param evaluationId
+     * @param batchPredictionId
      *            a unique identifier in the form batchprediction/id where id is
      *            a string of 24 alpha-numeric chars.
      * @param changes

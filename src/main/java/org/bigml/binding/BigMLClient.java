@@ -1,30 +1,14 @@
 package org.bigml.binding;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.security.SecureRandom;
-import java.util.List;
-import java.util.Properties;
-
-import org.bigml.binding.resources.BatchCentroid;
-import org.bigml.binding.resources.BatchPrediction;
-import org.bigml.binding.resources.Centroid;
-import org.bigml.binding.resources.Cluster;
-import org.bigml.binding.resources.Dataset;
-import org.bigml.binding.resources.Ensemble;
-import org.bigml.binding.resources.Evaluation;
-import org.bigml.binding.resources.Model;
-import org.bigml.binding.resources.Prediction;
-import org.bigml.binding.resources.Source;
-import org.bigml.binding.utils.MockHostnameVerifier;
-import org.bigml.binding.utils.MockX509TrustManager;
+import org.bigml.binding.resources.*;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * Entry point to create, retrieve, list, update, and delete sources, datasets,
