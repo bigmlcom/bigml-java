@@ -116,7 +116,6 @@ public class Utils {
         return connection;
     }
 
-
     /**
      * Converts a InputStream to a String.
      * 
