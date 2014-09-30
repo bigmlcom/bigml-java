@@ -21,6 +21,7 @@ import cucumber.junit.Cucumber;
         "src/test/resources/createPredictionFromLocalModel.feature",
         "src/test/resources/createPredictions.feature",
         "src/test/resources/rename_duplicated_names.feature",
-        "src/test/resources/create_batch_prediction.feature" })
+        "src/test/resources/create_batch_prediction.feature",
+        "src/test/resources/delete_all_dev_data.feature" })
 public class RunCukesTest {
 }

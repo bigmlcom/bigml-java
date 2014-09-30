@@ -124,11 +124,11 @@ public class CommonStepdefs {
         assertEquals(AbstractResource.HTTP_ACCEPTED, status);
     }
 
-    @Then("^delete dev data$")
-    public void delete_dev_data() throws AuthenticationException {
+    @Then("^delete all test data$")
+    public void delete_all_test_data() throws AuthenticationException {
         // BatchCentroids
         JSONArray batchCentroids = (JSONArray) BigMLClient.getInstance()
-                .listBatchCentroids("").get("objects");
+                .listBatchCentroids(";tags__in=unitTest").get("objects");
         for (int i = 0; i < batchCentroids.size(); i++) {
             JSONObject batchCentroid = (JSONObject) batchCentroids.get(i);
             BigMLClient.getInstance().deleteBatchCentroid(
@@ -137,7 +137,7 @@ public class CommonStepdefs {
 
         // Centroids
         JSONArray centroids = (JSONArray) BigMLClient.getInstance()
-                .listCentroids("").get("objects");
+                .listCentroids(";tags__in=unitTest").get("objects");
         for (int i = 0; i < centroids.size(); i++) {
             JSONObject centroid = (JSONObject) centroids.get(i);
             BigMLClient.getInstance().deleteCentroid(
@@ -146,7 +146,7 @@ public class CommonStepdefs {
 
         // Batch predictions
         JSONArray batchPredictions = (JSONArray) BigMLClient.getInstance()
-                .listBatchPredictions("").get("objects");
+                .listBatchPredictions(";tags__in=unitTest").get("objects");
         for (int i = 0; i < batchPredictions.size(); i++) {
             JSONObject batchPrediction = (JSONObject) batchPredictions.get(i);
             BigMLClient.getInstance().deleteBatchPrediction(
@@ -155,7 +155,7 @@ public class CommonStepdefs {
 
         // Predictions
         JSONArray predictions = (JSONArray) BigMLClient.getInstance()
-                .listPredictions("").get("objects");
+                .listPredictions(";tags__in=unitTest").get("objects");
         for (int i = 0; i < predictions.size(); i++) {
             JSONObject prediction = (JSONObject) predictions.get(i);
             BigMLClient.getInstance().deletePrediction(
@@ -164,7 +164,7 @@ public class CommonStepdefs {
 
         // Clusters
         JSONArray clusters = (JSONArray) BigMLClient.getInstance()
-                .listClusters("").get("objects");
+                .listClusters(";tags__in=unitTest").get("objects");
         for (int i = 0; i < clusters.size(); i++) {
             JSONObject cluster = (JSONObject) clusters.get(i);
             BigMLClient.getInstance().deleteCluster(
@@ -173,7 +173,7 @@ public class CommonStepdefs {
 
         // Evaluations
         JSONArray evaluations = (JSONArray) BigMLClient.getInstance()
-                .listEvaluations("").get("objects");
+                .listEvaluations(";tags__in=unitTest").get("objects");
         for (int i = 0; i < evaluations.size(); i++) {
             JSONObject evaluation = (JSONObject) evaluations.get(i);
             BigMLClient.getInstance().deleteEvaluation(
@@ -182,7 +182,7 @@ public class CommonStepdefs {
 
         // Ensembles
         JSONArray ensembles = (JSONArray) BigMLClient.getInstance()
-                .listEnsembles("").get("objects");
+                .listEnsembles(";tags__in=unitTest").get("objects");
         for (int i = 0; i < ensembles.size(); i++) {
             JSONObject ensemble = (JSONObject) ensembles.get(i);
             BigMLClient.getInstance().deleteEnsemble(
@@ -190,7 +190,7 @@ public class CommonStepdefs {
         }
 
         // Models
-        JSONArray models = (JSONArray) BigMLClient.getInstance().listModels("")
+        JSONArray models = (JSONArray) BigMLClient.getInstance().listModels(";tags__in=unitTest")
                 .get("objects");
         for (int i = 0; i < models.size(); i++) {
             JSONObject model = (JSONObject) models.get(i);
@@ -200,7 +200,7 @@ public class CommonStepdefs {
 
         // Datasets
         JSONArray datasets = (JSONArray) BigMLClient.getInstance()
-                .listDatasets("").get("objects");
+                .listDatasets(";tags__in=unitTest").get("objects");
         for (int i = 0; i < datasets.size(); i++) {
             JSONObject dataset = (JSONObject) datasets.get(i);
             BigMLClient.getInstance().deleteDataset(
@@ -209,7 +209,7 @@ public class CommonStepdefs {
 
         // Sources
         JSONArray sources = (JSONArray) BigMLClient.getInstance()
-                .listSources("").get("objects");
+                .listSources(";tags__in=unitTest").get("objects");
         for (int i = 0; i < sources.size(); i++) {
             JSONObject source = (JSONObject) sources.get(i);
             BigMLClient.getInstance().deleteSource(

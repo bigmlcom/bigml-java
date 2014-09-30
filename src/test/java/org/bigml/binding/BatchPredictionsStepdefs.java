@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -37,8 +38,11 @@ public class BatchPredictionsStepdefs {
         String modelId = (String) context.model.get("resource");
         String datasetId = (String) context.dataset.get("resource");
 
+        JSONObject args = new JSONObject();
+        args.put("tags", Arrays.asList("unitTest"));
+
         JSONObject resource = BigMLClient.getInstance().createBatchPrediction(
-                modelId, datasetId, new JSONObject(), 5, 3);
+                modelId, datasetId, args, 5, 3);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.batchPrediction = (JSONObject) resource.get("object");
@@ -51,8 +55,11 @@ public class BatchPredictionsStepdefs {
         String ensembleId = (String) context.ensemble.get("resource");
         String datasetId = (String) context.dataset.get("resource");
 
+        JSONObject args = new JSONObject();
+        args.put("tags", Arrays.asList("unitTest"));
+
         JSONObject resource = BigMLClient.getInstance().createBatchPrediction(
-                ensembleId, datasetId, new JSONObject(), 5, 3);
+                ensembleId, datasetId, args, 5, 3);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.batchPrediction = (JSONObject) resource.get("object");

@@ -3,6 +3,7 @@ package org.bigml.binding;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -33,9 +34,13 @@ public class PredictionsStepdefs {
             throws AuthenticationException {
         String modelId = (String) context.model.get("resource");
         Boolean byName = new Boolean(by_name);
+
+        JSONObject args = new JSONObject();
+        args.put("tags", Arrays.asList("unitTest"));
+
         JSONObject resource = BigMLClient.getInstance().createPrediction(
                 modelId, (JSONObject) JSONValue.parse(inputData), byName,
-                new JSONObject(), 5, null);
+                args, 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.prediction = (JSONObject) resource.get("object");
@@ -56,7 +61,7 @@ public class PredictionsStepdefs {
     public void the_prediction_for_is(String expected, String pred) {
         JSONObject obj = (JSONObject) context.prediction.get("prediction");
         String objective = (String) obj.get(expected);
-        assertEquals(objective, pred);
+        assertEquals(pred, objective);
     }
 
     @When("^I create a prediction with ensemble by name=(true|false) for \"(.*)\"$")
@@ -64,9 +69,13 @@ public class PredictionsStepdefs {
             String inputData) throws AuthenticationException {
         String ensembleId = (String) context.ensemble.get("resource");
         Boolean byName = new Boolean(by_name);
+
+        JSONObject args = new JSONObject();
+        args.put("tags", Arrays.asList("unitTest"));
+
         JSONObject resource = BigMLClient.getInstance().createPrediction(
                 ensembleId, (JSONObject) JSONValue.parse(inputData), byName,
-                new JSONObject(), 5, null);
+                args, 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.prediction = (JSONObject) resource.get("object");

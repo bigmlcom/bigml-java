@@ -3,6 +3,7 @@ package org.bigml.binding;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -30,8 +31,10 @@ public class DatasetsStepdefs {
     @Given("^I create a dataset$")
     public void I_create_a_dataset() throws AuthenticationException {
         String sourceId = (String) context.source.get("resource");
+
         JSONObject args = new JSONObject();
-        args.put("name", "unitTest Dataset");
+        args.put("tags", Arrays.asList("unitTest"));
+
         JSONObject resource = BigMLClient.getInstance().createDataset(sourceId,
                 args, 5, null);
         context.status = (Integer) resource.get("code");
@@ -45,6 +48,14 @@ public class DatasetsStepdefs {
         String sourceId = (String) context.source.get("resource");
         JSONObject argsJSON = args != null ? (JSONObject) JSONValue.parse(args)
                 : null;
+
+        if( argsJSON != null ) {
+            argsJSON.put("tags", Arrays.asList("unitTest"));
+        } else {
+            argsJSON = new JSONObject();
+            argsJSON.put("tags", Arrays.asList("unitTest"));
+        }
+
         JSONObject resource = BigMLClient.getInstance().createDataset(sourceId,
                 argsJSON, 5, null);
         context.status = (Integer) resource.get("code");

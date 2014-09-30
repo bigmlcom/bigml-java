@@ -216,15 +216,6 @@ public class BigMLClient {
 
     private void initConfiguration() {
         try {
-            // We need to disable the VERIFY of the certificate until we decide how to use it
-            TrustManager[] trustAllCerts = new TrustManager[] { new MockX509TrustManager() };
-            // Install the all-trusting trust manager
-            final SSLContext sc = SSLContext.getInstance("SSL");
-            sc.init(null, trustAllCerts, new SecureRandom());
-            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-            // Install the all-trusting host verifier
-            HttpsURLConnection.setDefaultHostnameVerifier(new MockHostnameVerifier());
-
             props = new Properties();
             FileInputStream fis = new FileInputStream(new File(
                     "src/main/resources/binding.properties"));
