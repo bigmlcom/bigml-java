@@ -9,6 +9,8 @@ predictions, centroids, batch predictions, batch centroids, evaluations).
 This client is licensed under the
 [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html).
 
+See the changes [here](Changes.md).
+
 ## Support
 
 Please, report problems and bugs to 
