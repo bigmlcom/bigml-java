@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 public class Utils {
 
     // Headers
-    static String JSON = "application/json";
+    static String JSON = "application/json; charset=utf-8";
 
     private static SSLSocketFactory sslSocketFactory;
 

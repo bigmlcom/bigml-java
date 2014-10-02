@@ -3,7 +3,7 @@ Feature: Create Evaluations
     I need to create a model and a dataset first
 
      Scenario Outline: Successfully creating an evaluation:
-        Given that I use development mode
+        Given that I use development mode with seed="<seed>"
         Given I create a data source uploading a "<data>" file
         And I wait until the source is ready less than <time_1> secs
         And I add the unitTest tag to the data source waiting less than <time_1> secs
@@ -17,12 +17,12 @@ Feature: Create Evaluations
         Then delete test data
 
         Examples:
-        | data             | time_1  | time_2 | time_3 | time_4 | measure       | value  |
-        | data/iris.csv | 10      | 10     | 10     | 10     | average_phi   | 1      |
+        | data             | seed      | time_1  | time_2 | time_3 | time_4 | measure       | value  |
+        | data/iris.csv | BigML | 30      | 30     | 30     | 30     | average_phi   | 1      |
 
 
     Scenario Outline: Successfully creating an evaluation for an ensemble:
-        Given that I use development mode
+        Given that I use development mode with seed="<seed>"
         Given I create a data source uploading a "<data>" file
         And I wait until the source is ready less than <time_1> secs
         And I add the unitTest tag to the data source waiting less than <time_1> secs
@@ -36,5 +36,5 @@ Feature: Create Evaluations
         Then delete test data
 
         Examples:
-        | data             | time_1  | time_2 | number_of_models | tlp | time_3 | time_4 | measure       | value  |
-        | data/iris.csv | 10      | 10     | 5                | 1   | 60     | 10     | average_phi   | 0.8   |
+        | data             | seed      | time_1  | time_2 | number_of_models | tlp | time_3 | time_4 | measure       | value  |
+        | data/iris.csv | BigML | 30      | 30     | 5                | 1   | 50     | 30     | average_phi   | 0.9   |

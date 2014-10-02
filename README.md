@@ -9,16 +9,17 @@ predictions, centroids, batch predictions, batch centroids, evaluations).
 This client is licensed under the
 [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html).
 
-See the changes [here](Changes.md).
+See all the changes history [here](Changes.md).
 
 ## Support
 
 Please, report problems and bugs to 
-[BigML.io-Java issue tracker](https://github.com/javinp/bigml-java/issues)
+[BigML.io-Java issue tracker](https://github.com/bigmlcom/bigml-java/issues)
 
-Discussions about the different bindings take place in the general
-[BigML mailing list](http://groups.google.com/group/bigml). Or join us
-in [Campfire chatroom](https://bigmlinc.campfirenow.com/f20a0)
+You can send us an email at [BigML email support](mailto://support.bigml.com)
+
+You can join us in [Campfire chatroom](https://bigmlinc.campfirenow.com/f20a0)
+
 
 ## Integrating Maven
 
@@ -44,8 +45,8 @@ Add the following lines to your project's pom.xml file if you want to use the SN
 ## Requirements
 
 You will find in the `binding.properties` file where to setup your BigML credentials
-`BIGML_USERNAME` and `BIGML_API_KEY`. They can be overwritten passing
-the values as JVM variables with `-D`.
+`BIGML_USERNAME` and `BIGML_API_KEY`, and the `BIGML_SEED` to be used by BigML to make deterministic samples and models.
+They can be overwritten passing the values as JVM variables with `-D`.
 
 The project uses Maven as project manager.
 

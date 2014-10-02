@@ -3,7 +3,7 @@ Feature: Create Predictions
     I need to create a model first
 
     Scenario Outline: Successfully creating a prediction:
-        Given that I use development mode
+        Given that I use development mode with seed="<seed>"
         Given I create a data source uploading a "<data>" file
         And I wait until the source is ready less than <time_1> secs
         And I add the unitTest tag to the data source waiting less than <time_1> secs
@@ -16,12 +16,13 @@ Feature: Create Predictions
         Then delete test data
 
         Examples:
-        | data                | time_1  | time_2 | time_3 | by_name | data_input    | objective | prediction  |
-        | data/iris.csv | 10      | 10     | 10     | true     | {"petal width": 0.5} | 000004    | Iris-setosa |
+        | data                | seed      | time_1  | time_2 | time_3 | by_name | data_input    | objective | prediction  |
+        | data/iris.csv | BigML |  10      | 10     | 10     | true     | {"petal width": 0.5} | 000004    | Iris-setosa |
+        | data/iris_sp_chars.csv | BigML |  10      | 10     | 10     | true     | {"pétal&width\u0000": 0.5} | 000004    | Iris-setosa |
 
     
     Scenario Outline: Successfully creating a prediction from a source in a remote location:
-        Given that I use development mode
+        Given that I use development mode with seed="<seed>"
         Given I create a data source using the url "<url>"
         And I wait until the source is ready less than <time_1> secs
         And I add the unitTest tag to the data source waiting less than <time_1> secs
@@ -34,12 +35,12 @@ Feature: Create Predictions
         Then delete test data
 
         Examples:
-        | url                | time_1  | time_2 | time_3 | by_name | data_input    | objective | prediction  |
-        | s3://bigml-public/csv/iris.csv | 10      | 10     | 10     | true     | {"petal width": 0.5} | 000004    | Iris-setosa |
+        | url                | seed      | time_1  | time_2 | time_3 | by_name | data_input    | objective | prediction  |
+        | s3://bigml-public/csv/iris.csv | BigML |  10      | 10     | 10     | true     | {"petal width": 0.5} | 000004    | Iris-setosa |
         
         
     Scenario Outline: Successfully creating a centroid and the associated dataset:
-    	Given that I use development mode
+        Given that I use development mode with seed="<seed>"
         Given I create a data source uploading a "<data>" file
         And I wait until the source is ready less than <time_1> secs
         And I add the unitTest tag to the data source waiting less than <time_1> secs
@@ -53,6 +54,6 @@ Feature: Create Predictions
         Then delete test data
 
         Examples:
-        | data                | time_1  | time_2 | time_3 | data_input    | centroid  |
-        | data/diabetes.csv | 10      | 10     | 10     | {"pregnancies": 0, "plasma glucose": 118, "blood pressure": 84, "triceps skin thickness": 47, "insulin": 230, "bmi": 45.8, "diabetes pedigree": 0.551, "age": 31, "diabetes": "true"} | Cluster 4 |
+        | data                | seed      | time_1  | time_2 | time_3 | data_input    | centroid  |
+        | data/diabetes.csv | BigML tests |  10      | 10     | 10     | {"pregnancies": 0, "plasma glucose": 118, "blood pressure": 84, "triceps skin thickness": 47, "insulin": 230, "bmi": 45.8, "diabetes pedigree": 0.551, "age": 31, "diabetes": "true"} | Cluster 4 |
     

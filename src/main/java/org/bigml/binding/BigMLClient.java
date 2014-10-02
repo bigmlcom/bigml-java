@@ -48,6 +48,12 @@ public class BigMLClient {
     private String bigmlUrl;
     private String bigmlUser;
     private String bigmlApiKey;
+
+    /**
+     * A string to be hashed to generate deterministic samples
+     */
+    private String seed;
+
     private Source source;
     private Dataset dataset;
     private Model model;
@@ -82,11 +88,29 @@ public class BigMLClient {
         return instance;
     }
 
+    public static BigMLClient getInstance(final String seed, final String storage)
+            throws AuthenticationException {
+        if (instance == null) {
+            instance = new BigMLClient();
+            instance.init(null, null, seed, false, storage);
+        }
+        return instance;
+    }
+
     public static BigMLClient getInstance(final boolean devMode)
             throws AuthenticationException {
         if (instance == null) {
             instance = new BigMLClient();
             instance.init(devMode);
+        }
+        return instance;
+    }
+
+    public static BigMLClient getInstance(final String seed, final boolean devMode)
+            throws AuthenticationException {
+        if (instance == null) {
+            instance = new BigMLClient();
+            instance.init(seed, devMode);
         }
         return instance;
     }
@@ -102,11 +126,31 @@ public class BigMLClient {
     }
 
     public static BigMLClient getInstance(final String apiUser,
+            final String apiKey, final String seed, final boolean devMode)
+            throws AuthenticationException {
+        if (instance == null) {
+            instance = new BigMLClient();
+            instance.init(apiUser, apiKey, seed, devMode);
+        }
+        return instance;
+    }
+
+    public static BigMLClient getInstance(final String apiUser,
             final String apiKey, final boolean devMode, final String storage)
             throws AuthenticationException {
         if (instance == null) {
             instance = new BigMLClient();
             instance.init(apiUser, apiKey, devMode, storage);
+        }
+        return instance;
+    }
+
+    public static BigMLClient getInstance(final String apiUser,
+            final String apiKey, final String seed, final boolean devMode, final String storage)
+            throws AuthenticationException {
+        if (instance == null) {
+            instance = new BigMLClient();
+            instance.init(apiUser, apiKey, seed, devMode, storage);
         }
         return instance;
     }
@@ -137,6 +181,43 @@ public class BigMLClient {
             }
         }
 
+        // The seed to be used to create deterministic samples and models
+        this.seed = System.getProperty("BIGML_SEED");
+        if( this.seed == null || this.seed.equals("") ) {
+            this.seed = props.getProperty("BIGML_SEED");
+        }
+
+        initResources();
+    }
+
+    /**
+     * Initialization object.
+     */
+    private void init(final String seed, final boolean devMode) throws AuthenticationException {
+        this.devMode = devMode;
+        initConfiguration();
+
+        this.bigmlUser = System.getProperty("BIGML_USERNAME");
+        this.bigmlApiKey = System.getProperty("BIGML_API_KEY");
+        if (this.bigmlUser == null || this.bigmlUser.equals("")
+                || this.bigmlApiKey == null || this.bigmlApiKey.equals("")) {
+            this.bigmlUser = props.getProperty("BIGML_USERNAME");
+            this.bigmlApiKey = props.getProperty("BIGML_API_KEY");
+            if (this.bigmlUser == null || this.bigmlUser.equals("")
+                    || this.bigmlApiKey == null || this.bigmlApiKey.equals("")) {
+                AuthenticationException ex = new AuthenticationException(
+                        "Missing authentication information.");
+                logger.info(instance.toString(), ex);
+                throw ex;
+            }
+        }
+
+        // The seed to be used to create deterministic samples and models
+        this.seed = seed != null ? seed : System.getProperty("BIGML_SEED");
+        if( this.seed == null || this.seed.equals("") ) {
+            this.seed = props.getProperty("BIGML_SEED");
+        }
+
         initResources();
     }
 
@@ -163,6 +244,46 @@ public class BigMLClient {
                 logger.info(instance.toString(), ex);
                 throw ex;
             }
+        }
+
+        // The seed to be used to create deterministic samples and models
+        this.seed = System.getProperty("BIGML_SEED");
+        if( this.seed == null || this.seed.equals("") ) {
+            this.seed = props.getProperty("BIGML_SEED");
+        }
+
+        initResources();
+    }
+
+    /**
+     * Initialization object.
+     */
+    private void init(final String apiUser, final String apiKey, String seed,
+            final boolean devMode) throws AuthenticationException {
+        this.devMode = devMode;
+        initConfiguration();
+
+        this.bigmlUser = apiUser != null ? apiUser : System
+                .getProperty("BIGML_USERNAME");
+        this.bigmlApiKey = apiKey != null ? apiKey : System
+                .getProperty("BIGML_API_KEY");
+        if (this.bigmlUser == null || this.bigmlUser.equals("")
+                || this.bigmlApiKey == null || this.bigmlApiKey.equals("")) {
+            this.bigmlUser = props.getProperty("BIGML_USERNAME");
+            this.bigmlApiKey = props.getProperty("BIGML_API_KEY");
+            if (this.bigmlUser == null || this.bigmlUser.equals("")
+                    || this.bigmlApiKey == null || this.bigmlApiKey.equals("")) {
+                AuthenticationException ex = new AuthenticationException(
+                        "Missing authentication information.");
+                logger.info(instance.toString(), ex);
+                throw ex;
+            }
+        }
+
+        // The seed to be used to create deterministic samples and models
+        this.seed = seed != null ? seed : System.getProperty("BIGML_SEED");
+        if( this.seed == null || this.seed.equals("") ) {
+            this.seed = props.getProperty("BIGML_SEED");
         }
 
         initResources();
@@ -193,6 +314,48 @@ public class BigMLClient {
                 logger.info(instance.toString(), ex);
                 throw ex;
             }
+        }
+
+        // The seed to be used to create deterministic samples and models
+        this.seed = System.getProperty("BIGML_SEED");
+        if( this.seed == null || this.seed.equals("") ) {
+            this.seed = props.getProperty("BIGML_SEED");
+        }
+
+        initResources();
+    }
+
+    /**
+     * Initialization object.
+     */
+    private void init(final String apiUser, final String apiKey, String seed,
+            final boolean devMode, final String storage)
+            throws AuthenticationException {
+        this.devMode = devMode;
+        this.storage = storage;
+        initConfiguration();
+
+        this.bigmlUser = apiUser != null ? apiUser : System
+                .getProperty("BIGML_USERNAME");
+        this.bigmlApiKey = apiKey != null ? apiKey : System
+                .getProperty("BIGML_API_KEY");
+        if (this.bigmlUser == null || this.bigmlUser.equals("")
+                || this.bigmlApiKey == null || this.bigmlApiKey.equals("")) {
+            this.bigmlUser = props.getProperty("BIGML_USERNAME");
+            this.bigmlApiKey = props.getProperty("BIGML_API_KEY");
+            if (this.bigmlUser == null || this.bigmlUser.equals("")
+                    || this.bigmlApiKey == null || this.bigmlApiKey.equals("")) {
+                AuthenticationException ex = new AuthenticationException(
+                        "Missing authentication information.");
+                logger.info(instance.toString(), ex);
+                throw ex;
+            }
+        }
+
+        // The seed to be used to create deterministic samples and models
+        this.seed = seed != null ? seed : System.getProperty("BIGML_SEED");
+        if( this.seed == null || this.seed.equals("") ) {
+            this.seed = props.getProperty("BIGML_SEED");
         }
 
         initResources();
@@ -233,6 +396,14 @@ public class BigMLClient {
 
     public String getBigMLUrl() {
         return bigmlUrl;
+    }
+
+    public String getSeed() {
+        return seed;
+    }
+
+    public void setSeed(String seed) {
+        this.seed = seed;
     }
 
     // ################################################################
@@ -740,6 +911,17 @@ public class BigMLClient {
      */
     public JSONObject createModel(final String datasetId, JSONObject args,
             Integer waitTime, Integer retries) {
+
+        // Setting the seed automatically if it was informed during the initialization
+        if( seed != null && !seed.equals("") ) {
+            if( args == null ) {
+                args = new JSONObject();
+            }
+            if( !args.containsKey("seed") ) {
+                args.put("seed", seed);
+            }
+        }
+
         return model.create(datasetId, args, waitTime, retries);
     }
 
@@ -789,6 +971,17 @@ public class BigMLClient {
      */
     public JSONObject createModel(final List datasetsIds, JSONObject args,
             Integer waitTime, Integer retries) {
+
+        // Setting the seed automatically if it was informed during the initialization
+        if( seed != null && !seed.equals("") ) {
+            if( args == null ) {
+                args = new JSONObject();
+            }
+            if( !args.containsKey("seed") ) {
+                args.put("seed", seed);
+            }
+        }
+
         return model.create(datasetsIds, args, waitTime, retries);
     }
 
@@ -1388,6 +1581,17 @@ public class BigMLClient {
     public JSONObject createEvaluation(final String modelOrEnsembleId,
             final String datasetId, JSONObject args, Integer waitTime,
             Integer retries) {
+
+        // Setting the seed automatically if it was informed during the initialization
+        if( seed != null && !seed.equals("") ) {
+            if( args == null ) {
+                args = new JSONObject();
+            }
+            if( !args.containsKey("seed") ) {
+                args.put("seed", seed);
+            }
+        }
+
         return evaluation.create(modelOrEnsembleId, datasetId, args, waitTime,
                 retries);
     }
@@ -1585,6 +1789,17 @@ public class BigMLClient {
      */
     public JSONObject createEnsemble(final String datasetId, JSONObject args,
             Integer waitTime, Integer retries) {
+
+        // Setting the seed automatically if it was informed during the initialization
+        if( seed != null && !seed.equals("") ) {
+            if( args == null ) {
+                args = new JSONObject();
+            }
+            if( !args.containsKey("seed") ) {
+                args.put("seed", seed);
+            }
+        }
+
         return ensemble.create(datasetId, args, waitTime, retries);
     }
 
@@ -1634,6 +1849,17 @@ public class BigMLClient {
      */
     public JSONObject createEnsemble(final List datasetsIds, JSONObject args,
             Integer waitTime, Integer retries) {
+
+        // Setting the seed automatically if it was informed during the initialization
+        if( seed != null && !seed.equals("") ) {
+            if( args == null ) {
+                args = new JSONObject();
+            }
+            if( !args.containsKey("seed") ) {
+                args.put("seed", seed);
+            }
+        }
+
         return ensemble.create(datasetsIds, args, waitTime, retries);
     }
 
@@ -2087,6 +2313,17 @@ public class BigMLClient {
      */
     public JSONObject createCluster(final String datasetId, JSONObject args,
             Integer waitTime, Integer retries) {
+
+        // Setting the seed automatically if it was informed during the initialization
+        if( seed != null && !seed.equals("") ) {
+            if( args == null ) {
+                args = new JSONObject();
+            }
+            if( !args.containsKey("seed") ) {
+                args.put("seed", seed);
+            }
+        }
+
         return cluster.create(datasetId, args, waitTime, retries);
     }
 
@@ -2136,6 +2373,17 @@ public class BigMLClient {
      */
     public JSONObject create(final List datasetsIds, JSONObject args,
             Integer waitTime, Integer retries) {
+
+        // Setting the seed automatically if it was informed during the initialization
+        if( seed != null && !seed.equals("") ) {
+            if( args == null ) {
+                args = new JSONObject();
+            }
+            if( !args.containsKey("cluster_seed") ) {
+                args.put("cluster_seed", seed);
+            }
+        }
+
         return cluster.create(datasetsIds, args, waitTime, retries);
     }
 

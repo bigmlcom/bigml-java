@@ -21,11 +21,25 @@ public class CommonStepdefs {
     @Autowired
     private ContextRepository context;
 
+    @Given("^that I use production mode with seed=\"([^\"]*)\"$")
+    public void that_I_use_production_mode_with_seed(String seed) throws Throwable {
+        BigMLClient.resetInstance();
+        BigMLClient.getInstance(seed, false);
+        assertTrue("", BigMLClient.getInstance(false) != null);
+    }
+
     @Given("^that I use production mode$")
     public void that_I_use_production_mode() throws Throwable {
         BigMLClient.resetInstance();
         BigMLClient.getInstance(false);
         assertTrue("", BigMLClient.getInstance(false) != null);
+    }
+
+    @Given("^that I use development mode with seed=\"([^\"]*)\"$")
+    public void that_I_use_development_mode_with_seed(String seed) throws Throwable {
+        BigMLClient.resetInstance();
+        BigMLClient.getInstance(seed, true);
+        assertTrue("", BigMLClient.getInstance(true) != null);
     }
 
     @Given("^that I use development mode$")

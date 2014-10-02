@@ -2,24 +2,25 @@
 
 ## 1.2 version
 
-* Since version 1.2 we start to publish the release versions on the Maven Central Repository. Now, you can declare
-the library dependency in your project's pom.xml.
+### New Features
 
-```
-    <dependency>
-        <groupId>org.bigml</groupId>
-        <artifactId>bigml-binding</artifactId>
-        <version>1.2</version>
-    </dependency>
-```
+* Since version 1.2 we start to publish the release on the Maven Central Repository. Now, you can declare
+the library dependency in your project's pom file.
 
-* We have removed unnecessary dependencies with third party libraries, like Apache HttpClient and SLF4J-Log4j, making
-a more lightweight library.
+    If you were using the Apache HttpClient library in your own project, now you will need to explicitly declare this
+dependency in your own project's pom file, because it's not anymore a dependency of our library.
 
-* If you were using the Apache HttpClient library in your own project, now you will need to explicitly declare the
-dependencies to the libraries in your project's pom.xml file, because it's not anymore a dependency of this library.
+* We have removed the unnecessary dependencies with third party libraries, like Apache HttpClient and SLF4J-Log4j.
 
-* Support for json files in UTF-8 encoding. Now we can send json objects with UTF-8 characters inside them.
+* Support for json files in UTF-8 encoding. Now we can send json objects with UTF-8 characters inside.
+
+* Added the system property **BIGML_SEED** to allow clients to generate deterministic models.
+
+* Contact support information has been updated
+
+### Bugs
+
+* Fixed bug in predictions when we were using fields in the input data that had periods in their names.
 
 ## 1.1 version
 

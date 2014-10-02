@@ -3,6 +3,7 @@ package org.bigml.binding;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -57,11 +58,35 @@ public class PredictionsStepdefs {
         context.prediction = (JSONObject) resource.get("object");
     }
 
+    @Then("^the numerical prediction for \"([^\"]*)\" is ([\\d,.]+)$")
+    public void the_numerical_prediction_for_is(String expected, double pred) {
+        JSONObject obj = (JSONObject) context.prediction.get("prediction");
+        String predictionValue = String.format("%.12g%n", ((Double) obj.get(expected)));
+
+        assertEquals(String.format("%.12g%n", pred), predictionValue);
+    }
+
     @Then("^the prediction for \"([^\"]*)\" is \"([^\"]*)\"$")
     public void the_prediction_for_is(String expected, String pred) {
         JSONObject obj = (JSONObject) context.prediction.get("prediction");
         String objective = (String) obj.get(expected);
         assertEquals(pred, objective);
+    }
+
+    @When("^I create a prediction with ensemble for \"(.*)\"$")
+    public void I_create_a_prediction_with_ensemble_for(String inputData) throws AuthenticationException {
+        String ensembleId = (String) context.ensemble.get("resource");
+
+        JSONObject args = new JSONObject();
+        args.put("tags", Arrays.asList("unitTest"));
+
+        JSONObject resource = BigMLClient.getInstance().createPrediction(
+                ensembleId, (JSONObject) JSONValue.parse(inputData), true,
+                args, 5, null);
+        context.status = (Integer) resource.get("code");
+        context.location = (String) resource.get("location");
+        context.prediction = (JSONObject) resource.get("object");
+        commonSteps.the_resource_has_been_created_with_status(context.status);
     }
 
     @When("^I create a prediction with ensemble by name=(true|false) for \"(.*)\"$")

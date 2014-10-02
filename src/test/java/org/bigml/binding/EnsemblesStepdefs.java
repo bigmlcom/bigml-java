@@ -47,7 +47,7 @@ public class EnsemblesStepdefs {
         JSONObject args = new JSONObject();
         args.put("number_of_models", numberOfModels);
         args.put("tlp", tlp);
-        args.put("sample_rate", 0.99);
+        args.put("sample_rate", 0.70);
 
         args.put("tags", Arrays.asList("unitTest"));
 

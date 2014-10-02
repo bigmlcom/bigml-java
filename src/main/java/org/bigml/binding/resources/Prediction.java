@@ -191,9 +191,7 @@ public class Prediction extends AbstractResource {
                     while (iter.hasNext()) {
                         String key = (String) iter.next();
                         if (invertedFields.get(key) != null) {
-                            inputDataJSON.put(
-                                    Utils.getJSONObject(invertedFields, key
-                                            + ".fieldID"), inputData.get(key));
+                            inputDataJSON.put( ((JSONObject) invertedFields.get(key)).get("fieldID"), inputData.get(key));
                         }
                     }
                 } else {

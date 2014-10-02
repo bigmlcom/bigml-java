@@ -36,6 +36,7 @@ public class ModelsStepdefs {
 
         JSONObject args = new JSONObject();
         args.put("tags", Arrays.asList("unitTest"));
+        args.put("missing_splits", false);
 
         JSONObject resource = BigMLClient.getInstance().createModel(datasetId,
                 args, 5, null);
@@ -104,9 +105,14 @@ public class ModelsStepdefs {
             } else {
                 argsJSON.put("tags", Arrays.asList("unitTest"));
             }
+
+            if( !argsJSON.containsKey("missing_splits") ) {
+                argsJSON.put("missing_splits", false);
+            }
         } else {
             argsJSON = new JSONObject();
             argsJSON.put("tags", Arrays.asList("unitTest"));
+            argsJSON.put("missing_splits", false);
         }
 
         JSONObject resource = BigMLClient.getInstance().createModel(datasetId,
