@@ -41,6 +41,7 @@ Feature: Compare Predictions
         When I create a prediction by name=true for "<data_input>"
         Then the prediction for "<objective>" is "<prediction>"
         Then the local prediction by name=true for "<data_input>" is "<prediction>"
+        Then delete test data
 
         Examples:
         | data | seed      | time_1 | time_2 | time_3 | options | data_input | objective | prediction |

@@ -20,6 +20,7 @@ Feature: Create Predictions
         And I create a evaluation
         And I wait until the evaluation is ready less than <time_4> secs
         Then test listing
+        Then delete test data
 
     Examples:
       | data	| seed      | time_1  | time_2 | time_3 | time_4 | by_name    | data_input    | objective | prediction  | predictionEnsemble  |

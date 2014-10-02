@@ -14,6 +14,7 @@ Feature: Create Predictions from Local Model
         And I create a local model
         Then the local prediction for "<objective1>" is "<prediction1>"
         Then the local prediction by name for "<objective2>" is "<prediction2>"
+        Then delete test data
         
   Examples: 
         | data	| seed      | time_1  | time_2 | time_3 | objective1 | prediction1  | objective2 | prediction2  |
