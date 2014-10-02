@@ -16,6 +16,8 @@ dependency in your own project's pom file, because it's not anymore a dependency
 
 * Added the system property **BIGML_SEED** to allow clients to generate deterministic models.
 
+* Add **Seed** to the tests to make them deterministic
+
 * Contact support information has been updated
 
 ### Bugs
