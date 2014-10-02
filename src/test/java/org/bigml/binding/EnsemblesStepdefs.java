@@ -3,6 +3,7 @@ package org.bigml.binding;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -28,8 +29,12 @@ public class EnsemblesStepdefs {
     @Given("^I create a ensemble$")
     public void I_create_a_ensemble() throws AuthenticationException {
         String datasetId = (String) context.dataset.get("resource");
+
+        JSONObject args = new JSONObject();
+        args.put("tags", Arrays.asList("unitTest"));
+
         JSONObject resource = BigMLClient.getInstance().createEnsemble(
-                datasetId, new JSONObject(), 5, null);
+                datasetId, args, 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.ensemble = (JSONObject) resource.get("object");
@@ -42,7 +47,9 @@ public class EnsemblesStepdefs {
         JSONObject args = new JSONObject();
         args.put("number_of_models", numberOfModels);
         args.put("tlp", tlp);
-        args.put("sample_rate", 0.99);
+        args.put("sample_rate", 0.70);
+
+        args.put("tags", Arrays.asList("unitTest"));
 
         String datasetId = (String) context.dataset.get("resource");
         JSONObject resource = BigMLClient.getInstance().createEnsemble(
@@ -71,7 +78,7 @@ public class EnsemblesStepdefs {
             code = (Long) ((JSONObject) context.ensemble.get("status"))
                     .get("code");
         }
-        assertEquals(code.intValue(), code1);
+        assertEquals(code1, code.intValue());
     }
 
     @Given("^I wait until the ensemble is ready less than (\\d+) secs$")
@@ -86,7 +93,7 @@ public class EnsemblesStepdefs {
             throws AuthenticationException {
         JSONObject resource = BigMLClient.getInstance().getEnsemble(ensembleId);
         Integer code = (Integer) resource.get("code");
-        assertEquals(code.intValue(), AbstractResource.HTTP_OK);
+        assertEquals(AbstractResource.HTTP_OK, code.intValue());
         context.ensemble = (JSONObject) resource.get("object");
     }
 }

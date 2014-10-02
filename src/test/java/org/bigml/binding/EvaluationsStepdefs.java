@@ -3,6 +3,7 @@ package org.bigml.binding;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -33,8 +34,11 @@ public class EvaluationsStepdefs {
         String modelId = (String) context.model.get("resource");
         String datasetId = (String) context.dataset.get("resource");
 
+        JSONObject args = new JSONObject();
+        args.put("tags", Arrays.asList("unitTest"));
+
         JSONObject resource = BigMLClient.getInstance().createEvaluation(
-                modelId, datasetId, new JSONObject(), 5, 3);
+                modelId, datasetId, args, 5, 3);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.evaluation = (JSONObject) resource.get("object");
@@ -53,8 +57,11 @@ public class EvaluationsStepdefs {
         String ensembleId = (String) context.ensemble.get("resource");
         String datasetId = (String) context.dataset.get("resource");
 
+        JSONObject args = new JSONObject();
+        args.put("tags", Arrays.asList("unitTest"));
+
         JSONObject resource = BigMLClient.getInstance().createEvaluation(
-                ensembleId, datasetId, new JSONObject(), 5, 3);
+                ensembleId, datasetId, args, 5, 3);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.evaluation = (JSONObject) resource.get("object");
@@ -79,7 +86,7 @@ public class EvaluationsStepdefs {
             code = (Long) ((JSONObject) context.evaluation.get("status"))
                     .get("code");
         }
-        assertEquals(code.intValue(), code1);
+        assertEquals(code1, code.intValue());
     }
 
     @Given("^I wait until the evaluation is ready less than (\\d+) secs$")
@@ -95,7 +102,7 @@ public class EvaluationsStepdefs {
         JSONObject resource = BigMLClient.getInstance().getEvaluation(
                 evaluationId);
         Integer code = (Integer) resource.get("code");
-        assertEquals(code.intValue(), AbstractResource.HTTP_OK);
+        assertEquals(AbstractResource.HTTP_OK, code.intValue());
         context.evaluation = (JSONObject) resource.get("object");
     }
 

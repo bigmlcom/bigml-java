@@ -54,7 +54,7 @@ public class Ensemble extends AbstractResource {
      * POST /andromeda/ensemble?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      * 
-     * @param datsetId
+     * @param datasetId
      *            a unique identifier in the form datset/id where id is a string
      *            of 24 alpha-numeric chars for the dataset to attach the
      *            ensemble.
@@ -82,7 +82,7 @@ public class Ensemble extends AbstractResource {
      * POST /andromeda/ensemble?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      * 
-     * @param datsetId
+     * @param datasetId
      *            a unique identifier in the form datset/id where id is a string
      *            of 24 alpha-numeric chars for the dataset to attach the
      *            ensemble.

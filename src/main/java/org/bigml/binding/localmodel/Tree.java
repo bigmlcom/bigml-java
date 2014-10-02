@@ -8,11 +8,12 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
 import org.bigml.binding.Constants;
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A tree-like predictive model.
@@ -23,7 +24,7 @@ public class Tree {
     /**
      * Logging
      */
-    static Logger logger = Logger.getLogger(Tree.class.getName());
+    static Logger logger = LoggerFactory.getLogger(Tree.class.getName());
 
     final static String INDENT = "    ";
 

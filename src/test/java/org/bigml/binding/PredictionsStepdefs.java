@@ -3,6 +3,8 @@ package org.bigml.binding;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -33,9 +35,13 @@ public class PredictionsStepdefs {
             throws AuthenticationException {
         String modelId = (String) context.model.get("resource");
         Boolean byName = new Boolean(by_name);
+
+        JSONObject args = new JSONObject();
+        args.put("tags", Arrays.asList("unitTest"));
+
         JSONObject resource = BigMLClient.getInstance().createPrediction(
                 modelId, (JSONObject) JSONValue.parse(inputData), byName,
-                new JSONObject(), 5, null);
+                args, 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.prediction = (JSONObject) resource.get("object");
@@ -48,15 +54,39 @@ public class PredictionsStepdefs {
         JSONObject resource = BigMLClient.getInstance().getPrediction(
                 predictionId);
         Integer code = (Integer) resource.get("code");
-        assertEquals(code.intValue(), AbstractResource.HTTP_OK);
+        assertEquals(AbstractResource.HTTP_OK, code.intValue());
         context.prediction = (JSONObject) resource.get("object");
+    }
+
+    @Then("^the numerical prediction for \"([^\"]*)\" is ([\\d,.]+)$")
+    public void the_numerical_prediction_for_is(String expected, double pred) {
+        JSONObject obj = (JSONObject) context.prediction.get("prediction");
+        String predictionValue = String.format("%.12g%n", ((Double) obj.get(expected)));
+
+        assertEquals(String.format("%.12g%n", pred), predictionValue);
     }
 
     @Then("^the prediction for \"([^\"]*)\" is \"([^\"]*)\"$")
     public void the_prediction_for_is(String expected, String pred) {
         JSONObject obj = (JSONObject) context.prediction.get("prediction");
         String objective = (String) obj.get(expected);
-        assertEquals(objective, pred);
+        assertEquals(pred, objective);
+    }
+
+    @When("^I create a prediction with ensemble for \"(.*)\"$")
+    public void I_create_a_prediction_with_ensemble_for(String inputData) throws AuthenticationException {
+        String ensembleId = (String) context.ensemble.get("resource");
+
+        JSONObject args = new JSONObject();
+        args.put("tags", Arrays.asList("unitTest"));
+
+        JSONObject resource = BigMLClient.getInstance().createPrediction(
+                ensembleId, (JSONObject) JSONValue.parse(inputData), true,
+                args, 5, null);
+        context.status = (Integer) resource.get("code");
+        context.location = (String) resource.get("location");
+        context.prediction = (JSONObject) resource.get("object");
+        commonSteps.the_resource_has_been_created_with_status(context.status);
     }
 
     @When("^I create a prediction with ensemble by name=(true|false) for \"(.*)\"$")
@@ -64,9 +94,13 @@ public class PredictionsStepdefs {
             String inputData) throws AuthenticationException {
         String ensembleId = (String) context.ensemble.get("resource");
         Boolean byName = new Boolean(by_name);
+
+        JSONObject args = new JSONObject();
+        args.put("tags", Arrays.asList("unitTest"));
+
         JSONObject resource = BigMLClient.getInstance().createPrediction(
                 ensembleId, (JSONObject) JSONValue.parse(inputData), byName,
-                new JSONObject(), 5, null);
+                args, 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.prediction = (JSONObject) resource.get("object");
@@ -77,7 +111,7 @@ public class PredictionsStepdefs {
     public void the_prediction_with_ensemble_for_is(String expected, String pred) {
         JSONObject obj = (JSONObject) context.prediction.get("prediction");
         String objective = (String) obj.get(expected);
-        assertEquals(objective, pred);
+        assertEquals(pred, objective);
     }
 
     @Given("^I wait until the predition status code is either (\\d) or (\\d) less than (\\d+)")
@@ -98,7 +132,7 @@ public class PredictionsStepdefs {
             code = (Long) ((JSONObject) context.prediction.get("status"))
                     .get("code");
         }
-        assertEquals(code.intValue(), code1);
+        assertEquals(code1, code.intValue());
     }
 
     @Given("^I wait until the prediction is ready less than (\\d+) secs$")

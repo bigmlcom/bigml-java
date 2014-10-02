@@ -2,6 +2,9 @@ package org.bigml.binding;
 
 import static org.junit.Assert.assertTrue;
 
+import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 
 import org.bigml.binding.utils.Utils;
@@ -61,8 +64,7 @@ public class LocalModelsStepdefs {
             String pred) {
         try {
             Boolean byName = new Boolean(by_name);
-            JSONObject inputObj = (JSONObject) JSONValue.parse(args);
-            HashMap<Object, Object> p = predictiveModel.predict(inputObj,
+            HashMap<Object, Object> p = predictiveModel.predict( (JSONObject) JSONValue.parse(args),
                     byName);
             String prediction = (String) p.get("prediction");
             assertTrue("", prediction != null && prediction.equals(pred));

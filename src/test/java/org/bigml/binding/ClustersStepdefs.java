@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -39,8 +40,12 @@ public class ClustersStepdefs {
     @Given("^I create a cluster$")
     public void I_create_a_cluster() throws AuthenticationException {
         String datasetId = (String) context.dataset.get("resource");
+
+        JSONObject args = new JSONObject();
+        args.put("tags", Arrays.asList("unitTest"));
+
         JSONObject resource = BigMLClient.getInstance().createCluster(
-                datasetId, new JSONObject(), 5, null);
+                datasetId, args, 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.cluster = (JSONObject) resource.get("object");
@@ -65,7 +70,7 @@ public class ClustersStepdefs {
             code = (Long) ((JSONObject) context.cluster.get("status"))
                     .get("code");
         }
-        assertEquals(code.intValue(), code1);
+        assertEquals(code1, code.intValue());
     }
 
     @Given("^I wait until the cluster is ready less than (\\d+) secs$")
@@ -97,9 +102,12 @@ public class ClustersStepdefs {
             throws AuthenticationException {
         String clusterId = (String) context.cluster.get("resource");
 
+        JSONObject args = new JSONObject();
+        args.put("tags", Arrays.asList("unitTest"));
+
         JSONObject resource = BigMLClient.getInstance().createCentroid(
                 clusterId, (JSONObject) JSONValue.parse(inputData),
-                new JSONObject(), 5, null);
+                args, 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.centroid = (JSONObject) resource.get("object");
@@ -126,12 +134,12 @@ public class ClustersStepdefs {
             code = (Long) ((JSONObject) context.cluster.get("status"))
                     .get("code");
         }
-        assertEquals(code.intValue(), AbstractResource.FINISHED);
+        assertEquals(AbstractResource.FINISHED, code.intValue());
     }
 
     @Then("the centroid is \"(.*)\"$")
     public void the_centroid_is(String result) throws AuthenticationException {
-        assertEquals(context.centroid.get("centroid_name"), result);
+        assertEquals(result, context.centroid.get("centroid_name"));
     }
 
     @When("^I create a batch centroid for the dataset$")
@@ -139,8 +147,11 @@ public class ClustersStepdefs {
         String clusterId = (String) context.cluster.get("resource");
         String datasetId = (String) context.dataset.get("resource");
 
+        JSONObject args = new JSONObject();
+        args.put("tags", Arrays.asList("unitTest"));
+
         JSONObject resource = BigMLClient.getInstance().createBatchCentroid(
-                clusterId, datasetId, new JSONObject(), 5, null);
+                clusterId, datasetId, args, 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.batchCentroid = (JSONObject) resource.get("object");
@@ -153,7 +164,7 @@ public class ClustersStepdefs {
         JSONObject resource = BigMLClient.getInstance().getBatchCentroid(
                 batchCentroidId);
         Integer code = (Integer) resource.get("code");
-        assertEquals(code.intValue(), AbstractResource.HTTP_OK);
+        assertEquals(AbstractResource.HTTP_OK, code.intValue());
         context.batchCentroid = (JSONObject) resource.get("object");
     }
 
@@ -183,7 +194,7 @@ public class ClustersStepdefs {
             code = (Long) ((JSONObject) context.batchCentroid.get("status"))
                     .get("code");
         }
-        assertEquals(code.intValue(), code1);
+        assertEquals(code1, code.intValue());
     }
 
     @When("^I download the created centroid file to \"([^\"]*)\"$")
@@ -202,8 +213,8 @@ public class ClustersStepdefs {
                 downloadedFile));
         FileInputStream checkFis = new FileInputStream(new File(checkFile));
 
-        String localCvs = Utils.inputStreamAsString(downloadFis);
-        String checkCvs = Utils.inputStreamAsString(checkFis);
+        String localCvs = Utils.inputStreamAsString(downloadFis, "UTF-8");
+        String checkCvs = Utils.inputStreamAsString(checkFis, "UTF-8");
 
         if (!localCvs.equals(checkCvs)) {
             throw new Exception();

@@ -1,51 +1,121 @@
 package org.bigml.binding.utils;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
+import javax.net.ssl.*;
+import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.conn.scheme.PlainSocketFactory;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.SingleClientConnManager;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-
 public class Utils {
 
-    /**
-   *
-   */
-    public static DefaultHttpClient httpClient() throws Exception {
-        SchemeRegistry schemeRegistry = new SchemeRegistry();
-        schemeRegistry.register(new Scheme("http", 80, PlainSocketFactory
-                .getSocketFactory()));
-        schemeRegistry.register(new Scheme("https", 443,
-                new MockSSLSocketFactory()));
-        ClientConnectionManager cm = new SingleClientConnManager(schemeRegistry);
-        return new DefaultHttpClient(cm);
+    // Headers
+    static String JSON = "application/json; charset=utf-8";
+
+    private static SSLSocketFactory sslSocketFactory;
+
+    public static HttpURLConnection processPOST(String urlString, String json) throws NoSuchAlgorithmException, KeyManagementException, IOException {
+        return processHttpRequest(urlString, "POST", json);
     }
+
+    public static HttpURLConnection processPUT(String urlString, String json) throws NoSuchAlgorithmException, KeyManagementException, IOException {
+        return processHttpRequest(urlString, "PUT", json);
+    }
+
+
+    public static HttpURLConnection processGET(String urlString) throws NoSuchAlgorithmException, KeyManagementException, IOException {
+        return processHttpRequest(urlString, "GET", null);
+    }
+
+    public static HttpURLConnection processDELETE(String urlString) throws NoSuchAlgorithmException, KeyManagementException, IOException {
+        return processHttpRequest(urlString, "DELETE", null);
+    }
+
+    protected static HttpURLConnection processHttpRequest(String urlString, String methodName, String body) throws NoSuchAlgorithmException, KeyManagementException, IOException {
+        HttpURLConnection connection = openConnection(new URL(urlString));
+
+        if( methodName.equals("GET") ) {
+            connection.addRequestProperty("Accept", JSON);
+
+            connection.setRequestMethod("GET");
+
+        } else if( methodName.equals("DELETE") ) {
+            connection.addRequestProperty("Content-Type", JSON);
+
+            connection.setRequestMethod("DELETE");
+
+        } else if( methodName.equals("POST") || methodName.equals("PUT")) {
+            connection.addRequestProperty("Content-Type", JSON);
+
+            connection.setRequestMethod(methodName);
+
+            // Let the run-time system (RTS) know that we want input.
+            connection.setDoInput (true);
+
+            // Let the RTS know that we want to do output.
+            connection.setDoOutput (true);
+
+            // No caching, we want the real thing.
+            connection.setUseCaches (false);
+
+            // Sending the body to the server
+            DataOutputStream output = new DataOutputStream(connection.getOutputStream());
+            output.writeBytes(body);
+            output.flush();
+            output.close();
+        }
+
+        return connection;
+    }
+
+    protected static HttpURLConnection openConnection(URL url) throws NoSuchAlgorithmException, KeyManagementException, IOException {
+        if( sslSocketFactory == null ) {
+            // We need to disable the VERIFY of the certificate until we decide how to use it
+            TrustManager[] trustAllCerts = new TrustManager[] { new MockX509TrustManager() };
+            // Install the all-trusting trust manager
+            final SSLContext sc = SSLContext.getInstance("SSL");
+            sc.init(null, trustAllCerts, new SecureRandom());
+            sslSocketFactory = sc.getSocketFactory();
+        }
+
+        // Get a reference to the actual SSL socket factory before change it
+        SSLSocketFactory oldSSLSocketFactory = HttpsURLConnection.getDefaultSSLSocketFactory();
+        // Get a reference to the actual host verifier before change it
+        HostnameVerifier oldHostnameVerifier = HttpsURLConnection.getDefaultHostnameVerifier();
+
+        try {
+            HttpsURLConnection.setDefaultSSLSocketFactory(sslSocketFactory);
+            // Install the all-trusting host verifier
+            HttpsURLConnection.setDefaultHostnameVerifier(new MockHostnameVerifier());
+
+            return (HttpURLConnection) url.openConnection();
+        } finally {
+            // Install the old SSL socket factory
+            HttpsURLConnection.setDefaultSSLSocketFactory(oldSSLSocketFactory);
+            // Install the old host verifier
+            HttpsURLConnection.setDefaultHostnameVerifier(oldHostnameVerifier);
+        }
+    }
+
 
     /**
      * Converts a InputStream to a String.
      * 
      */
-    public static String inputStreamAsString(InputStream stream)
+    public static String inputStreamAsString(InputStream stream, String encoding)
             throws IOException {
 
-        BufferedReader br = new BufferedReader(new InputStreamReader(stream));
+        BufferedReader br = new BufferedReader(new InputStreamReader(stream, encoding));
         StringBuilder sb = new StringBuilder();
         String line = null;
 
@@ -136,7 +206,7 @@ public class Utils {
      * 
      * @param json
      *            the json object to invert
-     * @return
+     * @return the dictionary inverting keys per values
      */
     public static JSONObject invertDictionary(JSONObject json) {
         JSONObject invertedObject = new JSONObject();

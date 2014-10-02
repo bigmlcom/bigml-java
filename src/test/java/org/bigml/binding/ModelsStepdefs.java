@@ -3,10 +3,7 @@ package org.bigml.binding;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
+import java.util.*;
 
 import org.bigml.binding.resources.AbstractResource;
 import org.json.simple.JSONArray;
@@ -36,8 +33,13 @@ public class ModelsStepdefs {
     @Given("^I create a model$")
     public void I_create_a_model() throws AuthenticationException {
         String datasetId = (String) context.dataset.get("resource");
+
+        JSONObject args = new JSONObject();
+        args.put("tags", Arrays.asList("unitTest"));
+        args.put("missing_splits", false);
+
         JSONObject resource = BigMLClient.getInstance().createModel(datasetId,
-                new JSONObject(), 5, null);
+                args, 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.model = (JSONObject) resource.get("object");
@@ -62,7 +64,7 @@ public class ModelsStepdefs {
             code = (Long) ((JSONObject) context.model.get("status"))
                     .get("code");
         }
-        assertEquals(code.intValue(), code1);
+        assertEquals(code1, code.intValue());
     }
 
     @Given("^I wait until the model is ready less than (\\d+) secs$")
@@ -84,7 +86,7 @@ public class ModelsStepdefs {
     public void I_get_the_model(String modelId) throws AuthenticationException {
         JSONObject resource = BigMLClient.getInstance().getModel(modelId);
         Integer code = (Integer) resource.get("code");
-        assertEquals(code.intValue(), AbstractResource.HTTP_OK);
+        assertEquals(AbstractResource.HTTP_OK, code.intValue());
         context.model = (JSONObject) resource.get("object");
     }
 
@@ -96,6 +98,23 @@ public class ModelsStepdefs {
     public void I_create_a_model_with_params(String args) throws Throwable {
         String datasetId = (String) context.dataset.get("resource");
         JSONObject argsJSON = (JSONObject) JSONValue.parse(args);
+
+        if( argsJSON != null ) {
+            if (argsJSON.containsKey("tags")) {
+                ((JSONArray) argsJSON.get("tags")).add("unitTest");
+            } else {
+                argsJSON.put("tags", Arrays.asList("unitTest"));
+            }
+
+            if( !argsJSON.containsKey("missing_splits") ) {
+                argsJSON.put("missing_splits", false);
+            }
+        } else {
+            argsJSON = new JSONObject();
+            argsJSON.put("tags", Arrays.asList("unitTest"));
+            argsJSON.put("missing_splits", false);
+        }
+
         JSONObject resource = BigMLClient.getInstance().createModel(datasetId,
                 argsJSON, 5, null);
         context.status = (Integer) resource.get("code");
@@ -167,7 +186,7 @@ public class ModelsStepdefs {
         context.model = resource;
 
         Integer code = (Integer) context.model.get("code");
-        assertEquals(code.intValue(), AbstractResource.HTTP_OK);
+        assertEquals(AbstractResource.HTTP_OK, code.intValue());
     }
 
     // ---------------------------------------------------------------------
@@ -201,7 +220,7 @@ public class ModelsStepdefs {
         context.location = (String) resource.get("location");
         context.model = resource;
         Integer code = (Integer) context.model.get("code");
-        assertEquals(code.intValue(), AbstractResource.HTTP_OK);
+        assertEquals(AbstractResource.HTTP_OK, code.intValue());
     }
 
     @Given("^I check the model status using the model's shared key$")
@@ -213,7 +232,7 @@ public class ModelsStepdefs {
         context.location = (String) resource.get("location");
         context.model = resource;
         Integer code = (Integer) context.model.get("code");
-        assertEquals(code.intValue(), AbstractResource.HTTP_OK);
+        assertEquals(AbstractResource.HTTP_OK, code.intValue());
 
     }
 }

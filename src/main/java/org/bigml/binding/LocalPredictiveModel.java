@@ -40,12 +40,13 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.bigml.binding.localmodel.Tree;
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A lightweight wrapper around a Tree model.
@@ -59,7 +60,7 @@ public class LocalPredictiveModel {
     /**
      * Logging
      */
-    static Logger logger = Logger.getLogger(LocalPredictiveModel.class
+    static Logger logger = LoggerFactory.getLogger(LocalPredictiveModel.class
             .getName());
 
     // Map operator str to its corresponding java operator

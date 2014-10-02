@@ -24,8 +24,7 @@ public class MultiVote {
     /**
      * MultiVote: combiner class for ensembles voting predictions.
      * 
-     * @constructor
-     * @param {array|object} predictions Array of model's predictions
+     * @param predictionsArr {array|object} predictions Array of model's predictions
      */
     public MultiVote(HashMap<Object, Object>[] predictionsArr) {
         int i, len;
@@ -68,8 +67,8 @@ public class MultiVote {
     /**
      * Checks the presence of each of the keys in each of the predictions
      * 
-     * @param {array} predictions Array of prediction objects
-     * @param {array} keys Array of key strings
+     * @param predictions {array} predictions Array of prediction objects
+     * @param keys {array} keys Array of key strings
      */
     private static boolean checkKeys(HashMap<Object, Object>[] predictions,
             String[] keys) {
@@ -92,15 +91,15 @@ public class MultiVote {
     /**
      * Wilson score interval computation of the distribution for the prediction
      * 
-     * @param {object} prediction Value of the prediction for which confidence
+     * @param prediction {object} prediction Value of the prediction for which confidence
      *        is computed
-     * @param {array} distribution Distribution-like structure of predictions
+     * @param distribution {array} distribution Distribution-like structure of predictions
      *        and the associated weights (only for categoricals). (e.g.
      *        {'Iris-setosa': 10, 'Iris-versicolor': 5})
-     * @param {integer} n Total number of instances in the distribution. If
+     * @param n {integer} n Total number of instances in the distribution. If
      *        absent, the number is computed as the sum of weights in the
      *        provided distribution
-     * @param {float} z Percentile of the standard normal distribution
+     * @param z {float} z Percentile of the standard normal distribution
      */
     private static double wsConfidence(Object prediction,
             HashMap<String, Double> distribution, Integer n, Double z) {
@@ -191,7 +190,7 @@ public class MultiVote {
     /**
      * Normalizes error to a [0, top_range] range and builds probabilities
      * 
-     * @param {number} The top range of error to which the original error is
+     * @param topRange {number} The top range of error to which the original error is
      *        normalized.
      * @return {number} The normalization factor as the sum of the normalized
      *         error weights.
@@ -294,7 +293,7 @@ public class MultiVote {
     /**
      * Returns the prediction combining votes by using the given weight
      * 
-     * @param {string} weightLabel Type of combination method: 'plurality':
+     * @param weightLabel {string} weightLabel Type of combination method: 'plurality':
      *        plurality (1 vote per prediction) 'confidence': confidence
      *        weighted (confidence as a vote value) 'probability': probability
      *        weighted (probability as a vote value)
@@ -380,8 +379,8 @@ public class MultiVote {
     /**
      * Compute the combined weighted confidence from a list of predictions
      * 
-     * @param {object} combinedPrediction Prediction object
-     * @param {string} weightLabel Label of the value in the prediction object
+     * @param combinedPrediction {object} combinedPrediction Prediction object
+     * @param weightLabel {string} weightLabel Label of the value in the prediction object
      *        that will be used to weight confidence
      */
     public HashMap<Object, Object> weightedConfidence(
@@ -446,7 +445,7 @@ public class MultiVote {
     /**
      * Builds a distribution based on the predictions of the MultiVote
      * 
-     * @param {string} weightLabel Label of the value in the prediction object
+     * @param weightLabel {string} weightLabel Label of the value in the prediction object
      *        whose sum will be used as count in the distribution
      */
     public Object[] combineDistribution(Object weightLabel) {
@@ -484,8 +483,9 @@ public class MultiVote {
      * Reduces a number of predictions voting for classification and averaging
      * predictions for regression.
      * 
-     * @param {0|1|2} method Code associated to the voting method (plurality,
+     * @param method {0|1|2} method Code associated to the voting method (plurality,
      *        confidence weighted or probability weighted).
+     * @param withConfidence if we want to get back the confidence or probability of the prediction
      * @return {{"prediction": prediction, "confidence": combinedConfidence}}
      */
     public HashMap<Object, Object> combine(Integer method,
