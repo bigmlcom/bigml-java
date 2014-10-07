@@ -1,6 +1,7 @@
 package org.bigml.binding;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -9,6 +10,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import org.bigml.binding.resources.AbstractResource;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.slf4j.Logger;
@@ -99,6 +101,18 @@ public class DatasetsStepdefs {
         Integer code = (Integer) resource.get("code");
         assertEquals(AbstractResource.HTTP_OK, code.intValue());
         context.dataset = (JSONObject) resource.get("object");
+    }
+
+    @Given("^I store the dataset id in a list$")
+    public void I_store_the_dataset_id_in_a_list()
+            throws AuthenticationException {
+        if( null == context.datasets ) {
+            context.datasets = new JSONArray();
+        }
+
+        assertNotNull("No dataset available in the context", context.datasets);
+        context.datasets.add(context.dataset.get("resource"));
+        context.dataset = null;
     }
 
     // ---------------------------------------------------------------------

@@ -11,10 +11,13 @@ public class ContextRepository {
     JSONObject source = null;
     JSONObject dataset = null;
     JSONObject model = null;
+    JSONObject anomaly = null;
     JSONObject prediction = null;
     JSONObject evaluation = null;
     JSONObject ensemble = null;
     JSONArray models = null;
+    JSONArray anomalies = null;
+    JSONArray datasets = null;
     JSONObject batchPrediction = null;
     JSONObject cluster = null;
     JSONObject centroid = null;
@@ -60,6 +63,14 @@ public class ContextRepository {
         this.model = model;
     }
 
+    public JSONObject getAnomaly() {
+        return anomaly;
+    }
+
+    public void setAnomaly(JSONObject anomaly) {
+        this.anomaly = anomaly;
+    }
+
     public JSONObject getPrediction() {
         return prediction;
     }
@@ -84,12 +95,28 @@ public class ContextRepository {
         this.ensemble = ensemble;
     }
 
+    public JSONArray getDatasets() {
+        return datasets;
+    }
+
+    public void setDatasets(JSONArray datasets) {
+        this.datasets = datasets;
+    }
+
     public JSONArray getModels() {
         return models;
     }
 
     public void setModels(JSONArray models) {
         this.models = models;
+    }
+
+    public JSONArray getAnomalies() {
+        return anomalies;
+    }
+
+    public void setAnomalies(JSONArray anomalies) {
+        this.anomalies = anomalies;
     }
 
     public JSONObject getBatchPrediction() {

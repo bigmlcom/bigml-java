@@ -38,6 +38,7 @@ public abstract class AbstractResource {
     public final static String CLUSTER_PATH = "cluster";
     public final static String CENTROID_PATH = "centroid";
     public final static String BATCH_CENTROID_PATH = "batchcentroid";
+    public final static String ANOMALY_PATH = "anomaly";
 
     // Base Resource regular expressions
     static String SOURCE_RE = "^" + SOURCE_PATH + "/[a-f,0-9]{24}$";
@@ -56,6 +57,8 @@ public abstract class AbstractResource {
             + "/[a-zA-Z0-9]{26,27}$";
     static String CENTROID_RE = "^" + CENTROID_PATH + "/[a-f,0-9]{24}$";
     static String BATCH_CENTROID_RE = "^" + BATCH_CENTROID_PATH
+            + "/[a-f,0-9]{24}$";
+    static String ANOMALY_RE = "^" + ANOMALY_PATH
             + "/[a-f,0-9]{24}$";
 
     // Headers
@@ -127,6 +130,7 @@ public abstract class AbstractResource {
     protected String CLUSTER_URL;
     protected String CENTROID_URL;
     protected String BATCH_CENTROID_URL;
+    protected String ANOMALY_URL;
 
     protected void init() {
         try {
@@ -141,6 +145,7 @@ public abstract class AbstractResource {
             CLUSTER_URL = BIGML_URL + CLUSTER_PATH;
             CENTROID_URL = BIGML_URL + CENTROID_PATH;
             BATCH_CENTROID_URL = BIGML_URL + BATCH_CENTROID_PATH;
+            ANOMALY_URL = BIGML_URL + ANOMALY_PATH;
         } catch (AuthenticationException ae) {
 
         }

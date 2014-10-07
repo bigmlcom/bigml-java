@@ -60,6 +60,7 @@ public class BigMLClient {
     private Prediction prediction;
     private Evaluation evaluation;
     private Ensemble ensemble;
+    private Anomaly anomaly;
     private BatchPrediction batchPrediction;
     private Cluster cluster;
     private Centroid centroid;
@@ -386,6 +387,7 @@ public class BigMLClient {
         evaluation = new Evaluation(this.bigmlUser, this.bigmlApiKey,
                 this.devMode);
         ensemble = new Ensemble(this.bigmlUser, this.bigmlApiKey, this.devMode);
+        anomaly = new Anomaly(this.bigmlUser, this.bigmlApiKey, this.devMode);
         batchPrediction = new BatchPrediction(this.bigmlUser, this.bigmlApiKey,
                 this.devMode);
         cluster = new Cluster(this.bigmlUser, this.bigmlApiKey, this.devMode);
@@ -1314,6 +1316,413 @@ public class BigMLClient {
     public JSONObject deleteModel(final JSONObject modelJSON) {
         return model.delete(modelJSON);
     }
+
+    // ################################################################
+    // #
+    // # Anomalies
+    // # https://bigml.com/developers/anomalies
+    // #
+    // ################################################################
+
+    /**
+     * Creates a new anomaly.
+     *
+     * POST /andromeda/anomaly?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param datasetId
+     *            a unique identifier in the form datset/id where id is a string
+     *            of 24 alpha-numeric chars for the dataset to attach the anomaly.
+     * @param args
+     *            set of parameters for the new anomaly. Optional
+     * @param waitTime
+     *            time to wait for next check of FINISHED status for source
+     *            before to start to create the anomaly. Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     *
+     */
+    public JSONObject createAnomaly(final String datasetId, JSONObject args,
+                                  Integer waitTime, Integer retries) {
+
+        // Setting the seed automatically if it was informed during the initialization
+        if( seed != null && !seed.equals("") ) {
+            if( args == null ) {
+                args = new JSONObject();
+            }
+            if( !args.containsKey("seed") ) {
+                args.put("seed", seed);
+            }
+        }
+
+        return anomaly.create(datasetId, args, waitTime, retries);
+    }
+
+    /**
+     * Creates an anomaly from a list of `datasets`.
+     *
+     * POST /andromeda/anomaly?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param datasetsIds
+     *            list of identifiers in the form dataset/id where id is a
+     *            string of 24 alpha-numeric chars for the dataset to attach the
+     *            anomaly.
+     * @param args
+     *            set of parameters for the new anomaly. Optional
+     * @param waitTime
+     *            time (milliseconds) to wait for next check of FINISHED status
+     *            for source before to start to create the anomaly. Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     *
+     */
+    public JSONObject createAnomaly(final List datasetsIds, JSONObject args,
+                                  Integer waitTime, Integer retries) {
+
+        // Setting the seed automatically if it was informed during the initialization
+        if( seed != null && !seed.equals("") ) {
+            if( args == null ) {
+                args = new JSONObject();
+            }
+            if( !args.containsKey("seed") ) {
+                args.put("seed", seed);
+            }
+        }
+
+        return anomaly.create(datasetsIds, args, waitTime, retries);
+    }
+
+    /**
+     * Retrieves an anomaly.
+     *
+     *
+     * GET /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param anomalyId
+     *            a unique identifier in the form anomaly/id where id is a string
+     *            of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject getAnomaly(final String anomalyId) {
+        return getAnomaly(anomalyId, null, null);
+    }
+
+    /**
+     * Retrieves an anomaly.
+     *
+     *
+     * GET /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param anomalyId
+     *            a unique identifier in the form anomaly/id where id is a string
+     *            of 24 alpha-numeric chars.
+     * @param apiUser
+     *            API user
+     * @param apiKey
+     *            API key
+     *
+     */
+    public JSONObject getAnomaly(final String anomalyId, final String apiUser,
+                               final String apiKey) {
+        return anomaly.get(anomalyId, apiUser, apiKey);
+    }
+
+    /**
+     * Retrieves a public anomaly.
+     *
+     *
+     * GET /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param anomalyId
+     *            a unique identifier in the form anomaly/id where id is a string
+     *            of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject getPublicAnomaly(final String anomalyId) {
+        return getPublicModel(anomalyId, null, null);
+    }
+
+    /**
+     * Retrieves a public anomaly.
+     *
+     *
+     * GET /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param anomalyId
+     *            a unique identifier in the form anomaly/id where id is a string
+     *            of 24 alpha-numeric chars.
+     * @param apiUser
+     *            API user
+     * @param apiKey
+     *            API key
+     *
+     */
+    public JSONObject getPublicAnomaly(final String anomalyId,
+                                     final String apiUser, final String apiKey) {
+        return anomaly.get("public/" + anomalyId, apiUser, apiKey);
+    }
+
+    /**
+     * Retrieves an anomaly.
+     *
+     * GET /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param anomalyJSON
+     *            an anomaly JSONObject
+     *
+     */
+    public JSONObject getAnomaly(final JSONObject anomalyJSON) {
+        return getAnomaly(anomalyJSON, null, null);
+    }
+
+    /**
+     * Retrieves an anomaly.
+     *
+     * GET /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param anomalyJSON
+     *            an anomaly JSONObject
+     * @param apiUser
+     *            API user
+     * @param apiKey
+     *            API key
+     *
+     */
+    public JSONObject getAnomaly(final JSONObject anomalyJSON,
+                               final String apiUser, final String apiKey) {
+        return anomaly.get(anomalyJSON, apiUser, apiKey);
+    }
+
+    /**
+     * Retrieves an anomaly.
+     *
+     *
+     * GET /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param anomalyId
+     *            a unique identifier in the form anomaly/id where id is a string
+     *            of 24 alpha-numeric chars.
+     * @param queryString
+     *            query for filtering.
+     *
+     */
+    public JSONObject getAnomaly(final String anomalyId, final String queryString) {
+        return getAnomaly(anomalyId, queryString, null, null);
+    }
+
+    /**
+     * Retrieves an anomaly.
+     *
+     *
+     * GET /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param anomalyId
+     *            a unique identifier in the form anomaly/id where id is a string
+     *            of 24 alpha-numeric chars.
+     * @param queryString
+     *            query for filtering.
+     * @param apiUser
+     *            API user
+     * @param apiKey
+     *            API key
+     *
+     */
+    public JSONObject getAnomaly(final String anomalyId, final String queryString,
+                               final String apiUser, final String apiKey) {
+        return anomaly.get(anomalyId, queryString, apiUser, apiKey);
+    }
+
+    /**
+     * Retrieves a public anomaly.
+     *
+     *
+     * GET /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param anomalyId
+     *            a unique identifier in the form anomaly/id where id is a string
+     *            of 24 alpha-numeric chars.
+     * @param queryString
+     *            query for filtering.
+     *
+     */
+    public JSONObject getPublicAnomaly(final String anomalyId,
+                                     final String queryString) {
+        return getPublicAnomaly(anomalyId, queryString, null, null);
+    }
+
+    /**
+     * Retrieves a public anomaly.
+     *
+     *
+     * GET /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param anomalyId
+     *            a unique identifier in the form anomaly/id where id is a string
+     *            of 24 alpha-numeric chars.
+     * @param queryString
+     *            query for filtering.
+     * @param apiUser
+     *            API user
+     * @param apiKey
+     *            API key
+     *
+     */
+    public JSONObject getPublicAnomaly(final String anomalyId,
+                                     final String queryString, final String apiUser, final String apiKey) {
+        return anomaly.get("public/" + anomalyId, queryString, apiUser, apiKey);
+    }
+
+    /**
+     * Retrieves a anomaly.
+     *
+     * GET /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param anomalyJSON
+     *            an anomaly JSONObject
+     * @param queryString
+     *            query for filtering.
+     *
+     */
+    public JSONObject getAnomaly(final JSONObject anomalyJSON,
+                               final String queryString) {
+        return getAnomaly(anomalyJSON, queryString, null, null);
+    }
+
+    /**
+     * Retrieves an anomaly.
+     *
+     * GET /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param anomalyJSON
+     *            a anomaly JSONObject
+     * @param queryString
+     *            query for filtering.
+     * @param apiUser
+     *            API user
+     * @param apiKey
+     *            API key
+     *
+     */
+    public JSONObject getAnomaly(final JSONObject anomalyJSON,
+                               final String queryString, final String apiUser, final String apiKey) {
+        return anomaly.get(anomalyJSON, queryString, apiUser, apiKey);
+    }
+
+    /**
+     * Checks whether an anomaly's status is FINISHED.
+     *
+     * @param anomalyId
+     *            anomalyId a unique identifier in the form anomaly/id where id is a
+     *            string of 24 alpha-numeric chars.
+     *
+     */
+    public boolean anomalyIsReady(final String anomalyId) {
+        return anomaly.isReady(anomalyId);
+    }
+
+    /**
+     * Checks whether a anomaly's status is FINISHED.
+     *
+     * @param anomalyJSON
+     *            an anomaly JSONObject
+     *
+     */
+    public boolean anomalyIsReady(final JSONObject anomalyJSON) {
+        return anomaly.isReady(anomalyJSON);
+    }
+
+    /**
+     * Lists all your anomalies.
+     *
+     * GET /andromeda/anomaly?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param queryString
+     *            query filtering the listing.
+     *
+     */
+    public JSONObject listAnomalies(final String queryString) {
+        return anomaly.list(queryString);
+    }
+
+    /**
+     * Updates a anomaly.
+     *
+     * PUT /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param anomalyId
+     *            a unique identifier in the form anomaly/id where id is a string
+     *            of 24 alpha-numeric chars.
+     * @param changes
+     *            set of parameters to update the source. Optional
+     *
+     */
+    public JSONObject updateAnomaly(final String anomalyId, final String changes) {
+        return anomaly.update(anomalyId, changes);
+    }
+
+    /**
+     * Updates an anomaly.
+     *
+     * PUT /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param anomalyJSON
+     *            anomalyJSON a model JSONObject
+     * @param changes
+     *            set of parameters to update the source. Optional
+     *
+     */
+    public JSONObject updateAnomaly(final JSONObject anomalyJSON,
+                                  final JSONObject changes) {
+        return anomaly.update(anomalyJSON, changes);
+    }
+
+    /**
+     * Deletes an anomaly.
+     *
+     * DELETE
+     * /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1
+     *
+     * @param anomalyId
+     *            a unique identifier in the form anomaly/id where id is a string
+     *            of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject deleteAnomaly(final String anomalyId) {
+        return anomaly.delete(anomalyId);
+    }
+
+    /**
+     * Deletes an anomaly.
+     *
+     * DELETE
+     * /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1
+     *
+     * @param anomalyJSON
+     *            an anomaly JSONObject
+     *
+     */
+    public JSONObject deleteAnomaly(final JSONObject anomalyJSON) {
+        return anomaly.delete(anomalyJSON);
+    }
+
 
     // ################################################################
     // #

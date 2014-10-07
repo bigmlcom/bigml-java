@@ -71,6 +71,8 @@ public class CommonStepdefs {
         assertEquals(AbstractResource.HTTP_OK, ((Integer) listing.get("code")).intValue());
         listing = BigMLClient.getInstance().listBatchCentroids("");
         assertEquals(AbstractResource.HTTP_OK, ((Integer) listing.get("code")).intValue());
+        listing = BigMLClient.getInstance().listAnomalies("");
+        assertEquals(AbstractResource.HTTP_OK, ((Integer) listing.get("code")).intValue());
 
     }
 
@@ -106,10 +108,28 @@ public class CommonStepdefs {
                     (String) context.cluster.get("resource"));
             context.cluster = null;
         }
+        if (context.anomaly != null) {
+            BigMLClient.getInstance().deleteModel(
+                    (String) context.anomaly.get("resource"));
+            context.anomaly = null;
+        }
+        if (context.anomalies != null) {
+            for (Object anomaly : context.anomalies) {
+
+                BigMLClient.getInstance().deleteAnomaly((String) anomaly);
+            }
+            context.anomalies = null;
+        }
         if (context.model != null) {
             BigMLClient.getInstance().deleteModel(
                     (String) context.model.get("resource"));
             context.model = null;
+        }
+        if (context.models != null) {
+            for (Object model : context.models) {
+                BigMLClient.getInstance().deleteModel((String) model);
+            }
+            context.models = null;
         }
         if (context.ensemble != null) {
             BigMLClient.getInstance().deleteEnsemble(
@@ -120,6 +140,12 @@ public class CommonStepdefs {
             BigMLClient.getInstance().deleteDataset(
                     (String) context.dataset.get("resource"));
             context.dataset = null;
+        }
+        if (context.datasets != null) {
+            for (Object dataset : context.datasets) {
+                BigMLClient.getInstance().deleteDataset((String) dataset);
+            }
+            context.datasets = null;
         }
         if (context.source != null) {
             BigMLClient.getInstance().deleteSource(
@@ -201,6 +227,15 @@ public class CommonStepdefs {
             JSONObject ensemble = (JSONObject) ensembles.get(i);
             BigMLClient.getInstance().deleteEnsemble(
                     (String) ensemble.get("resource"));
+        }
+
+        // Anomalies
+        JSONArray anomalies = (JSONArray) BigMLClient.getInstance().listAnomalies(";tags__in=unitTest")
+                .get("objects");
+        for (int i = 0; i < anomalies.size(); i++) {
+            JSONObject model = (JSONObject) anomalies.get(i);
+            BigMLClient.getInstance().deleteAnomaly(
+                    (String) model.get("resource"));
         }
 
         // Models

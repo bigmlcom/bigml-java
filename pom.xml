@@ -4,13 +4,14 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.bigml</groupId>
     <artifactId>bigml-binding</artifactId>
-    <version>1.2</version>
+    <version>1.3-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>BigML.io Java bindings</name>
     <description>An open source Java client that gives you a simple binding to interact with BigML. You can use it to
         easily create, retrieve, list, update, and delete BigML resources (i.e., sources, datasets, models, ensembles,
-        clusters, predictions, centroids, batch predictions, batch centroids, evaluations)
+        clusters, anomalies, predictions, centroids, anomaly score, batch predictions, batch centroids,
+        batch anomaly score, evaluations)
     </description>
     <url>https://github.com/bigmlcom/bigml-java</url>
 

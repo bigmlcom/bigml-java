@@ -127,7 +127,7 @@ public class Model extends AbstractResource {
             Integer waitTime, Integer retries) {
 
         JSONObject requestObject = createFromDatasets(
-                (String[]) datasetsIds.toArray(), args, waitTime, retries, null);
+                (String[]) datasetsIds.toArray(new String[datasetsIds.size()]), args, waitTime, retries, null);
         return createResource(MODEL_URL, requestObject.toJSONString());
     }
 
@@ -154,7 +154,7 @@ public class Model extends AbstractResource {
             Integer waitTime, Integer retries) {
 
         JSONObject requestObject = createFromDatasets(
-                (String[]) datasetsIds.toArray(), args, waitTime, retries, null);
+                (String[]) datasetsIds.toArray(new String[datasetsIds.size()]), args, waitTime, retries, null);
         return createResource(MODEL_URL, requestObject.toJSONString());
     }
 

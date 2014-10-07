@@ -1,5 +1,16 @@
 # Changes in the BigML.io Java bindings
 
+## 1.3 version
+
+### New Features
+
+* Added support for Anomaly detectors. Predictive model that can help identify the instances within a dataset that
+    do not conform to a regular pattern.
+
+    Now you can create new anomaly detectors, retrieve individual anomaly detectors, list your anomaly detectors,
+    delete, and also update your anomaly detectors.
+
+
 ## 1.2 version
 
 ### New Features
