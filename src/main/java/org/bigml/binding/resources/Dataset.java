@@ -1,10 +1,15 @@
 package org.bigml.binding.resources;
 
 import org.bigml.binding.BigMLClient;
+import org.bigml.binding.utils.Utils;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Entry point to create, retrieve, list, update, and delete datasets.
@@ -18,6 +23,8 @@ public class Dataset extends AbstractResource {
 
     // Logging
     Logger logger = LoggerFactory.getLogger(Dataset.class);
+
+    public final static String DOWNLOAD_DIR = "/download";
 
     /**
      * Constructor
@@ -46,6 +53,16 @@ public class Dataset extends AbstractResource {
                 + this.bigmlApiKey + ";";
         this.devMode = devMode;
         super.init();
+    }
+
+    /**
+     * Check if the current resource is an Dataset
+     *
+     * @param resource the resource to be checked
+     * @return true if its an Dataset
+     */
+    public boolean isInstance(JSONObject resource) {
+        return ((String) resource.get("resource")).matches(DATASET_RE);
     }
 
     /**
@@ -85,18 +102,16 @@ public class Dataset extends AbstractResource {
     /**
      * Creates a remote dataset.
      * 
-     * Uses remote `source` to create a new dataset using the arguments in
-     * `args`. If `wait_time` is higher than 0 then the dataset creation request
-     * is not sent until the `source` has been created successfuly.
-     * 
-     * 
-     * POST /andromeda/dataset?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     * 
-     * @param sourceId
-     *            a unique identifier in the form source/id where id is a string
-     *            of 24 alpha-numeric chars for the source to attach the
-     *            dataset.
+     * Uses a remote resource to create a new dataset using the
+     * arguments in `args`.
+     *
+     * If `wait_time` is higher than 0 then the dataset creation
+     * request is not sent until the `source` has been created successfuly.
+     *
+     * @param resourceId
+     *            a unique identifier in the form [source|dataset|cluster]/id
+     *            where id is a string of 24 alpha-numeric chars for the
+     *            remote resource to attach the dataset.
      * @param args
      *            set of parameters for the new dataset. Optional
      * @param waitTime
@@ -106,39 +121,98 @@ public class Dataset extends AbstractResource {
      *            number of times to try the operation. Optional
      * 
      */
-    public JSONObject create(final String sourceId, JSONObject args,
+    public JSONObject create(final String resourceId, JSONObject args,
             Integer waitTime, Integer retries) {
-        if (sourceId == null || sourceId.length() == 0
-                || !sourceId.matches(SOURCE_RE)) {
-            logger.info("Wrong source id");
+
+        if (resourceId == null || resourceId.length() == 0 ) {
+            logger.info("Wrong resource id. Id cannot be null");
             return null;
         }
 
         try {
-            waitTime = waitTime != null ? waitTime : 3000;
-            retries = retries != null ? retries : 10;
-            if (waitTime > 0) {
-                int count = 0;
-                while (count < retries
-                        && !BigMLClient.getInstance(this.devMode)
-                                .sourceIsReady(sourceId)) {
-                    Thread.sleep(waitTime);
-                    count++;
-                }
-            }
-
             JSONObject requestObject = new JSONObject();
-            if (args != null) {
-                requestObject = args;
+
+            // If the original resource is a Source
+            if( resourceId.matches(SOURCE_RE) ) {
+                waitTime = waitTime != null ? waitTime : 3000;
+                retries = retries != null ? retries : 10;
+                if (waitTime > 0) {
+                    int count = 0;
+                    while (count < retries
+                            && !BigMLClient.getInstance(this.devMode)
+                                    .sourceIsReady(resourceId)) {
+                        Thread.sleep(waitTime);
+                        count++;
+                    }
+                }
+
+                if (args != null) {
+                    requestObject = args;
+                }
+                requestObject.put("source", resourceId);
+
+            } else if( resourceId.matches(DATASET_RE) ) {
+                // If the original resource is a Dataset
+                waitTime = waitTime != null ? waitTime : 3000;
+                retries = retries != null ? retries : 10;
+                if (waitTime > 0) {
+                    int count = 0;
+                    while (count < retries
+                            && !BigMLClient.getInstance(this.devMode)
+                            .datasetIsReady(resourceId)) {
+                        Thread.sleep(waitTime);
+                        count++;
+                    }
+                }
+
+                if (args != null) {
+                    requestObject = args;
+                }
+                requestObject.put("origin_dataset", resourceId);
+            } else if( resourceId.matches(CLUSTER_RE) ) {
+                // If the original resource is a Cluster
+                waitTime = waitTime != null ? waitTime : 3000;
+                retries = retries != null ? retries : 10;
+                if (waitTime > 0) {
+                    int count = 0;
+                    while (count < retries
+                            && !BigMLClient.getInstance(this.devMode)
+                            .clusterIsReady(resourceId)) {
+                        Thread.sleep(waitTime);
+                        count++;
+                    }
+                }
+
+                if (args != null) {
+                    requestObject = args;
+                }
+
+                if( !requestObject.containsKey("centroid") ) {
+                    try {
+                        JSONObject cluster = BigMLClient.getInstance(this.devMode).getCluster(resourceId);
+                        JSONObject clusterDSIds = (JSONObject) Utils.
+                                getJSONObject(cluster, "object.cluster_datasets_ids", null);
+                        Object centroidId = clusterDSIds.keySet().toArray()[0];
+                        args.put("centroid", centroidId);
+                    } catch (Exception e) {
+                        logger.error("Failed to generate the dataset." +
+                                "A centroid id is needed in the args " +
+                                "argument to generate a dataset from " +
+                                "a cluster.", e);
+                        return null;
+                    }
+                }
+
+                requestObject.put("cluster", resourceId);
             }
-            requestObject.put("source", sourceId);
 
             return createResource(DATASET_URL, requestObject.toJSONString());
         } catch (Throwable e) {
-            logger.error("Error creating dataset");
+            logger.error("Failed to generate the dataset.", e);
             return null;
         }
     }
+
 
     /**
      * Retrieves a dataset.
@@ -302,5 +376,60 @@ public class Dataset extends AbstractResource {
         String resourceId = (String) dataset.get("resource");
         return delete(resourceId);
     }
+
+    /**
+     * Returns the ids of the fields that contain errors and their number.
+     *
+     * The dataset argument can be either a dataset resource structure or a
+     * dataset id (that will be used to retrieve the associated remote
+     * resource).
+     *
+     * @param dataset
+     *            a dataset JSONObject
+     *
+     */
+    public Map<String, Long> getErrorCounts(final JSONObject dataset) {
+        Map<String, Long> errorsDict = new HashMap<String, Long>();
+
+        JSONObject loadedDataset = get(dataset);
+        if( loadedDataset != null ) {
+            JSONObject errors = (JSONObject) Utils.getJSONObject(loadedDataset, "object.status.field_errors",
+                    null);
+            for (Object fieldId : errors.keySet()) {
+                errorsDict.put(fieldId.toString(), ((Number) ((JSONObject) errors.get(fieldId)).get("total")).longValue());
+            }
+        }
+
+        return errorsDict;
+    }
+
+
+//    /**
+//     * Retrieves the dataset file.
+//     *
+//     * Downloads datasets, that are stored in a remote CSV file. If a path is
+//     * given in filename, the contents of the file are downloaded and saved
+//     * locally. A file-like object is returned otherwise.
+//     *
+//     * @param datasetId
+//     *            a unique identifier in the form dataset/id where id is a
+//     *            string of 24 alpha-numeric chars.
+//     * @param filename
+//     *            Path to save file locally
+//     *
+//     */
+//    public JSONObject downloadDatset(final String datasetId,
+//                                              final String filename) {
+//
+//        if (datasetId == null || datasetId.length() == 0
+//                || !datasetId.matches(DATASET_RE)) {
+//            logger.info("Wrong batch dataset id");
+//            return null;
+//        }
+//
+//        String url = BIGML_URL + datasetId + DOWNLOAD_DIR;
+//        return download(url, filename);
+//    }
+//
 
 }

@@ -52,6 +52,16 @@ public class Source extends AbstractResource {
     }
 
     /**
+     * Check if the current resource is an Source
+     *
+     * @param resource the resource to be checked
+     * @return true if its an Source
+     */
+    public boolean isInstance(JSONObject resource) {
+        return ((String) resource.get("resource")).matches(SOURCE_RE);
+    }
+
+    /**
      * Creates a source using a local file.
      * 
      * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
@@ -108,45 +118,22 @@ public class Source extends AbstractResource {
 
             multipartUtility.addFilePart("bin", new File(fileName));
 
-//            DefaultHttpClient httpclient = Utils.httpClient();
-//            HttpPost httppost = new HttpPost(SOURCE_URL + bigmlAuth);
-//
-//            MultipartEntity reqEntity = new MultipartEntity();
-//
-//            // Source file
-//            FileBody bin = new FileBody(new File(fileName));
-//            reqEntity.addPart("bin", bin);
-
-            // Source name
             if (name != null) {
                 multipartUtility.addFormField("name", name);
-//                reqEntity.addPart("name", new StringBody(name));
             }
 
             // Source parser
             if (sourceParser != null) {
                 multipartUtility.addFormField("source_parser", sourceParser.toJSONString());
-//                reqEntity.addPart("source_parser",
-//                        new StringBody(sourceParser.toJSONString()));
             }
 
             HttpURLConnection connection = multipartUtility.finish();
             code = connection.getResponseCode();
 
-//            httppost.setEntity(reqEntity);
-//
-//            HttpResponse response = httpclient.execute(httppost);
-//            HttpEntity resEntity = response.getEntity();
-//            code = response.getStatusLine().getStatusCode();
-
             if (code == HTTP_CREATED) {
                 location = connection.getHeaderField(location);
-//                location = connection.getHeaderFields().get("location").get(0);
-//                location = response.getHeaders("location")[0].getValue();
                 resource = (JSONObject) JSONValue.parse(Utils
                         .inputStreamAsString(connection.getInputStream(), "UTF-8"));
-//                resource = (JSONObject) JSONValue.parse(Utils
-//                        .inputStreamAsString(resEntity.getContent()));
                 resourceId = (String) resource.get("resource");
                 error = new JSONObject();
             } else {
@@ -155,8 +142,6 @@ public class Source extends AbstractResource {
                         || code == HTTP_NOT_FOUND) {
                     error = (JSONObject) JSONValue.parse(Utils
                             .inputStreamAsString(connection.getInputStream(), "UTF-8"));
-//                    error = (JSONObject) JSONValue.parse(Utils
-//                            .inputStreamAsString(resEntity.getContent()));
                 } else {
                     logger.info("Unexpected error (" + code + ")");
                     code = HTTP_INTERNAL_SERVER_ERROR;

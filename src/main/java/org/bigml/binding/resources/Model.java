@@ -49,6 +49,16 @@ public class Model extends AbstractResource {
     }
 
     /**
+     * Check if the current resource is an Model
+     *
+     * @param resource the resource to be checked
+     * @return true if its an Model
+     */
+    public boolean isInstance(JSONObject resource) {
+        return ((String) resource.get("resource")).matches(MODEL_RE);
+    }
+
+    /**
      * Creates a new model.
      * 
      * POST /andromeda/model?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;

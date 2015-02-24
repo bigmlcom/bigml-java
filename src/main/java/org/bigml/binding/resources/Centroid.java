@@ -48,6 +48,16 @@ public class Centroid extends AbstractResource {
     }
 
     /**
+     * Check if the current resource is an Centroid
+     *
+     * @param resource the resource to be checked
+     * @return true if its an Centroid
+     */
+    public boolean isInstance(JSONObject resource) {
+        return ((String) resource.get("resource")).matches(CENTROID_RE);
+    }
+
+    /**
      * Creates a new centroid.
      * 
      * POST /andromeda/centroid?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;

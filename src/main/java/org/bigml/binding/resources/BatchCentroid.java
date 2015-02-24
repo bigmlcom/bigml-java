@@ -57,6 +57,16 @@ public class BatchCentroid extends AbstractResource {
     }
 
     /**
+     * Check if the current resource is an BatchCentroid
+     *
+     * @param resource the resource to be checked
+     * @return true if its an BatchCentroid
+     */
+    public boolean isInstance(JSONObject resource) {
+        return ((String) resource.get("resource")).matches(BATCH_CENTROID_RE);
+    }
+
+    /**
      * Creates a new batchbatchcentroid.
      * 
      * POST /andromeda/batchbatchcentroid?username=$BIGML_USERNAME;api_key=
@@ -377,70 +387,6 @@ public class BatchCentroid extends AbstractResource {
     public JSONObject delete(final JSONObject batchcentroid) {
         String resourceId = (String) batchcentroid.get("resource");
         return delete(resourceId);
-    }
-
-    /**
-     * Retrieves a remote file.
-     * 
-     * Uses HTTP GET to download a file object with a BigML `url`.
-     * 
-     */
-    private JSONObject download(final String url, final String fileName) {
-        int code = HTTP_INTERNAL_SERVER_ERROR;
-
-        JSONObject error = new JSONObject();
-        String csv = "";
-        try {
-            HttpURLConnection connection = Utils.processGET(url + bigmlAuth);
-
-            code = connection.getResponseCode();
-
-//            HttpClient httpclient = Utils.httpClient();
-//            HttpGet httpget = new HttpGet(url + bigmlAuth);
-//            httpget.setHeader("Accept", JSON);
-//
-//            HttpResponse response = httpclient.execute(httpget);
-//            HttpEntity resEntity = response.getEntity();
-//            code = response.getStatusLine().getStatusCode();
-
-            csv = Utils.inputStreamAsString(connection.getInputStream(), "UTF-8");
-//            csv = Utils.inputStreamAsString(resEntity.getContent());
-            if (code == HTTP_OK) {
-                if (fileName != null) {
-                    File file = new File(fileName);
-                    if (!file.exists()) {
-
-                    }
-                    BufferedWriter output = new BufferedWriter(new FileWriter(
-                            file));
-                    output.write(csv);
-                    output.close();
-                }
-            } else {
-                if (code == HTTP_BAD_REQUEST || code == HTTP_UNAUTHORIZED
-                        || code == HTTP_NOT_FOUND) {
-                    error = (JSONObject) JSONValue.parse(Utils
-                            .inputStreamAsString(connection.getInputStream(), "UTF-8"));
-
-//                    error = (JSONObject) JSONValue.parse(Utils
-//                            .inputStreamAsString(resEntity.getContent()));
-                    logger.info("Error downloading:" + code);
-                } else {
-                    logger.info("Unexpected error (" + code + ")");
-                    code = HTTP_INTERNAL_SERVER_ERROR;
-                }
-            }
-
-        } catch (Throwable e) {
-            logger.error("Error downloading batch prediction", e);
-        }
-
-        JSONObject result = new JSONObject();
-        result.put("code", code);
-        result.put("error", error);
-        result.put("csv", csv);
-        return result;
-
     }
 
 }

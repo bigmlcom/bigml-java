@@ -49,6 +49,16 @@ public class Ensemble extends AbstractResource {
     }
 
     /**
+     * Check if the current resource is an Ensemble
+     *
+     * @param resource the resource to be checked
+     * @return true if its an Ensemble
+     */
+    public boolean isInstance(JSONObject resource) {
+        return ((String) resource.get("resource")).matches(ENSEMBLE_RE);
+    }
+
+    /**
      * Creates a new ensemble.
      * 
      * POST /andromeda/ensemble?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;

@@ -49,6 +49,16 @@ public class Cluster extends AbstractResource {
     }
 
     /**
+     * Check if the current resource is an Cluster
+     *
+     * @param resource the resource to be checked
+     * @return true if its an Cluster
+     */
+    public boolean isInstance(JSONObject resource) {
+        return ((String) resource.get("resource")).matches(CLUSTER_RE);
+    }
+
+    /**
      * Creates a cluster from a `dataset`.
      * 
      * POST /andromeda/cluster?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
