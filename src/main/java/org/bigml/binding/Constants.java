@@ -16,5 +16,6 @@ public interface Constants {
     final public static String OPERATOR_NE2 = "/=";
     final public static String OPERATOR_GE = ">=";
     final public static String OPERATOR_GT = ">";
+    final public static String OPERATOR_IN = "in";
 
 }

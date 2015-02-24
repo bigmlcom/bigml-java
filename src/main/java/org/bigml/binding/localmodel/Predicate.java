@@ -165,10 +165,6 @@ public class Predicate {
             return applyOperator(termMatches(inputData.get(fieldName).toString(), terms, options));
         }
 
-        if( Constants.OPERATOR_IN.equals(operator) ) {
-            // TODO: implement this operator!!!
-        }
-
         return applyOperator(inputData.get(fieldName));
     }
 
@@ -201,6 +197,10 @@ public class Predicate {
         if (operator.equals(Constants.OPERATOR_GT) &&
                 ((Number) inputValue).doubleValue() > ((Number) value)
                     .doubleValue()) {
+            return true;
+        }
+        if (operator.equals(Constants.OPERATOR_IN) &&
+                (inputValue.toString().contains(value.toString())) ) {
             return true;
         }
 
