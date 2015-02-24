@@ -113,6 +113,7 @@ public abstract class AbstractResource {
 
     protected String bigmlUser;
     protected String bigmlApiKey;
+    protected String bigmlDomain;
     protected String bigmlAuth;
 
     protected boolean devMode;

@@ -26,6 +26,7 @@ public class Anomaly extends AbstractResource {
     public Anomaly() {
         this.bigmlUser = System.getProperty("BIGML_USERNAME");
         this.bigmlApiKey = System.getProperty("BIGML_API_KEY");
+        this.bigmlDomain = System.getProperty("BIGML_DOMAIN");
         bigmlAuth = "?username=" + this.bigmlUser + ";api_key="
                 + this.bigmlApiKey + ";";
         this.devMode = false;
