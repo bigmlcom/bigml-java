@@ -49,6 +49,16 @@ public class Anomaly extends AbstractResource {
     }
 
     /**
+     * Check if the current resource is an Anomaly
+     *
+     * @param resource the resource to be checked
+     * @return true if its an Anomaly
+     */
+    public boolean isInstance(JSONObject resource) {
+        return ((String) resource.get("resource")).matches(ANOMALY_RE);
+    }
+
+    /**
      * Creates a new anomaly.
      * 
      * POST /andromeda/anomaly?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
