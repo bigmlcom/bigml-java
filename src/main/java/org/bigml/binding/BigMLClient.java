@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -38,6 +40,8 @@ public class BigMLClient {
     final public static String BIGML_URL = "https://bigml.io/";
     final public static String BIGML_DEV_URL = "https://bigml.io/dev/";
 
+    final public static Locale DEFAUL_LOCALE = Locale.ENGLISH;
+
     /**
      * Logging
      */
@@ -47,6 +51,7 @@ public class BigMLClient {
 
     private String bigmlUrl;
     private String bigmlUser;
+    private String bigmlDomain;
     private String bigmlApiKey;
 
     /**
@@ -61,6 +66,7 @@ public class BigMLClient {
     private Evaluation evaluation;
     private Ensemble ensemble;
     private Anomaly anomaly;
+    private AnomalyScore anomalyScore;
     private BatchPrediction batchPrediction;
     private Cluster cluster;
     private Centroid centroid;
@@ -152,6 +158,16 @@ public class BigMLClient {
         if (instance == null) {
             instance = new BigMLClient();
             instance.init(apiUser, apiKey, seed, devMode, storage);
+        }
+        return instance;
+    }
+
+    public static BigMLClient getInstance(final String bigmlDomain, final String apiUser,
+            final String apiKey, final String seed, final boolean devMode, final String storage)
+            throws AuthenticationException {
+        if (instance == null) {
+            instance = new BigMLClient();
+            instance.init(bigmlDomain, apiUser, apiKey, seed, devMode, storage);
         }
         return instance;
     }
@@ -362,6 +378,44 @@ public class BigMLClient {
         initResources();
     }
 
+    /**
+     * Initialization object.
+     */
+    private void init(final String bigmlDomain, final String apiUser,
+                      final String apiKey, String seed,
+            final boolean devMode, final String storage)
+            throws AuthenticationException {
+        this.bigmlDomain = bigmlDomain;
+        this.devMode = devMode;
+        this.storage = storage;
+        initConfiguration();
+
+        this.bigmlUser = apiUser != null ? apiUser : System
+                .getProperty("BIGML_USERNAME");
+        this.bigmlApiKey = apiKey != null ? apiKey : System
+                .getProperty("BIGML_API_KEY");
+        if (this.bigmlUser == null || this.bigmlUser.equals("")
+                || this.bigmlApiKey == null || this.bigmlApiKey.equals("")) {
+            this.bigmlUser = props.getProperty("BIGML_USERNAME");
+            this.bigmlApiKey = props.getProperty("BIGML_API_KEY");
+            if (this.bigmlUser == null || this.bigmlUser.equals("")
+                    || this.bigmlApiKey == null || this.bigmlApiKey.equals("")) {
+                AuthenticationException ex = new AuthenticationException(
+                        "Missing authentication information.");
+                logger.info(instance.toString(), ex);
+                throw ex;
+            }
+        }
+
+        // The seed to be used to create deterministic samples and models
+        this.seed = seed != null ? seed : System.getProperty("BIGML_SEED");
+        if( this.seed == null || this.seed.equals("") ) {
+            this.seed = props.getProperty("BIGML_SEED");
+        }
+
+        initResources();
+    }
+
     private void initConfiguration() {
         try {
             props = new Properties();
@@ -370,8 +424,13 @@ public class BigMLClient {
             props.load(fis);
             fis.close();
 
-            bigmlUrl = this.devMode ? props.getProperty("BIGML_DEV_URL",
-                    BIGML_DEV_URL) : props.getProperty("BIGML_URL", BIGML_URL);
+            if( bigmlDomain != null && bigmlDomain.length() > 0 ) {
+                bigmlUrl = this.devMode ? (bigmlDomain + (bigmlDomain.endsWith("/") ? "" : "/") +
+                        "dev/") : (bigmlDomain + (bigmlDomain.endsWith("/") ? "" : "/"));
+            } else {
+                bigmlUrl = this.devMode ? props.getProperty("BIGML_DEV_URL",
+                        BIGML_DEV_URL) : props.getProperty("BIGML_URL", BIGML_URL);
+            }
         } catch (Throwable e) {
             // logger.error("Error loading configuration", e);
             bigmlUrl = this.devMode ? BIGML_DEV_URL : BIGML_URL;
@@ -388,6 +447,7 @@ public class BigMLClient {
                 this.devMode);
         ensemble = new Ensemble(this.bigmlUser, this.bigmlApiKey, this.devMode);
         anomaly = new Anomaly(this.bigmlUser, this.bigmlApiKey, this.devMode);
+        anomalyScore = new AnomalyScore(this.bigmlUser, this.bigmlApiKey, this.devMode);
         batchPrediction = new BatchPrediction(this.bigmlUser, this.bigmlApiKey,
                 this.devMode);
         cluster = new Cluster(this.bigmlUser, this.bigmlApiKey, this.devMode);
@@ -702,16 +762,21 @@ public class BigMLClient {
     /**
      * Creates a remote dataset.
      * 
-     * Uses remote `source` to create a new dataset using the arguments in
-     * `args`. If `wait_time` is higher than 0 then the dataset creation request
-     * is not sent until the `source` has been created successfuly.
-     * 
-     * POST /andromeda/dataset?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     * 
-     * @param sourceId
-     *            a unique identifier in the form source/id where id is a string
-     *            of 24 alpha-numeric chars for the source to attach the
+     * Uses a remote resource to create a new dataset using the arguments in `args`.
+     * The allowed remote resources can be:
+     *      - source
+     *      - dataset
+     *      - cluster
+     * In the case of using cluster id as origin_resources, a centroid must
+     * also be provided in the args argument. The first centroid is used
+     * otherwise.
+     *
+     * If `wait_time` is higher than 0 then the dataset creation
+     * request is not sent until the `source` has been created successfuly.
+     *
+     * @param resourceId
+     *            a unique identifier in the form resource_name/id where id is a string
+     *            of 24 alpha-numeric chars for the remote resource to attach the
      *            dataset.
      * @param args
      *            set of parameters for the new dataset. Optional
@@ -722,9 +787,9 @@ public class BigMLClient {
      *            number of times to try the operation. Optional
      * 
      */
-    public JSONObject createDataset(final String sourceId, JSONObject args,
+    public JSONObject createDataset(final String resourceId, JSONObject args,
             Integer waitTime, Integer retries) {
-        return dataset.create(sourceId, args, waitTime, retries);
+        return dataset.create(resourceId, args, waitTime, retries);
     }
 
     /**
@@ -741,6 +806,24 @@ public class BigMLClient {
      */
     public JSONObject getDataset(final String datasetId) {
         return dataset.get(datasetId);
+    }
+
+    /**
+     * Returns the ids of the fields that contain errors and their number.
+     *
+     * @param datasetId the dataset id of the dataset to be inspected
+     */
+    public Map<String, Long> getErrorCounts(final String datasetId) {
+        return dataset.getErrorCounts(getDataset(datasetId));
+    }
+
+    /**
+     * Returns the ids of the fields that contain errors and their number.
+     *
+     * @param datasetJSON the dataset JSON object to be inspected
+     */
+    public Map<String, Long> getErrorCounts(final JSONObject datasetJSON) {
+        return dataset.getErrorCounts(datasetJSON);
     }
 
     /**
@@ -861,6 +944,25 @@ public class BigMLClient {
     public JSONObject deleteDataset(final JSONObject datasetJSON) {
         return dataset.delete(datasetJSON);
     }
+
+//    /**
+//     * Retrieves the dataset file.
+//     *
+//     * Downloads dataset, that are stored in a remote CSV file. If a path is
+//     * given in filename, the contents of the file are downloaded and saved
+//     * locally. A file-like object is returned otherwise.
+//     *
+//     * @param datasetId
+//     *            a unique identifier in the form dataset/id where id is a
+//     *            string of 24 alpha-numeric chars.
+//     * @param filename
+//     *            Path to save file locally
+//     *
+//     */
+//    public JSONObject downloadDataset(final String datasetId,
+//                                      final String filename) {
+//        return dataset.downloadDatset(datasetId, filename);
+//    }
 
     // ################################################################
     // #
@@ -1927,6 +2029,176 @@ public class BigMLClient {
 
     // ################################################################
     // #
+    // # Anomaly scores
+    // # https://bigml.com/developers/anomalyscores
+    // #
+    // ################################################################
+
+    /**
+     * Creates a new anomaly score.
+     *
+     * POST
+     * /andromeda/anomalyscore?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param anomalyId
+     *            a unique identifier in the form anomaly/id where
+     *            id is a string of 24 alpha-numeric chars for the anomaly
+     *            to attach the anomaly score.
+     * @param inputData
+     *            an object with field's id/value pairs representing the
+     *            instance you want to create an anomaly score for.
+     * @param byName
+     *
+     * @param args
+     *            set of parameters for the new anomaly score. Required
+     * @param waitTime
+     *            time to wait for next check of FINISHED status for anomaly
+     *            before to start to create the anomaly score. Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     *
+     */
+    public JSONObject createAnomalyScore(final String anomalyId,
+            JSONObject inputData, Boolean byName, JSONObject args,
+            Integer waitTime, Integer retries) {
+        return anomalyScore.create(anomalyId, inputData, byName, args,
+                waitTime, retries);
+    }
+
+    /**
+     * Retrieves an anomaly score.
+     *
+     * GET /andromeda/anomalyscore/id?username=$BIGML_USERNAME;api_key=
+     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
+     *
+     * @param anomalyScoreId
+     *            a unique identifier in the form anomalyScore/id where id is a
+     *            string of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject getAnomalyScore(final String anomalyScoreId) {
+        return anomalyScore.get(anomalyScoreId);
+    }
+
+    /**
+     * Retrieves an anomaly score.
+     *
+     * GET /andromeda/anomalyscore/id?username=$BIGML_USERNAME;api_key=
+     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
+     *
+     * @param anomalyScoreJSON
+     *            a anomaly score JSONObject
+     *
+     */
+    public JSONObject getAnomalyScore(final JSONObject anomalyScoreJSON) {
+        return anomalyScore.get(anomalyScoreJSON);
+    }
+
+    /**
+     * Checks whether an anomaly score's status is FINISHED.
+     *
+     * @param anomalyScoreId
+     *            a unique identifier in the form anomalyScore/id where id is a
+     *            string of 24 alpha-numeric chars.
+     *
+     */
+    public boolean anomalyScoreIsReady(final String anomalyScoreId) {
+        return anomalyScore.isReady(anomalyScoreId);
+    }
+
+    /**
+     * Checks whether an anomaly score's status is FINISHED.
+     *
+     * @param anomalyScoreJSON
+     *            an anomaly score JSONObject
+     *
+     */
+    public boolean anomalyScoreIsReady(final JSONObject anomalyScoreJSON) {
+        return anomalyScore.isReady(anomalyScoreJSON);
+    }
+
+    /**
+     * Lists all your anomaly scores.
+     *
+     * GET
+     * /andromeda/anomalyscore?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param queryString
+     *            query filtering the listing.
+     *
+     */
+    public JSONObject listAnomalyScores(final String queryString) {
+        return anomalyScore.list(queryString);
+    }
+
+    /**
+     * Updates an anomaly score.
+     *
+     * PUT /andromeda/anomalyscore/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param anomalyScoreId
+     *            a unique identifier in the form anomalyScore/id where id is a
+     *            string of 24 alpha-numeric chars.
+     * @param changes
+     *            set of parameters to update the source. Optional
+     *
+     */
+    public JSONObject updateAnomalyScore(final String anomalyScoreId,
+            final String changes) {
+        return anomalyScore.update(anomalyScoreId, changes);
+    }
+
+    /**
+     * Updates an anomaly score.
+     *
+     * PUT /andromeda/anomalyscore/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param anomalyScoreJSON
+     *            am anomaly score JSONObject
+     * @param changes
+     *            set of parameters to update the source. Optional
+     *
+     */
+    public JSONObject updateAnomalyScore(final JSONObject anomalyScoreJSON,
+            final JSONObject changes) {
+        return anomalyScore.update(anomalyScoreJSON, changes);
+    }
+
+    /**
+     * Deletes an anomaly score.
+     *
+     * DELETE /andromeda/anomalyscore/id?username=$BIGML_USERNAME;api_key=
+     * $BIGML_API_KEY; HTTP/1.1
+     *
+     * @param anomalyScoreId
+     *            a unique identifier in the form anomalyScore/id where id is a
+     *            string of 24 alpha-numeric chars
+     *
+     */
+    public JSONObject deleteAnomalyScore(final String anomalyScoreId) {
+        return anomalyScore.delete(anomalyScoreId);
+    }
+
+    /**
+     * Deletes an anomaly score.
+     *
+     * DELETE /andromeda/anomalyscore/id?username=$BIGML_USERNAME;api_key=
+     * $BIGML_API_KEY; HTTP/1.1
+     *
+     * @param anomalyScoreJSON
+     *            an anomaly score JSONObject
+     *
+     */
+    public JSONObject deleteAnomalyScore(final JSONObject anomalyScoreJSON) {
+        return anomalyScore.delete(anomalyScoreJSON);
+    }
+
+    // ################################################################
+    // #
     // # Evaluations
     // # https://bigml.com/developers/evaluations
     // #
@@ -2731,6 +3003,9 @@ public class BigMLClient {
             if( !args.containsKey("seed") ) {
                 args.put("seed", seed);
             }
+            if( !args.containsKey("cluster_seed") ) {
+                args.put("cluster_seed", seed);
+            }
         }
 
         return cluster.create(datasetId, args, waitTime, retries);
@@ -3269,20 +3544,20 @@ public class BigMLClient {
     }
 
     /**
-     * Retrieves the batch centroid file.
-     * 
-     * Downloads predictions, that are stored in a remote CSV file. If a path is
+     * Retrieves the dataset file.
+     *
+     * Downloads datasets, that are stored in a remote CSV file. If a path is
      * given in filename, the contents of the file are downloaded and saved
      * locally. A file-like object is returned otherwise.
-     * 
+     *
      * @param batchCentroidJSON
      *            a batch centroid JSONObject.
      * @param filename
      *            Path to save file locally
-     * 
+     *
      */
     public JSONObject downloadBatchCentroid(final JSONObject batchCentroidJSON,
-            final String filename) {
+                                            final String filename) {
         return batchCentroid.downloadBatchCentroid(batchCentroidJSON, filename);
     }
 
