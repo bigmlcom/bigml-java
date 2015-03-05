@@ -162,16 +162,58 @@ public class Source extends AbstractResource {
     }
 
     /**
-     * Creates a source using a URL.
+     * Creates a source using a Batch Prediction Id.
      * 
      * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json;
      * 
+     * @param batchPredictionId
+     *            the ID of the batch prediction resource to use
+     * @param sourceParser
+     *            set of parameters to create the source. Optional
+     * 
+     */
+    public JSONObject createSourceFromBatchPrediction(final String batchPredictionId,
+            final JSONObject sourceParser) {
+
+        String url = String.format("%s%s%s%s", BIGML_URL, batchPredictionId,
+                BatchPrediction.DOWNLOAD_DIR, bigmlAuth);
+
+        return createRemoteSource(url, sourceParser);
+    }
+
+    /**
+     * Creates a source using an Anomaly Score Id.
+     *
+     * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json;
+     *
+     * @param anomalyScoreId
+     *            the ID of the anomaly score resource to use
+     * @param sourceParser
+     *            set of parameters to create the source. Optional
+     *
+     */
+    public JSONObject createSourceFromBatchAnomalyScore(final String anomalyScoreId,
+            final JSONObject sourceParser) {
+
+        String url = String.format("%s%s%s%s", BIGML_URL, anomalyScoreId,
+                BatchPrediction.DOWNLOAD_DIR, bigmlAuth);
+
+        return createRemoteSource(url, sourceParser);
+    }
+
+    /**
+     * Creates a source using a URL.
+     *
+     * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json;
+     *
      * @param url
      *            url for remote source
      * @param sourceParser
      *            set of parameters to create the source. Optional
-     * 
+     *
      */
     @Deprecated
     public JSONObject createRemoteSource(final String url,
