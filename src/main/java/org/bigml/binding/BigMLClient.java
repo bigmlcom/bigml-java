@@ -67,6 +67,7 @@ public class BigMLClient {
     private Ensemble ensemble;
     private Anomaly anomaly;
     private AnomalyScore anomalyScore;
+    private BatchAnomalyScore batchAnomalyScore;
     private BatchPrediction batchPrediction;
     private Cluster cluster;
     private Centroid centroid;
@@ -448,6 +449,8 @@ public class BigMLClient {
         ensemble = new Ensemble(this.bigmlUser, this.bigmlApiKey, this.devMode);
         anomaly = new Anomaly(this.bigmlUser, this.bigmlApiKey, this.devMode);
         anomalyScore = new AnomalyScore(this.bigmlUser, this.bigmlApiKey, this.devMode);
+        batchAnomalyScore = new BatchAnomalyScore(this.bigmlUser, this.bigmlApiKey,
+                this.devMode);
         batchPrediction = new BatchPrediction(this.bigmlUser, this.bigmlApiKey,
                 this.devMode);
         cluster = new Cluster(this.bigmlUser, this.bigmlApiKey, this.devMode);
@@ -549,6 +552,42 @@ public class BigMLClient {
     public JSONObject createRemoteSource(final String url,
             final JSONObject sourceParser) {
         return source.createRemoteSource(url, sourceParser);
+    }
+
+    /**
+     * Creates a source using a BatchPrediction ID.
+     *
+     * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json;
+     *
+     * @param batchPredictionId
+     *            the resource ID of the batch prediction resource
+     * @param sourceParser
+     *            set of parameters to create the source. Optional
+     *
+     */
+    public JSONObject createSourceFromBatchPrediction(final String batchPredictionId,
+            final JSONObject sourceParser) {
+
+        return source.createSourceFromBatchPrediction(batchPredictionId, sourceParser);
+    }
+
+    /**
+     * Creates a source using a BatchAnomalyScore ID.
+     *
+     * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json;
+     *
+     * @param batchAnomalyScoreId
+     *            the resource ID of the batch anomaly score resource
+     * @param sourceParser
+     *            set of parameters to create the source. Optional
+     *
+     */
+    public JSONObject createSourceFromBatchAnomalyScore(final String batchAnomalyScoreId,
+            final JSONObject sourceParser) {
+
+        return source.createSourceFromBatchAnomalyScore(batchAnomalyScoreId, sourceParser);
     }
 
     /**
@@ -945,24 +984,25 @@ public class BigMLClient {
         return dataset.delete(datasetJSON);
     }
 
-//    /**
-//     * Retrieves the dataset file.
-//     *
-//     * Downloads dataset, that are stored in a remote CSV file. If a path is
-//     * given in filename, the contents of the file are downloaded and saved
-//     * locally. A file-like object is returned otherwise.
-//     *
-//     * @param datasetId
-//     *            a unique identifier in the form dataset/id where id is a
-//     *            string of 24 alpha-numeric chars.
-//     * @param filename
-//     *            Path to save file locally
-//     *
-//     */
-//    public JSONObject downloadDataset(final String datasetId,
-//                                      final String filename) {
-//        return dataset.downloadDatset(datasetId, filename);
-//    }
+    /**
+     * Retrieves the dataset file.
+     *
+     * Downloads dataset, that are stored in a remote CSV file. If a path is
+     * given in filename, the contents of the file are downloaded and saved
+     * locally. A file-like object is returned otherwise.
+     *
+     * @param datasetId
+     *            a unique identifier in the form dataset/id where id is
+     *            a string of 24 alpha-numeric chars.
+     * @param filename
+     *            Path to save file locally
+     *
+     */
+    public JSONObject downloadDataset(final String datasetId,
+                                                final String filename) {
+        return dataset.downloadDataset(datasetId, filename);
+    }
+
 
     // ################################################################
     // #
@@ -2067,6 +2107,37 @@ public class BigMLClient {
     }
 
     /**
+     * Creates a new anomaly score.
+     *
+     * POST
+     * /andromeda/anomalyscore?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param anomaly
+     *            a anomaly JSONObject
+     * @param inputData
+     *            an object with field's id/value pairs representing the
+     *            instance you want to create an anomaly score for.
+     * @param byName
+     *
+     * @param args
+     *            set of parameters for the new anomaly score. Required
+     * @param waitTime
+     *            time to wait for next check of FINISHED status for anomaly
+     *            before to start to create the anomaly score. Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     *
+     */
+    public JSONObject createAnomalyScore(final JSONObject anomaly,
+            JSONObject inputData, Boolean byName, JSONObject args,
+            Integer waitTime, Integer retries) {
+        String anomalyId = (String) anomaly.get("resource");
+        return  createAnomalyScore(anomalyId, inputData, byName, args,
+                waitTime, retries);
+    }
+
+    /**
      * Retrieves an anomaly score.
      *
      * GET /andromeda/anomalyscore/id?username=$BIGML_USERNAME;api_key=
@@ -2093,6 +2164,45 @@ public class BigMLClient {
      */
     public JSONObject getAnomalyScore(final JSONObject anomalyScoreJSON) {
         return anomalyScore.get(anomalyScoreJSON);
+    }
+
+    /**
+     * Retrieves the anomaly score file.
+     *
+     * Downloads scores, that are stored in a remote CSV file. If a path is
+     * given in filename, the contents of the file are downloaded and saved
+     * locally. A file-like object is returned otherwise.
+     *
+     * @param anomalyScoreId
+     *            a unique identifier in the form anomalyScore/id where id is
+     *            a string of 24 alpha-numeric chars.
+     * @param filename
+     *            Path to save file locally
+     *
+     */
+    public JSONObject downloadAnomalyScore(
+            final String anomalyScoreId, final String filename) {
+        return anomalyScore.downloadAnomalyScore(anomalyScoreId,
+                filename);
+    }
+
+    /**
+     * Retrieves the anomaly score file.
+     *
+     * Downloads scores, that are stored in a remote CSV file. If a path is
+     * given in filename, the contents of the file are downloaded and saved
+     * locally. A file-like object is returned otherwise.
+     *
+     * @param anomalyScoreJSON
+     *            an anomaly score JSONObject.
+     * @param filename
+     *            Path to save file locally
+     *
+     */
+    public JSONObject downloadAnomalyScore(
+            final JSONObject anomalyScoreJSON, final String filename) {
+        return anomalyScore.downloadAnomalyScore(anomalyScoreJSON,
+                filename);
     }
 
     /**
@@ -2939,6 +3049,226 @@ public class BigMLClient {
      */
     public JSONObject deleteBatchPrediction(final JSONObject batchPredictionJSON) {
         return batchPrediction.delete(batchPredictionJSON);
+    }
+
+    // ################################################################
+    // #
+    // # Batch anomaly scores
+    // # https://bigml.com/developers/batch_anomalyscore
+    // #
+    // ################################################################
+
+    /**
+     * Creates a new batch anomaly score.
+     *
+     * POST /andromeda/batchanomalyscore?username=$BIGML_USERNAME;api_key=
+     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param anomalyId
+     *            a unique identifier in the form anomaly/id where
+     *            id is a string of 24 alpha-numeric chars for the
+     *            anomaly to attach the evaluation.
+     * @param datasetId
+     *            a unique identifier in the form dataset/id where id is a
+     *            string of 24 alpha-numeric chars for the dataset to attach the
+     *            batch anomaly score.
+     * @param args
+     *            set of parameters for the new batch prediction. Optional
+     * @param waitTime
+     *            time (milliseconds) to wait for next check of FINISHED status
+     *            for model before to start to create the batch prediction.
+     *            Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     *
+     */
+    public JSONObject createBatchAnomalyScore(final String anomalyId,
+            final String datasetId, JSONObject args, Integer waitTime,
+            Integer retries) {
+        return batchAnomalyScore.create(anomalyId, datasetId, args,
+                waitTime, retries);
+    }
+
+    /**
+     * Retrieves a batch anomaly score.
+     *
+     * The batch_anomalyscore parameter should be a string containing the
+     * batch_anomalyscore id or the dict returned by create_batch_anomalyscore. As
+     * batch_anomalyscore is an evolving object that is processed until it reaches
+     * the FINISHED or FAULTY state, the function will return a dict that
+     * encloses the batch_anomalyscore values and state info available at the time
+     * it is called.
+     *
+     * GET /andromeda/batchanomalyscore/id?username=$BIGML_USERNAME;api_key=
+     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
+     *
+     * @param batchAnomalyScoreId
+     *            a unique identifier in the form batchanomalyscore/id where id is
+     *            a string of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject getBatchAnomalyScore(final String batchAnomalyScoreId) {
+        return batchAnomalyScore.get(batchAnomalyScoreId);
+    }
+
+    /**
+     * Retrieves a batch anomaly score.
+     *
+     * The batch_anomalyscore parameter should be a string containing the
+     * batch_anomalyscore id or the dict returned by create_batch_anomalyscore. As
+     * batch_anomalyscore is an evolving object that is processed until it reaches
+     * the FINISHED or FAULTY state, the function will return a dict that
+     * encloses the batch_anomalyscore values and state info available at the time
+     * it is called.
+     *
+     * GET /andromeda/batchanomalyscore/id?username=$BIGML_USERNAME;api_key=
+     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
+     *
+     * @param batchAnomalyScoreJSON
+     *            a batch anomaly score JSONObject.
+     *
+     */
+    public JSONObject getBatchAnomalyScore(final JSONObject batchAnomalyScoreJSON) {
+        return batchAnomalyScore.get(batchAnomalyScoreJSON);
+    }
+
+    /**
+     * Retrieves the batch anomaly score file.
+     *
+     * Downloads scores, that are stored in a remote CSV file. If a path is
+     * given in filename, the contents of the file are downloaded and saved
+     * locally. A file-like object is returned otherwise.
+     *
+     * @param batchAnomalyScoreId
+     *            a unique identifier in the form batchanomalyscore/id where id is
+     *            a string of 24 alpha-numeric chars.
+     * @param filename
+     *            Path to save file locally
+     *
+     */
+    public JSONObject downloadBatchAnomalyScore(final String batchAnomalyScoreId,
+            final String filename) {
+        return batchAnomalyScore.downloadBatchAnomalyScore(batchAnomalyScoreId,
+                filename);
+    }
+
+    /**
+     * Retrieves the batch anomaly score file.
+     *
+     * Downloads scores, that are stored in a remote CSV file. If a path is
+     * given in filename, the contents of the file are downloaded and saved
+     * locally. A file-like object is returned otherwise.
+     *
+     * @param batchAnomalyScoreJSON
+     *            a batch anomaly score JSONObject.
+     * @param filename
+     *            Path to save file locally
+     *
+     */
+    public JSONObject downloadBatchAnomalyScore(
+            final JSONObject batchAnomalyScoreJSON, final String filename) {
+        return batchAnomalyScore.downloadBatchAnomalyScore(batchAnomalyScoreJSON,
+                filename);
+    }
+
+    /**
+     * Check whether a batch anomaly score's status is FINISHED.
+     *
+     * @param batchAnomalyScoreId
+     *            a unique identifier in the form batchanomalyscore/id where id is
+     *            a string of 24 alpha-numeric chars.
+     *
+     */
+    public boolean batchAnomalyScoreIsReady(final String batchAnomalyScoreId) {
+        return batchAnomalyScore.isReady(batchAnomalyScoreId);
+    }
+
+    /**
+     * Check whether a batch anomaly score's status is FINISHED.
+     *
+     * @param batchAnomalyScoreJSON
+     *            a batchanomalyscore JSONObject.
+     *
+     */
+    public boolean batchAnomalyScoreIsReady(final JSONObject batchAnomalyScoreJSON) {
+        return batchAnomalyScore.isReady(batchAnomalyScoreJSON);
+    }
+
+    /**
+     * Lists all your batch anomaly scores.
+     *
+     * GET /andromeda/batchanomalyscore?username=$BIGML_USERNAME;api_key=
+     * $BIGML_API_KEY; Host: bigml.io
+     *
+     * @param queryString
+     *            query filtering the listing.
+     *
+     */
+    public JSONObject listBatchAnomalyScores(final String queryString) {
+        return batchAnomalyScore.list(queryString);
+    }
+
+    /**
+     * Updates a batch anomaly score.
+     *
+     * PUT /andromeda/batchanomalyscore/id?username=$BIGML_USERNAME;api_key=
+     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param batchAnomalyScoreId
+     *            a unique identifier in the form batchanomalyscore/id where id is
+     *            a string of 24 alpha-numeric chars.
+     * @param changes
+     *            set of parameters to update the batch anomaly score. Optional
+     *
+     */
+    public JSONObject updateBatchAnomalyScore(final String batchAnomalyScoreId,
+            final String changes) {
+        return batchAnomalyScore.update(batchAnomalyScoreId, changes);
+    }
+
+    /**
+     * Updates a batch anomaly score.
+     *
+     * PUT /andromeda/batchanomalyscore/id?username=$BIGML_USERNAME;api_key=
+     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param batchAnomalyScoreJSON
+     *            a batch anomaly score JSONObject
+     * @param changes
+     *            set of parameters to update the batch anomaly score. Optional
+     */
+    public JSONObject updateBatchAnomalyScore(
+            final JSONObject batchAnomalyScoreJSON, final JSONObject changes) {
+        return batchAnomalyScore.update(batchAnomalyScoreJSON, changes);
+    }
+
+    /**
+     * Deletes a batch anomaly score.
+     *
+     * DELETE /andromeda/batchanomalyscore/id?username=$BIGML_USERNAME;api_key=
+     * $BIGML_API_KEY; HTTP/1.1
+     *
+     * @param batchAnomalyScoreId
+     *            a unique identifier in the form batchanomalyscore/id where id is
+     *            a string of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject deleteBatchAnomalyScore(final String batchAnomalyScoreId) {
+        return batchAnomalyScore.delete(batchAnomalyScoreId);
+    }
+
+    /**
+     * Deletes a batch anomaly score.
+     *
+     * DELETE /andromeda/batchanomalyscore/id?username=$BIGML_USERNAME;api_key=
+     * $BIGML_API_KEY; HTTP/1.1
+     *
+     * @param batchAnomalyScoreJSON
+     *            a batch anomaly score JSONObject.
+     *
+     */
+    public JSONObject deleteBatchAnomalyScore(final JSONObject batchAnomalyScoreJSON) {
+        return batchAnomalyScore.delete(batchAnomalyScoreJSON);
     }
 
     // ################################################################
