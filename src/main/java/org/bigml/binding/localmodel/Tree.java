@@ -1,5 +1,6 @@
 package org.bigml.binding.localmodel;
 
+import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -195,7 +196,7 @@ public class Tree {
      *
      * @return true if it's a regression or false if it's a classification
      */
-    protected boolean isRegression() {
+    public boolean isRegression() {
         if( isClassification(this) ) {
             return false;
         }
@@ -339,6 +340,22 @@ public class Tree {
         return Double.NaN;
     }
 
+
+    /**
+     * Wilson score interval computation of the distribution for the prediction
+     *
+     * @param prediction {object} prediction Value of the prediction for which confidence
+     *        is computed
+     * @param distribution {{array}} distribution Distribution-like structure of predictions
+     *        and the associated weights (only for categoricals). (e.g.
+     *        {'Iris-setosa': 10, 'Iris-versicolor': 5})
+     */
+    public static double wsConfidence(Object prediction,
+                                      List<JSONArray> distribution) {
+        return wsConfidence(prediction, distribution, null, null);
+    }
+
+
     /**
      * Wilson score interval computation of the distribution for the prediction
      *
@@ -445,7 +462,7 @@ public class Tree {
      * 
      */
     public HashMap<Object, Object> predict(final JSONObject inputData) {
-        return predict(inputData, null, false, MissingStrategy.LAST_PREDICTION);
+        return predict(inputData, null, MissingStrategy.LAST_PREDICTION);
 
     }
 
@@ -458,17 +475,16 @@ public class Tree {
      * 
      */
     public HashMap<Object, Object> predict(final JSONObject inputData, List<String> path,
-                                  Boolean withConfidence, MissingStrategy missingStrategy) {
-        if (withConfidence == null) {
-            withConfidence = false;
+                                           MissingStrategy strategy) {
+        if (strategy == null) {
+            strategy = MissingStrategy.LAST_PREDICTION;
         }
-
 
         if( path == null ) {
             path = new ArrayList<String>();
         }
 
-        if( missingStrategy == MissingStrategy.LAST_PREDICTION  ) {
+        if( strategy == MissingStrategy.LAST_PREDICTION  ) {
 
             if (this.children != null && this.children.size() > 0) {
                 LOGGER.debug("Has children!");
@@ -487,7 +503,7 @@ public class Tree {
                         LOGGER.debug("Predicate applies!");
                         path.add(child.predicate.toRule(fields));
                         LOGGER.debug("Path:" + Arrays.toString(path.toArray()));
-                        return child.predict(inputData, path, withConfidence, missingStrategy);
+                        return child.predict(inputData, path, strategy);
                     }
                 }
             }
@@ -502,8 +518,7 @@ public class Tree {
             result.put("count", this.count);
             result.put("prediction", this.output);
             result.put("path", path);
-            if (withConfidence)
-                result.put("confidence", this.confidence);
+            result.put("confidence", this.confidence);
             result.put("distribution", this.distribution);
             return result;
 
@@ -520,8 +535,7 @@ public class Tree {
                         result.put("count", 1);
                         result.put("prediction", lastNode.getTree().output);
                         result.put("path", path);
-                        if (withConfidence)
-                            result.put("confidence", lastNode.getTree().confidence);
+                        result.put("confidence", lastNode.getTree().confidence);
                         result.put("distribution", lastNode.getTree().distribution);
                         return result;
                     }
@@ -542,8 +556,7 @@ public class Tree {
                 result.put("count", totalInstances);
                 result.put("prediction", prediction);
                 result.put("path", path);
-                if (withConfidence)
-                    result.put("confidence", confindence);
+                result.put("confidence", confindence);
                 result.put("distribution", distribution);
                 return result;
             } else {
@@ -553,8 +566,7 @@ public class Tree {
                 result.put("count", totalInstances);
                 result.put("prediction", distribution.get(0).get(0));
                 result.put("path", path);
-                if (withConfidence)
-                    result.put("confidence", wsConfidence(
+                result.put("confidence", wsConfidence(
                             distribution.get(0).get(0), distribution, totalInstances, DEFAULT_RZ));
                 result.put("distribution", distribution);
                 return result;
