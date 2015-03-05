@@ -3,13 +3,12 @@ package org.bigml.binding;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.util.*;
 
 import org.bigml.binding.resources.AbstractResource;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.slf4j.Logger;
@@ -29,6 +28,25 @@ public class PredictionsStepdefs {
 
     @Autowired
     private ContextRepository context;
+
+    @When("^I create a proportional missing strategy prediction by name=(true|false) for \"(.*)\"$")
+    public void I_create_a_proportional_missing_strategy_prediction(String by_name, String inputData)
+            throws AuthenticationException {
+        String modelId = (String) context.model.get("resource");
+        Boolean byName = new Boolean(by_name);
+
+        JSONObject args = new JSONObject();
+        args.put("tags", Arrays.asList("unitTest"));
+        args.put("missing_strategy", 1);
+
+        JSONObject resource = BigMLClient.getInstance().createPrediction(
+                modelId, (JSONObject) JSONValue.parse(inputData), byName,
+                args, 5, null);
+        context.status = (Integer) resource.get("code");
+        context.location = (String) resource.get("location");
+        context.prediction = (JSONObject) resource.get("object");
+        commonSteps.the_resource_has_been_created_with_status(context.status);
+    }
 
     @When("^I create a prediction by name=(true|false) for \"(.*)\"$")
     public void I_create_a_prediction(String by_name, String inputData)
@@ -59,18 +77,24 @@ public class PredictionsStepdefs {
     }
 
     @Then("^the numerical prediction for \"([^\"]*)\" is ([\\d,.]+)$")
-    public void the_numerical_prediction_for_is(String expected, double pred) {
+    public void the_numerical_prediction_for_is(String objectiveField, double pred) {
         JSONObject obj = (JSONObject) context.prediction.get("prediction");
-        String predictionValue = String.format("%.12g%n", ((Double) obj.get(expected)));
+        String predictionValue = String.format("%.5g", ((Double) obj.get(objectiveField)));
 
-        assertEquals(String.format("%.12g%n", pred), predictionValue);
+        assertEquals(String.format("%.5g", pred), predictionValue);
     }
 
     @Then("^the prediction for \"([^\"]*)\" is \"([^\"]*)\"$")
-    public void the_prediction_for_is(String expected, String pred) {
+    public void the_prediction_for_is(String objectiveField, String pred) {
         JSONObject obj = (JSONObject) context.prediction.get("prediction");
-        String objective = (String) obj.get(expected);
+        String objective = (String) obj.get(objectiveField);
         assertEquals(pred, objective);
+    }
+
+    @Then("^the confidence for the prediction is ([\\d,.]+)$")
+    public void the_confidence_for_the_prediction_is(Double expectedConfidence) {
+        Double actualConfidence = (Double) context.prediction.get("confidence");
+        assertEquals(String.format("%.4g", expectedConfidence), String.format("%.4g",actualConfidence));
     }
 
     @When("^I create a prediction with ensemble for \"(.*)\"$")
@@ -141,4 +165,55 @@ public class PredictionsStepdefs {
         I_wait_until_prediction_status_code_is(AbstractResource.FINISHED,
                 AbstractResource.FAULTY, secs);
     }
+
+    @Given("^I combine the votes in \"(.*)\"$")
+    public void I_combine_the_votes(String dir)
+            throws AuthenticationException {
+        try {
+            context.votes = context.multiModel.batchVotes(dir, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            assertTrue("Exception combining votes", false);
+        }
+    }
+
+    @Given("^the plurality combined predictions are \"(.*)\"$")
+    public void The_plurality_combined_prediction(String predictionsStr)
+            throws AuthenticationException {
+        JSONArray predictions = (JSONArray) JSONValue.parse(predictionsStr);
+        for (int iVote = 0; iVote < context.votes.size(); iVote++ ) {
+            MultiVote vote = context.votes.get(iVote);
+            Map<Object,Object> combinedPrediction = vote.combine();
+            assertEquals("The predictions are not equals", predictions.get(iVote),
+                    combinedPrediction.get("prediction"));
+        }
+    }
+
+    @Given("^the confidence weighted predictions are \"(.*)\"$")
+    public void The_confidence_weighted_prediction(String predictionsStr)
+            throws AuthenticationException {
+        JSONArray predictions = (JSONArray) JSONValue.parse(predictionsStr);
+        for (int iVote = 0; iVote < context.votes.size(); iVote++ ) {
+            MultiVote vote = context.votes.get(iVote);
+            Map<Object,Object> combinedPrediction = vote.combine(MultiVote.CONFIDENCE, false,
+                    null, null, null, null, null);
+            assertEquals("The predictions are not equals", predictions.get(iVote),
+                    combinedPrediction.get("prediction"));
+        }
+    }
+
+
+
+
+//    @Given("^I create a batch prediction for \"(.*)\" and save it in \"(.*)\"$")
+//    public void i_create_a_batch_prediction_for_and_save_it_in(String inputDataList, String directory)
+//            throws AuthenticationException {
+//        if( directory != null && directory.length() > 0 ) {
+//            File dirFile = new File(directory);
+//            if( !dirFile.exists() ) {
+//                dirFile.mkdirs();
+//            }
+//        }
+//    }
+
 }

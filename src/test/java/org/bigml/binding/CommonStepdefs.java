@@ -28,6 +28,24 @@ public class CommonStepdefs {
         assertTrue("", BigMLClient.getInstance(false) != null);
     }
 
+    @Given("^that I use production mode with domain=\"(.*)\" and seed=\"([^\"]*)\"$")
+    public void that_I_use_production_mode_with_domain(String bigmlDomain, String seed) throws Throwable {
+        BigMLClient.resetInstance();
+        BigMLClient.getInstance(bigmlDomain, System.getProperty("BIGML_USERNAME"),
+                System.getProperty("BIGML_API_KEY"),
+                seed, false, null);
+        assertTrue("", BigMLClient.getInstance() != null);
+    }
+
+    @Given("^that I use production mode with domain=\"([^\"]*)\"$")
+    public void that_I_use_production_mode_with_domain(String bigmlDomain) throws Throwable {
+        BigMLClient.resetInstance();
+        BigMLClient.getInstance(bigmlDomain, System.getProperty("BIGML_USERNAME"),
+                System.getProperty("BIGML_API_KEY"),
+                null, false, null);
+        assertTrue("", BigMLClient.getInstance() != null);
+    }
+
     @Given("^that I use production mode$")
     public void that_I_use_production_mode() throws Throwable {
         BigMLClient.resetInstance();
@@ -42,12 +60,32 @@ public class CommonStepdefs {
         assertTrue("", BigMLClient.getInstance(true) != null);
     }
 
+    @Given("^that I use development mode with domain=\"(.*)\" and seed=\"([^\"]*)\"$")
+    public void that_I_use_development_mode_with_domain_and_seed(String bigmlDomain, String seed) throws Throwable {
+        BigMLClient.resetInstance();
+        BigMLClient.getInstance(bigmlDomain, System.getProperty("BIGML_USERNAME"),
+                System.getProperty("BIGML_API_KEY"),
+                seed, true, null);
+        assertTrue("", BigMLClient.getInstance() != null);
+    }
+
+
+    @Given("^that I use development mode with domain=\"([^\"]*)\"$")
+    public void that_I_use_development_mode_with_domain(String bigmlDomain) throws Throwable {
+        BigMLClient.resetInstance();
+        BigMLClient.getInstance(bigmlDomain, System.getProperty("BIGML_USERNAME"),
+                System.getProperty("BIGML_API_KEY"),
+                null, true, null);
+        assertTrue("", BigMLClient.getInstance() != null);
+    }
+
     @Given("^that I use development mode$")
     public void that_I_use_development_mode() throws Throwable {
         BigMLClient.resetInstance();
         BigMLClient.getInstance(true);
         assertTrue("", BigMLClient.getInstance(true) != null);
     }
+
 
     @Then("^test listing$")
     public void test_listing() throws AuthenticationException {
@@ -109,7 +147,23 @@ public class CommonStepdefs {
             context.cluster = null;
         }
         if (context.anomaly != null) {
-            BigMLClient.getInstance().deleteModel(
+
+            if( context.anomalies != null ) {
+                int anomalyToRemove = -1;
+                for (int iAnomaly = 0; iAnomaly < context.anomalies.size(); iAnomaly++ ) {
+                    JSONObject anomalyInList = (JSONObject) context.anomalies.get(iAnomaly);
+                    if( anomalyInList.get("resource").equals(context.anomaly.get("resource"))) {
+                        anomalyToRemove = iAnomaly;
+                        break;
+                    }
+                }
+
+                if( anomalyToRemove >= 0  ) {
+                    context.anomalies.remove(anomalyToRemove);
+                }
+            }
+
+            BigMLClient.getInstance().deleteAnomaly(
                     (String) context.anomaly.get("resource"));
             context.anomaly = null;
         }
@@ -120,14 +174,64 @@ public class CommonStepdefs {
             }
             context.anomalies = null;
         }
+        if (context.anomalyScore != null) {
+
+            if( context.anomalyScores != null ) {
+                int anomalyScoreToRemove = -1;
+                for (int iAnomalyScore = 0; iAnomalyScore < context.anomalyScores.size(); iAnomalyScore++ ) {
+                    JSONObject anomalyInList = (JSONObject) context.anomalyScores.get(iAnomalyScore);
+                    if( anomalyInList.get("resource").equals(context.anomalyScore.get("resource"))) {
+                        anomalyScoreToRemove = iAnomalyScore;
+                        break;
+                    }
+                }
+
+                if( anomalyScoreToRemove >= 0  ) {
+                    context.anomalyScores.remove(anomalyScoreToRemove);
+                }
+            }
+
+            BigMLClient.getInstance().deleteAnomalyScore(
+                    (String) context.anomalyScore.get("resource"));
+            context.anomalyScore = null;
+        }
+        if (context.batchAnomalyScore != null) {
+            BigMLClient.getInstance().deleteBatchAnomalyScore(
+                    (String) context.batchAnomalyScore.get("resource"));
+            context.batchAnomalyScore = null;
+        }
         if (context.model != null) {
+
+            if( context.models != null ) {
+                int modelToRemove = -1;
+                for (int iModel = 0; iModel < context.models.size(); iModel++ ) {
+                    JSONObject modelInList = (JSONObject) context.models.get(iModel);
+                    if( modelInList.get("resource").equals(context.model.get("resource"))) {
+                        modelToRemove = iModel;
+                        break;
+                    }
+                }
+
+                if( modelToRemove >= 0  ) {
+                    context.models.remove(modelToRemove);
+                }
+            }
+
             BigMLClient.getInstance().deleteModel(
                     (String) context.model.get("resource"));
             context.model = null;
         }
+        if (context.anomalyScores != null) {
+            for (Object anomalyScore : context.anomalyScores) {
+                BigMLClient.getInstance().
+                        deleteAnomalyScore((String) ((JSONObject) anomalyScore).get("resource"));
+            }
+            context.anomalyScores = null;
+        }
         if (context.models != null) {
             for (Object model : context.models) {
-                BigMLClient.getInstance().deleteModel((String) model);
+                BigMLClient.getInstance().
+                        deleteModel((String) ((JSONObject) model).get("resource"));
             }
             context.models = null;
         }
@@ -235,6 +339,24 @@ public class CommonStepdefs {
         for (int i = 0; i < anomalies.size(); i++) {
             JSONObject model = (JSONObject) anomalies.get(i);
             BigMLClient.getInstance().deleteAnomaly(
+                    (String) model.get("resource"));
+        }
+
+        // Anomaly Scores
+        JSONArray anomalyScores = (JSONArray) BigMLClient.getInstance().listAnomalyScores(";tags__in=unitTest")
+                .get("objects");
+        for (int i = 0; i < anomalyScores.size(); i++) {
+            JSONObject model = (JSONObject) anomalyScores.get(i);
+            BigMLClient.getInstance().deleteAnomalyScore(
+                    (String) model.get("resource"));
+        }
+
+        // Batch Anomaly Scores
+        JSONArray batchAnomalyScores = (JSONArray) BigMLClient.getInstance().listBatchAnomalyScores(";tags__in=unitTest")
+                .get("objects");
+        for (int i = 0; i < batchAnomalyScores.size(); i++) {
+            JSONObject model = (JSONObject) batchAnomalyScores.get(i);
+            BigMLClient.getInstance().deleteBatchAnomalyScore(
                     (String) model.get("resource"));
         }
 

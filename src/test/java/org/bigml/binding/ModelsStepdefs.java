@@ -1,6 +1,7 @@
 package org.bigml.binding;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.*;
@@ -21,7 +22,7 @@ public class ModelsStepdefs {
     // Logging
     Logger logger = LoggerFactory.getLogger(ModelsStepdefs.class);
 
-    MultiModel multiModel;
+//    MultiModel multiModel;
     CommonStepdefs commonSteps = new CommonStepdefs();
 
     @Autowired
@@ -29,6 +30,83 @@ public class ModelsStepdefs {
 
     private String sharedHash;
     private String sharedKey;
+
+    @Given("^I create a model with missing splits$")
+    public void I_create_a_model_with_missing_splits() throws AuthenticationException {
+        String datasetId = (String) context.dataset.get("resource");
+
+        JSONObject args = new JSONObject();
+        args.put("tags", Arrays.asList("unitTest"));
+        args.put("missing_splits", true);
+
+        JSONObject resource = BigMLClient.getInstance().createModel(datasetId,
+                args, 5, null);
+        context.status = (Integer) resource.get("code");
+        context.location = (String) resource.get("location");
+        context.model = (JSONObject) resource.get("object");
+
+        if( context.models == null ) {
+            context.models = new JSONArray();
+        }
+        context.models.add(context.model);
+
+        commonSteps.the_resource_has_been_created_with_status(context.status);
+    }
+
+
+    @Given("^I create a model from a dataset list$")
+    public void I_create_a_model_from_a_dataset_list() throws AuthenticationException {
+        JSONObject args = new JSONObject();
+        args.put("tags", Arrays.asList("unitTest"));
+        args.put("missing_splits", false);
+
+        JSONObject resource = BigMLClient.getInstance().createModel(context.datasets,
+                args, 5, null);
+        context.status = (Integer) resource.get("code");
+        context.location = (String) resource.get("location");
+        context.model = (JSONObject) resource.get("object");
+        if( context.models == null ) {
+            context.models = new JSONArray();
+        }
+        context.models.add(context.model);
+        commonSteps.the_resource_has_been_created_with_status(context.status);
+    }
+
+    @Given("^I create a model with \"(.*)\"$")
+    public void I_create_a_model_with_params(String args) throws Throwable {
+        String datasetId = (String) context.dataset.get("resource");
+        JSONObject argsJSON = (JSONObject) JSONValue.parse(args);
+
+        if( argsJSON != null ) {
+            if (argsJSON.containsKey("tags")) {
+                ((JSONArray) argsJSON.get("tags")).add("unitTest");
+            } else {
+                argsJSON.put("tags", Arrays.asList("unitTest"));
+            }
+
+            if( !argsJSON.containsKey("missing_splits") ) {
+                argsJSON.put("missing_splits", false);
+            }
+        } else {
+            argsJSON = new JSONObject();
+            argsJSON.put("tags", Arrays.asList("unitTest"));
+            argsJSON.put("missing_splits", false);
+        }
+
+        JSONObject resource = BigMLClient.getInstance().createModel(datasetId,
+                argsJSON, 5, null);
+        context.status = (Integer) resource.get("code");
+        context.location = (String) resource.get("location");
+        context.model = (JSONObject) resource.get("object");
+
+
+        if( context.models == null ) {
+            context.models = new JSONArray();
+        }
+        context.models.add(context.model);
+
+        commonSteps.the_resource_has_been_created_with_status(context.status);
+    }
 
     @Given("^I create a model$")
     public void I_create_a_model() throws AuthenticationException {
@@ -43,6 +121,10 @@ public class ModelsStepdefs {
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.model = (JSONObject) resource.get("object");
+        if( context.models == null ) {
+            context.models = new JSONArray();
+        }
+        context.models.add(context.model);
         commonSteps.the_resource_has_been_created_with_status(context.status);
     }
 
@@ -90,41 +172,8 @@ public class ModelsStepdefs {
         context.model = (JSONObject) resource.get("object");
     }
 
-    // ---------------------------------------------------------------------
-    // create_prediction_multi_model.feature
-    // ---------------------------------------------------------------------
-
-    @Given("^I create a model with \"(.*)\"$")
-    public void I_create_a_model_with_params(String args) throws Throwable {
-        String datasetId = (String) context.dataset.get("resource");
-        JSONObject argsJSON = (JSONObject) JSONValue.parse(args);
-
-        if( argsJSON != null ) {
-            if (argsJSON.containsKey("tags")) {
-                ((JSONArray) argsJSON.get("tags")).add("unitTest");
-            } else {
-                argsJSON.put("tags", Arrays.asList("unitTest"));
-            }
-
-            if( !argsJSON.containsKey("missing_splits") ) {
-                argsJSON.put("missing_splits", false);
-            }
-        } else {
-            argsJSON = new JSONObject();
-            argsJSON.put("tags", Arrays.asList("unitTest"));
-            argsJSON.put("missing_splits", false);
-        }
-
-        JSONObject resource = BigMLClient.getInstance().createModel(datasetId,
-                argsJSON, 5, null);
-        context.status = (Integer) resource.get("code");
-        context.location = (String) resource.get("location");
-        context.model = (JSONObject) resource.get("object");
-        commonSteps.the_resource_has_been_created_with_status(context.status);
-    }
-
     @Given("^I retrieve a list of remote models tagged with \"(.*)\"$")
-    public void I_cretrieve_a_list_of_remote_models_tagged_with(String tag)
+    public void I_retrieve_a_list_of_remote_models_tagged_with(String tag)
             throws Throwable {
         context.models = new JSONArray();
         JSONArray models = (JSONArray) BigMLClient.getInstance()
@@ -139,8 +188,8 @@ public class ModelsStepdefs {
 
     @Given("^I create a local multi model$")
     public void I_create_a_local_multi_model() throws Exception {
-        multiModel = new MultiModel(context.models);
-        assertTrue("", multiModel != null);
+        context.multiModel = new MultiModel(context.models);
+        assertTrue("", context.multiModel != null);
     }
 
     @Then("^the local multi prediction by name=(true|false) for \"(.*)\" is \"([^\"]*)\"$")
@@ -148,7 +197,7 @@ public class ModelsStepdefs {
             String args, String pred) throws Exception {
         Boolean byName = new Boolean(by_name);
         JSONObject inputObj = (JSONObject) JSONValue.parse(args);
-        HashMap<Object, Object> prediction = multiModel.predict(inputObj,
+        HashMap<Object, Object> prediction = context.multiModel.predict(inputObj,
                 byName, null, true);
         assertTrue(
                 "",
@@ -187,6 +236,20 @@ public class ModelsStepdefs {
 
         Integer code = (Integer) context.model.get("code");
         assertEquals(AbstractResource.HTTP_OK, code.intValue());
+    }
+
+    @Given("^I check the model stems from the original dataset list$")
+    public void I_check_the_model_stems_from_the_original_dataset_list()
+            throws Throwable {
+        if( context.model.containsKey("datasets") &&
+                ((JSONArray) context.model.get("datasets")).containsAll(context.datasets) ) {
+           assertTrue(true);
+        } else {
+           assertFalse(String.format("The model contains only %s " +
+                   "and the dataset ids are %s",
+                   Arrays.toString(((JSONArray) context.model.get("datasets")).toArray()),
+                   Arrays.toString((context.datasets.toArray()))), false);
+        }
     }
 
     // ---------------------------------------------------------------------

@@ -19,8 +19,8 @@ Feature: Create Predictions from Ensembles
 
 	Examples:
         | data             | seed      | time_1  | time_2 | time_3 | time_4 | number_of_models | tlp   | data_input    | objective | prediction  |
-        | data/iris.csv | BigML |  10      | 10     | 50     | 20     | 5                | 1     | {"petal width": 0.5} | 000004    | Iris-versicolor |
-        | data/iris_sp_chars.csv | BigML | 10 | 10 | 50 | 20 | 5 | 1 | {"pétal&width\u0000": 0.5} | 000004 | Iris-versicolor |
+        | data/iris.csv | BigML |  10      | 10     | 100     | 20     | 5                | 1     | {"petal width": 0.5} | 000004    | Iris-versicolor |
+        | data/iris_sp_chars.csv | BigML | 10 | 10 | 100 | 20 | 5 | 1 | {"pétal&width\u0000": 0.5} | 000004 | Iris-versicolor |
 
 
   Scenario Outline: Successfully creating a prediction from an ensemble:

@@ -1,6 +1,7 @@
 package org.bigml.binding;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -12,7 +13,9 @@ import java.util.GregorianCalendar;
 
 import org.bigml.binding.resources.AbstractResource;
 import org.bigml.binding.utils.Utils;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,6 +131,65 @@ public class BatchPredictionsStepdefs {
             throw new Exception();
         }
 
+    }
+
+
+    @When("^I create a batch anomaly score$")
+    public void I_create_a_batch_prediction_with_anomaly() throws Throwable {
+        assertNotNull("Dataset cannot be null!", context.dataset);
+        assertNotNull("Anomaly Detector cannot be null!", context.anomaly);
+
+        String anomalyId = (String) context.anomaly.get("resource");
+        String datasetId = (String) context.dataset.get("resource");
+
+        JSONObject args = new JSONObject();
+        args.put("tags", Arrays.asList("unitTest"));
+
+        JSONObject resource = BigMLClient.getInstance().createBatchAnomalyScore(
+                anomalyId, datasetId, args, 5, null);
+
+        context.status = (Integer) resource.get("code");
+        context.location = (String) resource.get("location");
+        context.batchAnomalyScore = (JSONObject) resource.get("object");
+        commonSteps.the_resource_has_been_created_with_status(context.status);
+    }
+
+
+    @Then("^I create a batch prediction for \"(.*)\" and save it in \"(.*)\"$")
+    public void I_create_a_batch_prediction_and_save_it_in(String dataInput,
+            String path) throws Throwable {
+
+        if( !new File(path).exists() ) {
+            new File(path).mkdirs();
+        }
+
+        JSONArray inputDataList = dataInput != null ? (JSONArray) JSONValue.parse(dataInput)
+                : null;
+
+        context.multiModel.batchPredict(inputDataList, path);
+    }
+
+    @Then("^I create a source from the batch prediction$")
+    public void I_create_a_source_from_the_batch_prediction() throws Throwable {
+
+        String batchPredictionId = (String) context.batchPrediction.get("resource");
+
+        assertNotNull("A batch prediction id is needed.", batchPredictionId);
+
+        JSONObject source = BigMLClient.getInstance().createSourceFromBatchPrediction(batchPredictionId,
+                new JSONObject());
+
+
+        Integer code = (Integer) source.get("code");
+        assertEquals(AbstractResource.HTTP_CREATED, code.intValue());
+        context.location = (String) source.get("location");
+        context.source = (JSONObject) source.get("object");
+
+        if( context.sources == null ) {
+            context.sources = new JSONArray();
+        }
+
+        context.sources.add(source.get("resource"));
     }
 
 }

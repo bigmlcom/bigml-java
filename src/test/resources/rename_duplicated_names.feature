@@ -1,5 +1,5 @@
 Feature: Rename duplicated names
-    In order rename the duplicated field names
+  In order rename the duplicated field names
     I need to create a model first
     Then I need to create a local model
 

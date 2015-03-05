@@ -3,6 +3,9 @@ package org.bigml.binding;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import java.util.List;
+import java.util.Map;
+
 @org.springframework.stereotype.Repository
 public class ContextRepository {
 
@@ -12,16 +15,25 @@ public class ContextRepository {
     JSONObject dataset = null;
     JSONObject model = null;
     JSONObject anomaly = null;
+    JSONObject anomalyScore = null;
+    JSONArray  anomalyScores = null;
+    JSONObject batchAnomalyScore = null;
     JSONObject prediction = null;
     JSONObject evaluation = null;
     JSONObject ensemble = null;
     JSONArray models = null;
     JSONArray anomalies = null;
     JSONArray datasets = null;
+    JSONArray sources = null;
     JSONObject batchPrediction = null;
     JSONObject cluster = null;
     JSONObject centroid = null;
     JSONObject batchCentroid = null;
+    MultiModel multiModel = null;
+    List<MultiVote> votes = null;
+
+    Map<String, Long> datasetErrorCounts;
+    Map<String, Long> datasetMissingCounts;
 
     public int getStatus() {
         return status;
@@ -71,6 +83,30 @@ public class ContextRepository {
         this.anomaly = anomaly;
     }
 
+    public JSONObject getAnomalyScore() {
+        return anomalyScore;
+    }
+
+    public void setAnomalyScore(JSONObject anomalyScore) {
+        this.anomalyScore = anomalyScore;
+    }
+
+    public JSONArray getAnomalyScores() {
+        return anomalyScores;
+    }
+
+    public void setAnomalyScores(JSONArray anomalyScores) {
+        this.anomalyScores = anomalyScores;
+    }
+
+    public JSONObject getBatchAnomalyScore() {
+        return batchAnomalyScore;
+    }
+
+    public void setBatchAnomalyScore(JSONObject batchAnomalyScore) {
+        this.batchAnomalyScore = batchAnomalyScore;
+    }
+
     public JSONObject getPrediction() {
         return prediction;
     }
@@ -93,6 +129,14 @@ public class ContextRepository {
 
     public void setEnsemble(JSONObject ensemble) {
         this.ensemble = ensemble;
+    }
+
+    public JSONArray getSources() {
+        return sources;
+    }
+
+    public void setSources(JSONArray sources) {
+        this.sources = sources;
     }
 
     public JSONArray getDatasets() {
@@ -151,4 +195,27 @@ public class ContextRepository {
         this.batchCentroid = batchCentroid;
     }
 
+    public Map<String, Long> getDatasetErrorCounts() {
+        return datasetErrorCounts;
+    }
+
+    public void setDatasetErrorCounts(Map<String, Long> datasetErrorCounts) {
+        this.datasetErrorCounts = datasetErrorCounts;
+    }
+
+    public Map<String, Long> getDatasetMissingCounts() {
+        return datasetMissingCounts;
+    }
+
+    public void setDatasetMissingCounts(Map<String, Long> datasetMissingCounts) {
+        this.datasetMissingCounts = datasetMissingCounts;
+    }
+
+    public MultiModel getMultiModel() {
+        return multiModel;
+    }
+
+    public void setMultiModel(MultiModel multiModel) {
+        this.multiModel = multiModel;
+    }
 }

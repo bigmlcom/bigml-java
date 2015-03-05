@@ -43,6 +43,7 @@ public class ClustersStepdefs {
 
         JSONObject args = new JSONObject();
         args.put("tags", Arrays.asList("unitTest"));
+        args.put("k", 8);
 
         JSONObject resource = BigMLClient.getInstance().createCluster(
                 datasetId, args, 5, null);
@@ -137,7 +138,15 @@ public class ClustersStepdefs {
         assertEquals(AbstractResource.FINISHED, code.intValue());
     }
 
-    @Then("the centroid is \"(.*)\"$")
+    @Then("the centroid is \"([^\"]*)\" with distance (.*)$")
+    public void the_centroid_is_with_distance(String result, Double distance) throws AuthenticationException {
+        assertEquals(result, context.centroid.get("centroid_name"));
+        String confidenceValue = String.format("%.8g",
+                ((Number) context.centroid.get("distance")).doubleValue());
+        assertTrue(confidenceValue.equals(String.format("%.8g", distance)));
+    }
+
+    @Then("the centroid is \"([^\"]*)\"$")
     public void the_centroid_is(String result) throws AuthenticationException {
         assertEquals(result, context.centroid.get("centroid_name"));
     }

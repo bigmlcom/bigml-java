@@ -4,12 +4,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import cucumber.annotation.en.Then;
 import org.bigml.binding.resources.AbstractResource;
+import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -26,6 +30,9 @@ public class DatasetsStepdefs {
     Logger logger = LoggerFactory.getLogger(DatasetsStepdefs.class);
 
     CommonStepdefs commonSteps = new CommonStepdefs();
+
+    long datasetOrigRows;
+    long datasetRatedRows;
 
     @Autowired
     private ContextRepository context;
@@ -115,6 +122,42 @@ public class DatasetsStepdefs {
         context.dataset = null;
     }
 
+    @Given("^I ask for the missing values counts in the fields$")
+    public void I_ask_for_the_missing_values_counts_in_the_fields()
+            throws AuthenticationException {
+        Fields fields = new Fields((JSONObject) context.dataset.get("fields"));
+        context.datasetMissingCounts = fields.getMissingCounts();
+    }
+
+    @Given("^I ask for the error counts in the fields$")
+    public void I_ask_for_the_error_counts_in_the_fields()
+            throws AuthenticationException {
+        String datasetId = (String) context.dataset.get("resource");
+        context.datasetErrorCounts = BigMLClient.getInstance().getErrorCounts(datasetId);
+    }
+
+    @Given("^the (missing values counts|error counts) dict is \"(.*)\"$")
+    public void I_get_the_error_values(String missingOrErrors, String propertiesDict)
+            throws AuthenticationException {
+        JSONObject propertiesDictJSON = propertiesDict != null ? (JSONObject) JSONValue.parse(propertiesDict)
+                : null;
+
+        assertNotNull("No dataset available in the context", context.dataset);
+        assertNotNull("The propertiesDict was not informed", propertiesDictJSON);
+
+
+        if( missingOrErrors.equals("error counts") ) {
+            for (String fieldId : context.datasetErrorCounts.keySet()) {
+                assertEquals(context.datasetErrorCounts.get(fieldId), propertiesDictJSON.get(fieldId));
+            }
+        } else {
+            for (String fieldId : context.datasetMissingCounts.keySet()) {
+                assertEquals(context.datasetMissingCounts.get(fieldId), propertiesDictJSON.get(fieldId));
+            }
+        }
+    }
+
+
     // ---------------------------------------------------------------------
     // split_dataset.feature
     // ---------------------------------------------------------------------
@@ -122,8 +165,38 @@ public class DatasetsStepdefs {
     @Given("^I create a dataset extracting a ([\\d,.]+) sample$")
     public void I_create_a_dataset_extracting_a_sample(double rate)
             throws Throwable {
+        if( null == context.datasets ) {
+            context.datasets = new JSONArray();
+        }
+
         String datasetId = (String) context.dataset.get("resource");
 
+
+        JSONObject args = new JSONObject();
+        args.put("tags", Arrays.asList("unitTest"));
+        args.put("sample_rate", rate);
+
+        datasetOrigRows = (Long) context.dataset.get("rows");
+
+        JSONObject resource = BigMLClient.getInstance().createDataset(datasetId,
+                args, 5, null);
+        context.status = (Integer) resource.get("code");
+        context.location = (String) resource.get("location");
+        context.dataset = (JSONObject) resource.get("object");
+        context.datasets.add(context.dataset.get("resource"));
+        commonSteps.the_resource_has_been_created_with_status(context.status);
+    }
+
+    @When("^I compare the datasets\' instances$")
+    public void I_compare_datasets_instances()
+            throws Throwable {
+        datasetRatedRows = (Long) context.dataset.get("rows");
+    }
+
+    @Then("^the proportion of instances between datasets is ([\\d,.]+)$")
+    public void The_proportion_datasets_instances(double rate)
+            throws Throwable {
+        assertEquals( (long) (datasetOrigRows * rate), datasetRatedRows);
     }
 
     /*
@@ -179,6 +252,47 @@ public class DatasetsStepdefs {
         Long code = (Long) ((JSONObject) context.dataset.get("status"))
                 .get("code");
         assertEquals(AbstractResource.FINISHED, code.intValue());
+    }
+
+    @Given("^I check that the dataset is created for the cluster and the centroid$")
+    public void i_check_dataset_from_cluster_centroid() throws Throwable {
+        JSONObject changes = new JSONObject();
+        changes.put("private", new Boolean(false));
+
+        JSONObject resource = BigMLClient.getInstance().getCluster(
+                (JSONObject) context.cluster.get("resource"));
+        context.status = (Integer) resource.get("code");
+
+        assertEquals(AbstractResource.HTTP_OK, context.status);
+
+        assertEquals(context.getDataset().get("resource"), String.format("dataset/%s",
+                Utils.getJSONObject(resource,
+                        String.format("object.cluster_datasets.%s", context.centroid.get("centroid_id")) )));
+
+    }
+
+    @When("^I download the dataset file to \"([^\"]*)\"$")
+    public void I_download_the_dataset_file_to(String fileTo)
+            throws Throwable {
+        BigMLClient.getInstance().downloadDataset((String) context.getDataset().get("resource"),
+                fileTo);
+    }
+
+    @Then("^the dataset file \"([^\"]*)\" is like \"([^\"]*)\"$")
+    public void the_dataset_file_is_like(String downloadedFile,
+                                                  String checkFile) throws Throwable {
+
+        FileInputStream downloadFis = new FileInputStream(new File(
+                downloadedFile));
+        FileInputStream checkFis = new FileInputStream(new File(checkFile));
+
+        String localCvs = Utils.inputStreamAsString(downloadFis, "UTF-8");
+        String checkCvs = Utils.inputStreamAsString(checkFis, "UTF-8");
+
+        if (!localCvs.equals(checkCvs)) {
+            throw new Exception();
+        }
+
     }
 
 }

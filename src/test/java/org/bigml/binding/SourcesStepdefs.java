@@ -64,7 +64,7 @@ public class SourcesStepdefs {
 
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
-        context.dataset = (JSONObject) resource.get("object");
+        context.source = (JSONObject) resource.get("object");
         commonSteps
                 .the_resource_has_been_updated_with_status(context.status);
         I_wait_until_the_source_is_ready_less_than_secs(secs);
@@ -119,11 +119,20 @@ public class SourcesStepdefs {
                     sourceId, args);
             context.status = (Integer) resource.get("code");
             context.location = (String) resource.get("location");
-            context.dataset = (JSONObject) resource.get("object");
+            context.source = (JSONObject) resource.get("object");
             commonSteps
                     .the_resource_has_been_updated_with_status(context.status);
             I_wait_until_the_source_is_ready_less_than_secs(secs);
         }
+    }
+
+    @Given("^The source has development (true|false)$")
+    public void The_source_has_development(String isDevStr) throws Throwable {
+        Boolean isDev = new Boolean(isDevStr);
+
+        Boolean isModelInDev = (Boolean) context.source.get("dev");
+
+        assertTrue(isDev.booleanValue() == isModelInDev.booleanValue());
     }
 
 }
