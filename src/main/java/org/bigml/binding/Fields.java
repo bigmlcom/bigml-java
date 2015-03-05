@@ -277,6 +277,34 @@ public class Fields {
     }
 
     /**
+     * Returns the list of columns Ids
+     */
+    public List<String> getColumnsIds() {
+        return new ArrayList<String>(rowIds);
+    }
+
+    /**
+     * Returns the list of columns Names
+     */
+    public List<String> getColumnsNames() {
+        return new ArrayList<String>(fieldsByName.keySet());
+    }
+
+    /**
+     * Returns the field object using its fieldID
+     */
+    public JSONObject getFieldById(String fieldID) {
+        return (JSONObject) fields.get(fieldID);
+    }
+
+    /**
+     * Returns the field object using its Name
+     */
+    public JSONObject getFieldByName(String fieldName) {
+        return (JSONObject) fieldsByName.get(fieldName);
+    }
+
+    /**
      * Returns a field id
      *
      * @param fieldName the field key
