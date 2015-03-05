@@ -43,6 +43,7 @@ public abstract class AbstractResource {
     public final static String BATCH_CENTROID_PATH = "batchcentroid";
     public final static String ANOMALY_PATH = "anomaly";
     public final static String ANOMALYSCORE_PATH = "anomalyscore";
+    public final static String BATCHANOMALYSCORE_PATH = "batchanomalyscore";
 
     // Base Resource regular expressions
     static String SOURCE_RE = "^" + SOURCE_PATH + "/[a-f,0-9]{24}$";
@@ -65,6 +66,8 @@ public abstract class AbstractResource {
     static String ANOMALY_RE = "^" + ANOMALY_PATH
             + "/[a-f,0-9]{24}$";
     static String ANOMALYSCORE_RE = "^" + ANOMALYSCORE_PATH
+            + "/[a-f,0-9]{24}$";
+    static String BATCH_ANOMALYSCORE_RE = "^" + BATCHANOMALYSCORE_PATH
             + "/[a-f,0-9]{24}$";
 
     // HTTP Status Codes from https://bigml.com/developers/status_codes
@@ -133,6 +136,9 @@ public abstract class AbstractResource {
     protected String BATCH_CENTROID_URL;
     protected String ANOMALY_URL;
     protected String ANOMALYSCORE_URL;
+    protected String BATCHANOMALYSCORE_URL;
+
+    public final static String DOWNLOAD_DIR = "/download";
 
     protected void init() {
         try {
@@ -149,6 +155,7 @@ public abstract class AbstractResource {
             BATCH_CENTROID_URL = BIGML_URL + BATCH_CENTROID_PATH;
             ANOMALY_URL = BIGML_URL + ANOMALY_PATH;
             ANOMALYSCORE_URL = BIGML_URL + ANOMALYSCORE_PATH;
+            BATCHANOMALYSCORE_URL = BIGML_URL + BATCHANOMALYSCORE_PATH;
         } catch (AuthenticationException ae) {
 
         }
@@ -655,6 +662,119 @@ public abstract class AbstractResource {
             csv = Utils.inputStreamAsString(connection.getInputStream(), "UTF-8");
 
             if (code == HTTP_OK) {
+                if (fileName != null) {
+                    File file = new File(fileName);
+                    if (!file.exists()) {
+
+                    }
+                    BufferedWriter output = new BufferedWriter(new FileWriter(
+                            file));
+                    output.write(csv);
+                    output.close();
+                }
+            } else {
+                if (code == HTTP_BAD_REQUEST || code == HTTP_UNAUTHORIZED
+                        || code == HTTP_NOT_FOUND) {
+                    error = (JSONObject) JSONValue.parse(Utils
+                            .inputStreamAsString(connection.getInputStream(), "UTF-8"));
+                    logger.info("Error downloading:" + code);
+                } else {
+                    logger.info("Unexpected error (" + code + ")");
+                    code = HTTP_INTERNAL_SERVER_ERROR;
+                }
+            }
+
+        } catch (Throwable e) {
+            logger.error("Error downloading batch prediction", e);
+        }
+
+        JSONObject result = new JSONObject();
+        result.put("code", code);
+        result.put("error", error);
+        result.put("csv", csv);
+        return result;
+
+    }
+
+    /**
+     * Retrieves a remote async file.
+     *
+     * Uses HTTP GET to download a file object with a BigML `url` asynchronous.
+     *
+     */
+    protected JSONObject downloadAsync(final String url, final String fileName) {
+        return downloadAsync(url, fileName, 10L, 10, 0);
+    }
+
+    /**
+     * Retrieves a remote async file.
+     *
+     * Uses HTTP GET to download a file object with a BigML `url` asynchronous.
+     *
+     * @param waitTime time between retries in seconds
+     *
+     *
+     */
+    protected JSONObject downloadAsync(final String url, final String fileName,
+                                       Long waitTime, Integer retries, Integer counter) {
+        int code = HTTP_INTERNAL_SERVER_ERROR;
+
+        if( waitTime == null ) {
+            waitTime = 10L;
+        }
+        if( retries == null ){
+            retries = 10;
+        }
+        if( counter == null ) {
+            counter = 0;
+        }
+
+        JSONObject error = new JSONObject();
+        String csv = "";
+        try {
+            HttpURLConnection connection = Utils.processGET(url + bigmlAuth);
+
+            code = connection.getResponseCode();
+
+            csv = Utils.inputStreamAsString(connection.getInputStream(), "UTF-8");
+
+            if (code == HTTP_OK) {
+
+                try {
+                    JSONObject downloadStatus = (JSONObject) JSONValue.parse(csv);
+
+                    if( downloadStatus != null ) {
+                        if( counter < retries ) {
+                            Number downloadCode = (Number) Utils.getJSONObject(downloadStatus, "status.code");
+                            if( downloadCode.intValue() != FINISHED ) {
+                                try {
+                                    Thread.sleep(1000 * Utils.getExponentialWait(waitTime, counter));
+                                } catch (InterruptedException e) {
+                                }
+
+                                counter += 1;
+                                return downloadAsync(url, fileName, waitTime, retries, counter);
+                            } else {
+                                return downloadAsync(url, fileName, waitTime, retries, retries + 1);
+                            }
+                        } else {
+                            logger.error("The maximum number of retries " +
+                                    " for the download has been " +
+                                    " exceeded. You can retry your " +
+                                    " command again in" +
+                                    " a while.");
+                            return null;
+                        }
+                    }
+                } catch(Exception e) {
+                    // This exception will be thrown when we try to parse a JSON
+                    //  response when we finally receive the file content
+                    if( counter < retries ) {
+                        return downloadAsync(url, fileName, waitTime, retries, retries + 1);
+                    }
+                }
+
+
                 if (fileName != null) {
                     File file = new File(fileName);
                     if (!file.exists()) {
