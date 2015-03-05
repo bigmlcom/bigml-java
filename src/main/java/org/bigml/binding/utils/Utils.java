@@ -26,6 +26,8 @@ public class Utils {
 
     private static SSLSocketFactory sslSocketFactory;
 
+    private static Random random = new Random(System.currentTimeMillis());
+
     // Map operator str to its corresponding java operator
     static HashMap<String, Class> JAVA_TYPE_MAP = new HashMap<String, Class>();
     static {
@@ -147,7 +149,7 @@ public class Utils {
         return connection;
     }
 
-    protected static HttpURLConnection openConnection(URL url) throws NoSuchAlgorithmException, KeyManagementException, IOException {
+    public static HttpURLConnection openConnection(URL url) throws NoSuchAlgorithmException, KeyManagementException, IOException {
         if( sslSocketFactory == null ) {
             // We need to disable the VERIFY of the certificate until we decide how to use it
             TrustManager[] trustAllCerts = new TrustManager[] { new MockX509TrustManager() };
@@ -197,7 +199,7 @@ public class Utils {
     }
 
     /**
-     * Reads the contect of a file
+     * Reads the content of a file
      */
     public static String readFile(String filename) {
         String content = null;
@@ -583,5 +585,28 @@ public class Utils {
                 return new Locale(str.substring(0, 2), str.substring(3, 5), str.substring(6));
             }
         }
+    }
+
+    public static String join(Collection list, String delim) {
+
+        StringBuilder sb = new StringBuilder();
+
+        String loopDelim = "";
+
+        for(Object s : list) {
+
+            sb.append(loopDelim);
+            sb.append(s);
+
+            loopDelim = delim;
+        }
+
+        return sb.toString();
+    }
+
+    public static long getExponentialWait(long waitTime, int retryCount) {
+        double delta = Math.pow(retryCount,2) * waitTime / 2;
+        double expFactor = retryCount > 1 ? delta : 0;
+        return (long) (waitTime + Math.floor(random.nextLong() * expFactor));
     }
 }
