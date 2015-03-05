@@ -2,6 +2,8 @@
 .project
 .classpath
 target/
-*.log
+logs/*.log*
 .settings/
 bin/
+.idea
+.bigmler
