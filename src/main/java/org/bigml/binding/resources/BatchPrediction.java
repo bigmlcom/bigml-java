@@ -25,8 +25,6 @@ public class BatchPrediction extends AbstractResource {
     // Logging
     Logger logger = LoggerFactory.getLogger(BatchPrediction.class);
 
-    public final static String DOWNLOAD_DIR = "/download";
-
     /**
      * Constructor
      * 
@@ -271,14 +269,8 @@ public class BatchPrediction extends AbstractResource {
      */
     public JSONObject downloadBatchPrediction(final JSONObject batchPrediction,
             final String filename) {
-
         String resourceId = (String) batchPrediction.get("resource");
-
-        if (resourceId != null) {
-            String url = BIGML_URL + resourceId + DOWNLOAD_DIR;
-            return download(url, filename);
-        }
-        return null;
+        return downloadBatchPrediction(resourceId, filename);
     }
 
     /**
