@@ -404,32 +404,32 @@ public class Dataset extends AbstractResource {
     }
 
 
-//    /**
-//     * Retrieves the dataset file.
-//     *
-//     * Downloads datasets, that are stored in a remote CSV file. If a path is
-//     * given in filename, the contents of the file are downloaded and saved
-//     * locally. A file-like object is returned otherwise.
-//     *
-//     * @param datasetId
-//     *            a unique identifier in the form dataset/id where id is a
-//     *            string of 24 alpha-numeric chars.
-//     * @param filename
-//     *            Path to save file locally
-//     *
-//     */
-//    public JSONObject downloadDatset(final String datasetId,
-//                                              final String filename) {
-//
-//        if (datasetId == null || datasetId.length() == 0
-//                || !datasetId.matches(DATASET_RE)) {
-//            logger.info("Wrong batch dataset id");
-//            return null;
-//        }
-//
-//        String url = BIGML_URL + datasetId + DOWNLOAD_DIR;
-//        return download(url, filename);
-//    }
-//
+    /**
+     * Retrieves the dataset file.
+     *
+     * Downloads datasets, that are stored in a remote CSV file. If a path is
+     * given in filename, the contents of the file are downloaded and saved
+     * locally. A file-like object is returned otherwise.
+     *
+     * @param datasetId
+     *            a unique identifier in the form dataset/id where id is a
+     *            string of 24 alpha-numeric chars.
+     * @param filename
+     *            Path to save file locally
+     *
+     */
+    public JSONObject downloadDataset(final String datasetId,
+                                              final String filename) {
+
+        if (datasetId == null || datasetId.length() == 0
+                || !datasetId.matches(DATASET_RE)) {
+            logger.info("Wrong dataset id");
+            return null;
+        }
+
+        String url = BIGML_URL + datasetId + DOWNLOAD_DIR;
+        return downloadAsync(url, filename);
+    }
+
 
 }
