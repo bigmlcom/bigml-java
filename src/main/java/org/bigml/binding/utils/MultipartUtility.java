@@ -4,6 +4,8 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +39,16 @@ public class MultipartUtility {
         boundary = "===" + System.currentTimeMillis() + "===";
 
         URL url = new URL(requestURL);
-        httpConn = (HttpURLConnection) url.openConnection();
+//        httpConn = (HttpURLConnection) url.openConnection();
+        try {
+            httpConn = Utils.openConnection(url);
+        } catch (NoSuchAlgorithmException e) {
+            throw new IOException("Unable to open the connection !!!", e);
+        } catch (KeyManagementException e) {
+            throw new IOException("Unable to open the connection !!!", e);
+        }
+
+        httpConn.setRequestMethod("POST");
         httpConn.setUseCaches(false);
         httpConn.setDoOutput(true); // indicates POST method
         httpConn.setDoInput(true);
