@@ -1,29 +1,46 @@
 package org.bigml.binding;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.*;
 
 public class MultiVote {
 
+    /**
+     * Logging
+     */
+    static Logger LOGGER = LoggerFactory.getLogger(MultiVote.class.getName());
+
     private final static String[] COMBINATION_WEIGHTS = new String[] {
-            "confidence", "distribution" };
+            null , "confidence", "probability", null };
     private final static String[][] WEIGHT_KEYS = new String[][] { {},
-            { "confidence" }, { "distribution", "count" } };
-    private final static String[] WEIGHT_LABELS = new String[] { null,
-            "confidence", "probability" };
+            { "confidence" }, { "distribution", "count" }, {} };
+    private final static String[] WEIGHT_LABELS = new String[] { "plurality",
+            "confidence", "probability", "threshold" };
 
     public final static int PLURALITY = 0;
     public final static int CONFIDENCE = 1;
     public final static int PROBABILITY = 2;
+    public final static int THRESHOLD = 3;
+
+    public final static String[] PREDICTION_HEADERS = new String[] { "prediction",
+            "confidence", "order", "distribution", "count" };
 
     public HashMap<Object, Object>[] predictions;
 
     /**
      * MultiVote: combiner class for ensembles voting predictions.
-     * 
+     */
+    public MultiVote() {
+        this(null);
+    }
+
+    /**
+     * MultiVote: combiner class for ensembles voting predictions.
+     *
      * @param predictionsArr {array|object} predictions Array of model's predictions
      */
     public MultiVote(HashMap<Object, Object>[] predictionsArr) {
@@ -64,6 +81,56 @@ public class MultiVote {
         return true;
     };
 
+
+    /**
+     * Return the next order to be assigned to a prediction
+     *
+     * Predictions in MultiVote are ordered in arrival sequence when
+     * added using the constructor or the append and extend methods.
+     * This order is used to break even cases in combination
+     * methods for classifications.
+     *
+     * @return the next order to be assigned to a prediction
+     */
+    private int nextOrder() {
+        if( predictions != null && predictions.length > 0 ) {
+            return ((Number) predictions[predictions.length - 1].get("order")).intValue() + 1;
+        }
+
+        return 0;
+    }
+
+
+    /**
+     * Given a multi vote instance (alist of predictions), extends the list
+     * with another list of predictions and adds the order information.
+     *
+     * For instance, predictions_info could be:
+     *
+     *  [{'prediction': 'Iris-virginica', 'confidence': 0.3},
+     *      {'prediction': 'Iris-versicolor', 'confidence': 0.8}]
+     *
+     *  where the expected prediction keys are: prediction (compulsory),
+     *  confidence, distribution and count.
+     *
+     * @param votes
+     */
+    public void extend(MultiVote votes) {
+        if( votes.predictions != null && votes.predictions.length > 0  ) {
+            int order = nextOrder();
+
+            List<HashMap<Object,Object>> predictionsList =
+                    new ArrayList<HashMap<Object, Object>>(Arrays.asList(predictions));
+
+            for (HashMap<Object, Object> prediction : votes.predictions) {
+                prediction.put("order", (order + 1));
+                predictionsList.add(prediction);
+            }
+
+            predictions = (HashMap<Object, Object>[]) predictionsList.toArray( new HashMap[predictionsList.size()] );
+        }
+    }
+
     /**
      * Checks the presence of each of the keys in each of the predictions
      * 
@@ -101,7 +168,7 @@ public class MultiVote {
      *        provided distribution
      * @param z {float} z Percentile of the standard normal distribution
      */
-    private static double wsConfidence(Object prediction,
+    protected static double wsConfidence(Object prediction,
             HashMap<String, Double> distribution, Integer n, Double z) {
         double norm, z2, n2, wsSqrt, p = distribution.get(prediction)
                 .doubleValue(), zDefault = 1.96d;
@@ -140,7 +207,25 @@ public class MultiVote {
      * Average for regression models' predictions
      * 
      */
-    private HashMap<Object, Object> avg() {
+    private HashMap<Object, Object> avg(Boolean withConfidence, Boolean addConfidence,
+                                        Boolean addDistribution, Boolean addCount,
+                                        Boolean addMedian) {
+        if (withConfidence == null) {
+            withConfidence = false;
+        }
+        if (addConfidence == null) {
+            addConfidence = false;
+        }
+        if (addDistribution == null) {
+            addDistribution = false;
+        }
+        if (addCount == null) {
+            addCount = false;
+        }
+        if (addMedian == null) {
+            addMedian = false;
+        }
+
         int i, len, total = this.predictions.length;
         double result = 0.0d, confidence = 0.0d;
         HashMap<Object, Object> average = new HashMap<Object, Object>();
@@ -163,7 +248,25 @@ public class MultiVote {
      *         combined error is an average of the errors in the MultiVote
      *         predictions.
      */
-    public HashMap<Object, Object> errorWeighted() {
+    public HashMap<Object, Object> errorWeighted(Boolean withConfidence, Boolean addConfidence,
+                                                 Boolean addDistribution, Boolean addCount,
+                                                 Boolean addMedian) {
+        if (withConfidence == null) {
+            withConfidence = false;
+        }
+        if (addConfidence == null) {
+            addConfidence = false;
+        }
+        if (addDistribution == null) {
+            addDistribution = false;
+        }
+        if (addCount == null) {
+            addCount = false;
+        }
+        if (addMedian == null) {
+            addMedian = false;
+        }
+
         this.checkKeys(this.predictions, new String[] { "confidence" });
         int index, len;
         HashMap<Object, Object> prediction = new HashMap<Object, Object>();
@@ -301,7 +404,7 @@ public class MultiVote {
      *        Will also return the combined confidence, as a weighted average of
      *        the confidences of the votes.
      */
-    public HashMap<Object, Object> combineCategorical(Object weightLabel,
+    public HashMap<Object, Object> combineCategorical(String weightLabel,
             Boolean withConfidence) {
         if (withConfidence == null) {
             withConfidence = false;
@@ -314,22 +417,36 @@ public class MultiVote {
         HashMap<Object, Object> mode = new HashMap<Object, Object>();
         ArrayList tuples = new ArrayList();
 
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug(String.format("weight: %f", weight));
+            LOGGER.debug("Predictions: [");
+            for (HashMap<Object, Object> curPrediction : predictions) {
+                LOGGER.debug(String.format("%s", JSONObject.toJSONString(curPrediction)));
+            }
+        }
+
         for (index = 0, len = this.predictions.length; index < len; index++) {
             prediction = this.predictions[index];
 
-            if (weightLabel != null && !weightLabel.equals("plurality")) {
+            if ( weightLabel != null ) {
                 if (Arrays.asList(WEIGHT_LABELS).indexOf(weightLabel) == -1) {
                     throw new Error("Wrong weightLabel value.");
                 }
-                if (prediction.get(weightLabel) == null) {
+                if ( !prediction.containsKey(weightLabel) ) {
                     throw new Error(
                             "Not enough data to use the selected prediction"
                                     + " method. Try creating your model anew.");
+                } else {
+                    weight = (Double) prediction.get(weightLabel);
                 }
-                weight = (Double) prediction.get(weightLabel);
             }
 
             category = prediction.get("prediction");
+
+            if( LOGGER.isDebugEnabled() ) {
+                LOGGER.debug(String.format("weight = %f", weight));
+                LOGGER.debug(String.format("category = %s", category));
+            }
 
             HashMap<String, Object> categoryHash = new HashMap<String, Object>();
             if (mode.get(category) != null) {
@@ -344,6 +461,9 @@ public class MultiVote {
             }
 
             mode.put(category, categoryHash);
+
+            if(LOGGER.isDebugEnabled())
+                LOGGER.debug(String.format("mode = %s", mode));
         }
 
         for (Object key : mode.keySet()) {
@@ -357,21 +477,27 @@ public class MultiVote {
         Object[] tuple = (Object[]) tuples.get(0);
         Object predictionName = (Object) tuple[0];
 
-        if (this.predictions[0].get("confidence") != null) {
-            return this.weightedConfidence(predictionName, weightLabel);
-        }
-
-        // If prediction had no confidence, compute it from distribution
-        Object[] distributionInfo = this.combineDistribution(weightLabel);
-        int count = (Integer) distributionInfo[1];
-        HashMap<String, Double> distribution = (HashMap<String, Double>) distributionInfo[0];
-
-        double combinedConfidence = wsConfidence(predictionName, distribution,
-                count, null);
+        if( LOGGER.isDebugEnabled() )
+            LOGGER.debug(String.format("prediction = %s", predictionName));
 
         HashMap<Object, Object> result = new HashMap<Object, Object>();
         result.put("prediction", predictionName);
-        result.put("confidence", combinedConfidence);
+
+        if( withConfidence ) {
+            if (this.predictions[0].get("confidence") != null) {
+                return this.weightedConfidence(predictionName, weightLabel);
+            }
+
+            // If prediction had no confidence, compute it from distribution
+            Object[] distributionInfo = this.combineDistribution(weightLabel);
+            int count = (Integer) distributionInfo[1];
+            HashMap<String, Double> distribution = (HashMap<String, Double>) distributionInfo[0];
+
+            double combinedConfidence = wsConfidence(predictionName, distribution,
+                    count, null);
+
+            result.put("confidence", combinedConfidence);
+        }
 
         return result;
     }
@@ -448,12 +574,17 @@ public class MultiVote {
      * @param weightLabel {string} weightLabel Label of the value in the prediction object
      *        whose sum will be used as count in the distribution
      */
-    public Object[] combineDistribution(Object weightLabel) {
+    public Object[] combineDistribution(String weightLabel) {
         int index, len;
         int total = 0;
         HashMap<Object, Object> prediction = new HashMap<Object, Object>();
         HashMap<String, Double> distribution = new HashMap<String, Double>();
         Object[] combinedDistribution = new Object[2];
+
+        if( weightLabel == null || weightLabel.trim().length() == 0 ) {
+            weightLabel = WEIGHT_LABELS[PROBABILITY];
+        }
+
 
         for (index = 0, len = this.predictions.length; index < len; index++) {
             prediction = this.predictions[index];
@@ -465,7 +596,7 @@ public class MultiVote {
             }
 
             String predictionName = (String) prediction.get("prediction");
-            if (!distribution.containsKey(prediction.get("prediction"))) {
+            if (!distribution.containsKey(predictionName)) {
                 distribution.put(predictionName, 0.0);
             }
 
@@ -481,20 +612,49 @@ public class MultiVote {
 
     /**
      * Reduces a number of predictions voting for classification and averaging
-     * predictions for regression.
+     * predictions for regression using the PLURALITY method and without confidence
      * 
-     * @param method {0|1|2} method Code associated to the voting method (plurality,
-     *        confidence weighted or probability weighted).
-     * @param withConfidence if we want to get back the confidence or probability of the prediction
+     * @return {{"prediction": prediction}}
+     */
+    public HashMap<Object, Object> combine() {
+        return combine(null, null, null, null, null, null, null);
+    }
+
+    /**
+     * Reduces a number of predictions voting for classification and averaging
+     * predictions for regression.
+     *
+     * @param method {0|1|2|3} method Code associated to the voting method (plurality,
+     *        confidence weighted or probability weighted or threshold).
+     * @param withConfidence if withConfidence is true, the combined confidence
+     *                       (as a weighted of the prediction average of the confidences
+     *                       of votes for the combined prediction) will also be given.
      * @return {{"prediction": prediction, "confidence": combinedConfidence}}
      */
     public HashMap<Object, Object> combine(Integer method,
-            Boolean withConfidence) {
+            Boolean withConfidence, Boolean addConfidence,
+            Boolean addDistribution, Boolean addCount,
+            Boolean addMedian, Map options) {
         if (method == null) {
             method = PLURALITY;
         }
         if (withConfidence == null) {
             withConfidence = false;
+        }
+        if (addConfidence == null) {
+            addConfidence = false;
+        }
+        if (addDistribution == null) {
+            addDistribution = false;
+        }
+        if (addCount == null) {
+            addCount = false;
+        }
+        if (addMedian == null) {
+            addMedian = false;
+        }
+        if (options == null) {
+            options = new HashMap();
         }
 
         // there must be at least one prediction to be combined
@@ -509,36 +669,299 @@ public class MultiVote {
         }
 
         if (this.is_regression()) {
-            if (method == CONFIDENCE) {
-                return this.errorWeighted();
+            if( LOGGER.isDebugEnabled())
+                LOGGER.debug("Is regression");
+            for (HashMap<Object, Object> prediction : predictions) {
+                if( !prediction.containsKey("confidence") ) {
+                    prediction.put("confidence", 0.0);
+                }
             }
-            return this.avg();
+
+            if (method == CONFIDENCE) {
+                return this.errorWeighted(withConfidence,
+                        addConfidence, addDistribution, addCount,
+                        addMedian);
+            }
+            return this.avg(withConfidence,
+                    addConfidence, addDistribution, addCount,
+                    addMedian);
         }
 
-        MultiVote multiVote = this;
-        if (method == PROBABILITY) {
+        if( LOGGER.isDebugEnabled() )
+            LOGGER.debug("Is classification");
+
+        MultiVote multiVote = null;
+        if (method == THRESHOLD) {
+            if( LOGGER.isDebugEnabled() )
+                LOGGER.debug("Method THRESHOLD");
+
+            Integer threshold = (Integer) options.get("threshold");
+            String category = (String) options.get("category");
+
+            multiVote = singleOutCategory(threshold, category);
+        } else if (method == PROBABILITY) {
+            if( LOGGER.isDebugEnabled())
+                LOGGER.debug("Method PROBABILITY");
             multiVote = new MultiVote(this.probabilityWeight());
+        } else {
+            if( LOGGER.isDebugEnabled())
+                LOGGER.debug("Method PLURALITY");
+            multiVote = this;
         }
 
-        return multiVote.combineCategorical(WEIGHT_LABELS[method],
+        if( LOGGER.isDebugEnabled())
+            LOGGER.debug("Calling combine_categorical");
+        return multiVote.combineCategorical(COMBINATION_WEIGHTS[method],
                 withConfidence);
     }
 
-}
 
-/**
- * Comparator
- */
-class TupleComparator implements Comparator<Object[]> {
+    /**
+     * Adds a new prediction into a list of predictions
+     *
+     * prediction_info should contain at least:
+     *      - prediction: whose value is the predicted category or value
+     *
+     * for instance:
+     *      {'prediction': 'Iris-virginica'}
+     *
+     * it may also contain the keys:
+     *      - confidence: whose value is the confidence/error of the prediction
+     *      - distribution: a list of [category/value, instances] pairs
+     *                      describing the distribution at the prediction node
+     *      - count: the total number of instances of the training set in the
+     *                  node
+     *
+     * @param predictionInfo the prediction to be appended
+     * @return the this instance
+     */
+    public MultiVote append(HashMap<Object, Object> predictionInfo) {
 
-    public int compare(Object[] o1, Object[] o2) {
-        HashMap hash1 = (HashMap) o1[1];
-        HashMap hash2 = (HashMap) o2[1];
-        double weight1 = (Double) hash1.get("count");
-        double weight2 = (Double) hash2.get("count");
-        int order1 = (Integer) hash1.get("order");
-        int order2 = (Integer) hash2.get("order");
-        return weight1 > weight2 ? -1 : (weight1 < weight2 ? 1
-                : order1 < order2 ? -1 : 1);
+        if( predictionInfo == null || predictionInfo.isEmpty() ||
+                !predictionInfo.containsKey("prediction") ) {
+            throw new IllegalArgumentException("Failed to add the prediction.\\n" +
+                    "The minimal key for the prediction is 'prediction'" +
+                    ":\n{'prediction': 'Iris-virginica'");
+        }
+
+        int order = nextOrder();
+        predictionInfo.put("order", order);
+        HashMap<Object, Object>[] temp = predictions.clone();
+        predictions = new HashMap[predictions.length + 1];
+        System.arraycopy(temp, 0, predictions, 0, temp.length);
+        predictions[order] = predictionInfo;
+
+
+        return this;
+    }
+
+    /**
+     * Singles out the votes for a chosen category and returns a prediction
+     *  for this category if the number of votes reaches at least the given
+     *  threshold.
+     *
+     * @param threshold the number of the minimum positive predictions needed for
+     *                    a final positive prediction.
+     * @param category the positive category
+     * @return MultiVote instance
+     */
+    protected MultiVote singleOutCategory(Integer threshold, String category) {
+        if( threshold == null || category == null || category.length() == 0 ) {
+            throw new IllegalArgumentException("No category and threshold information was" +
+                    " found. Add threshold and category info." +
+                    " E.g. {\"threshold\": 6, \"category\":" +
+                    " \"Iris-virginica\"}.");
+        }
+
+        if( threshold > predictions.length ) {
+            throw new IllegalArgumentException(String.format(
+                    "You cannot set a threshold value larger than " +
+                    "%s. The ensemble has not enough models to use" +
+                    " this threshold value.", predictions.length)
+            );
+        }
+
+        if( threshold < 1 ) {
+            throw new IllegalArgumentException("The threshold must be a positive value");
+        }
+
+        List categoryPredictions = new ArrayList();
+        List restOfPredictions = new ArrayList();
+
+        for (HashMap<Object, Object> prediction : predictions) {
+            if( category.equals(prediction.get("prediction")) ) {
+                categoryPredictions.add(prediction);
+            } else {
+                restOfPredictions.add(prediction);
+            }
+        }
+
+        if( categoryPredictions.size() >= threshold ) {
+            return new MultiVote((HashMap<Object, Object>[]) categoryPredictions.toArray(
+                    new HashMap[categoryPredictions.size()]));
+        } else {
+            return new MultiVote((HashMap<Object, Object>[]) restOfPredictions.toArray(
+                    new HashMap[categoryPredictions.size()]));
+        }
+    }
+
+
+    /**
+     * Adds a new prediction into a list of predictions
+     *
+     * predictionHeaders should contain the labels for the predictionRow
+     *  values in the same order.
+     *
+     * predictionHeaders should contain at least the following string
+     *      - 'prediction': whose associated value in predictionRow
+     *                      is the predicted category or value
+     *
+     * for instance:
+     *      predictionRow = ['Iris-virginica']
+     *      predictionHeaders = ['prediction']
+     *
+     * it may also contain the following headers and values:
+     *      - 'confidence': whose associated value in prediction_row
+     *                      is the confidence/error of the prediction
+     *      - 'distribution': a list of [category/value, instances] pairs
+     *                      describing the distribution at the prediction node
+     *      - 'count': the total number of instances of the training set in the
+     *                      node
+     *
+     * @param predictionRow the list of predicted values and extra info
+     * @param predictionHeaders the name of each value in the predictionRow
+     * @return the this instance
+     */
+    public MultiVote appendRow(List<Object> predictionRow,
+                               List<String> predictionHeaders) {
+
+        if( predictionHeaders == null ) {
+            predictionHeaders = Arrays.asList(PREDICTION_HEADERS);
+        }
+
+        if( predictionRow.size() != predictionHeaders.size() ) {
+            throw new IllegalArgumentException("WARNING: failed to add the prediction.\\n" +
+                    "The row must have label 'prediction' at least. And the number" +
+                    " of headers must much with the number of elements in the row.");
+        }
+
+        List<Object> mutablePredictionRow = new ArrayList<Object>(predictionRow);
+        List<String> mutablePredictionHeaders = new ArrayList<String>(predictionHeaders);
+
+        int index = -1;
+        int order = nextOrder();
+        try {
+            index = mutablePredictionHeaders.indexOf("order");
+            mutablePredictionRow.set(index, order);
+        } catch (Exception ex) {
+            mutablePredictionHeaders.add("order");
+            mutablePredictionRow.add(order);
+        }
+
+        HashMap<Object, Object> predictionInfo = new HashMap<Object, Object>();
+        for (int i = 0; i < mutablePredictionHeaders.size(); i++) {
+            predictionInfo.put(mutablePredictionHeaders.get(i),
+                    mutablePredictionRow.get(i));
+        }
+
+        HashMap<Object, Object>[] temp = predictions.clone();
+        predictions = new HashMap[predictions.length + 1];
+        System.arraycopy(temp, 0, predictions, 0, temp.length);
+        predictions[order] = predictionInfo;
+
+        return this;
+    }
+
+
+    /**
+     * Given a list of predictions, extends the list with another list of
+     *  predictions and adds the order information. For instance,
+     *  predictionsInfo could be:
+     *
+     *      [{'prediction': 'Iris-virginica', 'confidence': 0.3},
+     *       {'prediction': 'Iris-versicolor', 'confidence': 0.8}]
+     *
+     * where the expected prediction keys are: prediction (compulsory),
+     * confidence, distribution and count.
+     *
+     * @param predictionsInfo the list of predictions we want to append
+     * @return the this instance
+     */
+    public MultiVote extend(List<HashMap<Object, Object>> predictionsInfo) {
+
+        if( predictionsInfo == null || predictionsInfo.isEmpty() ) {
+            throw new IllegalArgumentException("WARNING: failed to add the predictions.\\n" +
+                    "No predictions informed.");
+        }
+
+        int order = nextOrder();
+
+        for (int i = 0; i < predictionsInfo.size(); i++) {
+            HashMap<Object, Object> prediction = predictionsInfo.get(i);
+            prediction.put("order", order + i);
+            append(prediction);
+        }
+        return this;
+    }
+
+    /**
+     * Given a list of predictions, extends the list with another list of
+     *  predictions and adds the order information. For instance,
+     *  predictionsInfo could be:
+     *
+     *      [{'prediction': 'Iris-virginica', 'confidence': 0.3},
+     *       {'prediction': 'Iris-versicolor', 'confidence': 0.8}]
+     *
+     * where the expected prediction keys are: prediction (compulsory),
+     * confidence, distribution and count.
+     *
+     * @param predictionsRows the list of predictions (in list format) we want to append
+     * @return the this instance
+     */
+    public MultiVote extendRows(List<List<Object>> predictionsRows,
+                                List<String> predictionsHeader) {
+
+        if( predictionsHeader == null ) {
+            predictionsHeader = Arrays.asList(PREDICTION_HEADERS);
+        }
+
+        int order = nextOrder();
+        int index = predictionsHeader.indexOf("order");
+        if( index < 0 ) {
+            index = predictionsHeader.size();
+            predictionsHeader.add("order");
+        }
+
+
+        for( int iPrediction = 0; iPrediction < predictionsRows.size(); iPrediction++ ) {
+            List<Object> predictionRow = predictionsRows.get(iPrediction);
+
+            if( index == predictionRow.size() ) {
+                predictionRow.add(order + 1);
+            } else {
+                predictionRow.set(index, order);
+            }
+
+            appendRow(predictionRow, predictionsHeader);
+        }
+
+        return this;
+    }
+
+        /**
+         * Comparator
+         */
+    class TupleComparator implements Comparator<Object[]> {
+
+        public int compare(Object[] o1, Object[] o2) {
+            HashMap hash1 = (HashMap) o1[1];
+            HashMap hash2 = (HashMap) o2[1];
+            double weight1 = (Double) hash1.get("count");
+            double weight2 = (Double) hash2.get("count");
+            int order1 = (Integer) hash1.get("order");
+            int order2 = (Integer) hash2.get("order");
+            return weight1 > weight2 ? -1 : (weight1 < weight2 ? 1
+                    : order1 < order2 ? -1 : 1);
+        }
     }
 }
