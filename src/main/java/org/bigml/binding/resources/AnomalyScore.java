@@ -188,6 +188,7 @@ public class AnomalyScore extends AbstractResource {
 
     }
 
+
     /**
      * Retrieves an anomaly score.
      * 
@@ -345,6 +346,53 @@ public class AnomalyScore extends AbstractResource {
     public JSONObject delete(final JSONObject anomalyScore) {
         String resourceId = (String) anomalyScore.get("resource");
         return delete(resourceId);
+    }
+
+
+    /**
+     * Retrieves the anomaly score file.
+     *
+     * Downloads scores, that are stored in a remote CSV file. If a path is
+     * given in filename, the contents of the file are downloaded and saved
+     * locally. A file-like object is returned otherwise.
+     *
+     * @param anomalyScoreId
+     *            a unique identifier in the form anomalyScore/id where id is
+     *            a string of 24 alpha-numeric chars.
+     * @param filename
+     *            Path to save file locally
+     *
+     */
+    public JSONObject downloadAnomalyScore(final String anomalyScoreId,
+                                           final String filename) {
+
+        if (anomalyScoreId == null || anomalyScoreId.length() == 0
+                || !anomalyScoreId.matches(ANOMALYSCORE_RE)) {
+            logger.info("Wrong anomaly score id");
+            return null;
+        }
+
+        String url = BIGML_URL + anomalyScoreId + DOWNLOAD_DIR;
+        return download(url, filename);
+    }
+
+    /**
+     * Retrieves the anomaly scores file.
+     *
+     * Downloads scores, that are stored in a remote CSV file. If a path is
+     * given in filename, the contents of the file are downloaded and saved
+     * locally. A file-like object is returned otherwise.
+     *
+     * @param anomalyScore
+     *            a anomaly score JSONObject.
+     * @param filename
+     *            Path to save file locally
+     *
+     */
+    public JSONObject downloadAnomalyScore(final JSONObject anomalyScore,
+                                              final String filename) {
+        String anomalyScoreId = (String) anomalyScore.get("resource");
+        return downloadAnomalyScore(anomalyScoreId, filename);
     }
 
 }

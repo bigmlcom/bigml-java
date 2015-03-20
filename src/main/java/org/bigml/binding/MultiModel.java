@@ -80,10 +80,10 @@ public class MultiModel {
      */
     @Deprecated
     public HashMap<Object, Object> predict(final String inputData,
-            Boolean byName, Integer method, Boolean withConfidence)
+            Boolean byName, PredictionMethod method, Boolean withConfidence)
             throws Exception {
         if (method == null) {
-            method = MultiVote.PLURALITY;
+            method = PredictionMethod.PLURALITY;
         }
         if (byName == null) {
             byName = true;
@@ -109,10 +109,10 @@ public class MultiModel {
      * average: PROBABILITY_CODE
      */
     public HashMap<Object, Object> predict(final JSONObject inputData,
-            Boolean byName, Integer method, Boolean withConfidence)
+            Boolean byName, PredictionMethod method, Boolean withConfidence)
             throws Exception {
         if (method == null) {
-            method = MultiVote.PLURALITY;
+            method = PredictionMethod.PLURALITY;
         }
         if (byName == null) {
             byName = true;
@@ -140,13 +140,13 @@ public class MultiModel {
      *              THRESHOLD_COD
      */
     public HashMap<Object, Object> predict(final JSONObject inputData,
-            Boolean byName, Integer method, Boolean withConfidence,
+            Boolean byName, PredictionMethod method, Boolean withConfidence,
             Map options, MissingStrategy strategy, Boolean addConfidence,
             Boolean addDistribution, Boolean addCount, Boolean addMedian)
             throws Exception {
 
         if (method == null) {
-            method = MultiVote.PLURALITY;
+            method = PredictionMethod.PLURALITY;
         }
         if (byName == null) {
             byName = true;

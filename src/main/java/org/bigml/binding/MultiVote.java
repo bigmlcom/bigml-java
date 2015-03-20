@@ -21,10 +21,10 @@ public class MultiVote {
     private final static String[] WEIGHT_LABELS = new String[] { "plurality",
             "confidence", "probability", "threshold" };
 
-    public final static int PLURALITY = 0;
-    public final static int CONFIDENCE = 1;
-    public final static int PROBABILITY = 2;
-    public final static int THRESHOLD = 3;
+//    public final static int PLURALITY = 0;
+//    public final static int CONFIDENCE = 1;
+//    public final static int PROBABILITY = 2;
+//    public final static int THRESHOLD = 3;
 
     public final static String[] PREDICTION_HEADERS = new String[] { "prediction",
             "confidence", "order", "distribution", "count" };
@@ -582,7 +582,7 @@ public class MultiVote {
         Object[] combinedDistribution = new Object[2];
 
         if( weightLabel == null || weightLabel.trim().length() == 0 ) {
-            weightLabel = WEIGHT_LABELS[PROBABILITY];
+            weightLabel = WEIGHT_LABELS[PredictionMethod.PROBABILITY.getCode()];
         }
 
 
@@ -617,7 +617,33 @@ public class MultiVote {
      * @return {{"prediction": prediction}}
      */
     public HashMap<Object, Object> combine() {
-        return combine(null, null, null, null, null, null, null);
+        return combine((PredictionMethod) null, null, null, null, null, null, null);
+    }
+
+
+    /**
+     * Reduces a number of predictions voting for classification and averaging
+     * predictions for regression.
+     *
+     * @param method {0|1|2|3} method Code associated to the voting method (plurality,
+     *        confidence weighted or probability weighted or threshold).
+     * @param withConfidence if withConfidence is true, the combined confidence
+     *                       (as a weighted of the prediction average of the confidences
+     *                       of votes for the combined prediction) will also be given.
+     * @return {{"prediction": prediction, "confidence": combinedConfidence}}
+     */
+    @Deprecated
+    public HashMap<Object, Object> combine(Integer method,
+                                           Boolean withConfidence, Boolean addConfidence,
+                                           Boolean addDistribution, Boolean addCount,
+                                           Boolean addMedian, Map options) {
+        if (method == null) {
+            method = PredictionMethod.PLURALITY.getCode();
+        }
+
+        PredictionMethod intMethod = PredictionMethod.valueOf(method);
+        return combine(intMethod, withConfidence, addConfidence, addDistribution, addCount,
+                addMedian, options);
     }
 
     /**
@@ -631,12 +657,12 @@ public class MultiVote {
      *                       of votes for the combined prediction) will also be given.
      * @return {{"prediction": prediction, "confidence": combinedConfidence}}
      */
-    public HashMap<Object, Object> combine(Integer method,
+    public HashMap<Object, Object> combine(PredictionMethod method,
             Boolean withConfidence, Boolean addConfidence,
             Boolean addDistribution, Boolean addCount,
             Boolean addMedian, Map options) {
         if (method == null) {
-            method = PLURALITY;
+            method = PredictionMethod.PLURALITY;
         }
         if (withConfidence == null) {
             withConfidence = false;
@@ -662,7 +688,7 @@ public class MultiVote {
             throw new Error("No predictions to be combined.");
         }
 
-        String[] keys = WEIGHT_KEYS[method];
+        String[] keys = WEIGHT_KEYS[method.getCode()];
         // and all predictions should have the weight-related keys
         if (keys.length > 0) {
             checkKeys(this.predictions, keys);
@@ -677,7 +703,7 @@ public class MultiVote {
                 }
             }
 
-            if (method == CONFIDENCE) {
+            if (method == PredictionMethod.CONFIDENCE) {
                 return this.errorWeighted(withConfidence,
                         addConfidence, addDistribution, addCount,
                         addMedian);
@@ -691,7 +717,7 @@ public class MultiVote {
             LOGGER.debug("Is classification");
 
         MultiVote multiVote = null;
-        if (method == THRESHOLD) {
+        if (method == PredictionMethod.THRESHOLD) {
             if( LOGGER.isDebugEnabled() )
                 LOGGER.debug("Method THRESHOLD");
 
@@ -699,7 +725,7 @@ public class MultiVote {
             String category = (String) options.get("category");
 
             multiVote = singleOutCategory(threshold, category);
-        } else if (method == PROBABILITY) {
+        } else if (method == PredictionMethod.PROBABILITY) {
             if( LOGGER.isDebugEnabled())
                 LOGGER.debug("Method PROBABILITY");
             multiVote = new MultiVote(this.probabilityWeight());
@@ -711,7 +737,7 @@ public class MultiVote {
 
         if( LOGGER.isDebugEnabled())
             LOGGER.debug("Calling combine_categorical");
-        return multiVote.combineCategorical(COMBINATION_WEIGHTS[method],
+        return multiVote.combineCategorical(COMBINATION_WEIGHTS[method.getCode()],
                 withConfidence);
     }
 

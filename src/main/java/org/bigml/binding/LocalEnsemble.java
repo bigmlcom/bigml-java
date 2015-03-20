@@ -24,7 +24,6 @@ package org.bigml.binding;
 
 import java.util.*;
 
-import org.bigml.binding.resources.EnsemblePredictionMethod;
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -317,8 +316,11 @@ public class LocalEnsemble {
     public Map<Object, Object> predict(final String inputData, Boolean byName,
             Integer method, Boolean withConfidence) throws Exception {
         if (method == null) {
-            method = MultiVote.PLURALITY;
+            method = PredictionMethod.PLURALITY.getCode();
         }
+
+        PredictionMethod intMethod = PredictionMethod.valueOf(method);
+
         if (byName == null) {
             byName = true;
         }
@@ -329,16 +331,7 @@ public class LocalEnsemble {
         JSONObject inputDataObj = (JSONObject) JSONValue.parse(inputData);
         MultiVote votes = this.multiModel.generateVotes(inputDataObj, byName,
                 null, withConfidence);
-        return votes.combine(method, withConfidence, null, null, null, null, null);
-    }
-
-    /**
-     * Makes a prediction based on the prediction made by every model.
-     */
-    public Map<Object, Object> predict(final JSONObject inputData, Boolean byName,
-            EnsemblePredictionMethod method, Boolean withConfidence)
-            throws Exception {
-        return predict(inputData, byName, method.getCode(), withConfidence);
+        return votes.combine(intMethod, withConfidence, null, null, null, null, null);
     }
 
     /**
@@ -351,10 +344,10 @@ public class LocalEnsemble {
      * average: PROBABILITY_CODE
      */
     public Map<Object, Object> predict(final JSONObject inputData,
-            Boolean byName, Integer method, Boolean withConfidence)
+            Boolean byName, PredictionMethod method, Boolean withConfidence)
             throws Exception {
         if (method == null) {
-            method = MultiVote.PLURALITY;
+            method = PredictionMethod.PLURALITY;
         }
         if (byName == null) {
             byName = true;
@@ -387,8 +380,28 @@ public class LocalEnsemble {
      * or names to their values as Java objects. See also predict(String,
      * Boolean, Integer, Boolean).
      */
+    @Deprecated
     public Map<Object, Object> predictWithMap(Map<String, Object> inputs,
             Boolean byName, Integer method, Boolean conf) throws Exception {
+        JSONObject inputObj = (JSONObject) JSONValue.parse(JSONValue
+                .toJSONString(inputs));
+
+        if ( method == null ) {
+            method = PredictionMethod.PLURALITY.getCode();
+        }
+
+        PredictionMethod intMethod = PredictionMethod.valueOf(method);
+
+        return predict(inputObj, byName, intMethod, conf);
+    }
+
+    /**
+     * Convenience version of predict that take as inputs a map from field ids
+     * or names to their values as Java objects. See also predict(String,
+     * Boolean, Integer, Boolean).
+     */
+    public Map<Object, Object> predictWithMap(Map<String, Object> inputs,
+            Boolean byName, PredictionMethod method, Boolean conf) throws Exception {
         JSONObject inputObj = (JSONObject) JSONValue.parse(JSONValue
                 .toJSONString(inputs));
         return predict(inputObj, byName, method, conf);

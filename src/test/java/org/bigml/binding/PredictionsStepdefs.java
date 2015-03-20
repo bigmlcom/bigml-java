@@ -195,7 +195,7 @@ public class PredictionsStepdefs {
         JSONArray predictions = (JSONArray) JSONValue.parse(predictionsStr);
         for (int iVote = 0; iVote < context.votes.size(); iVote++ ) {
             MultiVote vote = context.votes.get(iVote);
-            Map<Object,Object> combinedPrediction = vote.combine(MultiVote.CONFIDENCE, false,
+            Map<Object,Object> combinedPrediction = vote.combine(PredictionMethod.CONFIDENCE, false,
                     null, null, null, null, null);
             assertEquals("The predictions are not equals", predictions.get(iVote),
                     combinedPrediction.get("prediction"));

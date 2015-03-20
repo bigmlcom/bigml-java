@@ -2,8 +2,6 @@ package org.bigml.binding;
 
 import cucumber.annotation.en.Given;
 import cucumber.annotation.en.Then;
-import org.bigml.binding.resources.EnsemblePredictionMethod;
-import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -55,7 +53,7 @@ public class LocalEnsembleStepdefs {
         try {
             JSONObject inputObj = (JSONObject) JSONValue.parse(args);
             Map<Object, Object> p = predictiveEnsemble
-                    .predict(inputObj, true, EnsemblePredictionMethod.PLURALITY, true);
+                    .predict(inputObj, true, PredictionMethod.PLURALITY, true);
             String prediction = (String) p.get("prediction");
             assertTrue("", prediction != null && prediction.equals(pred));
         } catch (Exception parseException) {

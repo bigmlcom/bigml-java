@@ -64,7 +64,8 @@ public class ComputeMultivotePredictionsStepdefs {
     public void I_compute_the_prediction_with_confidence_using_method(
             String method) throws Throwable {
         try {
-            combinedPrediction = multivote.combine(new Integer(method), true,
+            PredictionMethod intMethod = PredictionMethod.valueOf(new Integer(method));
+            combinedPrediction = multivote.combine(intMethod, true,
                     null, null, null, null, null);
         } catch (Exception e) {
             assertTrue("" == "Incorrect method");
