@@ -87,7 +87,11 @@ public class Tree {
     private final List<Tree> children;
     private final Long count;
     private JSONArray distribution;
-    private final double confidence;
+    private String distributionUnit;
+    private Integer maxBins = 0;
+    private Double median;
+    private double impurity = 0.0;
+    private double confidence;
     private JSONObject rootDistribution;
 
     /**
@@ -135,29 +139,53 @@ public class Tree {
         }
 
         JSONArray distributionObj = (JSONArray) root.get("distribution");
+        JSONObject summary = null;
         if (distributionObj != null) {
             this.distribution = distributionObj;
         } else if( root.get("objective_summary") != null ) {
-            JSONObject objectiveSummaryObj = (JSONObject) root
+            summary = (JSONObject) root
                     .get("objective_summary");
-            if (objectiveSummaryObj.get("bins") != null) {
-                this.distribution = (JSONArray) objectiveSummaryObj.get("bins");
-            } else if (objectiveSummaryObj.get("counts") != null) {
-                this.distribution = (JSONArray) objectiveSummaryObj.get("counts");
-            } else if (objectiveSummaryObj.get("categories") != null) {
-                this.distribution = (JSONArray) objectiveSummaryObj
-                        .get("categories");
-            }
-        } else {
-            JSONObject summary = rootDistribution;
             if (summary.get("bins") != null) {
                 this.distribution = (JSONArray) summary.get("bins");
+                this.distributionUnit = "bins";
             } else if (summary.get("counts") != null) {
                 this.distribution = (JSONArray) summary.get("counts");
+                this.distributionUnit = "counts";
             } else if (summary.get("categories") != null) {
                 this.distribution = (JSONArray) summary
                         .get("categories");
+                this.distributionUnit = "categories";
             }
+        } else {
+            summary = rootDistribution;
+            if (summary.get("bins") != null) {
+                this.distribution = (JSONArray) summary.get("bins");
+                this.distributionUnit = "bins";
+            } else if (summary.get("counts") != null) {
+                this.distribution = (JSONArray) summary.get("counts");
+                this.distributionUnit = "counts";
+            } else if (summary.get("categories") != null) {
+                this.distribution = (JSONArray) summary
+                        .get("categories");
+                this.distributionUnit = "categories";
+            }
+        }
+
+        if( isRegression() ) {
+            maxBins = distribution.size();
+            median = null;
+
+            if( summary != null ) {
+                median = ((Number) summary.get("median")).doubleValue();
+            }
+
+            if( median == null ) {
+                median = distributionMedian(distribution, count);
+            }
+        }
+
+        if( !isRegression() && distribution != null ) {
+            impurity = calculateGiniImpurity(distribution, count);
         }
     }
 
@@ -179,6 +207,22 @@ public class Tree {
 
     public Predicate getPredicate() {
         return predicate;
+    }
+
+    public Double getMedian() {
+        return median;
+    }
+
+    public Long getCount() {
+        return count;
+    }
+
+    public double getImpurity() {
+        return impurity;
+    }
+
+    public double getConfidence() {
+        return confidence;
     }
 
     /**
@@ -428,20 +472,41 @@ public class Tree {
     /**
      * Returns a list that includes all the leaves of the tree.
      *
+     * @param path a List of Strings empty array where the path
      * @return the list of leaf nodes
      */
-    protected List<Tree> getLeaves() {
+    protected List<Tree> getLeaves(List<String> path, TreeNodeFilter filter) {
         List<Tree> leaves = new ArrayList<Tree>();
+
+        if( path == null ) {
+            path = new ArrayList<String>();
+        }
+
+        if( !isPredicate() ) {
+            path.add(predicate.toRule(fields));
+        }
+
 
         if( !children.isEmpty() ) {
             for (Tree child : children) {
-                leaves.addAll(child.getLeaves());
+                leaves.addAll(child.getLeaves(path, filter));
             }
         } else {
-            leaves.add(clone());
+            if( filter == null || !filter.filter(this) ) {
+                leaves.add(clone());
+            }
         }
 
         return leaves;
+    }
+
+    /**
+     * Returns a list that includes all the leaves of the tree.
+     *
+     * @return the list of leaf nodes
+     */
+    public List<Tree> getLeaves(TreeNodeFilter filter) {
+        return getLeaves(null, filter);
     }
 
     /**
@@ -875,6 +940,56 @@ public class Tree {
         return instructions;
     }
 
+    /**
+     * Returns the median value for a distribution
+     *
+     * @param distribution
+     * @param count
+     * @return
+     */
+    protected Double distributionMedian(JSONArray distribution, Long count) {
+
+        int counter = 0;
+        Double previousValue = null;
+        for (Object binInfo : distribution) {
+            Double value = ((Number) ((JSONObject) binInfo).get("value")).doubleValue();
+            counter += ((Number) ((JSONObject) binInfo).get("instances")).intValue();
+            if( counter > (count / 2) ) {
+                if( (count % 2 != 0) && ((counter - 1) == (count / 2)) &&
+                        previousValue != null ) {
+                    return (value + previousValue) / 2;
+                }
+
+                return value;
+            }
+
+            previousValue = value;
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns the gini impurity score associated to the distribution in the node
+     *
+     * @param distribution
+     * @param count
+     * @return
+     */
+    protected Double calculateGiniImpurity(JSONArray distribution, Long count) {
+
+        double purity = 0.0;
+        if( distribution == null ) {
+            return null;
+        }
+
+        for (Object binInfo : distribution) {
+            int instances = ((Number) ((JSONObject) binInfo).get("instances")).intValue();
+            purity += Math.pow(instances / count, 2);
+        }
+
+        return (1.0 - purity) / 2;
+    }
 
     protected static class TreeHolder {
         private Tree tree;

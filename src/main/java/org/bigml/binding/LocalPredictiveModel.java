@@ -42,6 +42,7 @@ import java.text.ParseException;
 import java.util.*;
 
 import org.bigml.binding.localmodel.Tree;
+import org.bigml.binding.localmodel.TreeNodeFilter;
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -167,6 +168,45 @@ public class LocalPredictiveModel implements PredictionConverter {
      */
     public JSONObject fields() {
         return tree.listFields();
+    }
+
+    /**
+     * Returns a list that includes all the leaves of the model.
+     *
+     * @return all the leave nodes
+     */
+    public List<Tree> getLeaves() {
+        return this.tree.getLeaves(null);
+    }
+
+    /**
+     * Returns a list that includes all the leaves of the model.
+     *
+     * @param filter should be a function that returns a boolean
+     * when applied to each leaf node.
+     *
+     * @return all the leave nodes after apply the filter
+     */
+    public List<Tree> getLeaves(TreeNodeFilter filter) {
+        return this.tree.getLeaves(filter);
+    }
+
+    /**
+     * Returns True if the gini impurity of the node distribution
+     * goes above the impurity threshold.
+     *
+     * @param impurityThreshold the degree of impurity
+     *
+     * @return all the leave nodes after apply the impurity threshold
+     */
+    public List<Tree> getImpureLeaves(final Double impurityThreshold) {
+        return this.tree.getLeaves(new TreeNodeFilter() {
+            @Override
+            public boolean filter(Tree node) {
+                Double nodeImpurity = node.getImpurity();
+                return (nodeImpurity != null && nodeImpurity > impurityThreshold);
+            }
+        });
     }
 
     /**
