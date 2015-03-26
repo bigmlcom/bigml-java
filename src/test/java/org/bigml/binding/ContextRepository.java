@@ -27,6 +27,8 @@ public class ContextRepository {
     JSONArray sources = null;
     JSONObject batchPrediction = null;
     JSONObject cluster = null;
+    LocalCluster localCluster = null;
+    JSONObject  localCentroid = null;
     JSONObject centroid = null;
     JSONObject batchCentroid = null;
     MultiModel multiModel = null;

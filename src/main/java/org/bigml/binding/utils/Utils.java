@@ -609,4 +609,70 @@ public class Utils {
         double expFactor = retryCount > 1 ? delta : 0;
         return (long) (waitTime + Math.floor(random.nextLong() * expFactor));
     }
+
+    /**
+     * Computes the mean of a distribution in the [[point, instances]] syntax
+     *
+     * @param distribution
+     * @return
+     */
+    public static double meanOfDistribution(List<JSONArray> distribution) {
+        double addition = 0.0f;
+        long count = 0;
+
+        for (JSONArray bin : distribution) {
+            double point = ((Number) bin.get(0)).doubleValue();
+            long instances = ((Number) bin.get(1)).longValue();
+
+            addition += point * instances;
+            count += instances;
+        }
+
+        if( count > 0 ) {
+            return addition / count;
+        }
+
+        return Double.NaN;
+    }
+
+    /**
+     * Computes the mean of a list of double values
+     */
+    public static double meanOfValues(List<Double> values) {
+        double addition = 0.0f;
+        long count = values.size();
+
+        for (Double value : values) {
+            addition += value;
+        }
+
+        return addition / count;
+    }
+
+
+    /**
+     * Prints distribution data
+     */
+    public static StringBuilder printDistribution(JSONArray distribution) {
+        StringBuilder distributionStr = new StringBuilder();
+
+        int total = 0;
+        for (Object binInfo : distribution) {
+            JSONArray binInfoArr = (JSONArray) binInfo;
+            total += ((Number) binInfoArr.get(1)).intValue();
+        }
+
+        for (Object binInfo : distribution) {
+            JSONArray binInfoArr = (JSONArray) binInfo;
+            distributionStr.append(String.format("    %s: %.2f%% (%d instance%s)\n",
+                    binInfoArr.get(0),
+                    (((Number) binInfoArr.get(1)).intValue() * 1.0 / total),
+                    binInfoArr.get(1),
+                    (((Number) binInfoArr.get(1)).intValue() == 1 ? "" : "s")
+                    ));
+        }
+
+
+        return distributionStr;
+    }
 }

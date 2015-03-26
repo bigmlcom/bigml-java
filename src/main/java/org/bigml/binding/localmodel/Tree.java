@@ -306,32 +306,6 @@ public class Tree {
     }
 
     /**
-     * Computes the mean of a distribution in the [[point, instances]] syntax
-     *
-     * @param distribution
-     * @return
-     */
-    public double mean(List<JSONArray> distribution) {
-        double addition = 0.0f;
-        long count = 0;
-
-        for (JSONArray bin : distribution) {
-            double point = ((Number) bin.get(0)).doubleValue();
-            long instances = ((Number) bin.get(1)).longValue();
-
-            addition += point * instances;
-            count += instances;
-        }
-
-        if( count > 0 ) {
-            return addition / count;
-        }
-
-        return Double.NaN;
-    }
-
-
-    /**
      * Computes the variance error
      *
      * @param distributionVariance
@@ -366,7 +340,7 @@ public class Tree {
         double count = 0.0f;
 
         if( distributionMean == null ) {
-            distributionMean = mean(distribution);
+            distributionMean = Utils.meanOfDistribution(distribution);
         }
 
         for (JSONArray bin : distribution) {
@@ -611,7 +585,7 @@ public class Tree {
 
                 distribution = mergeBins(distribution, BINS_LIMIT);
 
-                double prediction = mean(distribution);
+                double prediction = Utils.meanOfDistribution(distribution);
 
                 long totalInstances = calculateTotalInstances(distribution);
                 double confindence = regressionError(unbiasedSampleVariance(distribution, prediction),
@@ -984,7 +958,7 @@ public class Tree {
         }
 
         for (Object binInfo : distribution) {
-            int instances = ((Number) ((JSONObject) binInfo).get("instances")).intValue();
+            int instances = ((Number) ((JSONArray) binInfo).get(1)).intValue();
             purity += Math.pow(instances / count, 2);
         }
 

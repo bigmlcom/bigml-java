@@ -40,11 +40,11 @@ import java.util.*;
 public class Fields {
 
     // Logging
-    Logger LOGGER = LoggerFactory.getLogger(AbstractResource.class);
+    Logger LOGGER = LoggerFactory.getLogger(Fields.class);
 
-    private static Class[] RESOURCES_WITH_FIELDS = new Class[] { Source.class, Dataset.class, Model.class};
+    protected static Class[] RESOURCES_WITH_FIELDS = new Class[] { Source.class, Dataset.class, Model.class};
 
-    private static String[] DEFAULT_MISSING_TOKENS = {
+    public static String[] DEFAULT_MISSING_TOKENS = {
             "", "N/A", "n/a", "NULL", "null", "-", "#DIV/0",
             "#REF!", "#NAME?", "NIL", "nil", "NA", "na",
             "#VALUE!", "#NULL!", "NaN", "#N/A", "#NUM!", "?"
@@ -280,7 +280,7 @@ public class Fields {
      * Returns the list of columns Ids
      */
     public List<String> getColumnsIds() {
-        return new ArrayList<String>(rowIds);
+        return new ArrayList<String>(fields.keySet());
     }
 
     /**

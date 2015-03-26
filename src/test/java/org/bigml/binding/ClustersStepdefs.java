@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -37,6 +38,23 @@ public class ClustersStepdefs {
 
     private String downloadedFile;
 
+    @Given("^I create a cluster with options \"(.*)\"$")
+    public void I_create_a_cluster_with_options(String options) throws AuthenticationException {
+        String datasetId = (String) context.dataset.get("resource");
+
+        JSONObject args = (JSONObject) JSONValue.parse(options);
+
+        args.put("tags", Arrays.asList("unitTest"));
+        args.put("k", 8);
+
+        JSONObject resource = BigMLClient.getInstance().createCluster(
+                datasetId, args, 5, null);
+        context.status = (Integer) resource.get("code");
+        context.location = (String) resource.get("location");
+        context.cluster = (JSONObject) resource.get("object");
+        commonSteps.the_resource_has_been_created_with_status(context.status);
+    }
+
     @Given("^I create a cluster$")
     public void I_create_a_cluster() throws AuthenticationException {
         String datasetId = (String) context.dataset.get("resource");
@@ -51,6 +69,11 @@ public class ClustersStepdefs {
         context.location = (String) resource.get("location");
         context.cluster = (JSONObject) resource.get("object");
         commonSteps.the_resource_has_been_created_with_status(context.status);
+    }
+
+    @Given("^I create a local cluster$")
+    public void I_create_a_local_cluster() throws Exception {
+        context.localCluster = new LocalCluster(context.cluster);
     }
 
     @Given("^I wait until the cluster status code is either (\\d) or (\\d) less than (\\d+)$")
@@ -115,6 +138,13 @@ public class ClustersStepdefs {
         commonSteps.the_resource_has_been_created_with_status(context.status);
     }
 
+    @When("^I create a local centroid for \"(.*)\"$")
+    public void I_create_a_local_centroid_for(String inputData)
+            throws AuthenticationException {
+        context.localCentroid = context.localCluster.calculateCentroid((JSONObject) JSONValue.parse(inputData),
+                Boolean.TRUE);
+    }
+
     @Given("^I check the centroid is ok$")
     public void I_check_the_centroid_is_ok() throws AuthenticationException {
         int secs = 60;
@@ -140,10 +170,31 @@ public class ClustersStepdefs {
 
     @Then("the centroid is \"([^\"]*)\" with distance (.*)$")
     public void the_centroid_is_with_distance(String result, Double distance) throws AuthenticationException {
+
         assertEquals(result, context.centroid.get("centroid_name"));
-        String confidenceValue = String.format("%.8g",
-                ((Number) context.centroid.get("distance")).doubleValue());
-        assertTrue(confidenceValue.equals(String.format("%.8g", distance)));
+
+        BigDecimal centroidDist = new BigDecimal(((Number) context.centroid.get("distance")).doubleValue());
+        centroidDist = centroidDist.setScale(8, BigDecimal.ROUND_UP);
+
+        BigDecimal expectedDistance = new BigDecimal(distance);
+        expectedDistance = expectedDistance.setScale(8, BigDecimal.ROUND_UP);
+
+        String confidenceValue = String.format("%.8g", centroidDist);
+        assertTrue(confidenceValue.equals(String.format("%.8g", expectedDistance)));
+    }
+
+    @Then("the local centroid is \"([^\"]*)\" with distance (.*)$")
+    public void the_local_centroid_is_with_distance(String result, Double distance) throws AuthenticationException {
+        assertEquals(result, context.localCentroid.get("centroid_name"));
+
+        BigDecimal centroidDist = new BigDecimal(((Number) context.centroid.get("distance")).doubleValue());
+        centroidDist = centroidDist.setScale(8, BigDecimal.ROUND_UP);
+
+        BigDecimal expectedDistance = new BigDecimal(distance);
+        expectedDistance = expectedDistance.setScale(8, BigDecimal.ROUND_UP);
+
+        String confidenceValue = String.format("%.8g", centroidDist);
+        assertTrue(confidenceValue.equals(String.format("%.8g", expectedDistance)));
     }
 
     @Then("the centroid is \"([^\"]*)\"$")
