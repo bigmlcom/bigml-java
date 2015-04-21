@@ -72,6 +72,9 @@ public class BigMLClient {
     private Cluster cluster;
     private Centroid centroid;
     private BatchCentroid batchCentroid;
+    private Project project;
+    private Sample sample;
+
     private Properties props;
     private Boolean devMode = false;
     private String storage;
@@ -456,6 +459,10 @@ public class BigMLClient {
         cluster = new Cluster(this.bigmlUser, this.bigmlApiKey, this.devMode);
         centroid = new Centroid(this.bigmlUser, this.bigmlApiKey, this.devMode);
         batchCentroid = new BatchCentroid(this.bigmlUser, this.bigmlApiKey,
+                this.devMode);
+        project = new Project(this.bigmlUser, this.bigmlApiKey,
+                this.devMode);
+        sample = new Sample(this.bigmlUser, this.bigmlApiKey,
                 this.devMode);
     }
 
@@ -3990,6 +3997,434 @@ public class BigMLClient {
      */
     public JSONObject deleteBatchCentroid(final JSONObject batchCentroidJSON) {
         return batchCentroid.delete(batchCentroidJSON);
+    }
+
+    // ################################################################
+    // #
+    // # Samples
+    // # https://bigml.com/developers/sample
+    // #
+    // ################################################################
+
+    /**
+     * Creates a remote sample.
+     *
+     * Uses remote `dataset` to create a new sample using the arguments in
+     * `args`. If `wait_time` is higher than 0 then the sample creation request
+     * is not sent until the `dataset` has been created successfuly.
+     *
+     * POST /andromeda/sample?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param datasetId
+     *            a unique identifier in the form dataset/id where id is a string
+     *            of 24 alpha-numeric chars for the sample to attach the
+     *            dataset.
+     * @param args
+     *            set of parameters for the new sample. Optional
+     * @param waitTime
+     *            time to wait for next check of FINISHED status for dataset
+     *            before to start to create the sample. Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     *
+     */
+    public JSONObject createSample(final String datasetId, JSONObject args,
+                                    Integer waitTime, Integer retries) {
+        return sample.create(datasetId, args, waitTime, retries);
+    }
+
+    /**
+     * Retrieves a sample.
+     *
+     * GET
+     * /andromeda/sample/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io
+     *
+     * @param sampleId
+     *            a unique identifier in the form sample/id where id is a string
+     *            of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject getSample(final String sampleId) {
+        return sample.get(sampleId);
+    }
+
+    /**
+     * Returns the ids of the fields that contain errors and their number.
+     *
+     * @param sampleId the sample id of the sample to be inspected
+     */
+    public Map<String, Long> getErrorCountsInSample(final String sampleId) {
+        return sample.getErrorCounts(getSample(sampleId));
+    }
+
+    /**
+     * Returns the ids of the fields that contain errors and their number.
+     *
+     * @param sampleJSON the sample JSON object to be inspected
+     */
+    public Map<String, Long> getErrorCountsInSample(final JSONObject sampleJSON) {
+        return sample.getErrorCounts(sampleJSON);
+    }
+
+    /**
+     * Retrieves a sample.
+     *
+     * GET
+     * /andromeda/sample/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io
+     *
+     * @param sampleJSON
+     *            a sample JSONObject
+     *
+     */
+    public JSONObject getSample(final JSONObject sampleJSON) {
+        return sample.get(sampleJSON);
+    }
+
+    /**
+     * Retrieves an sample.
+     *
+     *
+     * GET /andromeda/sample/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param sampleId
+     *            a unique identifier in the form sample/id where id is a string
+     *            of 24 alpha-numeric chars.
+     * @param queryString
+     *            query for filtering.
+     *
+     */
+    public JSONObject getSample(final String sampleId, final String queryString) {
+        return getSample(sampleId, queryString, null, null);
+    }
+
+    /**
+     * Retrieves an sample.
+     *
+     *
+     * GET /andromeda/sample/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param sampleId
+     *            a unique identifier in the form sample/id where id is a string
+     *            of 24 alpha-numeric chars.
+     * @param queryString
+     *            query for filtering.
+     * @param apiUser
+     *            API user
+     * @param apiKey
+     *            API key
+     *
+     */
+    public JSONObject getSample(final String sampleId, final String queryString,
+                                 final String apiUser, final String apiKey) {
+        return sample.get(sampleId, queryString, apiUser, apiKey);
+    }
+
+    /**
+     * Check whether a sample's status is FINISHED.
+     *
+     * @param sampleId
+     *            a unique identifier in the form sample/id where id is a
+     *            string of 24 alpha-numeric chars.
+     *
+     */
+    public boolean sampleIsReady(final String sampleId) {
+        return sample.isReady(sampleId);
+    }
+
+    /**
+     * Checks whether a sample's status is FINISHED.
+     *
+     * @param sampleJSON
+     *            a sample JSONObject
+     *
+     */
+    public boolean sampleIsReady(final JSONObject sampleJSON) {
+        return sample.isReady(sampleJSON);
+    }
+
+    /**
+     * Lists all your samples.
+     *
+     * GET /andromeda/sample?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param queryString
+     *            query filtering the listing.
+     *
+     */
+    public JSONObject listSamples(final String queryString) {
+        return sample.list(queryString);
+    }
+
+    /**
+     * Updates a sample.
+     *
+     * PUT
+     * /andromeda/sample/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param sampleId
+     *            a unique identifier in the form sample/id where id is a
+     *            string of 24 alpha-numeric chars.
+     * @param changes
+     *            set of parameters to update the source. Optional
+     *
+     */
+    public JSONObject updateSample(final String sampleId, final String changes) {
+        return sample.update(sampleId, changes);
+    }
+
+    /**
+     * Updates a sample.
+     *
+     * PUT
+     * /andromeda/sample/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param sampleJSON
+     *            a sample JSONObject
+     * @param changes
+     *            set of parameters to update the sample. Optional
+     *
+     */
+    public JSONObject updateSample(final JSONObject sampleJSON,
+                                    final JSONObject changes) {
+        return sample.update(sampleJSON, changes);
+    }
+
+    /**
+     * Deletes a sample.
+     *
+     * DELETE
+     * /andromeda/sample/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1
+     *
+     * @param sampleId
+     *            a unique identifier in the form sample/id where id is a
+     *            string of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject deleteSample(final String sampleId) {
+        return sample.delete(sampleId);
+    }
+
+    /**
+     * Deletes a sample.
+     *
+     * DELETE
+     * /andromeda/sample/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1
+     *
+     * @param sampleJSON
+     *            a sample JSONObject
+     *
+     */
+    public JSONObject deleteSample(final JSONObject sampleJSON) {
+        return sample.delete(sampleJSON);
+    }
+
+    // ################################################################
+    // #
+    // # Projects
+    // # https://bigml.com/developers/project
+    // #
+    // ################################################################
+
+    /**
+     * Creates a remote project.
+     *
+     * Create a new project using the arguments in `args`.
+     *
+     * POST /andromeda/project?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param args
+     *            set of parameters for the new sample. Optional
+     *
+     */
+    public JSONObject createProject(JSONObject args) {
+        return project.create(args);
+    }
+
+    /**
+     * Retrieves a project.
+     *
+     * GET
+     * /andromeda/project/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io
+     *
+     * @param projectId
+     *            a unique identifier in the form project/id where id is a string
+     *            of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject getProject(final String projectId) {
+        return project.get(projectId);
+    }
+
+    /**
+     * Retrieves a project.
+     *
+     * GET
+     * /andromeda/project/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io
+     *
+     * @param projectJSON
+     *            a project JSONObject
+     *
+     */
+    public JSONObject getProject(final JSONObject projectJSON) {
+        return project.get(projectJSON);
+    }
+
+    /**
+     * Retrieves an project.
+     *
+     *
+     * GET /andromeda/project/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param projectId
+     *            a unique identifier in the form project/id where id is a string
+     *            of 24 alpha-numeric chars.
+     * @param queryString
+     *            query for filtering.
+     *
+     */
+    public JSONObject getProject(final String projectId, final String queryString) {
+        return getProject(projectId, queryString, null, null);
+    }
+
+    /**
+     * Retrieves an project.
+     *
+     *
+     * GET /andromeda/project/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param projectId
+     *            a unique identifier in the form project/id where id is a string
+     *            of 24 alpha-numeric chars.
+     * @param queryString
+     *            query for filtering.
+     * @param apiUser
+     *            API user
+     * @param apiKey
+     *            API key
+     *
+     */
+    public JSONObject getProject(final String projectId, final String queryString,
+                                final String apiUser, final String apiKey) {
+        return project.get(projectId, queryString, apiUser, apiKey);
+    }
+
+    /**
+     * Check whether a project's status is FINISHED.
+     *
+     * @param projectId
+     *            a unique identifier in the form project/id where id is a
+     *            string of 24 alpha-numeric chars.
+     *
+     */
+    public boolean projectIsReady(final String projectId) {
+        return project.isReady(projectId);
+    }
+
+    /**
+     * Checks whether a project's status is FINISHED.
+     *
+     * @param projectJSON
+     *            a project JSONObject
+     *
+     */
+    public boolean projectIsReady(final JSONObject projectJSON) {
+        return project.isReady(projectJSON);
+    }
+
+    /**
+     * Lists all your projects.
+     *
+     * GET /andromeda/project?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param queryString
+     *            query filtering the listing.
+     *
+     */
+    public JSONObject listProjects(final String queryString) {
+        return project.list(queryString);
+    }
+
+    /**
+     * Updates a project.
+     *
+     * PUT
+     * /andromeda/project/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param projectId
+     *            a unique identifier in the form project/id where id is a
+     *            string of 24 alpha-numeric chars.
+     * @param changes
+     *            set of parameters to update the project. Optional
+     *
+     */
+    public JSONObject updateProject(final String projectId, final String changes) {
+        return project.update(projectId, changes);
+    }
+
+    /**
+     * Updates a project.
+     *
+     * PUT
+     * /andromeda/project/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param projectJSON
+     *            a project JSONObject
+     * @param changes
+     *            set of parameters to update the sample. Optional
+     *
+     */
+    public JSONObject updateProject(final JSONObject projectJSON,
+                                   final JSONObject changes) {
+        return project.update(projectJSON, changes);
+    }
+
+    /**
+     * Deletes a project.
+     *
+     * DELETE
+     * /andromeda/project/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1
+     *
+     * @param projectId
+     *            a unique identifier in the form project/id where id is a
+     *            string of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject deleteProject(final String projectId) {
+        return project.delete(projectId);
+    }
+
+    /**
+     * Deletes a project.
+     *
+     * DELETE
+     * /andromeda/project/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1
+     *
+     * @param projectJSON
+     *            a project JSONObject
+     *
+     */
+    public JSONObject deleteProject(final JSONObject projectJSON) {
+        return project.delete(projectJSON);
     }
 
 }
