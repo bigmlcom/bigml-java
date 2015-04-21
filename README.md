@@ -58,6 +58,13 @@ you may want to run it by execute:
 ```bash
 $ mvn test
 ```
+
+or this way, if you want to debug the tests
+
+```bash
+$ mvn -Dmaven.surefire.debug="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000 -Xnoagent -Djava.compiler=NONE" test
+```
+
 ## Generated JAR file of the bindings
 
 Since version 1.1 the name of the JAR file is _bigml-binding_.
