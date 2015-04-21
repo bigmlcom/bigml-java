@@ -1,6 +1,7 @@
 package org.bigml.binding.utils;
 
 import org.bigml.binding.BigMLClient;
+import org.bigml.binding.Constants;
 import org.bigml.binding.localmodel.Tree;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -371,8 +372,7 @@ public class Utils {
         Set<String> fields = new HashSet<String>();
         for (Tree child : children) {
             if( !child.isPredicate() ) {
-                String fieldName = (String) ((JSONObject) child.listFields().get(child.getPredicate().getField())).get("name");
-                fields.add(fieldName);
+                fields.add(child.getPredicate().getField());
             }
         }
 
@@ -421,37 +421,37 @@ public class Utils {
      */
     public static void cast(JSONObject inputData, JSONObject fields) {
 
-        JSONObject invertedFields = Utils.invertDictionary(fields);
+        for (Object fieldId : inputData.keySet()) {
+            Object value = inputData.get(fieldId);
 
-        for (Object key : inputData.keySet()) {
-            Object value = inputData.get(key);
+            JSONObject field = (JSONObject) fields.get(fieldId);
 
-            String optType = ((JSONObject) invertedFields.get(key)).get("optype").toString();
+            String optType = (String) Utils.getJSONObject(field, "optype");
 
             if( ("numeric".equals(optType) && value instanceof String) ||
-                (!"numeric".equals(optType) && !(value instanceof String)) ) {
+                    (!"numeric".equals(optType) && !(value instanceof String)) ) {
 
                 try {
 
                     if( "numeric".equals(optType) ) {
-                        value = stripAffixes(value.toString(), (JSONObject) invertedFields.get(key));
+                        value = stripAffixes(value.toString(), field);
                     }
 
-                    if( "numeric".equals(optType) ) {
+                    if ("numeric".equals(optType)) {
                         value = Double.parseDouble(value.toString());
                     } else {
                         value = value.toString();
                     }
-
-                    inputData.put(key, value);
-                } catch (IllegalArgumentException e) {
-                    throw new IllegalArgumentException(
-                            MessageFormat.format("Mismatch input data type in field \"%s\" for value %s.",
-                                    getJSONObject(invertedFields, key + ".name"), value));
+                } catch (Exception e) {
+                    throw new IllegalStateException(
+                            String.format("Mismatch input data type in field " +
+                                    "\"%s\" for value %s.", field.get("name"), value.toString()));
                 }
             }
-            
         }
+
+//        return inputData;
+
     }
 
     /**
@@ -674,5 +674,140 @@ public class Utils {
 
 
         return distributionStr;
+    }
+
+    /**
+     * Adds up a new distribution structure to a map formatted distribution
+     *
+     * @param distribution
+     * @param newDistribution
+     * @return
+     */
+    public static Map<Object, Number> mergeDistributions(Map<Object, Number> distribution, Map<Object, Number> newDistribution) {
+        for (Object value : newDistribution.keySet()) {
+            if( !distribution.containsKey(value) ) {
+                distribution.put(value, 0);
+            }
+            distribution.put(value, distribution.get(value).intValue() + newDistribution.get(value).intValue());
+        }
+
+        return distribution;
+    }
+
+
+    /**
+     * We switch the Array to a Map structure in order to be more easily manipulated
+     *
+     * @param distribution current distribution as an JSONArray instance
+     * @return the distribution as a Map instance
+     */
+
+    public static Map<Object, Number> convertDistributionArrayToMap(JSONArray distribution) {
+        Map<Object, Number> newDistribution = new HashMap<Object, Number>();
+        for (Object distValueObj : distribution) {
+            JSONArray distValueArr = (JSONArray) distValueObj;
+            newDistribution.put(distValueArr.get(0), (Number) distValueArr.get(1));
+        }
+
+        return newDistribution;
+    }
+
+    /**
+     * We switch the Array to a Map structure in order to be more easily manipulated
+     *
+     * @param distribution current distribution as an JSONArray instance
+     * @return the distribution as a Map instance
+     */
+
+    public static JSONArray convertDistributionMapToSortedArray(Map<Object, Number> distribution) {
+        JSONArray newDistribution = new JSONArray();
+
+        String opType = Constants.OPTYPE_NUMERIC;
+
+        for (Object key : distribution.keySet()) {
+            JSONArray element = new JSONArray();
+            element.add(key);
+            element.add(distribution.get(key));
+            newDistribution.add(element);
+
+            if( key instanceof Number ) {
+                opType = Constants.OPTYPE_NUMERIC;
+            } else if( key instanceof String ) {
+                opType = Constants.OPTYPE_TEXT;
+            }
+        }
+
+        if( distribution != null && !distribution.isEmpty() ) {
+            final String finalOpType = opType;
+
+            Collections.sort(newDistribution, new Comparator<JSONArray>() {
+                @Override
+                public int compare(JSONArray jsonArray1, JSONArray jsonArray2) {
+                    if( Constants.OPTYPE_NUMERIC.equals(finalOpType) ) {
+                        return Double.compare( ((Number) jsonArray1.get(0)).doubleValue(),
+                                ((Number) jsonArray2.get(0)).doubleValue());
+                    } else if( Constants.OPTYPE_TEXT.equals(finalOpType) ) {
+                        return ((String) jsonArray1.get(0)).compareTo( (String) jsonArray2.get(0));
+                    } else { // OPTYPE_DATETIME
+                        // TODO: implement this
+                        throw new UnsupportedOperationException();
+                    }
+                }
+            });
+        }
+
+        return newDistribution;
+    }
+
+    /**
+     * Merges the bins of a regression distribution to the given limit number
+     */
+    public static JSONArray mergeBins(JSONArray distribution, int limit) {
+        int length = distribution.size();
+        if( limit < 1 || length <= limit || length < 2 ) {
+            return distribution;
+        }
+
+        int indexToMerge = 2;
+        double shortest = Double.MAX_VALUE;
+        for(int index = 1; index < length; index++) {
+            double distance = ((Number) ((JSONArray) distribution.get(index)).get(0)).doubleValue() -
+                    ((Number) ((JSONArray) distribution.get(index - 1)).get(0)).doubleValue();
+
+            if( distance < shortest ) {
+                shortest = distance;
+                indexToMerge = index;
+            }
+        }
+
+        JSONArray newDistribution = new JSONArray();
+        newDistribution.addAll(distribution.subList(0, indexToMerge - 1));
+
+        JSONArray left = (JSONArray) distribution.get(indexToMerge - 1);
+
+        JSONArray right = (JSONArray) distribution.get(indexToMerge);
+
+        JSONArray newBin = new JSONArray();
+        newBin.add(0, ( ((((Number) left.get(0)).doubleValue() * ((Number) left.get(1)).doubleValue()) +
+                (((Number) right.get(0)).doubleValue() * ((Number) right.get(1)).doubleValue())) /
+                (((Number) left.get(1)).doubleValue() + ((Number) right.get(1)).doubleValue()) ) );
+        newBin.add(1, ((Number) left.get(1)).longValue() + ((Number) right.get(1)).longValue());
+
+
+        newDistribution.add(newBin);
+
+        if( indexToMerge < (length - 1) ) {
+            newDistribution.addAll(distribution.subList(indexToMerge + 1, distribution.size()));
+        }
+
+        return mergeBins(newDistribution, limit);
+    }
+
+    /**
+     * Merges the bins of a regression distribution to the given limit number
+     */
+    public static Map<Object, Number> mergeBins(Map<Object, Number> distribution, int limit) {
+        JSONArray mergedDist = mergeBins(convertDistributionMapToSortedArray(distribution), limit);
+        return convertDistributionArrayToMap(mergedDist);
     }
 }
