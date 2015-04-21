@@ -225,6 +225,26 @@ public class Tree {
         return confidence;
     }
 
+    public JSONArray getDistribution() {
+        return distribution;
+    }
+
+    public String getDistributionUnit() {
+        return distributionUnit;
+    }
+
+    public Integer getMaxBins() {
+        return maxBins;
+    }
+
+    public Object getOutput() {
+        return output;
+    }
+
+    public List<Tree> getChildren() {
+        return children;
+    }
+
     /**
      * Checks if the node's value is a category
      *
@@ -256,53 +276,6 @@ public class Tree {
         }
 
         return true;
-    }
-
-    /**
-     * Merges the bins of a regression distribution to the given limit number
-     *
-     * @param distribution
-     * @param limit
-     * @return
-     */
-    protected List<JSONArray> mergeBins(List<JSONArray> distribution, int limit) {
-        int length = distribution.size();
-        if( limit < 1 || length <= limit || length < 2 ) {
-            return distribution;
-        }
-
-        int indexToMerge = 2;
-        double shortest = Double.MAX_VALUE;
-        for(int index = 1; index < length; index++) {
-            double distance = ((Number) distribution.get(index).get(0)).doubleValue() -
-                    ((Number) distribution.get(index - 1).get(0)).doubleValue();
-
-            if( distance < shortest ) {
-                shortest = distance;
-                indexToMerge = index;
-            }
-        }
-
-        List<JSONArray> newDistribution = new ArrayList<JSONArray>(distribution.subList(0, indexToMerge - 1));
-
-        JSONArray left = distribution.get(indexToMerge - 1);
-
-        JSONArray right = distribution.get(indexToMerge);
-
-        JSONArray newBin = new JSONArray();
-        newBin.add(0, ( ((((Number) left.get(0)).doubleValue() * ((Number) left.get(1)).doubleValue()) +
-                (((Number) right.get(0)).doubleValue() * ((Number) right.get(1)).doubleValue())) /
-                (((Number) left.get(1)).doubleValue() + ((Number) right.get(1)).doubleValue()) ) );
-        newBin.add(1, ((Number) left.get(1)).longValue() + ((Number) right.get(1)).longValue());
-
-
-        newDistribution.add(newBin);
-
-        if( indexToMerge < (length - 1) ) {
-            newDistribution.addAll(new ArrayList<JSONArray>(distribution.subList(indexToMerge + 1, distribution.size())));
-        }
-
-        return mergeBins(newDistribution, limit);
     }
 
     /**
@@ -369,7 +342,7 @@ public class Tree {
      *        {'Iris-setosa': 10, 'Iris-versicolor': 5})
      */
     public static double wsConfidence(Object prediction,
-                                      List<JSONArray> distribution) {
+                                      JSONArray distribution) {
         return wsConfidence(prediction, distribution, null, null);
     }
 
@@ -388,14 +361,14 @@ public class Tree {
      * @param z {float} z Percentile of the standard normal distribution
      */
     public static double wsConfidence(Object prediction,
-                                      List<JSONArray> distribution, Long n, Double z) {
+                                      JSONArray distribution, Long n, Double z) {
         double norm, z2, n2, wsSqrt, zDefault = DEFAULT_RZ;
 
         double p = 0.0;
 
-        for (JSONArray element : distribution) {
-            if( element.get(0).equals(prediction) ) {
-                p = ((Number) element.get(1)).doubleValue();
+        for (Object bin : distribution) {
+            if( ((JSONArray) bin).get(0).equals(prediction) ) {
+                p = ((Number) ((JSONArray) bin).get(1)).doubleValue();
                 break;
             }
         }
@@ -412,8 +385,8 @@ public class Tree {
                             + " a positive integer");
         }
         norm = 0.0d;
-        for (JSONArray element : distribution) {
-            norm += ((Number) element.get(1)).doubleValue();
+        for (Object bin: distribution) {
+            norm += ((Number) ((JSONArray) bin).get(1)).doubleValue();
         }
         if (norm == 0.0d) {
             throw new Error("Invalid distribution norm: "
@@ -431,11 +404,11 @@ public class Tree {
         return (p + (z2 / (2 * n)) - (z * wsSqrt)) / (1 + (z2 / n));
     }
 
-    protected long calculateTotalInstances(List<JSONArray> distribution) {
+    protected long calculateTotalInstances(JSONArray distribution) {
         long count = 0L;
 
-        for (JSONArray bin : distribution) {
-            double instances = ((Number) bin.get(1)).doubleValue();
+        for (Object bin : distribution) {
+            double instances = ((Number) ((JSONArray) bin).get(1)).doubleValue();
             count += instances;
         }
 
@@ -513,7 +486,7 @@ public class Tree {
      * .predict({"petal length": 1})
      * 
      */
-    public HashMap<Object, Object> predict(final JSONObject inputData, List<String> path,
+    public Prediction predict(final JSONObject inputData, List<String> path,
                                            MissingStrategy strategy) {
         if (strategy == null) {
             strategy = MissingStrategy.LAST_PREDICTION;
@@ -526,90 +499,69 @@ public class Tree {
         if( strategy == MissingStrategy.LAST_PREDICTION  ) {
 
             if (this.children != null && this.children.size() > 0) {
-                LOGGER.debug("Has children!");
                 for (int i = 0; i < this.children.size(); i++) {
-                    LOGGER.debug("Child iteration");
                     Tree child = this.children.get(i);
 
-                    String field = child.predicate.getField();
-                    Object inputValue = inputData.get(((JSONObject) fields
-                            .get(field)).get("name"));
-                    if (inputValue == null) {
-                        continue;
-                    }
-
                     if( child.predicate.apply(inputData, fields) ) {
-                        LOGGER.debug("Predicate applies!");
                         path.add(child.predicate.toRule(fields));
-                        LOGGER.debug("Path:" + Arrays.toString(path.toArray()));
                         return child.predict(inputData, path, strategy);
                     }
                 }
             }
 
-            LOGGER.debug(String.format("No children. Output: %s ", output));
-            LOGGER.debug(String.format("No children. Path: %s ", Arrays.toString(path.toArray())));
-            LOGGER.debug(String.format("No children. Confidence: %f ", confidence));
-            LOGGER.debug(String.format("No children. Distribution: %s ", distribution.toJSONString()));
-            LOGGER.debug(String.format("No children. Instances: %d ", count));
+            return new Prediction(this.output, this.confidence, this.count,
+                                (isRegression() ? this.median : null),
+                                path, this.distribution, this.distributionUnit,
+                                children);
 
-            HashMap<Object, Object> result = new HashMap<Object, Object>();
-            result.put("count", this.count);
-            result.put("prediction", this.output);
-            result.put("path", path);
-            result.put("confidence", this.confidence);
-            result.put("distribution", this.distribution);
-            return result;
-
-        } else {
+        } else if( strategy == MissingStrategy.PROPORTIONAL  ) {
             TreeHolder lastNode = new TreeHolder();
-            Map<Object, Number> finalDistribution = predictProportional(inputData, lastNode, path, false);
+            Map<Object, Number> finalDistribution = predictProportional(inputData, lastNode, path, false, false);
 
             if( isRegression() ) {
                 // singular case:
                 // when the prediction is the one given in a 1-instance node
                 if( finalDistribution.size() == 1 ) {
-                    if( finalDistribution.values().toArray(new Number[1])[0].intValue() == 1 ) {
-                        HashMap<Object, Object> result = new HashMap<Object, Object>();
-                        result.put("count", 1);
-                        result.put("prediction", lastNode.getTree().output);
-                        result.put("path", path);
-                        result.put("confidence", lastNode.getTree().confidence);
-                        result.put("distribution", lastNode.getTree().distribution);
-                        return result;
+                    long instances = finalDistribution.values().toArray(new Number[1])[0].longValue();
+                    if(  instances == 1 ) {
+                        return new Prediction(lastNode.getTree().getOutput(), lastNode.getTree().getConfidence(),
+                                instances, lastNode.getTree().getMedian(),
+                                path, lastNode.getTree().getDistribution(), lastNode.getTree().getDistributionUnit(),
+                                lastNode.getTree().getChildren());
                     }
                 }
 
                 // when there's more instances, sort elements by their mean
-                List<JSONArray> distribution  = convertDistributionMapToSortedArray(predicate, finalDistribution);
+                JSONArray distribution  = Utils.convertDistributionMapToSortedArray(finalDistribution);
 
-                distribution = mergeBins(distribution, BINS_LIMIT);
+                String distributionUnit = (distribution.size() > BINS_LIMIT ? "bins" : "counts");
+
+                distribution = Utils.mergeBins(distribution, BINS_LIMIT);
+                long totalInstances = calculateTotalInstances(distribution);
 
                 double prediction = Utils.meanOfDistribution(distribution);
 
-                long totalInstances = calculateTotalInstances(distribution);
-                double confindence = regressionError(unbiasedSampleVariance(distribution, prediction),
+                double confidence = regressionError(unbiasedSampleVariance(distribution, prediction),
                         totalInstances, DEFAULT_RZ);
 
-                HashMap<Object, Object> result = new HashMap<Object, Object>();
-                result.put("count", totalInstances);
-                result.put("prediction", prediction);
-                result.put("path", path);
-                result.put("confidence", confindence);
-                result.put("distribution", distribution);
-                return result;
+                return new Prediction(prediction, confidence, totalInstances,
+                                distributionMedian(distribution, totalInstances),
+                                path, distribution, distributionUnit,
+                                lastNode.getTree().getChildren());
             } else {
-                List<JSONArray> distribution  = convertDistributionMapToSortedArray(predicate, finalDistribution);
+                JSONArray distribution  = Utils.convertDistributionMapToSortedArray(finalDistribution);
                 long totalInstances = calculateTotalInstances(distribution);
-                HashMap<Object, Object> result = new HashMap<Object, Object>();
-                result.put("count", totalInstances);
-                result.put("prediction", distribution.get(0).get(0));
-                result.put("path", path);
-                result.put("confidence", wsConfidence(
-                            distribution.get(0).get(0), distribution, totalInstances, DEFAULT_RZ));
-                result.put("distribution", distribution);
-                return result;
+
+                return new Prediction(((JSONArray) distribution.get(0)).get(0),
+                        wsConfidence(((JSONArray) distribution.get(0)).get(0), distribution,
+                                totalInstances, DEFAULT_RZ),
+                        totalInstances, null,
+                        path, distribution, "categorical",
+                        lastNode.getTree().getChildren());
             }
+        } else {
+            throw new UnsupportedOperationException(
+                    String.format("Unsupported missing strategy %s", strategy.name()));
         }
     }
 
@@ -627,7 +579,8 @@ public class Tree {
      * @param missingFound
      * @return
      */
-    protected Map<Object, Number> predictProportional(final JSONObject inputData, final TreeHolder lastNode, List<String> path, Boolean missingFound) {
+    protected Map<Object, Number> predictProportional(final JSONObject inputData, final TreeHolder lastNode, List<String> path,
+                                                      Boolean missingFound, Boolean median) {
         if( path == null ) {
             path = new ArrayList<String>();
         }
@@ -637,7 +590,7 @@ public class Tree {
         // We are in a leaf node... the only thing we need to do is return distribution of the node as a Map object
         if( children.isEmpty() ) {
             lastNode.setTree(this);
-            return mergeDistributions(new HashMap<Object, Number>(), convertDistributionArrayToMap(distribution));
+            return Utils.mergeDistributions(new HashMap<Object, Number>(), Utils.convertDistributionArrayToMap(distribution));
         }
 
         if( isOneBranch(children, inputData) ) {
@@ -647,15 +600,15 @@ public class Tree {
                     if( !path.contains(newRule) && !missingFound ) {
                         path.add(newRule);
                     }
-                    return child.predictProportional(inputData, lastNode, path, missingFound);
+                    return child.predictProportional(inputData, lastNode, path, missingFound, median);
                 }
             }
         } else {
             // missing value found, the unique path stops
             missingFound = true;
             for (Tree child : children) {
-                finalDistribution = mergeDistributions(finalDistribution,
-                        child.predictProportional(inputData, lastNode, path, missingFound));
+                finalDistribution = Utils.mergeDistributions(finalDistribution,
+                        child.predictProportional(inputData, lastNode, path, missingFound, median));
             }
 
             lastNode.setTree(this);
@@ -743,88 +696,6 @@ public class Tree {
 //
 //        return count;
 //    }
-
-    /**
-     * Adds up a new distribution structure to a map formatted distribution
-     *
-     * @param distribution
-     * @param newDistribution
-     * @return
-     */
-    protected Map<Object, Number> mergeDistributions(Map<Object, Number> distribution, Map<Object, Number> newDistribution) {
-        for (Object value : newDistribution.keySet()) {
-            if( !distribution.containsKey(value) ) {
-                distribution.put(value, 0);
-            }
-            distribution.put(value, distribution.get(value).intValue() + newDistribution.get(value).intValue());
-        }
-
-        return distribution;
-    }
-
-    /**
-     * We switch the Array to a Map structure in order to be more easily manipulated
-     *
-     * @param distribution current distribution as an JSONArray instance
-     * @return the distribution as a Map instance
-     */
-
-    protected Map<Object, Number> convertDistributionArrayToMap(JSONArray distribution) {
-        Map<Object, Number> newDistribution = new HashMap<Object, Number>();
-        for (Object distValueObj : distribution) {
-            JSONArray distValueArr = (JSONArray) distValueObj;
-            newDistribution.put(distValueArr.get(0), (Number) distValueArr.get(1));
-        }
-
-        return newDistribution;
-    }
-
-    /**
-     * We switch the Array to a Map structure in order to be more easily manipulated
-     *
-     * @param distribution current distribution as an JSONArray instance
-     * @return the distribution as a Map instance
-     */
-
-    protected List<JSONArray> convertDistributionMapToSortedArray(final Predicate predicate, Map<Object, Number> distribution) {
-        List<JSONArray> newDistribution = new ArrayList<JSONArray>(distribution.size());
-
-        String opType = Constants.OPTYPE_NUMERIC;
-
-        for (Object key : distribution.keySet()) {
-            JSONArray element = new JSONArray();
-            element.add(key);
-            element.add(distribution.get(key));
-            newDistribution.add(element);
-
-            if( key instanceof Number ) {
-                opType = Constants.OPTYPE_NUMERIC;
-            } else if( key instanceof String ) {
-                opType = Constants.OPTYPE_TEXT;
-            }
-        }
-
-        if( distribution != null && !distribution.isEmpty() ) {
-            final String finalOpType = opType;
-
-            Collections.sort(newDistribution, new Comparator<JSONArray>() {
-                @Override
-                public int compare(JSONArray jsonArray1, JSONArray jsonArray2) {
-                    if( Constants.OPTYPE_NUMERIC.equals(finalOpType) ) {
-                        return Double.compare( ((Number) jsonArray1.get(0)).doubleValue(),
-                                ((Number) jsonArray2.get(0)).doubleValue());
-                    } else if( Constants.OPTYPE_TEXT.equals(finalOpType) ) {
-                        return ((String) jsonArray1.get(0)).compareTo( (String) jsonArray2.get(0));
-                    } else { // OPTYPE_DATETIME
-                        // TODO: implement this
-                        throw new UnsupportedOperationException();
-                    }
-                }
-            });
-        }
-
-        return newDistribution;
-    }
 
     /**
      * Translates a tree model into a set of IF-THEN rules.
@@ -926,8 +797,8 @@ public class Tree {
         int counter = 0;
         Double previousValue = null;
         for (Object binInfo : distribution) {
-            Double value = ((Number) ((JSONObject) binInfo).get("value")).doubleValue();
-            counter += ((Number) ((JSONObject) binInfo).get("instances")).intValue();
+            Double value = ((Number) ((JSONArray) binInfo).get(0)).doubleValue();
+            counter += ((Number) ((JSONArray) binInfo).get(1)).intValue();
             if( counter > (count / 2) ) {
                 if( (count % 2 != 0) && ((counter - 1) == (count / 2)) &&
                         previousValue != null ) {

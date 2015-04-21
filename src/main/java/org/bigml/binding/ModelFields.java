@@ -26,10 +26,17 @@ public class ModelFields {
     protected Map<String, String> fieldsIdByName;
     protected Map<String, String> fieldsNameById;
 
-    protected String locale;
     protected List<String> missingTokens;
     protected JSONObject fields = null;
     protected JSONObject invertedFields = null;
+
+    /**
+     * The constructor can be instantiated with nothing inside.
+     *
+     * We will need to invoke the initialize in overridden classes
+     */
+    protected ModelFields() {
+    }
 
     /**
      * The constructor can be instantiated with the fields structure.
@@ -42,6 +49,17 @@ public class ModelFields {
     }
 
     /**
+     * The constructor can be instantiated with the fields structure.
+     * The structure is checked and fields structure is returned if a resource type is matched.
+     *
+     * @param fields the resource that hold the fields structure
+     */
+    public ModelFields(JSONObject fields, String objectiveFieldId, String dataLocale,
+                       List<String> missingTokens) {
+        initialize(fields, objectiveFieldId, dataLocale, missingTokens);
+    }
+
+    /**
      * The constructor can be instantiated with fields structure.
      *
      * @param fields the fields structure itself
@@ -49,7 +67,7 @@ public class ModelFields {
      * @param missingTokens the list of missing tokens to use. DEFAULT_MISSING_TOKENS will be used by default
      * @param dataLocale the locale of the data
      */
-    public void initialize(JSONObject fields, String objectiveFieldId, String dataLocale,
+    protected void initialize(JSONObject fields, String objectiveFieldId, String dataLocale,
                        List<String> missingTokens) {
 
         this.fields = new JSONObject();
@@ -63,12 +81,7 @@ public class ModelFields {
         uniquifyNames(this.fields);
         this.invertedFields = Utils.invertDictionary(fields, "name");
 
-        this.locale = dataLocale;
         this.missingTokens = missingTokens;
-
-        if( this.locale == null ) {
-            locale = BigMLClient.DEFAUL_LOCALE.toString();
-        }
 
         if( this.missingTokens == null ) {
             this.missingTokens = new ArrayList<String>(Arrays.asList(DEFAULT_MISSING_TOKENS));
@@ -76,10 +89,24 @@ public class ModelFields {
     }
 
     /**
-     * Filters the keys given in input_data checking against model fields
+     * Checks the model structure to see if it contains all the needed keys
      */
-    public JSONObject filterInputData(Map<String, Object> inputData, Boolean byName) {
+    protected boolean checkModelStructure(JSONObject model) {
+        return model.containsKey("resource") && model.get("resource") != null &&
+                (model.containsKey("object") &&
+                        Utils.getJSONObject(model, "object.model", null) != null ||
+                        model.containsKey("model") );
+    }
 
+
+    /**
+     * Filters the keys given in inputData checking against model fields
+     *
+     * @param inputData
+     * @param byName
+     * @return
+     */
+    public JSONObject filterInputData(JSONObject inputData, boolean byName) {
         Iterator<String> fieldIdItr = inputData.keySet().iterator();
         while(fieldIdItr.hasNext()) {
             String fieldId = fieldIdItr.next();
@@ -90,7 +117,6 @@ public class ModelFields {
             }
         }
 
-//        if( byName ) {
         // We no longer check that the input data keys match some of
         // the dataset fields. We only remove the keys that are not
         // used as predictors in the model
@@ -195,38 +221,6 @@ public class ModelFields {
 
 //        return null;
     }
-
-    /**
-     * Checks expected type in input data values, strips affixes and casts
-     */
-    public Map<String, Object> cast(Map<String, Object> inputData) {
-        for (String fieldId : inputData.keySet()) {
-            Object value = inputData.get(fieldId);
-
-            JSONObject field = (JSONObject) fields.get(fieldId);
-
-            String optType = (String) Utils.getJSONObject(field, "optype");
-
-            if( ("numeric".equals(optType) && value instanceof String) ||
-                    (!"numeric".equals(optType) && !(value instanceof String)) ) {
-
-                if( "numeric".equals(optType) ) {
-                    value = stripAffixes(value.toString(), field);
-                    inputData.put(fieldId, Double.parseDouble(value.toString()));
-                } else if( "categorical".equals(optType) || "text".equals(optType) ) {
-                    inputData.put(fieldId, Double.parseDouble(value.toString()));
-                } else {
-                    throw new IllegalStateException(
-                            String.format("Mismatch input data type in field " +
-                            "\"%s\" for value %s.", field.get("name"), value.toString()));
-                }
-
-            }
-        }
-
-        return inputData;
-    }
-
 
     /**
      * Strips prefixes and suffixes if present

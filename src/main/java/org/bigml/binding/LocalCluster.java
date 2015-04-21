@@ -175,7 +175,8 @@ public class LocalCluster extends ModelFields {
         }
 
         // Strips affixes for numeric values and casts to the final field type
-        inputData = new JSONObject(cast(inputData));
+        Utils.cast(inputData, fields);
+        inputData = new JSONObject(inputData);
 
         Map<String, Object> uniqueTerms = getUniqueTerms(inputData);
 
@@ -374,7 +375,7 @@ public class LocalCluster extends ModelFields {
         List<String> headers = new ArrayList<String>();
         headers.add("centroid_name");
         headers.addAll(fieldsName);
-        headers.add("centroid_features");
+//        headers.add("centroid_features");
         headers.add("Instances");
 
         List<String> csvStatistics = new ArrayList<String>(Arrays.asList(CSV_STATISTICS));
@@ -405,7 +406,7 @@ public class LocalCluster extends ModelFields {
                 for (Object measureName : distanceInfo.keySet()) {
                     Object result = distanceInfo.get(measureName);
 
-                    if( csvStatistics.contains(measureName) ) {
+                    if( csvStatistics.contains( measureName.toString() ) ) {
                         if( !headerComplete ) {
                             headers.add(String.format("Data %s",
                                     measureName.toString().toLowerCase().replace('_',' ')));

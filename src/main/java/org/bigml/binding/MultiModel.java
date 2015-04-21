@@ -26,6 +26,7 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
+import org.bigml.binding.localmodel.Prediction;
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -56,6 +57,9 @@ public class MultiModel {
 
         if (models instanceof JSONArray) {
             this.models = (JSONArray) models;
+        } else if( models instanceof List ) {
+            this.models = new JSONArray();
+            this.models.addAll((List) models);
         } else {
             this.models = new JSONArray();
             this.models.add(models);
@@ -185,7 +189,7 @@ public class MultiModel {
 
             throws Exception {
 
-        batchPredict(inputDataList, outputFilePath, null, null, null, null);
+        batchPredict(inputDataList, outputFilePath, null, null, null, null, null, null);
     }
 
         /**
@@ -207,9 +211,10 @@ public class MultiModel {
          * weighted: CONFIDENCE_CODE 2 - probability weighted majority vote /
          * average: PROBABILITY_CODE
          */
-    public void batchPredict(final JSONArray inputDataList,
+    public List<MultiVote> batchPredict(final JSONArray inputDataList,
             String outputFilePath, Boolean byName, Boolean reuse,
-            MissingStrategy strategy, Boolean withConfidence)
+            MissingStrategy strategy, Set<String> headers, Boolean toFile,
+                             Boolean useMedian)
 
             throws Exception {
         if (strategy == null) {
@@ -221,79 +226,113 @@ public class MultiModel {
         if (reuse == null) {
             reuse = false;
         }
-        if (withConfidence == null) {
-            withConfidence = true;
+
+        if (toFile == null) {
+            toFile = true;
         }
 
+        List<MultiVote> votes = new ArrayList<MultiVote>();
+        int order = 0;
 
         for (Object model : models) {
             JSONObject modelObj = (JSONObject) model;
 
-            List<HashMap<Object, Object>> predictions =
-                    new ArrayList<HashMap<Object, Object>>(models.size());
+            order += 1;
+
+            List<Prediction> predictions =
+                    new ArrayList<Prediction>(models.size());
 
             Set availableHeaders = new TreeSet();
 
             try {
+                int index = 0;
                 for (Object inputData : inputDataList) {
                     LocalPredictiveModel localModel = new LocalPredictiveModel(modelObj);
 
-                    HashMap<Object,Object> prediction =
-                            localModel.predict((JSONObject) inputData, byName,
-                                    strategy, withConfidence);
+                    Prediction prediction =
+                            localModel.predict((JSONObject) inputData, byName, strategy);
+
+                    // if median is to be used, we just place it as prediction
+                    //  starting the list
+                    if( useMedian && localModel.isRegression() ) {
+                        prediction.setPrediction(prediction.getMedian());
+                    }
+
                     predictions.add(prediction);
 
                     availableHeaders.addAll(prediction.keySet());
-                }
-            } catch (Exception e) {
-                throw new Exception("Error generating the CSV !!!");
-            }
 
+                    // Prediction is a row that contains prediction, confidence,
+                    // distribution, instances
+                    Prediction predictionWithOrder = new Prediction();
+                    predictionWithOrder.putAll(prediction);
 
-            List headers = new ArrayList(availableHeaders);
-
-            String ouputFile = getPredictionsFileName(modelObj.get("resource").toString(),
-                    outputFilePath);
-
-            Writer predictionsFile = null;
-            try {
-                if( reuse ) {
-                    predictionsFile = new BufferedWriter(new OutputStreamWriter(
-                            new FileOutputStream(ouputFile, true), "UTF-8"));
-                } else {
-                    predictionsFile = new BufferedWriter(new OutputStreamWriter(
-                            new FileOutputStream(ouputFile), "UTF-8"));
-                }
-            } catch (IOException e) {
-                throw new Exception(String.format("Cannot find %s directory.", outputFilePath));
-            }
-
-            final CSVPrinter printer = CSVFormat.DEFAULT.withHeader((String[])
-                    headers.toArray(new String[headers.size()])).print(predictionsFile);
-
-            try {
-                for (HashMap<Object, Object> prediction : predictions) {
-                    Object[] values = new Object[headers.size()];
-                    for(int iHeader = 0; iHeader < headers.size(); iHeader++ ) {
-                        values[iHeader] = prediction.get(headers.get(iHeader));
+                    if( votes.size() <= index ) {
+                        votes.add(new MultiVote());
                     }
-                    printer.printRecord(values);
+
+                    votes.get(index).append(predictionWithOrder);
+
+                    index++;
                 }
             } catch (Exception e) {
                 throw new Exception("Error generating the CSV !!!");
             }
 
-            try {
-                predictionsFile.flush();
-                predictionsFile.close();
-            } catch (IOException e) {
-                throw new Exception("Error while flushing/closing fileWriter !!!");
-            }
+            if( toFile ) {
+                List headersList = new ArrayList();
+                if( headers != null && !headers.isEmpty() ) {
+                    for (Object availableHeader : availableHeaders) {
+                        if( headers.contains(availableHeader) ) {
+                            headersList.add(availableHeader);
+                        }
+                    }
+                } else {
+                    headersList.addAll(availableHeaders);
+                }
 
+                String ouputFile = getPredictionsFileName(modelObj.get("resource").toString(),
+                        outputFilePath);
+
+                Writer predictionsFile = null;
+                try {
+                    if (reuse) {
+                        predictionsFile = new BufferedWriter(new OutputStreamWriter(
+                                new FileOutputStream(ouputFile, true), "UTF-8"));
+                    } else {
+                        predictionsFile = new BufferedWriter(new OutputStreamWriter(
+                                new FileOutputStream(ouputFile), "UTF-8"));
+                    }
+                } catch (IOException e) {
+                    throw new Exception(String.format("Cannot find %s directory.", outputFilePath));
+                }
+
+                final CSVPrinter printer = CSVFormat.DEFAULT.withHeader((String[])
+                        headersList.toArray(new String[headersList.size()])).print(predictionsFile);
+
+                try {
+                    for (HashMap<Object, Object> prediction : predictions) {
+                        Object[] values = new Object[headersList.size()];
+                        for (int iHeader = 0; iHeader < headersList.size(); iHeader++) {
+                            values[iHeader] = prediction.get(headersList.get(iHeader));
+                        }
+                        printer.printRecord(values);
+                    }
+                } catch (Exception e) {
+                    throw new Exception("Error generating the CSV !!!");
+                }
+
+                try {
+                    predictionsFile.flush();
+                    predictionsFile.close();
+                } catch (IOException e) {
+                    throw new Exception("Error while flushing/closing fileWriter !!!");
+                }
+            }
 
         }
 
-
+        return votes;
     }
 
     /**
@@ -315,12 +354,10 @@ public class MultiModel {
             JSONObject model = (JSONObject) models.get(i);
             LocalPredictiveModel localModel = new LocalPredictiveModel(model);
 
-            HashMap<Object, Object> prediction = localModel.predict(inputData,
-                    byName, withConfidence);
+            Prediction prediction = localModel.predict(inputData, byName);
 
             HashMap<Object, Integer> distributionHash = new HashMap<Object, Integer>();
-            JSONArray predictionsArray = (JSONArray) prediction
-                    .get("distribution");
+            JSONArray predictionsArray = prediction.getDistribution();
             int count = 0;
             for (int j = 0; j < predictionsArray.size(); j++) {
                 JSONArray pred = (JSONArray) predictionsArray.get(j);
@@ -359,9 +396,7 @@ public class MultiModel {
             JSONObject model = (JSONObject) models.get(i);
             LocalPredictiveModel localModel = new LocalPredictiveModel(model);
 
-            HashMap<Object, Object> predictionInfo = localModel.predict(inputData,
-                    byName, null, null, null, strategy,
-                    true, null, true, true, addMedian, null).get(0);
+            Prediction predictionInfo = localModel.predict(inputData, byName, strategy);
 
             votes.append(predictionInfo);
         }

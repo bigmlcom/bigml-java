@@ -35,12 +35,15 @@ package org.bigml.binding;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.*;
 
+import org.bigml.binding.localmodel.Predicate;
+import org.bigml.binding.localmodel.Prediction;
 import org.bigml.binding.localmodel.Tree;
 import org.bigml.binding.localmodel.TreeNodeFilter;
 import org.bigml.binding.utils.Utils;
@@ -57,7 +60,7 @@ import org.slf4j.LoggerFactory;
  * generate prediction locally.
  * 
  */
-public class LocalPredictiveModel implements PredictionConverter {
+public class LocalPredictiveModel extends BaseModel implements PredictionConverter {
 
     /**
      * Logging
@@ -90,10 +93,13 @@ public class LocalPredictiveModel implements PredictionConverter {
         JAVA_TYPES.put(Constants.OPTYPE_NUMERIC + "-boolean", "Boolean");
     }
 
-    private JSONObject fields;
+    public static Double DEFAULT_IMPURITY = 0.2;
+
     private JSONObject root;
     private Tree tree;
-    private String objectiveField;
+    private Map<String, List<String>> terms = new HashMap<String, List<String>>();
+    private int maxBins = 0;
+
 
     /**
      * Constructor
@@ -102,61 +108,21 @@ public class LocalPredictiveModel implements PredictionConverter {
      *            the json representation for the remote model
      */
     public LocalPredictiveModel(JSONObject model) throws Exception {
-        super();
+        super(model);
 
         try {
-            if (model.get("resource") == null) {
-                throw new Exception(
-                        "Cannot create the Model instance. Could not find the 'model' key in the resource");
-            }
-            if (!BigMLClient.getInstance().modelIsReady(model)) {
-                throw new Exception("The model isn't finished yet");
-            }
-
             String prefix = Utils.getJSONObject(model, "object") != null ? "object."
                     : "";
-
-            this.fields = (JSONObject) Utils.getJSONObject(model, prefix
-                    + "model.fields");
-            if (Utils.getJSONObject(model, prefix + "model.model_fields") != null) {
-                this.fields = (JSONObject) Utils.getJSONObject(model, prefix
-                        + "model.model_fields");
-
-                JSONObject modelFields = (JSONObject) Utils.getJSONObject(
-                        model, prefix + "model.fields");
-                Iterator iter = this.fields.keySet().iterator();
-                while (iter.hasNext()) {
-                    String key = (String) iter.next();
-                    if (modelFields.get(key) == null) {
-                        throw new Exception(
-                                "Some fields are missing to generate a local model. Please, provide a model with the complete list of fields.");
-                    }
-                }
-
-                iter = this.fields.keySet().iterator();
-                while (iter.hasNext()) {
-                    String key = (String) iter.next();
-                    JSONObject field = (JSONObject) this.fields.get(key);
-                    JSONObject modelField = (JSONObject) modelFields.get(key);
-                    field.put("summary", modelField.get("summary"));
-                    field.put("name", modelField.get("name"));
-                }
-            }
 
             this.root = (JSONObject) Utils.getJSONObject(model, prefix
                     + "model.root");
 
-            String objectiveField;
-            Object objectiveFields = Utils.getJSONObject(model, prefix
-                    + "objective_fields");
-            objectiveField = objectiveFields instanceof JSONArray ? (String) ((JSONArray) objectiveFields)
-                    .get(0) : (String) objectiveFields;
-
-            // Check duplicated field names
-            uniquifyVarnames();
-
             this.tree = new Tree(root, this.fields, objectiveField,
                     (JSONObject) Utils.getJSONObject(model, prefix + "model.distribution.training"));
+
+            if( this.tree.isRegression() )
+                this.maxBins = this.tree.getMaxBins();
+
         } catch (Exception e) {
             logger.error("Invalid model structure", e);
             throw new InvalidModelException();
@@ -168,6 +134,14 @@ public class LocalPredictiveModel implements PredictionConverter {
      */
     public JSONObject fields() {
         return tree.listFields();
+    }
+
+
+    /**
+     * Checks if the tree is a regression problem
+     */
+    public boolean isRegression() {
+        return tree.isRegression();
     }
 
     /**
@@ -199,12 +173,15 @@ public class LocalPredictiveModel implements PredictionConverter {
      *
      * @return all the leave nodes after apply the impurity threshold
      */
-    public List<Tree> getImpureLeaves(final Double impurityThreshold) {
+    public List<Tree> getImpureLeaves(Double impurityThreshold) {
+        final Double impurityThresholdToUse = (impurityThreshold == null ?
+                DEFAULT_IMPURITY : impurityThreshold);
+
         return this.tree.getLeaves(new TreeNodeFilter() {
             @Override
             public boolean filter(Tree node) {
                 Double nodeImpurity = node.getImpurity();
-                return (nodeImpurity != null && nodeImpurity > impurityThreshold);
+                return (nodeImpurity != null && nodeImpurity > impurityThresholdToUse);
             }
         });
     }
@@ -215,42 +192,9 @@ public class LocalPredictiveModel implements PredictionConverter {
      * The input fields must be keyed by field name.
      * 
      */
-    @Deprecated
-    public HashMap<Object, Object> predict(final String args)
+    public Prediction predict(final String args)
             throws InputDataParseException {
-        return predict(args, null);
-    }
-
-    /**
-     * Makes a prediction based on a number of field values.
-     * 
-     * The input fields must be keyed by field name.
-     */
-    public HashMap<Object, Object> predict(final JSONObject args)
-            throws InputDataParseException {
-        return predict(args, null);
-    }
-
-    /**
-     * Makes a prediction based on a number of field values.
-     * 
-     * The input fields must be keyed by field name.
-     * 
-     */
-    @Deprecated
-    public HashMap<Object, Object> predict(final String args, Boolean byName)
-            throws InputDataParseException {
-        return predict(args, byName, null);
-    }
-
-    /**
-     * Makes a prediction based on a number of field values.
-     * 
-     * The input fields must be keyed by field name.
-     */
-    public HashMap<Object, Object> predict(final JSONObject args, Boolean byName)
-            throws InputDataParseException {
-        return predict(args, byName, null);
+        return predict(args, false);
     }
 
     /**
@@ -258,16 +202,11 @@ public class LocalPredictiveModel implements PredictionConverter {
      *
      * By default the input fields must be keyed by field name but you can use `by_name`
      *  to input them directly keyed by id.
-     * 
+     *
      */
-    @Deprecated
-    public HashMap<Object, Object> predict(final String args, Boolean byName,
-            Boolean withConfidence) throws InputDataParseException {
+    public Prediction predict(final String args, Boolean byName) throws InputDataParseException {
         if (byName == null) {
             byName = true;
-        }
-        if (withConfidence == null) {
-            withConfidence = false;
         }
 
         JSONObject argsData = (JSONObject) JSONValue.parse(args);
@@ -277,29 +216,47 @@ public class LocalPredictiveModel implements PredictionConverter {
         JSONObject inputData = argsData;
 
 
-        return predict(inputData, byName, withConfidence);
+        return predict(inputData, byName);
+    }
+
+    /**
+     * Makes a prediction based on a number of field values.
+     * 
+     * The input fields must be keyed by field name.
+     */
+    public Prediction predict(final JSONObject args)
+            throws InputDataParseException {
+        return predict(args, false, MissingStrategy.LAST_PREDICTION, null).get(0);
     }
 
     /**
      * Makes a prediction based on a number of field values using a Last Prediction Strategy
      * 
+     * The input fields must be keyed by field name.
      */
-    public HashMap<Object, Object> predict(final JSONObject args,
-            Boolean byName, Boolean withConfidence)
+    public Prediction predict(final JSONObject args, Boolean byName)
             throws InputDataParseException {
-      return predict(args, byName, null, null, withConfidence, MissingStrategy.LAST_PREDICTION,
-              null, null, null, null, null, null).get(0);
+        return predict(args, byName, MissingStrategy.LAST_PREDICTION, null).get(0);
     }
 
     /**
-     * Makes a prediction based on a number of field values using a Last Prediction Strategy
+     * Makes a prediction based on a number of field values using the specified Missing Strategy
      *
+     * The input fields must be keyed by field name.
      */
-    public HashMap<Object, Object> predict(final JSONObject args,
-            Boolean byName, MissingStrategy strategy, Boolean withConfidence)
+    public Prediction predict(final JSONObject args, Boolean byName, MissingStrategy strategy)
             throws InputDataParseException {
-      return predict(args, byName, null, null, withConfidence, strategy,
-              null, null, null, null, null, null).get(0);
+        return predict(args, byName, strategy, null).get(0);
+    }
+
+    /**
+     * Makes a multiple predictions based on a number of field values using the Last Prediction strategy
+     *
+     * The input fields must be keyed by field name.
+     */
+    public List<Prediction> predict(final JSONObject args, Boolean byName, Object multiple)
+            throws InputDataParseException {
+        return predict(args, byName, MissingStrategy.LAST_PREDICTION, multiple);
     }
 
     /**
@@ -309,23 +266,12 @@ public class LocalPredictiveModel implements PredictionConverter {
      *  `byName` to input them directly keyed by id.
      *
      * inputData: Input data to be predicted
+     *
      * byName: Boolean, True if input_data is keyed by names
-     * printPath: Boolean, if True the rules that lead to the prediction
-     *              are printed
-     * out: output handler
-     * withConfidence: Boolean, if True, all the information in the node
-     *                  (prediction, confidence, distribution and count)
-     *                  is returned in a list format
+     *
      * missingStrategy: LAST_PREDICTION|PROPORTIONAL missing strategy for
      *                  missing fields
-     * addConfidence: Boolean, if True adds confidence to the dict output
-     * addPath: Boolean, if True adds path to the dict output
-     * addDistribution: Boolean, if True adds distribution info to the
-     *                      dict output
-     * addCount: Boolean, if True adds the number of instances in the
-     *                      node to the dict output
-     * addMedian: Boolean, if True adds the median of the values in
-     *                      the distribution
+     *
      * multiple: For categorical fields, it will return the categories
      *           in the distribution of the predicted node as a
      *      list of dicts:
@@ -337,52 +283,24 @@ public class LocalPredictiveModel implements PredictionConverter {
      *              'confidence': 0.0103
      *              'probability': 0.03,
      *              'count': 3}]
+     *
      * The value of this argument can either be an integer
      *  (maximum number of categories to be returned), or the
      *  literal 'all', that will cause the entire distribution
      *  in the node to be returned.
      *
      */
-    public List<HashMap<Object, Object>> predict(final JSONObject args,
-            Boolean byName, Boolean printPath, OutputStream out,
-            Boolean withConfidence, MissingStrategy strategy,
-            Boolean addConfidence, Boolean addPath, Boolean addDistribution,
-            Boolean addCount, Boolean addMedian, Object multiple)
+    public List<Prediction> predict(final JSONObject args, Boolean byName, MissingStrategy strategy, Object multiple)
             throws InputDataParseException {
 
-        List<HashMap<Object, Object>> outputs = new ArrayList<HashMap<Object, Object>>();
+        List<Prediction> outputs = new ArrayList<Prediction>();
 
         if (byName == null) {
             byName = true;
         }
-        if (printPath == null) {
-            printPath = false;
-        }
-        if (out == null) {
-            out = System.out;
-        }
-        if (withConfidence == null) {
-            withConfidence = false;
-        }
 
         if (strategy == null) {
             strategy = MissingStrategy.LAST_PREDICTION;
-        }
-
-        if (addPath == null) {
-            addPath = false;
-        }
-        if (addConfidence == null) {
-            addConfidence = false;
-        }
-        if (addDistribution == null) {
-            addDistribution = false;
-        }
-        if (addCount == null) {
-            addCount = false;
-        }
-        if (addMedian == null) {
-            addMedian = false;
         }
 
         if (args == null) {
@@ -394,20 +312,8 @@ public class LocalPredictiveModel implements PredictionConverter {
         // Checks and cleans inputData leaving the fields used in the model
         inputData = filterInputData(inputData, byName);
 
-        // Lets work always using the field names instead of the keys
-        if (!byName) {
-            inputData = new JSONObject();
-            Iterator iter = args.keySet().iterator();
-            while (iter.hasNext()) {
-                String key = (String) iter.next();
-                String fieldName = (String) Utils.getJSONObject(fields, key
-                        + ".name");
-                inputData.put(fieldName, args.get(key));
-            }
-        }
-
-        Integer multipleNum = null;
-        Boolean multipleAll = null;
+        Integer multipleNum = Integer.MAX_VALUE;
+        Boolean multipleAll = false;
 
         if( multiple != null ) {
             if( multiple instanceof String ) {
@@ -422,55 +328,34 @@ public class LocalPredictiveModel implements PredictionConverter {
                 }
             } else if( multiple instanceof Number ) {
                 multipleNum = ((Number) multiple).intValue();
+            } else {
+                throw new IllegalArgumentException("The value of the \"multiple\"" +
+                        " argument  can either be an integer" +
+                        " (maximum number of categories to be returned), or the" +
+                        " literal 'all', that will cause the entire distribution" +
+                        " in the node to be returned.");
             }
         }
 
         // Strips affixes for numeric values and casts to the final field type
         Utils.cast(inputData, fields);
 
-        HashMap<Object, Object> predictionInfo = tree.predict(inputData, null, strategy);
+        Prediction predictionInfo = tree.predict(inputData, null, strategy);
 
-        Object prediction = predictionInfo.get("prediction");
-        List<String> path = (List<String>) predictionInfo.get("path");
-        Double confidence = (Double) predictionInfo.get("confidence");
-        List<JSONArray>  distribution = (List<JSONArray>) predictionInfo.get("distribution");
-        Long instances = (Long) predictionInfo.get("instances");
-        Double median = (Double) predictionInfo.get("median");
-        Object distribution_unit = predictionInfo.get("distribution_unit");
-
-        if( printPath ) {
-            try {
-                out.write((Utils.join(path, " AND ") + " => " + prediction + "\n").getBytes());
-                out.flush();
-            } catch (IOException e) {
-                logger.error("Unable to print the path into the outputstream.", e);
-            }
-        }
-
-        HashMap<Object, Object> output = new HashMap<Object, Object>();
-        output.put("prediction", prediction);
-
-        if( withConfidence ) {
-            output.put("confidence", confidence);
-            output.put("distribution", distribution);
-            output.put("instances", instances);
-        }
+        JSONArray  distribution = predictionInfo.getDistribution();
+        Long instances = predictionInfo.getCount();
 
         if( multiple != null && !tree.isRegression() ) {
-            Long totalInstances = instances;
-
             for( int iDistIndex = 0; iDistIndex < distribution.size(); iDistIndex++ ) {
-                JSONArray distElement = distribution.get(iDistIndex);
+                JSONArray distElement = (JSONArray) distribution.get(iDistIndex);
                 if( multipleAll || iDistIndex < multipleNum ) {
-                    predictionInfo = new HashMap<Object, Object>();
+                    predictionInfo = new Prediction();
                     // Category
                     Object category = distElement.get(0);
-                    predictionInfo.put("prediction", category);
-                    predictionInfo.put("confidence",
-                            Tree.wsConfidence(category, distribution));
-                    predictionInfo.put("probability",
-                            ((Integer) distElement.get(1)) / totalInstances);
-                    predictionInfo.put("count", distElement.get(1));
+                    predictionInfo.setPrediction(category);
+                    predictionInfo.setConfidence(Tree.wsConfidence(category, distribution));
+                    predictionInfo.setProbability(((Number) distElement.get(1)).doubleValue() / instances);
+                    predictionInfo.setCount(((Number) distElement.get(1)).longValue());
 
                     outputs.add(predictionInfo);
                 }
@@ -478,24 +363,14 @@ public class LocalPredictiveModel implements PredictionConverter {
 
             return outputs;
         } else {
-            if( addConfidence ) {
-                output.put("confidence", confidence);
+            List<Tree> children = predictionInfo.getChildren();
+            String field = (children == null || children.size() == 0 ? null : children.get(0).getPredicate().getField());
+            if( field != null && fields.containsKey(field) ) {
+                field = fieldsNameById.get(field);
             }
-            if( addPath ) {
-                output.put("path", new ArrayList<String>(path));
-            }
-            if( addDistribution ) {
-                output.put("distribution", distribution);
-                output.put("distribution_unit", distribution_unit);
-            }
-            if( addCount ) {
-                output.put("count", instances);
-            }
-            if( tree.isRegression() && addMedian ) {
-                output.put("median", median);
-            }
+            predictionInfo.setNext(field);
 
-            outputs.add(output);
+            outputs.add(predictionInfo);
 
             return outputs;
         }
@@ -506,35 +381,33 @@ public class LocalPredictiveModel implements PredictionConverter {
      * or names to their values as Java objects. See also predict(String,
      * Boolean, Integer, Boolean).
      */
-    public HashMap<Object, Object> predictWithMap(
+    public Prediction predictWithMap(
             final Map<String, Object> inputs, Boolean byName, Boolean withConfidence)
             throws InputDataParseException {
 
         JSONObject inputObj = (JSONObject) JSONValue.parse(JSONValue
                 .toJSONString(inputs));
-        return predict(inputObj, byName, null, null, withConfidence, MissingStrategy.LAST_PREDICTION,
-                null, null, null, null, null, null).get(0);
+        return predict(inputObj, byName, MissingStrategy.LAST_PREDICTION, null).get(0);
     }
 
-    public HashMap<Object, Object> predictWithMap(
-            final Map<String, Object> inputs, Boolean byName, Boolean withConfidence, MissingStrategy missingStrategy)
+    public Prediction predictWithMap(
+            final Map<String, Object> inputs, Boolean byName, MissingStrategy missingStrategy)
             throws InputDataParseException {
 
         JSONObject inputObj = (JSONObject) JSONValue.parse(JSONValue
                 .toJSONString(inputs));
-        return predict(inputObj, byName, null, null, withConfidence, missingStrategy,
-                null, null, null, null, null, null).get(0);
+        return predict(inputObj, byName, missingStrategy, null).get(0);
     }
 
-    public HashMap<Object, Object> predictWithMap(
+    public Prediction predictWithMap(
             final Map<String, Object> inputs, Boolean byName)
             throws InputDataParseException {
-        return predictWithMap(inputs, byName, null, MissingStrategy.LAST_PREDICTION);
+        return predictWithMap(inputs, byName, MissingStrategy.LAST_PREDICTION);
     }
 
-    public HashMap<Object, Object> predictWithMap(
+    public Prediction predictWithMap(
             final Map<String, Object> inputs) throws InputDataParseException {
-        return predictWithMap(inputs, null, null, MissingStrategy.LAST_PREDICTION);
+        return predictWithMap(inputs, false, MissingStrategy.LAST_PREDICTION);
     }
 
     /**
@@ -600,130 +473,332 @@ public class LocalPredictiveModel implements PredictionConverter {
     }
 
     /**
-     * Writes a java method that implements the model.
-     * 
+     * Groups in categories or bins the predicted data
+     *
+     * @return Map - contains a map grouping counts in 'total' and 'details' lists.
+     *
+     *      'total' key contains a 3-element list.
+     *              - common segment of the tree for all instances
+     *              - data count
+     *              - predictions count
+     *      'details' key contains a list of elements. Each element is a 3-element list:
+     *              - complete path of the tree from the root to the leaf
+     *              - leaf predictions count
+     *              - confidence
+     *              - impurity
      */
-    /*
-     * public String java() { Iterator iter = fields.keySet().iterator(); if
-     * (!iter.hasNext()) { return null; }
-     * 
-     * String methodReturn = "Object"; String methodName = ""; String
-     * objectiveFieldName = (String) Utils.getJSONObject(fields,
-     * tree.getObjectiveField()+".name");
-     * 
-     * String methodParams = ""; while (iter.hasNext()) { String key = (String)
-     * iter.next();
-     * 
-     * String dataType = (String) Utils.getJSONObject(fields, key+".datatype");
-     * String opType = (String) Utils.getJSONObject(fields, key+".optype");
-     * String name = (String) Utils.getJSONObject(fields, key+".name");
-     * 
-     * if (objectiveFieldName.equals(name)) { methodName = objectiveFieldName;
-     * methodReturn = JAVA_TYPES.get(opType+"-"+dataType); } else { methodParams
-     * += "final " + JAVA_TYPES.get(opType+"-"+dataType) + " " +
-     * Utils.slugify(name) + ", "; }
-     * 
-     * } methodParams = methodParams.substring(0, methodParams.length()-2);
-     * 
-     * return MessageFormat.format(
-     * "public {0} predict_{1}({2}) '{'\n{3}\n    return null;\n'}'\n",
-     * methodReturn, Utils.slugify(methodName), methodParams, tree.javaBody(1,
-     * methodReturn)); }
-     */
+    public Map<Object, GroupPrediction> getGroupPrediction() {
 
-    /*
-     * Tests if the fields names are unique. If they aren't, a transformation is
-     * applied to ensure unicity.
-     */
-    private void uniquifyVarnames() {
-        HashSet<String> uniqueNames = new HashSet<String>();
-        Iterator iter = this.fields.keySet().iterator();
-        while (iter.hasNext()) {
-            uniqueNames.add((String) iter.next());
+        Map<Object, GroupPrediction> groups = new HashMap<Object, GroupPrediction>();
+
+        JSONArray distribution = tree.getDistribution();
+        for (Object item : distribution) {
+            JSONArray distItem = (JSONArray) item;
+
+            GroupPrediction newGroupPrediction = new GroupPrediction();
+            newGroupPrediction.setTotalData(((Number) distItem.get(1)).intValue());
+
+            groups.put(distItem.get(0),newGroupPrediction);
         }
-        if (uniqueNames.size() < this.fields.size()) {
-            transformRepeatedNames();
-        }
-        return;
+
+        List<Predicate> path = new ArrayList<Predicate>();
+        depthFirstSearch(groups, tree, path);
+
+        return groups;
     }
 
-    /*
-     * If a field name is repeated, it will be transformed adding its column
-     * number. If that combination is also a field name, the field id will be
-     * added.
-     */
-    private void transformRepeatedNames() {
-        // The objective field treated first to avoid changing it.
-        String objectiveFieldId = (String) Utils.getJSONObject(this.fields,
-                objectiveField + ".name");
-        HashSet<String> uniqueNames = new HashSet<String>();
-        uniqueNames.add(objectiveFieldId);
 
-        Iterator iter = this.fields.keySet().iterator();
-        ArrayList<String> fieldIds = new ArrayList<String>();
-        while (iter.hasNext()) {
-            String fieldId = (String) iter.next();
-            if (!fieldId.equals(objectiveFieldId)) {
-                fieldIds.add(fieldId);
+    /**
+     * Adds instances to groups array
+     *
+     * Used by getGroupPrediction()
+     */
+    private void addToGroups(Map<Object, GroupPrediction> groups, List<Predicate> path, Object output,
+                             long count, double confidence, double impurity) {
+        GroupPrediction groupPrediction = groups.get(output);
+        if( groupPrediction == null ) {
+            groupPrediction = new GroupPrediction();
+            groups.put(output, groupPrediction);
+        }
+
+        PredictionDetails newPrediction = new PredictionDetails();
+        newPrediction.setPath(path);
+        newPrediction.setLeafPredictionsCount(count);
+        newPrediction.setConfidence(confidence);
+        newPrediction.setImpurity(impurity);
+
+        groupPrediction.addPrediction(newPrediction);
+    }
+
+    /**
+     * Search for leafs' values and instances
+     *
+     * Used by getGroupPrediction()
+     */
+    private long depthFirstSearch(Map<Object, GroupPrediction> groups, Tree tree, List<Predicate> path) {
+        if( tree.isPredicate() ) {
+            path.add(tree.getPredicate());
+            if( tree.getPredicate().getTerm() != null ) {
+                String field = tree.getPredicate().getField();
+                String term = tree.getPredicate().getTerm();
+                if( !terms.containsKey(field) ) {
+                    terms.put(field, new ArrayList<String>());
+                }
+
+                if( !terms.get(field).contains(term) ) {
+                    terms.get(field).add(term);
+                }
             }
         }
 
-        for (String fieldId : fieldIds) {
-            JSONObject fieldJson = (JSONObject) Utils.getJSONObject(
-                    this.fields, fieldId);
-            String newName = (String) Utils.getJSONObject(fieldJson, "name");
-            if (uniqueNames.contains(newName)) {
-                newName = MessageFormat.format("{0}{1}", fieldJson.get("name"),
-                        fieldJson.get("column_number"));
-                if (uniqueNames.contains(newName)) {
-                    newName = MessageFormat.format("{0}_{1}", newName, fieldId);
-                }
-                fieldJson.put("name", newName);
+        if( tree.getChildren().size() == 0 ) {
+            addToGroups(groups, path, tree.getOutput(), tree.getCount(), tree.getConfidence(), tree.getImpurity());
+            return tree.getCount();
+        } else {
+            List<Tree> children = new ArrayList<Tree>(tree.getChildren());
+            Collections.reverse(children);
+
+            int childrenSum = 0;
+            for (Tree child : children) {
+                childrenSum += depthFirstSearch(groups, child, new ArrayList<Predicate>(path));
             }
-            uniqueNames.add(newName);
+
+            if( childrenSum < tree.getCount() ) {
+                addToGroups(groups, path, tree.getOutput(), tree.getCount() - childrenSum,
+                        tree.getConfidence(), tree.getImpurity());
+            }
+
+            return tree.getCount();
         }
     }
 
     /**
-     * Filters the keys given in inputData checking against model fields
-     *
-     * @param inputData
-     * @param byName
-     * @return
+     * Returns training data distribution
      */
-    public JSONObject filterInputData(JSONObject inputData, boolean byName) {
+    public JSONArray getDataDistribution() {
 
-        List<String> emptyFields = new ArrayList<String>();
-        for (Object key : inputData.keySet()) {
-            if( inputData.get(key) == null ) {
-                emptyFields.add(key.toString());
-            }
-        }
+        JSONArray distribution = new JSONArray();
+        distribution.addAll(tree.getDistribution());
 
-        for (String emptyField : emptyFields) {
-            inputData.remove(emptyField);
-        }
+        Collections.sort(distribution, new Comparator<JSONArray>() {
+            public int compare(JSONArray o1, JSONArray o2) {
+                Number o1Num = (Number) o1.get(0);
+                Number o2Num = (Number) o2.get(0);
 
-        JSONObject newInputData = new JSONObject();
-
-        if( byName ) {
-            JSONObject invertedFields = Utils.invertDictionary(fields);
-            for (Object inputDataKey : inputData.keySet()) {
-                if( invertedFields.containsKey(inputDataKey) ) {
-                    newInputData.put(inputDataKey, inputData.get(inputDataKey));
+                if (((Object) o2Num).getClass().equals(((Object) o1Num).getClass())) {
+                    // both numbers are instances of the same type!
+                    if (o1Num instanceof Comparable) {
+                        // and they implement the Comparable interface
+                        return ((Comparable) o1Num).compareTo(o2Num);
+                    }
                 }
+                // for all different Number types, let's check there double values
+                if (o1Num.doubleValue() < o2Num.doubleValue())
+                    return -1;
+                if (o1Num.doubleValue() > o2Num.doubleValue())
+                    return 1;
+                return 0;
             }
-        } else {
-            for (Object inputDataKey : inputData.keySet()) {
-                if( fields.containsKey(inputDataKey) ) {
-                    newInputData.put(inputDataKey, inputData.get(inputDataKey));
-                }
-            }
-        }
+        });
 
-        return newInputData;
+        return distribution;
     }
 
+    public JSONArray getPredictionDistribution(Map<Object, GroupPrediction> groups) {
+
+        if( groups == null ) {
+            groups = getGroupPrediction();
+        }
+
+        JSONArray predictions = new JSONArray();
+
+        for (Object group : groups.keySet()) {
+            long totalPredictions = groups.get(group).getTotalPredictions();
+
+            // remove groups that are not predicted
+            if( totalPredictions > 0 ) {
+                JSONArray prediction = new JSONArray();
+                prediction.add(group);
+                prediction.add(totalPredictions);
+                predictions.add(prediction);
+            }
+        }
+
+        Collections.sort(predictions, new Comparator<JSONArray>() {
+            public int compare(JSONArray o1, JSONArray o2) {
+                Number o1Num = (Number) o1.get(0);
+                Number o2Num = (Number) o2.get(0);
+
+                if (((Object) o2Num).getClass().equals(((Object) o1Num).getClass())) {
+                    // both numbers are instances of the same type!
+                    if (o1Num instanceof Comparable) {
+                        // and they implement the Comparable interface
+                        return ((Comparable) o1Num).compareTo(o2Num);
+                    }
+                }
+                // for all different Number types, let's check there double values
+                if (o1Num.doubleValue() < o2Num.doubleValue())
+                    return -1;
+                if (o1Num.doubleValue() > o2Num.doubleValue())
+                    return 1;
+                return 0;
+            }
+        });
+
+        return predictions;
+    }
+
+    /**
+     * Prints summary grouping distribution as class header and details
+     *
+     * @param out
+     */
+    public void summarize(OutputStream out, Boolean addFieldImportance) throws IOException {
+
+        if( out == null ) {
+            out = System.out;
+        }
+
+        if( addFieldImportance == null ) {
+            addFieldImportance = false;
+        }
+
+        JSONArray distribution = getDataDistribution();
+        out.write("Data distribution:\n".getBytes());
+        out.write(Utils.printDistribution(distribution).toString().getBytes());
+        out.write("\n\n".getBytes());
+
+        Map<Object, GroupPrediction> groups = getGroupPrediction();
+        JSONArray predictions = getPredictionDistribution(groups);
+        out.write("Predicted distribution:\n".getBytes());
+        out.write(Utils.printDistribution(predictions).toString().getBytes());
+        out.write("\n\n".getBytes());
+
+        if( addFieldImportance ) {
+            out.write("Field importance:\n".getBytes());
+//            printImportance(out);
+        }
+    }
+
+    /**
+     * Extracts the common segment of the prediction path for a group
+     *
+     * Used by summarize()
+     *
+     * @param groups
+     */
+    private void extractCommonPath(Map<Object, GroupPrediction> groups) {
+
+        for (Object group : groups.keySet()) {
+            List<PredictionDetails> details = groups.get(group).getDetails();
+
+            List<Predicate> commonPath = new ArrayList<Predicate>();
+
+            if( details.size() > 0 ) {
+                PredictionDetails minPathLength = Collections.min(details, new Comparator<PredictionDetails>() {
+                    @Override
+                    public int compare(PredictionDetails o1, PredictionDetails o2) {
+                        int o1Length = o1.getPath().size();
+                        int o2Length = o2.getPath().size();
+
+                        // for all different Number types, let's check there double values
+                        if (o1Length < o2Length)
+                            return -1;
+                        if (o1Length > o2Length )
+                            return 1;
+                        return 0;
+                    }
+                });
+
+                int mdcLength = minPathLength.getPath().size();
+                for(int i = 0; i < mdcLength; i++ ) {
+                    Predicate testCommonPath = details.get(0).getPath().get(i);
+                    String testCommonPathRule = testCommonPath.toRule(fields);
+                    for (PredictionDetails subgroup : details) {
+                        String rule = subgroup.getPath().get(i).toRule(fields);
+
+                        if( !testCommonPathRule.equals(rule) ) {
+                            i = mdcLength;
+                            break;
+                        }
+                    }
+
+                    if( i < mdcLength ) {
+                        commonPath.add(testCommonPath);
+                    }
+                }
+            }
+
+            groups.get(group).setTotalCommonSegments(commonPath);
+            if( details.size() > 0 ) {
+                Collections.sort(details, new Comparator<PredictionDetails>() {
+                    @Override
+                    public int compare(PredictionDetails o1, PredictionDetails o2) {
+                        long o1Count = o1.getLeafPredictionsCount();
+                        long o2Count = o2.getLeafPredictionsCount();
+
+                        // for all different Number types, let's check there double values
+                        if ( o1Count < o2Count )
+                            return -1;
+                        if ( o1Count > o2Count )
+                            return 1;
+                        return 0;
+                    }
+                });
+
+                Collections.reverse(details);
+            }
+        }
+    }
+
+    /**
+     * Returns confidence for categorical objective fields and error for numeric objective fields
+     */
+    private String confidenceError(Object value, Double impurity) {
+        if( value == null ) {
+           return "";
+        }
+
+        String impurityLiteral = "";
+        if( impurity != null && impurity > 0.0 ) {
+            impurityLiteral = String.format("; impurity: %4.2f%%", impurity);
+        }
+
+        String objectiveType = (String) ((JSONObject) fields.get(tree.getObjectiveField())).get("optype");
+        if( "numeric".equals(objectiveType) ) {
+            return String.format(" [Error: %s]", value);
+        } else {
+            return String.format(" [Confidence: %4.2f%%%s]",
+                    ( ((Number) value).doubleValue() * 100), impurityLiteral);
+        }
+    }
+
+//    /**
+//     * Prints distribution data
+//     */
+//    private void printDistribution(JSONArray distribution, OutputStream out) throws IOException {
+//
+//        // Reduce distribution
+//        long total = 0;
+//        for (Object group : distribution) {
+//            JSONArray groupItem = (JSONArray) group;
+//            total += ((Number) groupItem.get(1)).longValue();
+//        }
+//
+//        for (Object group : distribution) {
+//            JSONArray groupItem = (JSONArray) group;
+//            long numOfInstances = ((Number) groupItem.get(1)).longValue();
+//            out.write(String.format("    %s: %4.2f%% (%d instance%s)%n",
+//                    groupItem.get(0),
+//                    (((numOfInstances * 1.0) / total) * 100),
+//                    groupItem.get(1),
+//                    numOfInstances == 1 ? "" : "s").getBytes());
+//        }
+//    }
+
+//    private void printImportance(OutputStream out) throws IOException {
+//
+//    }
 
     private enum DataTypeEnum {
         DOUBLE, FLOAT, INTEGER,
@@ -731,5 +806,91 @@ public class LocalPredictiveModel implements PredictionConverter {
         DAY, MONTH, YEAR,
         HOUR, MINUTE, SECOND, MILLISECOND,
         DAYOFWEEK, DAYOFMONTH
+    }
+
+    public static class GroupPrediction implements Serializable {
+
+        private List<Predicate> totalCommonSegments = new ArrayList<Predicate>();
+        private long totalData = 0;
+        private long totalPredictions = 0;
+
+        private List<PredictionDetails> details = new ArrayList<PredictionDetails>();
+
+        public List<Predicate> getTotalCommonSegments() {
+            return totalCommonSegments;
+        }
+
+        public void setTotalCommonSegments(List<Predicate> totalCommonSegments) {
+            this.totalCommonSegments = totalCommonSegments;
+        }
+
+        public long getTotalData() {
+            return totalData;
+        }
+
+        public void setTotalData(long totalData) {
+            this.totalData = totalData;
+        }
+
+        public long getTotalPredictions() {
+            return totalPredictions;
+        }
+
+        public void setTotalPredictions(long totalPredictions) {
+            this.totalPredictions = totalPredictions;
+        }
+
+        public List<PredictionDetails> getDetails() {
+            return details;
+        }
+
+        public void setDetails(List<PredictionDetails> details) {
+            this.details = details;
+        }
+
+        public void addPrediction(PredictionDetails newPrediction) {
+            details.add(newPrediction);
+            totalPredictions += newPrediction.getLeafPredictionsCount();
+        }
+    }
+
+    public static class PredictionDetails implements Serializable {
+
+        private List<Predicate> path = new ArrayList<Predicate>();
+        private long leafPredictionsCount = 0;
+        private double confidence = 0.0;
+        private double impurity = 0.0;
+
+        public List<Predicate> getPath() {
+            return path;
+        }
+
+        public void setPath(List<Predicate> path) {
+            this.path = path;
+        }
+
+        public long getLeafPredictionsCount() {
+            return leafPredictionsCount;
+        }
+
+        public void setLeafPredictionsCount(long leafPredictionsCount) {
+            this.leafPredictionsCount = leafPredictionsCount;
+        }
+
+        public double getConfidence() {
+            return confidence;
+        }
+
+        public void setConfidence(double confidence) {
+            this.confidence = confidence;
+        }
+
+        public double getImpurity() {
+            return impurity;
+        }
+
+        public void setImpurity(double impurity) {
+            this.impurity = impurity;
+        }
     }
 }

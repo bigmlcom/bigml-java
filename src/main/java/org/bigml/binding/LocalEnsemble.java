@@ -346,9 +346,28 @@ public class LocalEnsemble {
     public Map<Object, Object> predict(final JSONObject inputData,
             Boolean byName, PredictionMethod method, Boolean withConfidence)
             throws Exception {
+       return predict(inputData, byName, method, withConfidence, null, null, null, null, null, null);
+    }
+
+    /**
+     * Makes a prediction based on the prediction made by every model.
+     *
+     * The method parameter is a numeric key to the following combination
+     * methods in classifications/regressions: 0 - majority vote (plurality)/
+     * average: PLURALITY_CODE 1 - confidence weighted majority vote / error
+     * weighted: CONFIDENCE_CODE 2 - probability weighted majority vote /
+     * average: PROBABILITY_CODE
+     */
+    public Map<Object, Object> predict(final JSONObject inputData,
+            Boolean byName, PredictionMethod method, Boolean withConfidence, Map options,
+            MissingStrategy missingStrategy, Boolean addConfidence, Boolean addDistribution,
+            Boolean addCount, Boolean addMedian)
+            throws Exception {
+
         if (method == null) {
             method = PredictionMethod.PLURALITY;
         }
+
         if (byName == null) {
             byName = true;
         }
@@ -356,6 +375,9 @@ public class LocalEnsemble {
             withConfidence = false;
         }
 
+        if (addMedian == null) {
+            addMedian = false;
+        }
 
         MultiVote votes = null;
 
@@ -364,15 +386,29 @@ public class LocalEnsemble {
             for (JSONArray splitModels : models_split) {
                 MultiModel splitMultiModel = new MultiModel(splitModels);
                 MultiVote splitVotes = splitMultiModel.generateVotes(inputData,
-                        byName, null, withConfidence);
+                        byName, missingStrategy, addMedian);
+
+                if( addMedian ) {
+                    for (HashMap<Object, Object> prediction : splitVotes.getPredictions()) {
+                        prediction.put("prediction", prediction.get("median"));
+                    }
+                }
+
                 votes.extend(splitVotes);
             }
         } else {
-            votes = this.multiModel.generateVotes(inputData, byName,
-                    null, withConfidence);
+            // When only one group of models is found you use the
+            // corresponding multimodel to predict
+            votes = this.multiModel.generateVotes(inputData, byName, missingStrategy, addMedian);
+            if( addMedian ) {
+                for (HashMap<Object, Object> prediction : votes.getPredictions()) {
+                    prediction.put("prediction", prediction.get("median"));
+                }
+            }
         }
 
-        return votes.combine(method, withConfidence, null, null, null, null, null);
+        return votes.combine(method, withConfidence, addConfidence, addDistribution, addCount, addMedian, options);
+
     }
 
     /**

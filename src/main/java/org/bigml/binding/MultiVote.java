@@ -1,7 +1,8 @@
 package org.bigml.binding;
 
+import org.bigml.binding.utils.Utils;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +21,8 @@ public class MultiVote {
             { "confidence" }, { "distribution", "count" }, {} };
     private final static String[] WEIGHT_LABELS = new String[] { "plurality",
             "confidence", "probability", "threshold" };
+
+    final static int BINS_LIMIT = 32;
 
 //    public final static int PLURALITY = 0;
 //    public final static int CONFIDENCE = 1;
@@ -46,7 +49,7 @@ public class MultiVote {
     public MultiVote(HashMap<Object, Object>[] predictionsArr) {
         int i, len;
         if (predictionsArr == null) {
-            predictionsArr = (HashMap<Object, Object>[]) new HashMap[0];
+            predictionsArr = new HashMap[0];
         }
         predictions = predictionsArr;
 
@@ -62,6 +65,10 @@ public class MultiVote {
                 predictions[i].put("order", i);
             }
         }
+    }
+
+    public HashMap<Object, Object>[] getPredictions() {
+        return predictions;
     }
 
     /**
@@ -227,17 +234,45 @@ public class MultiVote {
         }
 
         int i, len, total = this.predictions.length;
-        double result = 0.0d, confidence = 0.0d;
+        double result = 0.0d, confidence = 0.0d, medianResult = 0.0d;
         HashMap<Object, Object> average = new HashMap<Object, Object>();
+        long instances = 0;
 
         for (i = 0, len = this.predictions.length; i < len; i++) {
             result += ((Number) this.predictions[i].get("prediction"))
                     .doubleValue();
+
+            if( addMedian ) {
+                medianResult += ((Number) this.predictions[i].get("median"))
+                        .doubleValue();
+            }
+
             confidence += ((Number) this.predictions[i].get("confidence"))
                     .doubleValue();
+
+            instances += ((Number) this.predictions[i].get("count"))
+                    .longValue();
         }
-        average.put("prediction", new Double(result / total));
-        average.put("confidence", new Double(confidence / total));
+
+        if( total > 0 ) {
+            average.put("prediction", result / total);
+            average.put("confidence", confidence / total);
+        } else {
+            average.put("prediction", Double.NaN);
+            average.put("confidence", 0.0d);
+        }
+
+        average.putAll(getGroupedDistribution(this));
+        average.put("count", instances);
+
+        if( addMedian ) {
+            if( total > 0 ) {
+                average.put("median", medianResult / total);
+            } else {
+                average.put("median", Double.NaN);
+            }
+        }
+
         return average;
     }
 
@@ -251,43 +286,63 @@ public class MultiVote {
     public HashMap<Object, Object> errorWeighted(Boolean withConfidence, Boolean addConfidence,
                                                  Boolean addDistribution, Boolean addCount,
                                                  Boolean addMedian) {
-        if (withConfidence == null) {
-            withConfidence = false;
-        }
-        if (addConfidence == null) {
-            addConfidence = false;
-        }
-        if (addDistribution == null) {
-            addDistribution = false;
-        }
-        if (addCount == null) {
-            addCount = false;
-        }
+//        if (withConfidence == null) {
+//            withConfidence = false;
+//        }
+//        if (addConfidence == null) {
+//            addConfidence = false;
+//        }
+//        if (addDistribution == null) {
+//            addDistribution = false;
+//        }
+//        if (addCount == null) {
+//            addCount = false;
+//        }
         if (addMedian == null) {
             addMedian = false;
         }
 
         this.checkKeys(this.predictions, new String[] { "confidence" });
         int index, len;
-        HashMap<Object, Object> prediction = new HashMap<Object, Object>();
-        Double combined_error = 0.0d, topRange = 10.0d, result = 0.0d, normalization_factor = this
+        HashMap<Object, Object> newPrediction = new HashMap<Object, Object>();
+        Double combinedError = 0.0d, topRange = 10.0d, result = 0.0d, medianResult = 0.0d, normalization_factor = this
                 .normalizeError(topRange);
+        Long instances = 0L;
 
         if (normalization_factor == 0.0d) {
-            prediction.put("prediction", Double.NaN);
-            prediction.put("confidence", 0.0d);
+            newPrediction.put("prediction", Double.NaN);
+            newPrediction.put("confidence", 0.0d);
+            return newPrediction;
         }
+
         for (index = 0, len = this.predictions.length; index < len; index++) {
-            prediction = this.predictions[index];
+            HashMap<Object, Object> prediction = this.predictions[index];
+
             result += ((Number) prediction.get("prediction")).doubleValue()
                     * ((Number) prediction.get("errorWeight")).doubleValue();
-            combined_error += ((Number) prediction.get("confidence"))
+
+            if( addMedian ) {
+                medianResult += ((Number) prediction.get("median")).doubleValue()
+                        * ((Number) prediction.get("errorWeight")).doubleValue();
+            }
+
+            instances += ((Number) prediction.get("count")).longValue();
+
+            combinedError += ((Number) prediction.get("confidence"))
                     .doubleValue()
                     * ((Number) prediction.get("errorWeight")).doubleValue();
+         }
+
+        newPrediction.put("prediction", result / normalization_factor);
+        newPrediction.put("confidence", combinedError / normalization_factor);
+        newPrediction.put("count", instances);
+        if( addMedian ) {
+            newPrediction.put("median", medianResult / normalization_factor);
         }
-        prediction.put("prediction", result / normalization_factor);
-        prediction.put("confidence", combined_error / normalization_factor);
-        return prediction;
+
+        newPrediction.putAll(getGroupedDistribution(this));
+
+        return newPrediction;
     };
 
     /**
@@ -989,5 +1044,30 @@ public class MultiVote {
             return weight1 > weight2 ? -1 : (weight1 < weight2 ? 1
                     : order1 < order2 ? -1 : 1);
         }
+    }
+
+    /**
+     * Returns a distribution formed by grouping the distributions of each predicted node.
+     */
+    protected static Map<String, Object> getGroupedDistribution(MultiVote multiVoteInstance) {
+        Map<Object, Number> joinedDist = new HashMap<Object, Number>();
+        String distributionUnit = "counts";
+
+        for (HashMap<Object, Object> prediction : multiVoteInstance.getPredictions()) {
+            JSONArray predictionDist = (JSONArray) prediction.get("distribution");
+            joinedDist = Utils.mergeDistributions(joinedDist, Utils.convertDistributionArrayToMap(predictionDist));
+
+            if( "counts".equals(distributionUnit) && joinedDist.size() > BINS_LIMIT) {
+                distributionUnit = "bins";
+            }
+
+            joinedDist = Utils.mergeBins(joinedDist, BINS_LIMIT);
+        }
+
+        Map<String, Object> distributionInfo = new HashMap<String, Object>();
+        distributionInfo.put("distribution", Utils.convertDistributionMapToSortedArray(joinedDist));
+        distributionInfo.put("distributionUnit", distributionUnit);
+
+        return distributionInfo;
     }
 }

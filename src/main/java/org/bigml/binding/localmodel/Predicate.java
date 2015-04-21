@@ -142,7 +142,7 @@ public class Predicate {
      * @return if the operator applies or not
      */
     public boolean apply(JSONObject inputData, JSONObject fields) {
-        if( !inputData.containsKey(fieldName) ) {
+        if( !inputData.containsKey(field) ) {
             return missing || ("=".equals(operator) && value == null);
         } else if("!=".equals(operator) && value == null) {
             return true;
@@ -162,10 +162,10 @@ public class Predicate {
             JSONObject options = (JSONObject) Utils.getJSONObject((JSONObject) fields.get(field),
                     "term_analysis");
 
-            return applyOperator(termMatches(inputData.get(fieldName).toString(), terms, options));
+            return applyOperator(termMatches(inputData.get(field).toString(), terms, options));
         }
 
-        return applyOperator(inputData.get(fieldName));
+        return applyOperator(inputData.get(field));
     }
 
     protected boolean applyOperator(Object inputValue) {

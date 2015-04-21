@@ -44,6 +44,8 @@ public abstract class AbstractResource {
     public final static String ANOMALY_PATH = "anomaly";
     public final static String ANOMALYSCORE_PATH = "anomalyscore";
     public final static String BATCHANOMALYSCORE_PATH = "batchanomalyscore";
+    public final static String PROJECT_PATH = "project";
+    public final static String SAMPLE_PATH = "sample";
 
     // Base Resource regular expressions
     static String SOURCE_RE = "^" + SOURCE_PATH + "/[a-f,0-9]{24}$";
@@ -68,6 +70,10 @@ public abstract class AbstractResource {
     static String ANOMALYSCORE_RE = "^" + ANOMALYSCORE_PATH
             + "/[a-f,0-9]{24}$";
     static String BATCH_ANOMALYSCORE_RE = "^" + BATCHANOMALYSCORE_PATH
+            + "/[a-f,0-9]{24}$";
+    static String PROJECT_RE = "^" + PROJECT_PATH
+            + "/[a-f,0-9]{24}$";
+    static String SAMPLE_RE = "^" + SAMPLE_PATH
             + "/[a-f,0-9]{24}$";
 
     // HTTP Status Codes from https://bigml.com/developers/status_codes
@@ -137,6 +143,8 @@ public abstract class AbstractResource {
     protected String ANOMALY_URL;
     protected String ANOMALYSCORE_URL;
     protected String BATCHANOMALYSCORE_URL;
+    protected String PROJECT_URL;
+    protected String SAMPLE_URL;
 
     public final static String DOWNLOAD_DIR = "/download";
 
@@ -156,6 +164,8 @@ public abstract class AbstractResource {
             ANOMALY_URL = BIGML_URL + ANOMALY_PATH;
             ANOMALYSCORE_URL = BIGML_URL + ANOMALYSCORE_PATH;
             BATCHANOMALYSCORE_URL = BIGML_URL + BATCHANOMALYSCORE_PATH;
+            PROJECT_URL = BIGML_URL + PROJECT_PATH;
+            SAMPLE_URL = BIGML_URL + SAMPLE_PATH;
         } catch (AuthenticationException ae) {
 
         }
