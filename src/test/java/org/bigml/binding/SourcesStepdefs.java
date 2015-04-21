@@ -53,6 +53,18 @@ public class SourcesStepdefs {
         commonSteps.the_resource_has_been_created_with_status(context.status);
     }
 
+    @Given("^I create a data source from inline data slurped from \"([^\"]*)\"$")
+    public void I_create_a_data_source_from_inline_data_slurped_from(String data)
+            throws AuthenticationException {
+        JSONObject resource = BigMLClient.getInstance().createInlineSource(data,
+                new JSONObject());
+        context.status = (Integer) resource.get("code");
+        context.location = (String) resource.get("location");
+        context.source = (JSONObject) resource.get("object");
+
+        commonSteps.the_resource_has_been_created_with_status(context.status);
+    }
+
     @Given("^I add the unitTest tag to the data source waiting less than (\\d+) secs$")
     public void I_add_the_unitTest_tag_to_the_data_source(int secs)
             throws Throwable {

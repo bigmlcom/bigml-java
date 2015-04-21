@@ -32,9 +32,9 @@ Feature: Create Evaluations
         And I wait until the ensemble is ready less than <time_3> secs
         When I create an evaluation for the ensemble with the dataset
         And I wait until the evaluation is ready less than <time_4> secs
-        Then the measured "<measure>" is greater than <value>
+        Then the measured "<measure>" is equals to <value>
         Then delete test data
 
         Examples:
         | data             | seed      | time_1  | time_2 | number_of_models | tlp | time_3 | time_4 | measure       | value  |
-        | data/iris.csv | BigML | 30      | 30     | 5                | 1   | 50     | 30     | average_phi   | 0.9   |
+        | data/iris.csv | BigML | 30      | 30     | 5                | 1   | 50     | 30     | average_phi   | 0.98029   |

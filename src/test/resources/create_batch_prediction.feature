@@ -77,8 +77,9 @@ Feature: Create Batch Predictions
         And I add the unitTest tag to the data source waiting less than <time_1> secs
 
         Examples:
-          | data             | seed      |  time_1  | time_2 | time_3 | time_4 |
-          | data/iris.csv | BigML |   30      | 30     | 50     | 50     |
+          | data              | seed      |  time_1   | time_2 | time_3 | time_4 |
+          | data/iris.csv     | BigML     |   30      | 30     | 50     | 50     |
+          | data/diabetes.csv | BigML     |   30      | 30     | 50     | 50     |
 
     Scenario Outline: Successfully creating a batch anomaly score from an anomaly detector:
         Given I create a data source uploading a "<data>" file

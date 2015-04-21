@@ -14,7 +14,7 @@ Feature: Create Batch Predictions from Multi Models
     And I create a model with "<params>"
     And I wait until the model is ready less than <time_3> secs
     And I retrieve a list of remote models tagged with "<tag>"
-    And I create a local multi model
+    And I create a multimodel local model
     When I create a batch prediction for "<data_input>" and save it in "<path>"
     And I combine the votes in "<path>"
     Then the plurality combined predictions are "<predictions>"

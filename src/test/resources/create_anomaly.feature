@@ -24,5 +24,6 @@ Feature: Create an anomaly detector from a dataset or dataset list
 
   Examples:
     | data                | seed      | time_1  | time_2 | time_3 | time_4 |
-    | data/iris.csv | BigML |  40      | 40     | 40     | 100    |
+    | data/iris.csv       | BigML     |  40     | 40     | 40     | 100    |
+    | data/tiny_kdd.csv   | BigML     |  40     | 40     | 40     | 100    |
 

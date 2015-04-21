@@ -48,6 +48,40 @@ public class LocalEnsembleStepdefs {
         assertTrue("", predictiveEnsemble != null);
     }
 
+    @Then("^the local ensemble prediction for \"(.*)\" is \"([^\"]*)\" with confidence ([\\d,.]+)$")
+    public void the_local_prediction_by_name_for_is_with_confidence(String args, String pred, Double expectedConfidence) {
+        try {
+            JSONObject inputObj = (JSONObject) JSONValue.parse(args);
+            Map<Object, Object> p = predictiveEnsemble
+                    .predict(inputObj, true, PredictionMethod.PLURALITY, true);
+            String prediction = (String) p.get("prediction");
+            Double actualConfidence = (Double) p.get("confidence");
+            assertTrue("", prediction != null && prediction.equals(pred));
+            assertEquals(String.format("%.4g", expectedConfidence), String.format("%.4g", actualConfidence));
+        } catch (Exception parseException) {
+            assertTrue("", false);
+        }
+    }
+
+    @Then("^the local ensemble prediction using median with confidence for \"(.*)\" is \"([^\"]*)\"$")
+    public void the_local_prediction_using_median_with_confidence_for_is(String args, String expectedPrediction) {
+        try {
+            JSONObject inputObj = (JSONObject) JSONValue.parse(args);
+            Map<Object, Object> p = predictiveEnsemble
+                    .predict(inputObj, true, PredictionMethod.PLURALITY, true, null, MissingStrategy.LAST_PREDICTION,
+                            true, true, true, true);
+            Object prediction = p.get("prediction");
+            if( prediction instanceof Number ) { // Regression
+                Double expected = Double.parseDouble(expectedPrediction);
+                assertEquals(String.format("%.4g", expected), String.format("%.4g", prediction));
+            } else {
+                assertTrue("", prediction != null && prediction.equals(expectedPrediction));
+            }
+        } catch (Exception parseException) {
+            assertTrue("", false);
+        }
+    }
+
     @Then("^the local ensemble prediction for \"(.*)\" is \"([^\"]*)\"$")
     public void the_local_prediction_by_name_for_is(String args, String pred) {
         try {

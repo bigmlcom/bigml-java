@@ -203,7 +203,18 @@ public class PredictionsStepdefs {
     }
 
 
+    @Then("^I create a local mm median batch prediction using \"(.*)\" with prediction (.*)$")
+    public void i_create_a_local_mm_median_batch_prediction_using_with_prediction(String args, Double expectedPrediction)
+            throws Exception {
+        JSONObject inputData = (JSONObject) JSONValue.parse(args);
+        JSONArray inputDataList = new JSONArray();
+        inputDataList.add(inputData);
+        List<MultiVote> votes = context.multiModel.batchPredict(inputDataList, null, true, false, MissingStrategy.LAST_PREDICTION,
+                null, false, true);
 
+        Double prediction = (Double) votes.get(0).getPredictions()[0].get("prediction");
+        assertEquals(expectedPrediction, prediction);
+    }
 
 //    @Given("^I create a batch prediction for \"(.*)\" and save it in \"(.*)\"$")
 //    public void i_create_a_batch_prediction_for_and_save_it_in(String inputDataList, String directory)

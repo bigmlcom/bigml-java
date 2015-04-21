@@ -188,7 +188,21 @@ public class ModelsStepdefs {
 
     @Given("^I create a local multi model$")
     public void I_create_a_local_multi_model() throws Exception {
-        context.multiModel = new MultiModel(context.models);
+        if( context.models != null ) {
+            JSONArray models = new JSONArray();
+            for (Object model : context.models) {
+                String modelId = (String) ((JSONObject) model).get("resource");
+                JSONObject resource = BigMLClient.getInstance().getModel(modelId);
+                Integer code = (Integer) resource.get("code");
+                assertEquals(AbstractResource.HTTP_OK, code.intValue());
+                models.add(resource.get("object"));
+            }
+            context.multiModel = new MultiModel(models);
+        } else {
+            List models = new ArrayList();
+            models.add(context.model);
+            context.multiModel = new MultiModel(models);
+        }
         assertTrue("", context.multiModel != null);
     }
 
@@ -203,6 +217,29 @@ public class ModelsStepdefs {
                 "",
                 prediction != null
                         && ((String) prediction.get("prediction")).equals(pred));
+    }
+    @Then("^I create a batch multimodel prediction for by name=(true|false) for \"(.*)\" and predictions \"(.*)\"$")
+    public void i_create_a_batch_multimodel_prediction_byname_for_and_predictions(String by_name,
+            String args, String expectedPredictions) throws Exception {
+        Boolean byName = new Boolean(by_name);
+        JSONArray inputObjArr = (JSONArray) JSONValue.parse(args);
+        List<MultiVote> votes = context.multiModel.batchPredict(inputObjArr, null,
+                byName, null, null, null, false, false);
+
+        JSONArray expectedPredictionsArr = new JSONArray();
+        if( expectedPredictions != null && expectedPredictions.trim().length() > 0 ) {
+            expectedPredictionsArr = (JSONArray) JSONValue.parse(expectedPredictions);
+        }
+
+        for (int i = 0; i < expectedPredictionsArr.size(); i++ ) {
+            MultiVote vote = votes.get(i);
+            for (HashMap<Object, Object> prediction : vote.getPredictions()) {
+                if( !prediction.get("prediction").equals(expectedPredictionsArr.get(i)) ) {
+                    assertTrue(String.format("Prediction: %s, expected: %s",
+                            prediction.get("prediction"), expectedPredictionsArr.get(i)), false);
+                }
+            }
+        }
     }
 
     // ---------------------------------------------------------------------

@@ -7,7 +7,9 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+import java.util.List;
 
+import org.bigml.binding.localmodel.Prediction;
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -50,9 +52,8 @@ public class LocalModelsStepdefs {
     public void the_local_prediction_by_name_for_is(String args, String pred) {
         try {
             JSONObject inputObj = (JSONObject) JSONValue.parse(args);
-            HashMap<Object, Object> p = predictiveModel
-                    .predict(inputObj, false);
-            String prediction = (String) p.get("prediction");
+            Prediction p = predictiveModel.predict(inputObj);
+            String prediction = (String) p.getPrediction();
             assertTrue("", prediction != null && prediction.equals(pred));
         } catch (InputDataParseException parseException) {
             assertTrue("", false);
@@ -63,8 +64,8 @@ public class LocalModelsStepdefs {
     public void the_numerical_prediction_of_proportional_missing_strategy_local_predictionfor_is(String args, double expectedPrediction) {
         try {
             JSONObject inputObj = (JSONObject) JSONValue.parse(args);
-            HashMap<Object, Object> p = predictiveModel.predict(inputObj, true, MissingStrategy.PROPORTIONAL, false);
-            Double actualPrediction = (Double) p.get("prediction");
+            Prediction p = predictiveModel.predict(inputObj, true, MissingStrategy.PROPORTIONAL);
+            Double actualPrediction = (Double) p.getPrediction();
             assertEquals(String.format("%.4g%n", expectedPrediction), String.format("%.4g%n", actualPrediction));
         } catch (InputDataParseException parseException) {
             assertTrue("", false);
@@ -75,8 +76,8 @@ public class LocalModelsStepdefs {
     public void the_proportional_missing_strategy_local_prediction_for_is(String args, String pred) {
         try {
             JSONObject inputObj = (JSONObject) JSONValue.parse(args);
-            HashMap<Object, Object> p = predictiveModel.predict(inputObj, true, MissingStrategy.PROPORTIONAL, false);
-            String prediction = (String) p.get("prediction");
+            Prediction p = predictiveModel.predict(inputObj, true, MissingStrategy.PROPORTIONAL);
+            String prediction = (String) p.getPrediction();
             assertTrue("", prediction != null && prediction.equals(pred));
         } catch (InputDataParseException parseException) {
             assertTrue("", false);
@@ -87,8 +88,8 @@ public class LocalModelsStepdefs {
     public void the_confidence_of_the_missing_strategy_local_predictionfor_is(String args, double expectedConfidence) {
         try {
             JSONObject inputObj = (JSONObject) JSONValue.parse(args);
-            HashMap<Object, Object> p = predictiveModel.predict(inputObj, true, MissingStrategy.PROPORTIONAL, true);
-            Double actualConfidence = (Double) p.get("confidence");
+            Prediction p = predictiveModel.predict(inputObj, true, MissingStrategy.PROPORTIONAL);
+            Double actualConfidence = p.getConfidence();
             assertEquals(String.format("%.4g%n", expectedConfidence), String.format("%.4g%n", actualConfidence));
         } catch (InputDataParseException parseException) {
             assertTrue("", false);
@@ -99,8 +100,8 @@ public class LocalModelsStepdefs {
     public void the_confidence_of_the_local_prediction_for_is(String args, double expectedConfidence) {
         try {
             JSONObject inputObj = (JSONObject) JSONValue.parse(args);
-            HashMap<Object, Object> p = predictiveModel.predict(inputObj, true, true);
-            Double actualConfidence = (Double) p.get("confidence");
+            Prediction p = predictiveModel.predict(inputObj, true);
+            Double actualConfidence = p.getConfidence();
             assertEquals(String.format("%.4g%n", expectedConfidence), String.format("%.4g%n", actualConfidence));
         } catch (InputDataParseException parseException) {
             assertTrue("", false);
@@ -111,9 +112,21 @@ public class LocalModelsStepdefs {
     public void the_local_prediction_for_is(String args, String pred) {
         try {
             JSONObject inputObj = (JSONObject) JSONValue.parse(args);
-            HashMap<Object, Object> p = predictiveModel.predict(inputObj, null);
-            String prediction = (String) p.get("prediction");
+            Prediction p = predictiveModel.predict(inputObj, true);
+            String prediction = (String) p.getPrediction();
             assertEquals(pred, prediction);
+        } catch (InputDataParseException parseException) {
+            assertTrue("", false);
+        }
+    }
+
+    @Then("^the multiple local prediction for \"(.*)\" is \"(.*)\"$")
+    public void the_multiple_local_prediction_for_is(String args, String pred) {
+        try {
+            JSONObject inputObj = (JSONObject) JSONValue.parse(args);
+            List<Prediction> predictions = predictiveModel.predict(inputObj, true, "all");
+            String predictionsStr = JSONValue.toJSONString(predictions);
+            assertEquals(pred, predictionsStr);
         } catch (InputDataParseException parseException) {
             assertTrue("", false);
         }
@@ -124,9 +137,9 @@ public class LocalModelsStepdefs {
             String pred) {
         try {
             Boolean byName = new Boolean(by_name);
-            HashMap<Object, Object> p = predictiveModel.predict( (JSONObject) JSONValue.parse(args),
+            Prediction p = predictiveModel.predict( (JSONObject) JSONValue.parse(args),
                     byName);
-            String prediction = (String) p.get("prediction");
+            String prediction = (String) p.getPrediction();
             assertEquals(pred, prediction);
         } catch (InputDataParseException parseException) {
             assertTrue("", false);

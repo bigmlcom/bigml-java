@@ -113,8 +113,8 @@ public class EvaluationsStepdefs {
         assertTrue(measureLong.floatValue() == value);
     }
 
-    @Then("^the measured \"([^\"]*)\" is greater than ([\\d,.]+)$")
-    public void the_measured_is_greater_than(String measure, double value)
+    @Then("^the measured \"([^\"]*)\" is equals to ([\\d,.]+)$")
+    public void the_measured_is_equals_to(String measure, double value)
             throws Throwable {
 
         System.out.println("1 ...... "
@@ -123,7 +123,7 @@ public class EvaluationsStepdefs {
 
         double measureLong = (Double) Utils.getJSONObject(context.evaluation,
                 "result.model." + measure);
-        assertTrue(measureLong > value);
+        assertTrue(measureLong == value);
     }
 
 }

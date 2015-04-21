@@ -31,11 +31,18 @@ public class ContextRepository {
     JSONObject  localCentroid = null;
     JSONObject centroid = null;
     JSONObject batchCentroid = null;
+    JSONObject project = null;
+    JSONArray projects = null;
+    JSONObject sample = null;
+    JSONArray samples = null;
     MultiModel multiModel = null;
     List<MultiVote> votes = null;
 
     Map<String, Long> datasetErrorCounts;
     Map<String, Long> datasetMissingCounts;
+
+    Map<String, Long> sampleErrorCounts;
+    Map<String, Long> sampleMissingCounts;
 
     public int getStatus() {
         return status;
@@ -197,6 +204,38 @@ public class ContextRepository {
         this.batchCentroid = batchCentroid;
     }
 
+    public JSONObject getProject() {
+        return project;
+    }
+
+    public void setProject(JSONObject project) {
+        this.project = project;
+    }
+
+    public JSONArray getProjects() {
+        return projects;
+    }
+
+    public void setProject(JSONArray projects) {
+        this.projects = projects;
+    }
+
+    public JSONObject getSample() {
+        return sample;
+    }
+
+    public void setSample(JSONObject sample) {
+        this.sample = sample;
+    }
+
+    public JSONArray getSamples() {
+        return samples;
+    }
+
+    public void setSamples(JSONArray samples) {
+        this.samples = samples;
+    }
+
     public Map<String, Long> getDatasetErrorCounts() {
         return datasetErrorCounts;
     }
@@ -211,6 +250,22 @@ public class ContextRepository {
 
     public void setDatasetMissingCounts(Map<String, Long> datasetMissingCounts) {
         this.datasetMissingCounts = datasetMissingCounts;
+    }
+
+    public Map<String, Long> getSampleErrorCounts() {
+        return sampleErrorCounts;
+    }
+
+    public void setSampleErrorCounts(Map<String, Long> sampleErrorCounts) {
+        this.sampleErrorCounts = sampleErrorCounts;
+    }
+
+    public Map<String, Long> getSampleMissingCounts() {
+        return sampleMissingCounts;
+    }
+
+    public void setSampleMissingCounts(Map<String, Long> sampleMissingCounts) {
+        this.sampleMissingCounts = sampleMissingCounts;
     }
 
     public MultiModel getMultiModel() {

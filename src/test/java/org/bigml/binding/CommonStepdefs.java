@@ -146,6 +146,65 @@ public class CommonStepdefs {
                     (String) context.cluster.get("resource"));
             context.cluster = null;
         }
+
+        if (context.project != null) {
+
+            if( context.projects != null ) {
+                int projectToRemove = -1;
+                for (int iProject = 0; iProject < context.projects.size(); iProject++ ) {
+                    JSONObject projectInList = (JSONObject) context.projects.get(iProject);
+                    if( projectInList.get("resource").equals(context.project.get("resource"))) {
+                        projectToRemove = iProject;
+                        break;
+                    }
+                }
+
+                if( projectToRemove >= 0  ) {
+                    context.projects.remove(projectToRemove);
+                }
+            }
+
+            BigMLClient.getInstance().deleteProject(
+                    (String) context.project.get("resource"));
+            context.project = null;
+        }
+        if (context.projects != null) {
+            for (Object project : context.projects) {
+
+                BigMLClient.getInstance().deleteProject((String) project);
+            }
+            context.projects = null;
+        }
+
+        if (context.sample != null) {
+
+            if( context.samples != null ) {
+                int sampleToRemove = -1;
+                for (int iSample = 0; iSample < context.samples.size(); iSample++ ) {
+                    JSONObject sampleInList = (JSONObject) context.samples.get(iSample);
+                    if( sampleInList.get("resource").equals(context.sample.get("resource"))) {
+                        sampleToRemove = iSample;
+                        break;
+                    }
+                }
+
+                if( sampleToRemove >= 0  ) {
+                    context.samples.remove(sampleToRemove);
+                }
+            }
+
+            BigMLClient.getInstance().deleteSample(
+                    (String) context.sample.get("resource"));
+            context.sample = null;
+        }
+        if (context.samples != null) {
+            for (Object sample : context.samples) {
+
+                BigMLClient.getInstance().deleteSample((String) sample);
+            }
+            context.samples = null;
+        }
+
         if (context.anomaly != null) {
 
             if( context.anomalies != null ) {

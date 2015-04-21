@@ -7,7 +7,7 @@ import cucumber.junit.Cucumber;
 @RunWith(Cucumber.class)
 // @Cucumber.Options(format = {"pretty", "html:target/cucumber-html-report"})
 @Cucumber.Options(format = { "pretty", "html:target/cucumber-html-report" }, features = {
-        "src/test/resources/compare_predictions.feature",
+        "src/test/resources/projects.feature",
         "src/test/resources/delete_all_dev_data.feature" })
 //@Cucumber.Options(format = { "pretty", "html:target/cucumber-html-report" }, features = {
 //        "src/test/resources/compare_predictions.feature",
