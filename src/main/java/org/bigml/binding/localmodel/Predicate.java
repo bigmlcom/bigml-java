@@ -1,6 +1,7 @@
 package org.bigml.binding.localmodel;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,7 +25,7 @@ public class Predicate {
     private String opType;
     private String operator;
     private String field;
-    private String fieldName;
+//    private String fieldName;
     private Object value;
     private String term;
     private boolean missing = false;
@@ -33,17 +34,17 @@ public class Predicate {
      * Constructor
      */
     public Predicate(final String opType, final String operator,
-            final String field, final String fieldName, final Object value, final String term) {
+            final String field, final Object value, final String term) {
         super();
 
         this.opType = opType;
         this.operator = operator;
         this.field = field;
-        this.fieldName = fieldName;
+//        this.fieldName = fieldName;
         this.value = value;
         this.term = term;
 
-        if( this.operator.endsWith("*") ) {
+        if( this.operator != null && this.operator.endsWith("*") ) {
             this.operator = this.operator.substring(0, this.operator.length() - 1);
             this.missing = true;
         }
@@ -74,12 +75,27 @@ public class Predicate {
     }
 
     /**
-     * Builds rule string from a predicate
-     * 
+     * Builds rule string from a predicate using the
+     * fields NAME property as the label for the operand
+     *
+     * @param fields a map that contains all the information
+     *               associated to each field ind the model
      */
     public String toRule(final JSONObject fields) {
+        return toRule(fields, "name");
+    }
 
-        String name = ((JSONObject) fields.get(this.field)).get("name").toString();
+    /**
+     * Builds rule string from a predicate
+     *
+     * @param fields a map that contains all the information
+     *               associated to each field ind the model
+     * @param label which attribute of the field to use as identifier
+     *              of the field associated to this predicate
+     */
+    public String toRule(final JSONObject fields, String label) {
+
+        String operandLabel = ((JSONObject) fields.get(this.field)).get(label).toString();
         boolean fullTerm = isFullTerm(fields);
         String relationMissing = "";
         if( missing ) {
@@ -90,16 +106,16 @@ public class Predicate {
             StringBuilder ruleStr = new StringBuilder();
             if( ( operator.equals("<") && ((Number) value).intValue() <= 1) ||
                     ( operator.equals("<=") && ((Number) value).intValue() == 0) ) {
-                ruleStr.append("!").append(name).append((fullTerm ? ".equals(\"" : ".contains(\""))
+                ruleStr.append("!").append(operandLabel).append((fullTerm ? ".equals(\"" : ".contains(\""))
                     .append(term).append("\")");
             } else {
                 if( fullTerm) {
-                    ruleStr.append(name).append(".equals(\"").append(term).append("\")");
+                    ruleStr.append(operandLabel).append(".equals(\"").append(term).append("\")");
                 } else {
                     if( !operator.equals(">") || ((Number) value).intValue() !=  0) {
-                        ruleStr.append("containsCount(").append(name).append(", \"").append(term).append("\") ").append(operator).append(" ").append(value.toString());
+                        ruleStr.append("containsCount(").append(operandLabel).append(", \"").append(term).append("\") ").append(operator).append(" ").append(value.toString());
                     } else {
-                        ruleStr.append(name).append(".contains(\"").append(term).append("\")");
+                        ruleStr.append(operandLabel).append(".contains(\"").append(term).append("\")");
                     }
                 }
             }
@@ -109,7 +125,7 @@ public class Predicate {
 
 
         return String.format("%s %s %s%s",
-                name, this.operator, (this.value != null ? this.value.toString() : "null"), relationMissing);
+                operandLabel, this.operator, (this.value != null ? this.value.toString() : "null"), relationMissing);
     }
 
     /**
@@ -169,16 +185,25 @@ public class Predicate {
     }
 
     protected boolean applyOperator(Object inputValue) {
-        if (operator.equals(Constants.OPERATOR_EQ)
-                && inputValue.equals(value)) {
-            return true;
+        if (operator.equals(Constants.OPERATOR_EQ) ) {
+            if( inputValue instanceof Number ) {
+                return ((Number) inputValue).doubleValue() == ((Number) value)
+                        .doubleValue();
+            } else {
+                return inputValue.toString().equals(value);
+            }
         }
 
         if ((operator.equals(Constants.OPERATOR_NE) || operator
-                .equals(Constants.OPERATOR_NE2))
-                && !inputValue.equals(value)) {
-            return true;
+                .equals(Constants.OPERATOR_NE2))) {
+            if( inputValue instanceof Number ) {
+                return ((Number) inputValue).doubleValue() != ((Number) value)
+                        .doubleValue();
+            } else {
+                return !inputValue.toString().equals(value);
+            }
         }
+
         if (operator.equals(Constants.OPERATOR_LT) &&
                 ((Number) inputValue).doubleValue() < ((Number) value)
                     .doubleValue()) {
@@ -199,9 +224,19 @@ public class Predicate {
                     .doubleValue()) {
             return true;
         }
-        if (operator.equals(Constants.OPERATOR_IN) &&
-                (inputValue.toString().contains(value.toString())) ) {
-            return true;
+        if (operator.equals(Constants.OPERATOR_IN) )  {
+
+            if( !(inputValue instanceof Collection) ) {
+                List newInputValue = new ArrayList();
+                newInputValue.add(inputValue);
+                inputValue = newInputValue;
+            }
+
+            if( value instanceof Collection ) {
+                return ((Collection) inputValue).containsAll((Collection) value);
+            } else {
+                return ((Collection) inputValue).contains(value);
+            }
         }
 
         return false;

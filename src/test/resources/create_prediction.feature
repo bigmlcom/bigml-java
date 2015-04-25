@@ -95,11 +95,11 @@ I need to create a model first
     And I wait until the dataset is ready less than <time_2> secs
     And I create an anomaly detector from a dataset
     And I wait until the anomaly detector is ready less than <time_3> secs
-    When I create an anomaly score for "<data_input>"
+    When I create an anomaly score for "<data_input>" by name=<by_name>
     Then the anomaly score is "<score>"
 
   Examples:
-  | data                 | time_1  | time_2 | time_3 | data_input         | score  |
-  | data/tiny_kdd.csv | 10      | 10     | 100     | {"src_bytes": 350} | 0.92618 |
-  | data/iris_sp_chars.csv | 10      | 10     | 100     | {"pétal&width\u0000": 300} | 0.90198 |
+  | data                    | time_1  | time_2 | time_3   |  by_name  | data_input                  | score   |
+  | data/tiny_kdd.csv       | 10      | 10     | 100      |   true    |{"src_bytes": 350}           | 0.92618 |
+  | data/iris_sp_chars.csv  | 10      | 10     | 100      |   true    | {"pétal&width\u0000": 300}  | 0.90198 |
 

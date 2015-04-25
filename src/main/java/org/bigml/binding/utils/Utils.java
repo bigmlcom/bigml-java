@@ -810,4 +810,29 @@ public class Utils {
         JSONArray mergedDist = mergeBins(convertDistributionMapToSortedArray(distribution), limit);
         return convertDistributionArrayToMap(mergedDist);
     }
+
+    /**
+     * Determines if the given collection contain the same value.
+     *
+     * We will use the contains method of the list to check if the value is inside
+     *
+     * @param collection the list of elements
+     * @param value the value to check.
+     * @return true if all the elements are equals to value or false in otherwise
+     */
+    public static boolean sameElement(List collection, Object value) {
+        if( collection == null || collection.isEmpty() ) {
+            return false;
+        }
+
+        // Iterate over the elements of the collection.
+        for (Object collectionValue : collection) {
+            // Check if the element in the collection is the same of value
+            if (!collectionValue.equals(value)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

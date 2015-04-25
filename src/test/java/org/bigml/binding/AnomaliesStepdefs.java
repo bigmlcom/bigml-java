@@ -23,7 +23,9 @@ public class AnomaliesStepdefs {
     // Logging
     Logger logger = LoggerFactory.getLogger(AnomaliesStepdefs.class);
 
-    MultiModel multiModel;
+    LocalAnomaly localAnomaly;
+    Double localScore;
+
     CommonStepdefs commonSteps = new CommonStepdefs();
 
     @Autowired
@@ -67,6 +69,11 @@ public class AnomaliesStepdefs {
         context.location = (String) resource.get("location");
         context.anomaly = (JSONObject) resource.get("object");
         commonSteps.the_resource_has_been_created_with_status(context.status);
+    }
+
+    @Given("^I create a local anomaly detector$")
+    public void I_create_a_local_anomaly_detector() throws Exception {
+        localAnomaly = new LocalAnomaly(context.anomaly);
     }
 
     @Given("^I wait until the anomaly detector status code is either (\\d) or (\\d) less than (\\d+)$")
@@ -337,8 +344,8 @@ public class AnomaliesStepdefs {
 
     }
 
-    @When("^I create an anomaly score for \"(.*)\"$")
-    public void I_create_an_anomaly_score(String data)
+    @When("^I create an anomaly score for \"(.*)\" by name=(true|false)$")
+    public void I_create_an_anomaly_score(String data, String byName)
             throws Throwable {
         if( data == null || data.trim().length() == 0 ) {
             data = "{}";
@@ -350,7 +357,7 @@ public class AnomaliesStepdefs {
         JSONObject argsJSON = new JSONObject();
         argsJSON.put("tags", Arrays.asList("unitTest"));
 
-        JSONObject resource = BigMLClient.getInstance().createAnomalyScore(anomaly, dataObj, true, argsJSON,
+        JSONObject resource = BigMLClient.getInstance().createAnomalyScore(anomaly, dataObj, new Boolean(byName), argsJSON,
                 5, null);
 
         context.status = (Integer) resource.get("code");
@@ -359,10 +366,28 @@ public class AnomaliesStepdefs {
         commonSteps.the_resource_has_been_created_with_status(context.status);
     }
 
+    @When("^I create a local anomaly score for \"(.*)\" by name=(true|false)$")
+    public void I_create_a_local_anomaly_score(String data, String byName)
+            throws Throwable {
+        if( data == null || data.trim().length() == 0 ) {
+            data = "{}";
+        }
+
+        JSONObject inputData = (JSONObject) JSONValue.parse(data);
+        localScore = localAnomaly.score(inputData, new Boolean(byName));
+    }
+
     @Then("^the anomaly score is \"(.*)\"$")
     public void the_anomaly_score_is(String data)
             throws Throwable {
 
         assertEquals(data, context.anomalyScore.get("score").toString());
+    }
+
+    @Then("^the local anomaly score is (.*)$")
+    public void the_local_anomaly_score_is(Double expectedScore)
+            throws Throwable {
+
+        assertEquals(String.format("%.5g", expectedScore), String.format("%.5g", localScore));
     }
 }

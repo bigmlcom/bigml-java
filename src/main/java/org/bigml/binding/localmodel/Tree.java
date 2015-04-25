@@ -123,7 +123,6 @@ public class Tree {
                     predicateObj.get("field") + ".optype"),
                     (String) predicateObj.get("operator"),
                     (String) predicateObj.get("field"),
-                    (String) ((JSONObject) fields.get(predicateObj.get("field"))).get("name"),
                     predicateObj.get("value"),
                     (String) predicateObj.get("term"));
         }
