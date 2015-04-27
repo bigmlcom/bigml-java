@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.net.HttpURLConnection;
 
 import org.bigml.binding.BigMLClient;
+import org.bigml.binding.utils.CacheManager;
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -37,7 +38,7 @@ public class BatchCentroid extends AbstractResource {
         bigmlAuth = "?username=" + this.bigmlUser + ";api_key="
                 + this.bigmlApiKey + ";";
         this.devMode = false;
-        super.init();
+        super.init(null);
     }
 
     /**
@@ -53,7 +54,23 @@ public class BatchCentroid extends AbstractResource {
         bigmlAuth = "?username=" + this.bigmlUser + ";api_key="
                 + this.bigmlApiKey + ";";
         this.devMode = devMode;
-        super.init();
+        super.init(null);
+    }
+
+    /**
+     * Constructor
+     *
+     */
+    public BatchCentroid(final String apiUser, final String apiKey,
+            final boolean devMode, final CacheManager cacheManager) {
+        this.bigmlUser = apiUser != null ? apiUser : System
+                .getProperty("BIGML_USERNAME");
+        this.bigmlApiKey = apiKey != null ? apiKey : System
+                .getProperty("BIGML_API_KEY");
+        bigmlAuth = "?username=" + this.bigmlUser + ";api_key="
+                + this.bigmlApiKey + ";";
+        this.devMode = devMode;
+        super.init(cacheManager);
     }
 
     /**

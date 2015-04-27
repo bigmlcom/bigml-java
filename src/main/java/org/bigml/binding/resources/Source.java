@@ -3,6 +3,7 @@ package org.bigml.binding.resources;
 import java.io.File;
 import java.net.HttpURLConnection;
 
+import org.bigml.binding.utils.CacheManager;
 import org.bigml.binding.utils.MultipartUtility;
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONObject;
@@ -32,7 +33,7 @@ public class Source extends AbstractResource {
         bigmlAuth = "?username=" + this.bigmlUser + ";api_key="
                 + this.bigmlApiKey + ";";
         this.devMode = false;
-        super.init();
+        super.init(null);
     }
 
     /**
@@ -48,7 +49,23 @@ public class Source extends AbstractResource {
         bigmlAuth = "?username=" + this.bigmlUser + ";api_key="
                 + this.bigmlApiKey + ";";
         this.devMode = devMode;
-        super.init();
+        super.init(null);
+    }
+
+    /**
+     * Constructor
+     *
+     */
+    public Source(final String apiUser, final String apiKey,
+            final boolean devMode, final CacheManager cacheManager) {
+        this.bigmlUser = apiUser != null ? apiUser : System
+                .getProperty("BIGML_USERNAME");
+        this.bigmlApiKey = apiKey != null ? apiKey : System
+                .getProperty("BIGML_API_KEY");
+        bigmlAuth = "?username=" + this.bigmlUser + ";api_key="
+                + this.bigmlApiKey + ";";
+        this.devMode = devMode;
+        super.init(cacheManager);
     }
 
     /**
@@ -150,6 +167,11 @@ public class Source extends AbstractResource {
 
         } catch (Throwable e) {
             logger.error("Error creating source", e);
+        }
+
+        // Cache the resource if the resource if ready
+        if( cacheManager != null && resource != null && isResourceReady(resource)) {
+            cacheManager.put(resourceId, null, resource);
         }
 
         JSONObject result = new JSONObject();

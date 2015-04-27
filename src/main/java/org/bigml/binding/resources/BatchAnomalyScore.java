@@ -1,8 +1,8 @@
 package org.bigml.binding.resources;
 
 import org.bigml.binding.BigMLClient;
+import org.bigml.binding.utils.CacheManager;
 import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +29,7 @@ public class BatchAnomalyScore extends AbstractResource {
         bigmlAuth = "?username=" + this.bigmlUser + ";api_key="
                 + this.bigmlApiKey + ";";
         this.devMode = false;
-        super.init();
+        super.init(null);
     }
 
     /**
@@ -45,7 +45,23 @@ public class BatchAnomalyScore extends AbstractResource {
         bigmlAuth = "?username=" + this.bigmlUser + ";api_key="
                 + this.bigmlApiKey + ";";
         this.devMode = devMode;
-        super.init();
+        super.init(null);
+    }
+
+    /**
+     * Constructor
+     *
+     */
+    public BatchAnomalyScore(final String apiUser, final String apiKey,
+                             final boolean devMode, final CacheManager cacheManager) {
+        this.bigmlUser = apiUser != null ? apiUser : System
+                .getProperty("BIGML_USERNAME");
+        this.bigmlApiKey = apiKey != null ? apiKey : System
+                .getProperty("BIGML_API_KEY");
+        bigmlAuth = "?username=" + this.bigmlUser + ";api_key="
+                + this.bigmlApiKey + ";";
+        this.devMode = devMode;
+        super.init(cacheManager);
     }
 
     /**

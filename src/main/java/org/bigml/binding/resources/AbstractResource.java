@@ -2,6 +2,7 @@ package org.bigml.binding.resources;
 
 import org.bigml.binding.AuthenticationException;
 import org.bigml.binding.BigMLClient;
+import org.bigml.binding.utils.CacheManager;
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -148,7 +149,9 @@ public abstract class AbstractResource {
 
     public final static String DOWNLOAD_DIR = "/download";
 
-    protected void init() {
+    public CacheManager cacheManager;
+
+    protected void init(CacheManager cacheManager) {
         try {
             BIGML_URL = BigMLClient.getInstance(devMode).getBigMLUrl();
             SOURCE_URL = BIGML_URL + SOURCE_PATH;
@@ -166,6 +169,8 @@ public abstract class AbstractResource {
             BATCHANOMALYSCORE_URL = BIGML_URL + BATCHANOMALYSCORE_PATH;
             PROJECT_URL = BIGML_URL + PROJECT_PATH;
             SAMPLE_URL = BIGML_URL + SAMPLE_PATH;
+
+            this.cacheManager = cacheManager;
         } catch (AuthenticationException ae) {
 
         }
@@ -219,6 +224,11 @@ public abstract class AbstractResource {
             logger.error("Error creating resource", e);
         }
 
+        // Cache the resource if the resource if ready
+        if( cacheManager != null && resource != null && isResourceReady(resource)) {
+            cacheManager.put(resourceId, null, resource);
+        }
+
         JSONObject result = new JSONObject();
         result.put("code", code);
         result.put("resource", resourceId);
@@ -259,6 +269,22 @@ public abstract class AbstractResource {
         status.put("message", "The resource couldn't be retrieved");
         error.put("status", status);
 
+        // Check the cache first
+        if( cacheManager != null ) {
+            resourceId = urlString.substring(BIGML_URL.length(), urlString.length());
+            if( cacheManager.exists(resourceId, null) ) {
+                resource = cacheManager.get(resourceId, queryString);
+
+                JSONObject result = new JSONObject();
+                result.put("code", HTTP_OK);
+                result.put("resource", resourceId);
+                result.put("location", location);
+                result.put("object", resource);
+                result.put("error", new JSONObject());
+                return result;
+            }
+        }
+
         try {
             String query = queryString != null ? queryString : "";
             String auth = apiUser != null && apiKey != null ? "?username="
@@ -286,6 +312,11 @@ public abstract class AbstractResource {
 
         } catch (Throwable e) {
             logger.error("Error getting resource", e);
+        }
+
+        // Cache the resource if the resource if ready
+        if( cacheManager != null && resource != null && isResourceReady(resource)) {
+            cacheManager.put(resourceId, queryString, resource);
         }
 
         JSONObject result = new JSONObject();
@@ -385,6 +416,12 @@ public abstract class AbstractResource {
             logger.error("Error updating resource", e);
         }
 
+        // Cache the resource if the resource is ready
+        if( cacheManager != null && resource != null
+                && code == HTTP_ACCEPTED && isResourceReady(resource)) {
+            cacheManager.put(resourceId, null, resource);
+        }
+
         JSONObject result = new JSONObject();
         result.put("code", code);
         result.put("resource", resourceId);
@@ -425,6 +462,12 @@ public abstract class AbstractResource {
             }
         } catch (Throwable e) {
             logger.error("Error deleting resource ", e);
+        }
+
+        // Delete the resource from the cache
+        if( cacheManager != null && code == HTTP_NO_CONTENT) {
+            String resourceId = urlString.substring(BIGML_URL.length(), urlString.length());
+            cacheManager.evict(resourceId, null);
         }
 
         JSONObject result = new JSONObject();
@@ -510,14 +553,21 @@ public abstract class AbstractResource {
             obj = (JSONObject) resource.get("error");
         }
 
-        if (obj == null)
-            return false;
+        if( obj == null ) {
+            if( resource.containsKey("status") ) {
+                JSONObject status = (JSONObject) resource.get("status");
+                Number statusCode = (Number) status.get("code");
+                return (statusCode != null && statusCode.intValue() == FINISHED);
+            }
 
-        JSONObject status = (JSONObject) obj.get("status");
-        Number code = (Number) resource.get("code");
-        Number statusCode = (Number) status.get("code");
-        return (code != null && code.intValue() == HTTP_OK
-                && statusCode != null && statusCode.intValue() == FINISHED);
+            return false;
+        } else {
+            JSONObject status = (JSONObject) obj.get("status");
+            Number code = (Number) resource.get("code");
+            Number statusCode = (Number) status.get("code");
+            return (code != null && code.intValue() == HTTP_OK
+                    && statusCode != null && statusCode.intValue() == FINISHED);
+        }
     }
 
     // ################################################################
@@ -818,5 +868,4 @@ public abstract class AbstractResource {
         return result;
 
     }
-
 }
