@@ -1,9 +1,11 @@
 package org.bigml.binding;
 
 import org.bigml.binding.resources.*;
+import org.bigml.binding.utils.CacheManager;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.misc.Cache;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -78,6 +80,8 @@ public class BigMLClient {
     private Properties props;
     private Boolean devMode = false;
     private String storage;
+
+    private CacheManager cacheManager;
 
     protected BigMLClient() {
     }
@@ -435,6 +439,7 @@ public class BigMLClient {
                 bigmlUrl = this.devMode ? props.getProperty("BIGML_DEV_URL",
                         BIGML_DEV_URL) : props.getProperty("BIGML_URL", BIGML_URL);
             }
+
         } catch (Throwable e) {
             // logger.error("Error loading configuration", e);
             bigmlUrl = this.devMode ? BIGML_DEV_URL : BIGML_URL;
@@ -442,28 +447,31 @@ public class BigMLClient {
     }
 
     private void initResources() {
-        source = new Source(this.bigmlUser, this.bigmlApiKey, this.devMode);
-        dataset = new Dataset(this.bigmlUser, this.bigmlApiKey, this.devMode);
-        model = new Model(this.bigmlUser, this.bigmlApiKey, this.devMode);
+        // Lets create the storage folder in it was informed
+        this.cacheManager = new CacheManager(storage);
+
+        source = new Source(this.bigmlUser, this.bigmlApiKey, this.devMode, cacheManager);
+        dataset = new Dataset(this.bigmlUser, this.bigmlApiKey, this.devMode, cacheManager);
+        model = new Model(this.bigmlUser, this.bigmlApiKey, this.devMode, cacheManager);
         prediction = new Prediction(this.bigmlUser, this.bigmlApiKey,
-                this.devMode);
+                this.devMode, cacheManager);
         evaluation = new Evaluation(this.bigmlUser, this.bigmlApiKey,
-                this.devMode);
-        ensemble = new Ensemble(this.bigmlUser, this.bigmlApiKey, this.devMode);
-        anomaly = new Anomaly(this.bigmlUser, this.bigmlApiKey, this.devMode);
-        anomalyScore = new AnomalyScore(this.bigmlUser, this.bigmlApiKey, this.devMode);
+                this.devMode, cacheManager);
+        ensemble = new Ensemble(this.bigmlUser, this.bigmlApiKey, this.devMode, cacheManager);
+        anomaly = new Anomaly(this.bigmlUser, this.bigmlApiKey, this.devMode, cacheManager);
+        anomalyScore = new AnomalyScore(this.bigmlUser, this.bigmlApiKey, this.devMode, cacheManager);
         batchAnomalyScore = new BatchAnomalyScore(this.bigmlUser, this.bigmlApiKey,
-                this.devMode);
+                this.devMode, cacheManager);
         batchPrediction = new BatchPrediction(this.bigmlUser, this.bigmlApiKey,
-                this.devMode);
-        cluster = new Cluster(this.bigmlUser, this.bigmlApiKey, this.devMode);
-        centroid = new Centroid(this.bigmlUser, this.bigmlApiKey, this.devMode);
+                this.devMode, cacheManager);
+        cluster = new Cluster(this.bigmlUser, this.bigmlApiKey, this.devMode, cacheManager);
+        centroid = new Centroid(this.bigmlUser, this.bigmlApiKey, this.devMode, cacheManager);
         batchCentroid = new BatchCentroid(this.bigmlUser, this.bigmlApiKey,
-                this.devMode);
+                this.devMode, cacheManager);
         project = new Project(this.bigmlUser, this.bigmlApiKey,
-                this.devMode);
+                this.devMode, cacheManager);
         sample = new Sample(this.bigmlUser, this.bigmlApiKey,
-                this.devMode);
+                this.devMode, cacheManager);
     }
 
     public String getBigMLUrl() {
@@ -476,6 +484,10 @@ public class BigMLClient {
 
     public void setSeed(String seed) {
         this.seed = seed;
+    }
+
+    public CacheManager getCacheManager() {
+        return cacheManager;
     }
 
     // ################################################################

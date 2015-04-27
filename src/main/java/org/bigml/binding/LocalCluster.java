@@ -3,6 +3,7 @@ package org.bigml.binding;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.bigml.binding.localmodel.Predicate;
+import org.bigml.binding.resources.AbstractResource;
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -76,73 +77,78 @@ public class LocalCluster extends ModelFields {
                     "Cannot create the Cluster instance. Could not find the 'cluster' key in the resource");
         }
 
-        if (!BigMLClient.getInstance().clusterIsReady(clusterData)) {
-            throw new Exception("The cluster isn't finished yet");
-        }
 
         clusterId = (String) clusterData.get("resource");
 
         cluster = clusterData;
 
-        if( cluster.containsKey("clusters") ) {
-            clusters = (JSONArray) Utils.getJSONObject(cluster, "clusters.clusters");
-            centroids = new JSONArray();
+        if (cluster.containsKey("clusters")) {
 
-            Iterator<JSONObject> clustersIterator = clusters.iterator();
-            while(clustersIterator.hasNext()) {
-                JSONObject childCluster = clustersIterator.next();
-                centroids.add(new LocalCentroid(childCluster));
-            }
+            JSONObject status = (JSONObject) Utils.getJSONObject(clusterData, "status");
+            if( status != null &&
+                    status.containsKey("code") &&
+                    AbstractResource.FINISHED == ((Number) status.get("code")).intValue() ) {
 
-            scales = new JSONObject();
-            scales.putAll((JSONObject) cluster.get("scales"));
+                clusters = (JSONArray) Utils.getJSONObject(cluster, "clusters.clusters");
+                centroids = new JSONArray();
 
-            termForms = new JSONObject();
-            tagClouds = new HashMap<String, Map<String, Integer>>();
-            termAnalysis = new JSONObject();
+                Iterator<JSONObject> clustersIterator = clusters.iterator();
+                while (clustersIterator.hasNext()) {
+                    JSONObject childCluster = clustersIterator.next();
+                    centroids.add(new LocalCentroid(childCluster));
+                }
 
-            summaryFields = (JSONArray) Utils.getJSONObject(cluster,"summary_fields");
+                scales = new JSONObject();
+                scales.putAll((JSONObject) cluster.get("scales"));
 
-            for (Object summaryField : summaryFields) {
-                fields.remove(summaryField);
-            }
+                termForms = new JSONObject();
+                tagClouds = new HashMap<String, Map<String, Integer>>();
+                termAnalysis = new JSONObject();
 
-            for (Object fieldId : fields.keySet()) {
-                JSONObject field = (JSONObject) fields.get(fieldId);
-                if( "text".equals(field.get("optype")) ) {
-                    termForms.put(fieldId, Utils.getJSONObject(field, "summary.term_forms", new JSONObject()));
+                summaryFields = (JSONArray) Utils.getJSONObject(cluster, "summary_fields");
 
-                    // Convert the Map of JSONArrays to a Map of Maps.
-                    Map<String, Integer> tagsCountMap = new HashMap<String, Integer>();
-                    JSONArray tags = (JSONArray) Utils.getJSONObject(field, "summary.tag_cloud", new JSONArray());
-                    for (Object tag : tags) {
-                        JSONArray tagArr = (JSONArray) tag;
-                        // [0] -> term , [1] -> Number of occurrences of the term
-                        tagsCountMap.put(tagArr.get(0).toString(), ((Number) tagArr.get(1)).intValue());
+                for (Object summaryField : summaryFields) {
+                    fields.remove(summaryField);
+                }
+
+                for (Object fieldId : fields.keySet()) {
+                    JSONObject field = (JSONObject) fields.get(fieldId);
+                    if ("text".equals(field.get("optype"))) {
+                        termForms.put(fieldId, Utils.getJSONObject(field, "summary.term_forms", new JSONObject()));
+
+                        // Convert the Map of JSONArrays to a Map of Maps.
+                        Map<String, Integer> tagsCountMap = new HashMap<String, Integer>();
+                        JSONArray tags = (JSONArray) Utils.getJSONObject(field, "summary.tag_cloud", new JSONArray());
+                        for (Object tag : tags) {
+                            JSONArray tagArr = (JSONArray) tag;
+                            // [0] -> term , [1] -> Number of occurrences of the term
+                            tagsCountMap.put(tagArr.get(0).toString(), ((Number) tagArr.get(1)).intValue());
+                        }
+                        tagClouds.put(fieldId.toString(), tagsCountMap);
+
+
+                        termAnalysis.put(fieldId, Utils.getJSONObject(field, "term_analysis", new JSONObject()));
                     }
-                    tagClouds.put(fieldId.toString(), tagsCountMap);
-
-
-                    termAnalysis.put(fieldId, Utils.getJSONObject(field, "term_analysis", new JSONObject()));
                 }
-            }
 
-            Set<String> fieldsId = scales.keySet();
-            for (String fieldId : fieldsId) {
-                if( !fields.containsKey(fieldId) ) {
-                    throw new Exception("Some fields are missing" +
-                            " to generate a local cluster." +
-                            " Please, provide a cluster with" +
-                            " the complete list of fields.");
+                Set<String> fieldsId = scales.keySet();
+                for (String fieldId : fieldsId) {
+                    if (!fields.containsKey(fieldId)) {
+                        throw new Exception("Some fields are missing" +
+                                " to generate a local cluster." +
+                                " Please, provide a cluster with" +
+                                " the complete list of fields.");
+                    }
                 }
-            }
 
+            } else {
+                throw new Exception("The cluster isn't finished yet");
+            }
         } else {
             throw new Exception(String.format("Cannot create the Cluster instance. Could not" +
-                    " find the 'clusters' key in the resource:\n\n%s",
-                            cluster));
+                            " find the 'clusters' key in the resource:\n\n%s",
+                    cluster));
         }
-
     }
 
     /**
