@@ -1,0 +1,11 @@
+ if( (petal_length != null && petal_length > 4.75) ){
+     return "Iris-virginica";
+ }
+ if( (petal_length != null && petal_length <= 4.75) || petal_length == null ){
+     if( petal_length == null ){
+         return "Iris-setosa";
+     }
+     if( petal_length != null ){
+         return "Iris-versicolor";
+     }
+ }

@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import cucumber.annotation.en.Given;
 import cucumber.annotation.en.Then;
 
+import java.io.IOException;
+
 public class CommonStepdefs {
 
     // Logging
@@ -328,7 +330,10 @@ public class CommonStepdefs {
     }
 
     @Then("^delete all test data$")
-    public void delete_all_test_data() throws AuthenticationException {
+    public void delete_all_test_data() throws Exception {
+
+        BigMLClient.getInstance().getCacheManager().cleanCache();
+
         // BatchCentroids
         JSONArray batchCentroids = (JSONArray) BigMLClient.getInstance()
                 .listBatchCentroids(";tags__in=unitTest").get("objects");

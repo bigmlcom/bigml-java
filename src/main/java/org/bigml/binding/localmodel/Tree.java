@@ -1,21 +1,20 @@
 package org.bigml.binding.localmodel;
 
-import java.io.OutputStream;
-import java.text.MessageFormat;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.commons.math3.distribution.ChiSquaredDistribution;
 import org.apache.commons.math3.special.Erf;
 import org.bigml.binding.Constants;
 import org.bigml.binding.MissingStrategy;
-import org.bigml.binding.MultiVote;
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.text.MessageFormat;
+import java.util.*;
 
 /**
  * A tree-like predictive model.
@@ -78,8 +77,17 @@ public class Tree {
                 + Constants.OPERATOR_GT, "\"{2}\".compareTo({3})>0");
     }
 
+    private static final JSONObject languageConversions;
+
+    static {
+        InputStream input = Tree.class.getResourceAsStream("/org/bigml/binding/localmodel/languageConversions.json");
+        languageConversions = (JSONObject) JSONValue.parse(new InputStreamReader(input));
+    }
+
     private final JSONObject fields;
     private final JSONObject root;
+    private String id;
+    private String parentId;
     private String objectiveField;
     private final Object output;
     private boolean isPredicate;
@@ -98,11 +106,14 @@ public class Tree {
      * Constructor
      */
     public Tree(final JSONObject root, final JSONObject fields,
-            final Object objective, final JSONObject rootDistribution) {
+                final Object objective, final JSONObject rootDistribution,
+                final String parentId, final Map<String, Tree> idsMap, final boolean subtree, Integer maxBins) {
         super();
 
         this.fields = fields;
         this.rootDistribution = rootDistribution;
+
+        maxBins = (maxBins != null ? maxBins : 0);
 
         if (objective != null && objective instanceof List) {
             this.objectiveField = (String) ((List) objective).get(0);
@@ -112,8 +123,6 @@ public class Tree {
 
         this.root = root;
         this.output = root.get("output");
-        this.count = (Long) root.get("count");
-        this.confidence = ((Number) root.get("confidence")).doubleValue();
 
         if (root.get("predicate") instanceof Boolean) {
             isPredicate = true;
@@ -127,15 +136,30 @@ public class Tree {
                     (String) predicateObj.get("term"));
         }
 
+        if( root.containsKey("id") ) {
+            id = root.get("id").toString();
+            this.parentId = parentId;
+
+            // The idsMap is null when cloning
+            if( idsMap != null ) {
+                idsMap.put(id, this);
+            }
+        }
+
         children = new ArrayList<Tree>();
         JSONArray childrenObj = (JSONArray) root.get("children");
         if (childrenObj != null) {
             for (int i = 0; i < childrenObj.size(); i++) {
                 JSONObject child = (JSONObject) childrenObj.get(i);
-                Tree childTree = new Tree(child, fields, objectiveField, null);
+                Tree childTree = new Tree(child, fields, objectiveField, null, id, idsMap, subtree, maxBins);
                 children.add(childTree);
             }
         }
+
+        this.count = (Long) root.get("count");
+        this.confidence = ((Number) root.get("confidence")).doubleValue();
+        this.distribution = null;
+        this.distributionUnit = null;
 
         JSONArray distributionObj = (JSONArray) root.get("distribution");
         JSONObject summary = null;
@@ -171,7 +195,7 @@ public class Tree {
         }
 
         if( isRegression() ) {
-            maxBins = distribution.size();
+            this.maxBins = Math.max(maxBins, distribution.size());
             median = null;
 
             if( summary != null ) {
@@ -186,6 +210,14 @@ public class Tree {
         if( !isRegression() && distribution != null ) {
             impurity = calculateGiniImpurity(distribution, count);
         }
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getParentId() {
+        return parentId;
     }
 
     /**
@@ -456,12 +488,76 @@ public class Tree {
     }
 
     /**
+     * Returns the information associated to each of the tree nodes in rows format
+     */
+    public List getNodesInfo(List<String> headers, boolean leavesOnly) {
+        List rows = new ArrayList();
+
+        List row = new ArrayList();
+        Map<String, Long> categoryDict = new HashMap<String, Long>();
+
+        if( !isRegression() ) {
+            categoryDict = new HashMap<String, Long>();
+            for (Object bin : this.distribution) {
+                JSONArray binObject = (JSONArray) bin;
+                categoryDict.put(binObject.get(0).toString(), ((Number) binObject.get(1)).longValue());
+            }
+        }
+
+        for (String header : headers) {
+            if( header.equals(Utils.getJSONObject(fields, objectiveField + ".name"))) {
+                row.add(output);
+                continue;
+            }
+
+            if( "confidence".equals(header) || "error".equals(header) ) {
+                row.add(confidence);
+                continue;
+            }
+
+            if( "impurity".equals(header) ) {
+                row.add(impurity);
+                continue;
+            }
+
+            if( isRegression() && header.startsWith("bin") ) {
+                for (Object bin : this.distribution) {
+                    JSONArray binObject = (JSONArray) bin;
+                    row.add(binObject.get(0)); // Bin Value
+                    row.add(((Number) binObject.get(1)).longValue()); // Bin Instances
+                }
+
+                break;
+            }
+
+            if( !isRegression() ) {
+                row.add(categoryDict.get(header));
+            }
+        }
+
+        while(row.size() < headers.size() ) {
+            row.add(null);
+        }
+
+        if( !leavesOnly || (children == null || children.isEmpty()) ) {
+            rows.add(row);
+            return rows;
+        }
+
+        for (Tree child : children) {
+            rows.addAll(child.getNodesInfo(headers, leavesOnly));
+        }
+
+        return rows;
+    }
+
+    /**
      * Creates a copy of the current tree node
      *
      * @return the copy of the tree node
      */
     protected Tree clone() {
-        return new Tree(root, fields, objectiveField, rootDistribution);
+        return new Tree(root, fields, objectiveField, rootDistribution, id, null, false, maxBins);
     }
 
     /**
@@ -702,41 +798,140 @@ public class Tree {
      * @param depth
      *            controls the size of indentation
      */
-    public String generateRules(final int depth) {
+    protected String generateRules(final int depth, final Predicate.RuleLanguage language,
+                                   final List<String> idsPath,
+                                final boolean subtree) {
         String rules = "";
-        if (this.children != null && this.children.size() > 0) {
-            for (int i = 0; i < this.children.size(); i++) {
-                Tree child = this.children.get(i);
-                String fieldName = (String) Utils.getJSONObject(fields,
-                        child.predicate.getField() + ".name");
-                rules += MessageFormat.format("{0} IF {1} {2} {3} {4}\n",
-                        new String(new char[depth]).replace("\0", INDENT),
-                        fieldName, child.predicate.getOperator(),
-                        child.predicate.getValue(), child.children != null
-                                && child.children.size() > 0 ? "AND" : "THEN");
 
-                rules += child.generateRules(depth + 1);
+        List<Tree> children = filterNodes(this.children, idsPath, subtree);
+
+        JSONObject conversions = (JSONObject) languageConversions.get(language.name());
+
+        String conditionOperator = Utils.getJSONObject(conversions, "IF", "IF").toString();
+        String conditionStart = Utils.getJSONObject(conversions, "IF_START", "").toString();
+        String conditionEnd = Utils.getJSONObject(conversions, "IF_END", "").toString();
+        String inclusiveOperator = Utils.getJSONObject(conversions, "AND", "AND").toString();
+        String startBlockCharacter = Utils.getJSONObject(conversions, "START_BLOCK", "THEN").toString();
+        String endBlockCharacter = (String) Utils.getJSONObject(conversions, "END_BLOCK", null);
+        String endSentenceCharacter = Utils.getJSONObject(conversions, "END_SENTENCE", "").toString();
+
+        if (children != null && children.size() > 0) {
+            for (int i = 0; i < children.size(); i++) {
+                Tree child = children.get(i);
+                rules += MessageFormat.format("{0} {1}{2} {3} {4}{5}\n",
+                        new String(new char[depth]).replace("\0", INDENT),
+                        conditionOperator,
+                        conditionStart,
+                        child.predicate.toRule(language, fields, "slug"),
+                        conditionEnd,
+                        child.children != null
+                                && child.children.size() > 0 ? inclusiveOperator : startBlockCharacter);
+                rules += child.generateRules(depth + 1, language, idsPath, subtree);
+
+                if( endBlockCharacter != null ) {
+                    rules += MessageFormat.format("{0} {1}\n",
+                            new String(new char[depth]).replace("\0", INDENT),
+                            endBlockCharacter);
+                }
             }
         } else {
             String fieldName = (String) Utils.getJSONObject(fields,
-                    objectiveField + ".name");
-            rules += MessageFormat.format("{0} {1} = {2}\n", new String(
-                    new char[depth]).replace("\0", INDENT),
-                    this.objectiveField != null ? fieldName : "Prediction",
-                    this.output);
+                    objectiveField + ".slug");
+            if( language == Predicate.RuleLanguage.PSEUDOCODE ) {
+                rules += MessageFormat.format("{0} {1} = {2}{3}\n", new String(
+                                new char[depth]).replace("\0", INDENT),
+                        this.objectiveField != null ? fieldName : Utils.slugify("Prediction", null, null),
+                        this.output,
+                        endSentenceCharacter);
+            } else {
+                String result = this.output.toString();
+                switch (language) {
+                    case JAVA:
+                        if( !isRegression() ) {
+                            result = String.format("\"%s\"", result);
+                        }
+                        break;
+
+                    case PYTHON:
+                        if( !isRegression() ) {
+                            result = String.format("'%s'", result);
+                        }
+                        break;
+                }
+
+                rules += MessageFormat.format("{0} return {1}{2}\n", new String(
+                                new char[depth]).replace("\0", INDENT),
+                                result,
+                                endSentenceCharacter);
+            }
         }
 
         return rules;
     }
 
     /**
-     * Prints out an IF-THEN rule version of the tree.
-     * 
-     * @param depth
-     *            controls the size of indentation
+     * Filters the contents of a nodesList. If any of the nodes is in the
+     * ids list, the rest of nodes are removed. If none is in the ids list
+     * we include or exclude the nodes depending on the subtree flag.
      */
-    public String rules(final int depth) {
-        return generateRules(depth);
+    protected List<Tree> filterNodes(List<Tree> nodesList, List<String> ids, boolean subtree) {
+        if( nodesList == null || nodesList.isEmpty() ) {
+            return null;
+        }
+
+        List<Tree> nodes = new ArrayList<Tree>(nodesList);
+        if( ids != null && !ids.isEmpty() ) {
+            for (Tree node : nodes) {
+                if( ids.contains(node.getId()) ) {
+                    nodes = new ArrayList<Tree>();
+                    nodes.add(node);
+                    return nodes;
+                }
+            }
+        }
+
+        if( !subtree ) {
+            return new ArrayList<Tree>();
+        }
+
+        return nodes;
+    }
+
+    /**
+     * Prints out an IF-THEN rule version of the tree.
+     */
+    public String rules() {
+        for (Object fieldId : fields.keySet()) {
+            String slug = Utils.slugify(Utils.getJSONObject(fields, fieldId + ".name", "").toString(),
+                    null, null);
+            ((JSONObject) fields.get(fieldId)).put("slug", slug);
+        }
+        return generateRules(0, Predicate.RuleLanguage.PSEUDOCODE, null, true);
+    }
+
+    /**
+     * Prints out an rule version of the tree in the informed language.
+     */
+    public String rules(Predicate.RuleLanguage language) {
+        for (Object fieldId : fields.keySet()) {
+            String slug = Utils.slugify(Utils.getJSONObject(fields, fieldId + ".name", "").toString(),
+                    null, null);
+            ((JSONObject) fields.get(fieldId)).put("slug", slug);
+        }
+        return generateRules(0, language, null, true);
+    }
+
+    /**
+     * Prints out an rule version of the tree in the informed language.
+     */
+    public String rules(Predicate.RuleLanguage language, final List<String> idsPath,
+                        final boolean subtree) {
+        for (Object fieldId : fields.keySet()) {
+            String slug = Utils.slugify(Utils.getJSONObject(fields, fieldId + ".name", "").toString(),
+                    null, null);
+            ((JSONObject) fields.get(fieldId)).put("slug", slug);
+        }
+        return generateRules(0, language, idsPath, subtree);
     }
 
     /**
@@ -745,37 +940,87 @@ public class Tree {
      * @param depth
      *            controls the size of indentation
      */
-    public String javaBody(final int depth, final String methodReturn) {
+    public String getJavaBody(final List<String> idsPath, final boolean subtree) {
+        return getJavaBody(0, "", null, null, idsPath, subtree);
+    }
+
+    protected String getJavaBody(final int depth, String body, List<String> conditions,
+                                 List<String> cmv, final List<String> idsPath, final boolean subtree) {
         String instructions = "";
-        if (this.children != null && this.children.size() > 0) {
-            for (int i = 0; i < this.children.size(); i++) {
-                Tree child = this.children.get(i);
-                String fieldName = (String) Utils.getJSONObject(fields,
-                        child.predicate.getField() + ".name");
+
+        if( cmv == null ) {
+            cmv = new ArrayList<String>();
+        }
+
+        String alternate = "";
+        if( body == null || body.length() == 0 ) {
+            alternate = "else if";
+        } else {
+            if (conditions == null) {
+                conditions = new ArrayList<String>();
+            }
+            alternate = "if";
+        }
+
+        String objectiveType = (String) Utils.getJSONObject(fields, objectiveField + ".optype", "");
+
+        List<Tree> children = filterNodes(this.children, idsPath, subtree);
+
+        if (children != null && children.size() > 0) {
+            String fieldId = Utils.split(children);
+            String fieldName = Utils.getJSONObject(fields, fieldId + ".name", "").toString();
+
+            boolean hasMissingBranch = missingBranch(children) || noneValue(children);
+
+            // the missing is singled out as a special case only when there's
+            //  no missing branch in the children list
+//            if( !hasMissingBranch &&
+//                    !cmv.contains(fieldName)) {
+//                conditions.add(String.format("%s == null", fieldName));
+//                body += String.format("%s( %s ) {\n", alternate, Utils.join(conditions, " && "));
+//                if( "numeric".equals(objectiveType) ) {
+//                    body += String.format("return")
+//                }
+//            }
+
+
+            for (int i = 0; i < children.size(); i++) {
+                Tree child = children.get(i);
+//                String fieldName = (String) Utils.getJSONObject(fields,
+//                        child.predicate.getField() + ".name");
+                String slug = Utils.slugify(fieldName, null, null);
 
                 String comparison = JAVA_OPERATOR.get(child.predicate
                         .getOpType() + "-" + child.predicate.getOperator());
                 instructions += MessageFormat.format("{0}if ({1} != null && "
                         + comparison + ") '{'\n",
                         new String(new char[depth]).replace("\0", INDENT),
-                        Utils.slugify(fieldName), Utils.slugify(fieldName),
+                        slug, slug,
                         child.predicate.getValue() + "");
 
-                instructions += child.javaBody(depth + 1, methodReturn);
+                instructions += child.getJavaBody(depth + 1, body, conditions, cmv, idsPath, subtree);
                 instructions += new String(new char[depth]).replace("\0",
                         INDENT) + "}\n";
             }
         } else {
             String returnSentence = "{0} return {1};\n";
-            if (methodReturn.equals("String")) {
+            if (objectiveType.equals("categorical")) {
                 returnSentence = "{0} return \"{1}\";\n";
             }
-            if (methodReturn.equals("Float")) {
+            if (objectiveType.equals("numeric") ) {
                 returnSentence = "{0} return {1}F;\n";
             }
-            if (methodReturn.equals("Boolean")) {
-                returnSentence = "{0} return new Boolean({1});\n";
-            }
+
+//            String returnSentence = "{0} return {1};\n";
+//            if (methodReturn.equals("String")) {
+//                returnSentence = "{0} return \"{1}\";\n";
+//            }
+//            if (methodReturn.equals("Float")) {
+//                returnSentence = "{0} return {1}F;\n";
+//            }
+//            if (methodReturn.equals("Boolean")) {
+//                returnSentence = "{0} return new Boolean({1});\n";
+//            }
 
             instructions += MessageFormat.format(returnSentence, new String(
                     new char[depth]).replace("\0", INDENT), this.output);
@@ -783,6 +1028,37 @@ public class Tree {
 
         return instructions;
     }
+
+
+    /**
+     * Translate the model into a set of "if" statements in Tableau syntax
+     *
+     * @param depth controls the size of indentation. As soon as a value is missing
+     *              that node is returned without further evaluation.
+     */
+//    public String getTableauBody(int depth, String body, List<String> conditions,
+//                                 List<String> cmv, List<String> idsPath, boolean subtree) {
+//
+//        if( cmv == null ) {
+//            cmv = new ArrayList<String>();
+//        }
+//
+//        String alternate = "";
+//        if( body == null || body.length() == 0 ) {
+//            alternate = "ELSEIF";
+//        } else {
+//            if (conditions == null) {
+//                conditions = new ArrayList<String>();
+//            }
+//            alternate = "IF";
+//        }
+//
+//        List<Tree> children = filterNodes(this.children, idsPath, subtree);
+//
+//        if( children != null && !children.isEmpty() ) {
+//
+//        }
+//    }
 
     /**
      * Returns the median value for a distribution

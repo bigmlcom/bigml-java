@@ -1,0 +1,166 @@
+ if( message.contains("call") ){
+     if( message.contains("i") ){
+         if( message.contains("s") ){
+             return "spam";
+         }
+         if( !message.contains("s") ){
+             if( message.contains("over") ){
+                 return "spam";
+             }
+             if( !message.contains("over") ){
+                 return "ham";
+             }
+         }
+     }
+     if( !message.contains("i") ){
+         if( message.contains("me") ){
+             if( message.contains("private") ){
+                 return "spam";
+             }
+             if( !message.contains("private") ){
+                 return "ham";
+             }
+         }
+         if( !message.contains("me") ){
+             if( message.contains("there") ){
+                 return "ham";
+             }
+             if( !message.contains("there") ){
+                 if( message.contains("food") ){
+                     return "ham";
+                 }
+                 if( !message.contains("food") ){
+                     if( message.contains("looking") ){
+                         return "ham";
+                     }
+                     if( !message.contains("looking") ){
+                         if( message.contains("ill") ){
+                             return "ham";
+                         }
+                         if( !message.contains("ill") ){
+                             return "spam";
+                         }
+                     }
+                 }
+             }
+         }
+     }
+ }
+ if( !message.contains("call") ){
+     if( message.contains("free") ){
+         if( message.contains("i") ){
+             if( message.contains("in") ){
+                 return "spam";
+             }
+             if( !message.contains("in") ){
+                 return "ham";
+             }
+         }
+         if( !message.contains("i") ){
+             if( message.contains("seen") ){
+                 return "ham";
+             }
+             if( !message.contains("seen") ){
+                 return "spam";
+             }
+         }
+     }
+     if( !message.contains("free") ){
+         if( message.contains("txt") ){
+             if( message.contains("sure") ){
+                 return "ham";
+             }
+             if( !message.contains("sure") ){
+                 return "spam";
+             }
+         }
+         if( !message.contains("txt") ){
+             if( message.contains("text") ){
+                 if( message.contains("with") ){
+                     return "spam";
+                 }
+                 if( !message.contains("with") ){
+                     if( message.contains("the") ){
+                         return "ham";
+                     }
+                     if( !message.contains("the") ){
+                         if( message.contains("a") ){
+                             return "spam";
+                         }
+                         if( !message.contains("a") ){
+                             if( message.contains("for") ){
+                                 return "spam";
+                             }
+                             if( !message.contains("for") ){
+                                 return "ham";
+                             }
+                         }
+                     }
+                 }
+             }
+             if( !message.contains("text") ){
+                 if( message.contains("currently") ){
+                     return "spam";
+                 }
+                 if( !message.contains("currently") ){
+                     if( message.contains("cost") ){
+                         if( message.contains("also") ){
+                             return "ham";
+                         }
+                         if( !message.contains("also") ){
+                             if( message.contains("it") ){
+                                 return "ham";
+                             }
+                             if( !message.contains("it") ){
+                                 return "spam";
+                             }
+                         }
+                     }
+                     if( !message.contains("cost") ){
+                         if( message.contains("rate") ){
+                             return "spam";
+                         }
+                         if( !message.contains("rate") ){
+                             if( message.contains("std") ){
+                                 return "spam";
+                             }
+                             if( !message.contains("std") ){
+                                 if( message.contains("http") ){
+                                     return "spam";
+                                 }
+                                 if( !message.contains("http") ){
+                                     if( message.contains("latest") ){
+                                         return "spam";
+                                     }
+                                     if( !message.contains("latest") ){
+                                         if( message.contains("lost") ){
+                                             if( message.contains("way") ){
+                                                 return "ham";
+                                             }
+                                             if( !message.contains("way") ){
+                                                 return "spam";
+                                             }
+                                         }
+                                         if( !message.contains("lost") ){
+                                             if( message.contains("girls") ){
+                                                 if( message.contains("it") ){
+                                                     return "ham";
+                                                 }
+                                                 if( !message.contains("it") ){
+                                                     return "spam";
+                                                 }
+                                             }
+                                             if( !message.contains("girls") ){
+                                                 return "ham";
+                                             }
+                                         }
+                                     }
+                                 }
+                             }
+                         }
+                     }
+                 }
+             }
+         }
+     }
+ }

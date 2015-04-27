@@ -11,6 +11,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -203,20 +204,42 @@ public class Utils {
      * Reads the content of a file
      */
     public static String readFile(String filename) {
-        String content = null;
-        File file = new File(filename);
+        StringBuilder content = new StringBuilder();
         try {
-            FileReader reader = new FileReader(file);
-            char[] chars = new char[(int) file.length()];
-            reader.read(chars);
-            content = new String(chars);
-            reader.close();
+            File fileDir = new File(filename);
+
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(
+                            new FileInputStream(fileDir), "UTF8"));
+
+            String str;
+
+            while ((str = in.readLine()) != null) {
+                content.append(str).append("\n");
+            }
+
+            in.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return content;
+        return content.toString();
     }
 
+//    public static String readFile(String filename) {
+//        String content = null;
+//        File file = new File(filename);
+//        try {
+//            FileReader reader = new FileReader(file);
+//            char[] chars = new char[(int) file.length()];
+//            reader.read(chars);
+//            content = new String(chars, Charset.forName("UTF-8"));
+//            reader.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        return content;
+//    }
+//
     /**
      * Returns True if value is a valid URL.
      * 
@@ -385,11 +408,26 @@ public class Utils {
     /**
      * Translates a field name into a variable name.
      */
-    public static String slugify(String input) {
-        String nowhitespace = WHITESPACE.matcher(input).replaceAll("_");
-        String normalized = Normalizer.normalize(nowhitespace, Form.NFD);
-        String slug = NONLATIN.matcher(normalized).replaceAll("");
-        return slug.toLowerCase(Locale.ENGLISH);
+    public static String slugify(String input, List<String> reservedKeywords, String prefix) {
+        if( prefix == null || prefix.trim().length() == 0 ) {
+            prefix = "";
+        }
+
+        String normalized = java.text.Normalizer.normalize(input, java.text.Normalizer.Form.NFD);
+        String accentsgone = normalized.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+        String slug  = NONLATIN.matcher(accentsgone).replaceAll("_");
+
+        slug = slug.toLowerCase(Locale.ENGLISH) ;
+
+        if( !Character.isLetter(slug.charAt(0)) ) {
+            slug = "fields_" + slug;
+        }
+
+        if( reservedKeywords != null && reservedKeywords.contains(slug) ) {
+            slug = prefix + slug;
+        }
+
+        return slug;
     }
 
     /**
@@ -835,4 +873,12 @@ public class Utils {
 
         return true;
     }
+
+    /**
+     * Pluralizer: adds "s" at the end of a string if a given number is > 1
+     */
+    public static String plural(String text, int num) {
+        return String.format("%s%s", text, (num == 1 ? "" : "s"));
+    }
+
 }

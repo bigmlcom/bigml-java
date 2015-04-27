@@ -1,0 +1,191 @@
+ if( (plasma_glucose != null && plasma_glucose > 142) ){
+     if( (plasma_glucose != null && plasma_glucose > 165) ){
+         if( (age != null && age > 28) ){
+             return "true";
+         }
+         if( (age != null && age <= 28) ){
+             if( (bmi != null && bmi > 35.9) ){
+                 return "true";
+             }
+             if( (bmi != null && bmi <= 35.9) ){
+                 return "false";
+             }
+         }
+     }
+     if( (plasma_glucose != null && plasma_glucose <= 165) ){
+         if( (bmi != null && bmi > 41.45) ){
+             return "true";
+         }
+         if( (bmi != null && bmi <= 41.45) ){
+             if( (bmi != null && bmi > 39.95) ){
+                 return "false";
+             }
+             if( (bmi != null && bmi <= 39.95) ){
+                 if( (bmi != null && bmi > 31.4) ){
+                     if( (blood_pressure != null && blood_pressure > 75) ){
+                         return "true";
+                     }
+                     if( (blood_pressure != null && blood_pressure <= 75) ){
+                         if( (diabetes_pedigree != null && diabetes_pedigree > 0.629) ){
+                             return "false";
+                         }
+                         if( (diabetes_pedigree != null && diabetes_pedigree <= 0.629) ){
+                             if( (bmi != null && bmi > 39.05) ){
+                                 return "false";
+                             }
+                             if( (bmi != null && bmi <= 39.05) ){
+                                 return "true";
+                             }
+                         }
+                     }
+                 }
+                 if( (bmi != null && bmi <= 31.4) ){
+                     if( (age != null && age > 41) ){
+                         if( (blood_pressure != null && blood_pressure > 73) ){
+                             if( (blood_pressure != null && blood_pressure > 85) ){
+                                 return "true";
+                             }
+                             if( (blood_pressure != null && blood_pressure <= 85) ){
+                                 return "false";
+                             }
+                         }
+                         if( (blood_pressure != null && blood_pressure <= 73) ){
+                             return "true";
+                         }
+                     }
+                     if( (age != null && age <= 41) ){
+                         return "false";
+                     }
+                 }
+             }
+         }
+     }
+ }
+ if( (plasma_glucose != null && plasma_glucose <= 142) ){
+     if( (bmi != null && bmi > 26.92) ){
+         if( (age != null && age > 30) ){
+             if( (plasma_glucose != null && plasma_glucose > 94) ){
+                 if( (blood_pressure != null && blood_pressure > 73) ){
+                     if( (age != null && age > 53) ){
+                         return "false";
+                     }
+                     if( (age != null && age <= 53) ){
+                         if( (insulin != null && insulin > 120) ){
+                             return "true";
+                         }
+                         if( (insulin != null && insulin <= 120) ){
+                             if( (diabetes_pedigree != null && diabetes_pedigree > 0.5385) ){
+                                 if( (bmi != null && bmi > 38.35) ){
+                                     if( (blood_pressure != null && blood_pressure > 89) ){
+                                         return "true";
+                                     }
+                                     if( (blood_pressure != null && blood_pressure <= 89) ){
+                                         return "false";
+                                     }
+                                 }
+                                 if( (bmi != null && bmi <= 38.35) ){
+                                     return "true";
+                                 }
+                             }
+                             if( (diabetes_pedigree != null && diabetes_pedigree <= 0.5385) ){
+                                 if( (blood_pressure != null && blood_pressure > 81) ){
+                                     return "false";
+                                 }
+                                 if( (blood_pressure != null && blood_pressure <= 81) ){
+                                     if( (diabetes_pedigree != null && diabetes_pedigree > 0.245) ){
+                                         if( (diabetes_pedigree != null && diabetes_pedigree > 0.399) ){
+                                             return "false";
+                                         }
+                                         if( (diabetes_pedigree != null && diabetes_pedigree <= 0.399) ){
+                                             return "true";
+                                         }
+                                     }
+                                     if( (diabetes_pedigree != null && diabetes_pedigree <= 0.245) ){
+                                         return "false";
+                                     }
+                                 }
+                             }
+                         }
+                     }
+                 }
+                 if( (blood_pressure != null && blood_pressure <= 73) ){
+                     if( (blood_pressure != null && blood_pressure > 59) ){
+                         return "true";
+                     }
+                     if( (blood_pressure != null && blood_pressure <= 59) ){
+                         if( (diabetes_pedigree != null && diabetes_pedigree > 0.457) ){
+                             return "true";
+                         }
+                         if( (diabetes_pedigree != null && diabetes_pedigree <= 0.457) ){
+                             return "false";
+                         }
+                     }
+                 }
+             }
+             if( (plasma_glucose != null && plasma_glucose <= 94) ){
+                 return "false";
+             }
+         }
+         if( (age != null && age <= 30) ){
+             if( (insulin != null && insulin > 92) ){
+                 if( (plasma_glucose != null && plasma_glucose > 94) ){
+                     return "false";
+                 }
+                 if( (plasma_glucose != null && plasma_glucose <= 94) ){
+                     if( (bmi != null && bmi > 33.05) ){
+                         return "true";
+                     }
+                     if( (bmi != null && bmi <= 33.05) ){
+                         return "false";
+                     }
+                 }
+             }
+             if( (insulin != null && insulin <= 92) ){
+                 if( (diabetes_pedigree != null && diabetes_pedigree > 1.043) ){
+                     return "true";
+                 }
+                 if( (diabetes_pedigree != null && diabetes_pedigree <= 1.043) ){
+                     if( (insulin != null && insulin > 82) ){
+                         return "true";
+                     }
+                     if( (insulin != null && insulin <= 82) ){
+                         if( (plasma_glucose != null && plasma_glucose > 118) ){
+                             if( (triceps_skin_thickness != null && triceps_skin_thickness > 13) ){
+                                 if( (bmi != null && bmi > 30.7) ){
+                                     return "false";
+                                 }
+                                 if( (bmi != null && bmi <= 30.7) ){
+                                     return "true";
+                                 }
+                             }
+                             if( (triceps_skin_thickness != null && triceps_skin_thickness <= 13) ){
+                                 return "true";
+                             }
+                         }
+                         if( (plasma_glucose != null && plasma_glucose <= 118) ){
+                             if( (triceps_skin_thickness != null && triceps_skin_thickness > 39) ){
+                                 return "true";
+                             }
+                             if( (triceps_skin_thickness != null && triceps_skin_thickness <= 39) ){
+                                 return "false";
+                             }
+                         }
+                     }
+                 }
+             }
+         }
+     }
+     if( (bmi != null && bmi <= 26.92) ){
+         if( (bmi != null && bmi > 9.7) ){
+             return "false";
+         }
+         if( (bmi != null && bmi <= 9.7) ){
+             if( (diabetes_pedigree != null && diabetes_pedigree > 0.2825) ){
+                 return "false";
+             }
+             if( (diabetes_pedigree != null && diabetes_pedigree <= 0.2825) ){
+                 return "true";
+             }
+         }
+     }
+ }

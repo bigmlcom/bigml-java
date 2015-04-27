@@ -106,7 +106,7 @@ public class ModelFields {
      * @param byName
      * @return
      */
-    public JSONObject filterInputData(JSONObject inputData, boolean byName) {
+    protected JSONObject filterInputData(JSONObject inputData, boolean byName) {
         Iterator<String> fieldIdItr = inputData.keySet().iterator();
         while(fieldIdItr.hasNext()) {
             String fieldId = fieldIdItr.next();
@@ -214,7 +214,7 @@ public class ModelFields {
      *
      * @param value the value to normalize
      */
-    public Object normalize(Object value) {
+    protected Object normalize(Object value) {
 //        if( value instanceof String ) {
             return (missingTokens.contains(value) ? null : value);
 //        }
@@ -222,24 +222,31 @@ public class ModelFields {
 //        return null;
     }
 
-    /**
-     * Strips prefixes and suffixes if present
-     */
-    public Object stripAffixes(String value, JSONObject field) {
+//    /**
+//     * Strips prefixes and suffixes if present
+//     */
+//    public Object stripAffixes(String value, JSONObject field) {
+//
+//        if( field.containsKey("prefix") &&
+//                value.startsWith(field.get("prefix").toString()) ) {
+//            value =  value.substring(field.get("prefix").toString().length(),
+//                    value.length());
+//        }
+//
+//        if( field.containsKey("suffix") &&
+//                value.endsWith(field.get("suffix").toString()) ) {
+//            value =  value.substring(0,
+//                    value.length() - field.get("suffix").toString().length());
+//        }
+//
+//        return value;
+//    }
 
-        if( field.containsKey("prefix") &&
-                value.startsWith(field.get("prefix").toString()) ) {
-            value =  value.substring(field.get("prefix").toString().length(),
-                    value.length());
-        }
-
-        if( field.containsKey("suffix") &&
-                value.endsWith(field.get("suffix").toString()) ) {
-            value =  value.substring(0,
-                    value.length() - field.get("suffix").toString().length());
-        }
-
-        return value;
+    public List<String> getMissingTokens() {
+        return missingTokens;
     }
 
+    public JSONObject getFields() {
+        return fields;
+    }
 }

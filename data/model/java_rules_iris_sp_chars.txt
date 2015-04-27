@@ -1,0 +1,41 @@
+ if( (petal_length != null && petal_length > 2.45) ){
+     if( (petal_width_ != null && petal_width_ > 1.75) ){
+         if( (petal_length != null && petal_length > 4.85) ){
+             return "Iris-virginica";
+         }
+         if( (petal_length != null && petal_length <= 4.85) ){
+             if( (sepal_width != null && sepal_width > 3.1) ){
+                 return "Iris-versicolor";
+             }
+             if( (sepal_width != null && sepal_width <= 3.1) ){
+                 return "Iris-virginica";
+             }
+         }
+     }
+     if( (petal_width_ != null && petal_width_ <= 1.75) ){
+         if( (petal_length != null && petal_length > 4.95) ){
+             if( (petal_width_ != null && petal_width_ > 1.55) ){
+                 if( (petal_length != null && petal_length > 5.45) ){
+                     return "Iris-virginica";
+                 }
+                 if( (petal_length != null && petal_length <= 5.45) ){
+                     return "Iris-versicolor";
+                 }
+             }
+             if( (petal_width_ != null && petal_width_ <= 1.55) ){
+                 return "Iris-virginica";
+             }
+         }
+         if( (petal_length != null && petal_length <= 4.95) ){
+             if( (petal_width_ != null && petal_width_ > 1.65) ){
+                 return "Iris-virginica";
+             }
+             if( (petal_width_ != null && petal_width_ <= 1.65) ){
+                 return "Iris-versicolor";
+             }
+         }
+     }
+ }
+ if( (petal_length != null && petal_length <= 2.45) ){
+     return "Iris-setosa";
+ }

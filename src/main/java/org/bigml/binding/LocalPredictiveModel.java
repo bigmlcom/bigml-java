@@ -33,15 +33,8 @@
  */
 package org.bigml.binding;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.Serializable;
-import java.text.DecimalFormat;
-import java.text.MessageFormat;
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.util.*;
-
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.bigml.binding.localmodel.Predicate;
 import org.bigml.binding.localmodel.Prediction;
 import org.bigml.binding.localmodel.Tree;
@@ -52,6 +45,12 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.*;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.util.*;
 
 /**
  * A lightweight wrapper around a Tree model.
@@ -97,6 +96,7 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
 
     private JSONObject root;
     private Tree tree;
+    private Map<String, Tree> idsMap;
     private Map<String, List<String>> terms = new HashMap<String, List<String>>();
     private int maxBins = 0;
 
@@ -117,8 +117,10 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
             this.root = (JSONObject) Utils.getJSONObject(model, prefix
                     + "model.root");
 
+            this.idsMap = new HashMap<String, Tree>();
+
             this.tree = new Tree(root, this.fields, objectiveField,
-                    (JSONObject) Utils.getJSONObject(model, prefix + "model.distribution.training"));
+                    (JSONObject) Utils.getJSONObject(model, prefix + "model.distribution.training"), null, idsMap, true, 0);
 
             if( this.tree.isRegression() )
                 this.maxBins = this.tree.getMaxBins();
@@ -411,13 +413,55 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
     }
 
     /**
+     * Builds the list of ids that go from a given id to the tree root
+     */
+    public List<String> getIdsPath(String filterId) {
+        List<String> idsPath = null;
+
+        if( (filterId != null && filterId.length() > 0 ) &&
+                (tree.getId() != null && tree.getId().length() > 0) ) {
+            if( !idsMap.containsKey(filterId) ) {
+                throw new IllegalArgumentException(
+                        String.format("The given id for the filter does " +
+                                "not exist. Filter Id: %s", filterId));
+            } else {
+                idsPath = new ArrayList<String>();
+                idsPath.add(filterId);
+                String lastId = filterId;
+                while(idsMap.containsKey(lastId) && idsMap.get(lastId).getParentId() != null) {
+                    idsPath.add(idsMap.get(lastId).getParentId());
+                    lastId = idsMap.get(lastId).getParentId();
+                }
+            }
+        }
+
+        return idsPath;
+    }
+
+
+    /**
      * Returns a IF-THEN rule set that implements the model.
-     * 
+     */
+    public String rules() {
+        return tree.rules(Predicate.RuleLanguage.PSEUDOCODE);
+    }
+
+    /**
+     * Returns a IF-THEN rule set that implements the model.
+     */
+    public String rules(Predicate.RuleLanguage language) {
+        return tree.rules(language);
+    }
+
+    /**
+     * Returns a IF-THEN rule set that implements the model.
+     *
      * @param depth
      *            controls the size of indentation
      */
-    public String rules(final int depth) {
-        return tree.rules(depth);
+    public String rules(Predicate.RuleLanguage language, final String filterId, boolean subtree) {
+        List<String> idsPath = getIdsPath(filterId);
+        return tree.rules(language, idsPath, subtree);
     }
 
 
@@ -473,6 +517,96 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
     }
 
     /**
+     * Average for the confidence of the predictions resulting from
+     * running the training data through the model
+     */
+    public double getAverageConfidence() {
+        double total = 0.0, cumulativeConfidence = 0.0;
+        Map<Object, GroupPrediction> groups = getGroupPrediction();
+        for (GroupPrediction groupPrediction : groups.values()) {
+            for (PredictionDetails predictionDetails : groupPrediction.getDetails()) {
+                cumulativeConfidence +=  predictionDetails.getLeafPredictionsCount() *
+                        predictionDetails.getConfidence();
+                total += predictionDetails.getLeafPredictionsCount();
+            }
+        }
+
+        return (total == 0.0 ? Double.NaN : cumulativeConfidence);
+    }
+
+    /**
+     * The tree nodes information in a row format
+     */
+    public List getNodesInfo(List<String> headers, boolean leavesOnly) {
+        return tree.getNodesInfo(headers, leavesOnly);
+    }
+
+    /**
+     * Outputs the node structure to in array format, including the
+     * header names in the first row
+     */
+    public List<List> getTreeArray(boolean leavesOnly) {
+        List<String> headerNames = new ArrayList<String>();
+
+        // Adding the objective field name
+        headerNames.add(Utils.getJSONObject(fields, objectiveField + ".name").toString());
+        if( isRegression() ) {
+            headerNames.add("error");
+            for(int index = 0; index < maxBins; index++) {
+                headerNames.add(String.format("bin%s_value", index));
+                headerNames.add(String.format("bin%s_instances", index));
+            }
+        } else {
+            headerNames.add("confidence");
+            headerNames.add("impurity");
+
+            // Adding the category of the bins
+            for (Object bin : tree.getDistribution()) {
+                JSONArray binObject = (JSONArray) bin;
+                headerNames.add(binObject.get(0).toString());
+            }
+        }
+
+        List<List> nodes = getNodesInfo(headerNames, leavesOnly);
+        nodes.add(0, headerNames);
+
+        return nodes;
+    }
+
+    /**
+     * Outputs the node structure to in CSV file, including the
+     */
+    public void exportTreeCSV(String outputFilePath, boolean leavesOnly) throws IOException {
+        List<List> rows = getTreeArray(leavesOnly);
+
+        Writer treeFile = null;
+        try {
+            treeFile = new BufferedWriter(new OutputStreamWriter(
+                    new FileOutputStream(outputFilePath), "UTF-8"));
+        } catch (IOException e) {
+            throw new IllegalArgumentException(String.format("Cannot find %s directory.", outputFilePath));
+        }
+
+        List headers = rows.remove(0);
+        final CSVPrinter printer = CSVFormat.DEFAULT.withHeader((String[])
+                headers.toArray(new String[headers.size()])).print(treeFile);
+
+        try {
+            printer.printRecords(rows);
+        } catch (Exception e) {
+            throw new IOException("Error generating the CSV !!!");
+        }
+
+        try {
+            treeFile.flush();
+            treeFile.close();
+        } catch (IOException e) {
+            throw new IOException("Error while flushing/closing fileWriter !!!");
+        }
+
+    }
+
+    /**
      * Groups in categories or bins the predicted data
      *
      * @return Map - contains a map grouping counts in 'total' and 'details' lists.
@@ -502,7 +636,7 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
         }
 
         List<Predicate> path = new ArrayList<Predicate>();
-        depthFirstSearch(groups, tree, path);
+        getDepthFirstSearch(groups, tree, path);
 
         return groups;
     }
@@ -513,7 +647,7 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
      *
      * Used by getGroupPrediction()
      */
-    private void addToGroups(Map<Object, GroupPrediction> groups, List<Predicate> path, Object output,
+    protected void addToGroups(Map<Object, GroupPrediction> groups, List<Predicate> path, Object output,
                              long count, double confidence, double impurity) {
         GroupPrediction groupPrediction = groups.get(output);
         if( groupPrediction == null ) {
@@ -535,8 +669,12 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
      *
      * Used by getGroupPrediction()
      */
-    private long depthFirstSearch(Map<Object, GroupPrediction> groups, Tree tree, List<Predicate> path) {
-        if( tree.isPredicate() ) {
+    protected long getDepthFirstSearch(Map<Object, GroupPrediction> groups, Tree tree, List<Predicate> path) {
+        if( path == null ) {
+            path= new ArrayList<Predicate>();
+        }
+
+        if( !tree.isPredicate() ) {
             path.add(tree.getPredicate());
             if( tree.getPredicate().getTerm() != null ) {
                 String field = tree.getPredicate().getField();
@@ -560,7 +698,7 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
 
             int childrenSum = 0;
             for (Tree child : children) {
-                childrenSum += depthFirstSearch(groups, child, new ArrayList<Predicate>(path));
+                childrenSum += getDepthFirstSearch(groups, child, new ArrayList<Predicate>(path));
             }
 
             if( childrenSum < tree.getCount() ) {
@@ -582,28 +720,43 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
 
         Collections.sort(distribution, new Comparator<JSONArray>() {
             public int compare(JSONArray o1, JSONArray o2) {
-                Number o1Num = (Number) o1.get(0);
-                Number o2Num = (Number) o2.get(0);
+                Object o1Val = o1.get(0);
+                Object o2Val = o2.get(0);
 
-                if (((Object) o2Num).getClass().equals(((Object) o1Num).getClass())) {
-                    // both numbers are instances of the same type!
-                    if (o1Num instanceof Comparable) {
-                        // and they implement the Comparable interface
-                        return ((Comparable) o1Num).compareTo(o2Num);
-                    }
+                if (o1Val instanceof Number) {
+                    o1Val = ((Number) o1Val).doubleValue();
+                    o2Val = ((Number) o2Val).doubleValue();
                 }
+
+//                if(o2Val.getClass().equals(o1Val.getClass()) )  {
+//                    // both numbers are instances of the same type!
+//                    if (o1Val instanceof Comparable) {
+//                        // and they implement the Comparable interface
+                return ((Comparable) o1Val).compareTo(o2Val);
+//                    }
+//                }
                 // for all different Number types, let's check there double values
-                if (o1Num.doubleValue() < o2Num.doubleValue())
-                    return -1;
-                if (o1Num.doubleValue() > o2Num.doubleValue())
-                    return 1;
-                return 0;
+//                if (o1Num.doubleValue() < o2Num.doubleValue())
+//                    return -1;
+//                if (o1Num.doubleValue() > o2Num.doubleValue())
+//                    return 1;
+//                return 0;
             }
         });
 
         return distribution;
     }
 
+    /**
+     * Returns model predicted distribution
+     */
+    public JSONArray getPredictionDistribution() {
+        return getPredictionDistribution(null);
+    }
+
+    /**
+     * Returns model predicted distribution
+     */
     public JSONArray getPredictionDistribution(Map<Object, GroupPrediction> groups) {
 
         if( groups == null ) {
@@ -626,22 +779,27 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
 
         Collections.sort(predictions, new Comparator<JSONArray>() {
             public int compare(JSONArray o1, JSONArray o2) {
-                Number o1Num = (Number) o1.get(0);
-                Number o2Num = (Number) o2.get(0);
+                Object o1Val = o1.get(0);
+                Object o2Val = o2.get(0);
 
-                if (((Object) o2Num).getClass().equals(((Object) o1Num).getClass())) {
-                    // both numbers are instances of the same type!
-                    if (o1Num instanceof Comparable) {
-                        // and they implement the Comparable interface
-                        return ((Comparable) o1Num).compareTo(o2Num);
-                    }
+                if (o1Val instanceof Number) {
+                    o1Val = ((Number) o1Val).doubleValue();
+                    o2Val = ((Number) o2Val).doubleValue();
                 }
+
+//                if (((Object) o2Num).getClass().equals(((Object) o1Num).getClass())) {
+//                    // both numbers are instances of the same type!
+//                    if (o1Num instanceof Comparable) {
+//                        // and they implement the Comparable interface
+                return ((Comparable) o1Val).compareTo(o2Val);
+//                    }
+//                }
                 // for all different Number types, let's check there double values
-                if (o1Num.doubleValue() < o2Num.doubleValue())
-                    return -1;
-                if (o1Num.doubleValue() > o2Num.doubleValue())
-                    return 1;
-                return 0;
+//                if (o1Num.doubleValue() < o2Num.doubleValue())
+//                    return -1;
+//                if (o1Num.doubleValue() > o2Num.doubleValue())
+//                    return 1;
+//                return 0;
             }
         });
 
@@ -653,31 +811,83 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
      *
      * @param out
      */
-    public void summarize(OutputStream out, Boolean addFieldImportance) throws IOException {
+    public String summarize(Boolean addFieldImportance) throws IOException {
 
-        if( out == null ) {
-            out = System.out;
-        }
+        StringBuilder summarize = new StringBuilder();
 
         if( addFieldImportance == null ) {
             addFieldImportance = false;
         }
 
         JSONArray distribution = getDataDistribution();
-        out.write("Data distribution:\n".getBytes());
-        out.write(Utils.printDistribution(distribution).toString().getBytes());
-        out.write("\n\n".getBytes());
+        summarize.append("Data distribution:\n");
+        summarize.append(Utils.printDistribution(distribution).toString());
+        summarize.append("\n\n");
 
         Map<Object, GroupPrediction> groups = getGroupPrediction();
         JSONArray predictions = getPredictionDistribution(groups);
-        out.write("Predicted distribution:\n".getBytes());
-        out.write(Utils.printDistribution(predictions).toString().getBytes());
-        out.write("\n\n".getBytes());
+        summarize.append("Predicted distribution:\n");
+        summarize.append(Utils.printDistribution(predictions).toString());
+        summarize.append("\n\n");
 
         if( addFieldImportance ) {
-            out.write("Field importance:\n".getBytes());
-//            printImportance(out);
+            summarize.append("Field importance:\n");
+            int count = 1;
+            for (Object fieldItem : fieldImportance) {
+                String fieldId = ((JSONArray) fieldItem).get(0).toString();
+                double importance = ((Number) ((JSONArray) fieldItem).get(1)).doubleValue();
+                summarize.append(String.format("    %s. %s: %.2f%%\n", count++,
+                        Utils.getJSONObject(fields, fieldId + ".name"), (importance * 100)));
+            }
         }
+
+        extractCommonPath(groups);
+
+        for (Object groupInstances : predictions) {
+            Object group = ((JSONArray) groupInstances).get(0);
+            GroupPrediction groupPrediction = groups.get(group);
+
+            List<PredictionDetails> details = groupPrediction.getDetails();
+            List<Predicate> predicates = groupPrediction.getTotalCommonSegments();
+
+            List<String> path = new ArrayList<String>(predicates.size());
+            for (Predicate predicate : predicates) {
+                path.add(predicate.toRule(fields));
+            }
+
+            double dataPerGroup = (groupPrediction.getTotalData() * 1.0) / tree.getCount();
+            double predPerGroup = (groupPrediction.getTotalPredictions() * 1.0) / tree.getCount();
+
+            summarize.append(String.format("\n\n%s : (data %.2f%% / prediction %.2f%%) %s\n",
+                    group, dataPerGroup * 100, predPerGroup * 100, Utils.join(path, " and ")));
+
+            if( details.size() == 0 ) {
+                summarize.append("    The model will never predict this class\n");
+            } else {
+                for(int index = 0; index < details.size(); index++) {
+                    PredictionDetails predictionDetails = details.get(index);
+
+                    double predPerSubgroup = (predictionDetails.getLeafPredictionsCount() * 1.0) /
+                            groupPrediction.getTotalPredictions();
+
+                    List<Predicate> gPredicates = predictionDetails.getPath();
+                    List<String> sPath = new ArrayList<String>(gPredicates.size());
+                    for (Predicate predicate : gPredicates) {
+                        sPath.add(predicate.toRule(fields));
+                    }
+
+                    String pathChain = (sPath.size() == 0 ? "(root node)" :
+                            Utils.join(sPath, " and "));
+
+                    summarize.append(String.format("    · %.2f%%: %s%s\n",
+                            predPerSubgroup * 100, pathChain,
+                            confidenceError(predictionDetails.getConfidence(),
+                                    predictionDetails.getImpurity())));
+                }
+            }
+        }
+
+        return summarize.toString();
     }
 
     /**
@@ -773,6 +983,10 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
         }
     }
 
+    // TODO: hadoop_python_mapper
+
+
+
 //    /**
 //     * Prints distribution data
 //     */
@@ -799,6 +1013,8 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
 //    private void printImportance(OutputStream out) throws IOException {
 //
 //    }
+
+
 
     private enum DataTypeEnum {
         DOUBLE, FLOAT, INTEGER,

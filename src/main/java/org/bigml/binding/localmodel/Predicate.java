@@ -30,6 +30,10 @@ public class Predicate {
     private String term;
     private boolean missing = false;
 
+    public enum RuleLanguage {
+        PSEUDOCODE, JAVA, PYTHON, TABLEAU
+    }
+
     /**
      * Constructor
      */
@@ -82,7 +86,7 @@ public class Predicate {
      *               associated to each field ind the model
      */
     public String toRule(final JSONObject fields) {
-        return toRule(fields, "name");
+        return toRule(RuleLanguage.PSEUDOCODE, fields, "name");
     }
 
     /**
@@ -94,28 +98,122 @@ public class Predicate {
      *              of the field associated to this predicate
      */
     public String toRule(final JSONObject fields, String label) {
+        return toRule(RuleLanguage.PSEUDOCODE, fields, label);
+    }
+
+    /**
+     * Builds rule string from a predicate
+     *
+     * @param language the final language we need to generate the rule for
+     * @param fields a map that contains all the information
+     *               associated to each field ind the model
+     * @param label which attribute of the field to use as identifier
+     *              of the field associated to this predicate
+     */
+    public String toRule(final RuleLanguage language, final JSONObject fields, String label) {
 
         String operandLabel = ((JSONObject) fields.get(this.field)).get(label).toString();
         boolean fullTerm = isFullTerm(fields);
         String relationMissing = "";
         if( missing ) {
-            relationMissing += " || missing";
+            switch (language) {
+                case PSEUDOCODE:
+                    relationMissing += " or missing";
+                    break;
+
+                case JAVA:
+                    relationMissing += String.format(" || %s == null", operandLabel);
+                    break;
+
+                case PYTHON:
+                    relationMissing += String.format(" or %s is None", operandLabel);
+                    break;
+            }
+
         }
 
         if( term != null && term.length() > 0 ) {
             StringBuilder ruleStr = new StringBuilder();
-            if( ( operator.equals("<") && ((Number) value).intValue() <= 1) ||
-                    ( operator.equals("<=") && ((Number) value).intValue() == 0) ) {
-                ruleStr.append("!").append(operandLabel).append((fullTerm ? ".equals(\"" : ".contains(\""))
-                    .append(term).append("\")");
+            if( ( Constants.OPERATOR_LT.equals(this.operator) && ((Number) value).intValue() <= 1) ||
+                    ( Constants.OPERATOR_LE.equals(this.operator) && ((Number) value).intValue() == 0) ) {
+                switch (language) {
+                    case JAVA:
+                        ruleStr.append("!").append(operandLabel).append((fullTerm ? ".equals(\"" : ".contains(\""))
+                                .append(term).append("\")");
+                    break;
+
+                    case PSEUDOCODE:
+                        ruleStr.append(String.format("%s %s %s", operandLabel, (fullTerm ? "is not equal to" : "does not contains"), term));
+                    break;
+
+                    case PYTHON:
+                        ruleStr.append(String.format("'%s' %s %s", term, (fullTerm ? "!=" : "not in"), operandLabel));
+                    break;
+                }
             } else {
                 if( fullTerm) {
-                    ruleStr.append(operandLabel).append(".equals(\"").append(term).append("\")");
-                } else {
-                    if( !operator.equals(">") || ((Number) value).intValue() !=  0) {
-                        ruleStr.append("containsCount(").append(operandLabel).append(", \"").append(term).append("\") ").append(operator).append(" ").append(value.toString());
+                    if( language == RuleLanguage.JAVA ) {
+                        ruleStr.append(operandLabel).append(".equals(\"").append(term).append("\")");
+                    } else if( language == RuleLanguage.PSEUDOCODE ){
+                        ruleStr.append(operandLabel).append(" is equal to ").append(term);
                     } else {
-                        ruleStr.append(operandLabel).append(".contains(\"").append(term).append("\")");
+                        ruleStr.append(operandLabel).append(" == '").append(term).append("'");
+                    }
+                } else {
+//                    '<=': 'no more than %s %s',
+//                            '>=': '%s %s at most',
+//                            '>': 'more than %s %s',
+//                            '<': 'less than %s %s'
+
+                    if( !Constants.OPERATOR_GT.equals(this.operator) || ((Number) value).intValue() !=  0) {
+                        switch (language) {
+                            case PSEUDOCODE:
+                                if( Constants.OPERATOR_LE.equals(this.operator) ) {
+                                    ruleStr.append(String.format("%s is equal to %s no more than %s %s",
+                                            operandLabel, this.term,
+                                            this.value, Utils.plural("time", ((Number) this.value).intValue())));
+                                } else if( Constants.OPERATOR_GE.equals(this.operator) ) {
+                                    ruleStr.append(String.format("\"%s is equal to %s %s %s at most",
+                                            operandLabel, this.term,
+                                            this.value, Utils.plural("time", ((Number) this.value).intValue())));
+                                } else if( Constants.OPERATOR_GT.equals(this.operator) ) {
+                                    ruleStr.append(String.format("\"%s is equal to %s more than %s %s",
+                                            operandLabel, this.term,
+                                            this.value, Utils.plural("time", ((Number) this.value).intValue())));
+                                } else { // LT
+                                    ruleStr.append(String.format("\"%s is equal to %s less than %s %s",
+                                            operandLabel, this.term,
+                                            this.value, Utils.plural("time", ((Number) this.value).intValue())));
+                                }
+                                break;
+
+                            case PYTHON:
+                                ruleStr.append(String.format("%s.count('%s') %s %s",
+                                        operandLabel, this.term, operator, this.value));
+                                break;
+
+                            case JAVA:
+                                ruleStr.append(String.format("%s.count(\"%s\") %s %s",
+                                        operandLabel, this.term, operator, this.value));
+                                break;
+                        }
+                    } else {
+                        switch (language) {
+                            case PSEUDOCODE:
+                                ruleStr.append(String.format("%s contains %s",
+                                        operandLabel, this.term));
+                                break;
+
+                            case JAVA:
+                                ruleStr.append(String.format("%s.contains(\"%s\")",
+                                        operandLabel, this.term));
+                                break;
+
+                            case PYTHON:
+                                ruleStr.append(String.format("%s in %s",
+                                        this.term, operandLabel));
+                                break;
+                        }
                     }
                 }
             }
@@ -123,9 +221,63 @@ public class Predicate {
             return ruleStr.append(relationMissing).toString();
         }
 
+        String operator = this.operator;
 
-        return String.format("%s %s %s%s",
-                operandLabel, this.operator, (this.value != null ? this.value.toString() : "null"), relationMissing);
+        // Use "is" or "is not" if the language is Pseudo or if the value
+        // is Null and the language is Python (xxx is None or xxx is not None)
+        if( (this.value == null &&
+                (language == RuleLanguage.PSEUDOCODE || language == RuleLanguage.PYTHON) ) ) {
+            if( Constants.OPERATOR_NE.equals(this.operator) ) {
+                operator = "is not";
+            } else if( Constants.OPERATOR_EQ.equals(this.operator) ) {
+                operator = "is";
+            }
+        }
+        // Special treatment of String in Java when value is not null
+        else if( language == RuleLanguage.JAVA && this.value != null &&
+                !Constants.OPTYPE_NUMERIC.equals(opType)) {
+
+            if( Constants.OPERATOR_NE.equals(this.operator) ) {
+                return String.format("!\"%s\".equals(%s)%s",
+                        this.value.toString(),
+                        operandLabel, relationMissing);
+            } else if( Constants.OPERATOR_EQ.equals(this.operator) ) {
+                return String.format("\"%s\".equals(%s)%s",
+                        this.value.toString(),
+                        operandLabel, relationMissing);
+            }
+        } else if( language != RuleLanguage.PSEUDOCODE ) {
+            // Use the correct Java and Python operators for EQ and NE
+            if (Constants.OPERATOR_NE.equals(this.operator)) {
+                operator = "!=";
+            } else if (Constants.OPERATOR_EQ.equals(this.operator)) {
+                operator = "==";
+            }
+        }
+
+        String notMissingCondition = null;
+        if( language == RuleLanguage.JAVA && this.value != null) {
+            notMissingCondition = String.format("%s != null && ",
+                    operandLabel);
+        }
+
+        String nullValue = "None";
+        switch (language) {
+            case JAVA:
+                nullValue = "null";
+                break;
+        }
+
+        if( notMissingCondition != null ) {
+            return String.format("(%s%s %s %s)%s",
+                    notMissingCondition, operandLabel, operator,
+                    (this.value != null ? this.value.toString() : nullValue), relationMissing);
+        } else {
+            return String.format("%s %s %s%s",
+                    operandLabel, operator,
+                    (this.value != null ? this.value.toString() : nullValue),
+                    relationMissing);
+        }
     }
 
     /**
@@ -158,16 +310,17 @@ public class Predicate {
      * @return if the operator applies or not
      */
     public boolean apply(JSONObject inputData, JSONObject fields) {
-        if( !inputData.containsKey(field) ) {
-            return missing || ("=".equals(operator) && value == null);
-        } else if("!=".equals(operator) && value == null) {
+        //for missing operators
+        if( inputData.get(field) == null ) {
+            return missing || (operator.equals(Constants.OPERATOR_EQ) && value == null);
+        } else if((operator.equals(Constants.OPERATOR_NE) && value == null)) {
             return true;
         }
 
+
         if( term != null ) {
             JSONObject allForms = (JSONObject) Utils.getJSONObject((JSONObject) fields.get(field),
-                    "summary.term_forms");
-            allForms = (allForms == null ? new JSONObject() : allForms);
+                    "summary.term_forms", new JSONObject());
             JSONArray termForms = (JSONArray) allForms.get(term);
             termForms = (termForms == null ? new JSONArray() : termForms);
 

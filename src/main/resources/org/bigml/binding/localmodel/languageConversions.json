@@ -1,0 +1,13 @@
+{
+  "PSEUDOCODE": {
+    "IF": "IF", "IF_START": "", "IF_END": "", "AND": "AND", "OR": "OR", "START_BLOCK": "THEN", "END_BLOCK": null, "END_SENTENCE": null
+  },
+
+  "JAVA": {
+    "IF": "if", "IF_START": "(", "IF_END": ")", "AND": "{", "OR": "||", "START_BLOCK": "{", "END_BLOCK": "}", "END_SENTENCE": ";"
+  },
+
+  "PYTHON": {
+    "IF": "if", "IF_START": "", "IF_END": "", "AND": ":", "OR": "or", "START_BLOCK": ":", "END_BLOCK": null, "END_SENTENCE": null
+  }
+}

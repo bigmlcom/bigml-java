@@ -1,0 +1,416 @@
+ if( message.contains("FREE") ){
+     return "spam";
+ }
+ if( !message.contains("FREE") ){
+     if( message.contains("from") ){
+         if( message.contains("call") ){
+             return "spam";
+         }
+         if( !message.contains("call") ){
+             if( message.contains("I") ){
+                 return "ham";
+             }
+             if( !message.contains("I") ){
+                 if( message.contains("of") ){
+                     return "spam";
+                 }
+                 if( !message.contains("of") ){
+                     if( message.contains("only") ){
+                         return "spam";
+                     }
+                     if( !message.contains("only") ){
+                         if( message.contains("today") ){
+                             return "spam";
+                         }
+                         if( !message.contains("today") ){
+                             if( message.contains("Win") ){
+                                 return "spam";
+                             }
+                             if( !message.contains("Win") ){
+                                 return "ham";
+                             }
+                         }
+                     }
+                 }
+             }
+         }
+     }
+     if( !message.contains("from") ){
+         if( message.contains("prize") ){
+             return "spam";
+         }
+         if( !message.contains("prize") ){
+             if( message.contains("txt") ){
+                 if( message.contains("time") ){
+                     return "ham";
+                 }
+                 if( !message.contains("time") ){
+                     return "spam";
+                 }
+             }
+             if( !message.contains("txt") ){
+                 if( message.contains("Your") ){
+                     if( message.contains("you") ){
+                         return "ham";
+                     }
+                     if( !message.contains("you") ){
+                         return "spam";
+                     }
+                 }
+                 if( !message.contains("Your") ){
+                     if( message.contains("cash") ){
+                         if( message.contains("got") ){
+                             return "ham";
+                         }
+                         if( !message.contains("got") ){
+                             return "spam";
+                         }
+                     }
+                     if( !message.contains("cash") ){
+                         if( message.contains("Call") ){
+                             if( message.contains("I") ){
+                                 return "ham";
+                             }
+                             if( !message.contains("I") ){
+                                 if( message.contains("me") ){
+                                     return "ham";
+                                 }
+                                 if( !message.contains("me") ){
+                                     return "spam";
+                                 }
+                             }
+                         }
+                         if( !message.contains("Call") ){
+                             if( message.contains("C") ){
+                                 if( message.contains("Ok") ){
+                                     return "ham";
+                                 }
+                                 if( !message.contains("Ok") ){
+                                     return "spam";
+                                 }
+                             }
+                             if( !message.contains("C") ){
+                                 if( message.contains("text") ){
+                                     if( message.contains("the") ){
+                                         return "ham";
+                                     }
+                                     if( !message.contains("the") ){
+                                         if( message.contains("time") ){
+                                             return "ham";
+                                         }
+                                         if( !message.contains("time") ){
+                                             return "spam";
+                                         }
+                                     }
+                                 }
+                                 if( !message.contains("text") ){
+                                     if( message.contains("send") ){
+                                         if( message.contains("3") ){
+                                             return "spam";
+                                         }
+                                         if( !message.contains("3") ){
+                                             if( message.contains("is") ){
+                                                 return "spam";
+                                             }
+                                             if( !message.contains("is") ){
+                                                 return "ham";
+                                             }
+                                         }
+                                     }
+                                     if( !message.contains("send") ){
+                                         if( message.contains("call") ){
+                                             if( message.contains("You") ){
+                                                 if( message.contains("only") ){
+                                                     return "ham";
+                                                 }
+                                                 if( !message.contains("only") ){
+                                                     return "spam";
+                                                 }
+                                             }
+                                             if( !message.contains("You") ){
+                                                 if( message.contains("your") ){
+                                                     if( message.contains("for") ){
+                                                         return "ham";
+                                                     }
+                                                     if( !message.contains("for") ){
+                                                         return "spam";
+                                                     }
+                                                 }
+                                                 if( !message.contains("your") ){
+                                                     return "ham";
+                                                 }
+                                             }
+                                         }
+                                         if( !message.contains("call") ){
+                                             if( message.contains("Latest") ){
+                                                 return "spam";
+                                             }
+                                             if( !message.contains("Latest") ){
+                                                 if( message.contains("10p") ){
+                                                     return "spam";
+                                                 }
+                                                 if( !message.contains("10p") ){
+                                                     if( message.contains("POBOX") ){
+                                                         return "spam";
+                                                     }
+                                                     if( !message.contains("POBOX") ){
+                                                         if( message.contains("rate") ){
+                                                             return "spam";
+                                                         }
+                                                         if( !message.contains("rate") ){
+                                                             if( message.contains("waiting") ){
+                                                                 return "ham";
+                                                             }
+                                                             if( !message.contains("waiting") ){
+                                                                 if( message.contains("I") ){
+                                                                     return "ham";
+                                                                 }
+                                                                 if( !message.contains("I") ){
+                                                                     if( message.contains("you") ){
+                                                                         return "ham";
+                                                                     }
+                                                                     if( !message.contains("you") ){
+                                                                         if( message.contains("to") ){
+                                                                             return "ham";
+                                                                         }
+                                                                         if( !message.contains("to") ){
+                                                                             if( message.contains("i") ){
+                                                                                 return "ham";
+                                                                             }
+                                                                             if( !message.contains("i") ){
+                                                                                 if( message.contains("is") ){
+                                                                                     return "ham";
+                                                                                 }
+                                                                                 if( !message.contains("is") ){
+                                                                                     if( message.contains("the") ){
+                                                                                         return "ham";
+                                                                                     }
+                                                                                     if( !message.contains("the") ){
+                                                                                         if( message.contains("s") ){
+                                                                                             return "ham";
+                                                                                         }
+                                                                                         if( !message.contains("s") ){
+                                                                                             if( message.contains("a") ){
+                                                                                                 return "ham";
+                                                                                             }
+                                                                                             if( !message.contains("a") ){
+                                                                                                 if( message.contains("Ok") ){
+                                                                                                     return "ham";
+                                                                                                 }
+                                                                                                 if( !message.contains("Ok") ){
+                                                                                                     if( message.contains("U") ){
+                                                                                                         return "ham";
+                                                                                                     }
+                                                                                                     if( !message.contains("U") ){
+                                                                                                         if( message.contains("lt") ){
+                                                                                                             return "ham";
+                                                                                                         }
+                                                                                                         if( !message.contains("lt") ){
+                                                                                                             if( message.contains("lor") ){
+                                                                                                                 return "ham";
+                                                                                                             }
+                                                                                                             if( !message.contains("lor") ){
+                                                                                                                 if( message.contains("then") ){
+                                                                                                                     return "ham";
+                                                                                                                 }
+                                                                                                                 if( !message.contains("then") ){
+                                                                                                                     if( message.contains("got") ){
+                                                                                                                         return "ham";
+                                                                                                                     }
+                                                                                                                     if( !message.contains("got") ){
+                                                                                                                         if( message.contains("it") ){
+                                                                                                                             return "ham";
+                                                                                                                         }
+                                                                                                                         if( !message.contains("it") ){
+                                                                                                                             if( message.contains("he") ){
+                                                                                                                                 return "ham";
+                                                                                                                             }
+                                                                                                                             if( !message.contains("he") ){
+                                                                                                                                 if( message.contains("are") ){
+                                                                                                                                     return "ham";
+                                                                                                                                 }
+                                                                                                                                 if( !message.contains("are") ){
+                                                                                                                                     if( message.contains("your") ){
+                                                                                                                                         return "ham";
+                                                                                                                                     }
+                                                                                                                                     if( !message.contains("your") ){
+                                                                                                                                         if( message.contains("No") ){
+                                                                                                                                             return "ham";
+                                                                                                                                         }
+                                                                                                                                         if( !message.contains("No") ){
+                                                                                                                                             if( message.contains("u") ){
+                                                                                                                                                 return "ham";
+                                                                                                                                             }
+                                                                                                                                             if( !message.contains("u") ){
+                                                                                                                                                 if( message.contains("time") ){
+                                                                                                                                                     return "ham";
+                                                                                                                                                 }
+                                                                                                                                                 if( !message.contains("time") ){
+                                                                                                                                                     if( message.contains("A") ){
+                                                                                                                                                         return "ham";
+                                                                                                                                                     }
+                                                                                                                                                     if( !message.contains("A") ){
+                                                                                                                                                         if( message.contains("What") ){
+                                                                                                                                                             return "ham";
+                                                                                                                                                         }
+                                                                                                                                                         if( !message.contains("What") ){
+                                                                                                                                                             if( message.contains("ü") ){
+                                                                                                                                                                 return "ham";
+                                                                                                                                                             }
+                                                                                                                                                             if( !message.contains("ü") ){
+                                                                                                                                                                 if( message.contains("Hmm") ){
+                                                                                                                                                                     return "ham";
+                                                                                                                                                                 }
+                                                                                                                                                                 if( !message.contains("Hmm") ){
+                                                                                                                                                                     if( message.contains("and") ){
+                                                                                                                                                                         return "ham";
+                                                                                                                                                                     }
+                                                                                                                                                                     if( !message.contains("and") ){
+                                                                                                                                                                         if( message.contains("work") ){
+                                                                                                                                                                             return "ham";
+                                                                                                                                                                         }
+                                                                                                                                                                         if( !message.contains("work") ){
+                                                                                                                                                                             if( message.contains("which") ){
+                                                                                                                                                                                 return "ham";
+                                                                                                                                                                             }
+                                                                                                                                                                             if( !message.contains("which") ){
+                                                                                                                                                                                 if( message.contains("were") ){
+                                                                                                                                                                                     return "ham";
+                                                                                                                                                                                 }
+                                                                                                                                                                                 if( !message.contains("were") ){
+                                                                                                                                                                                     if( message.contains("some") ){
+                                                                                                                                                                                         return "ham";
+                                                                                                                                                                                     }
+                                                                                                                                                                                     if( !message.contains("some") ){
+                                                                                                                                                                                         if( message.contains("You") ){
+                                                                                                                                                                                             return "ham";
+                                                                                                                                                                                         }
+                                                                                                                                                                                         if( !message.contains("You") ){
+                                                                                                                                                                                             if( message.contains("his") ){
+                                                                                                                                                                                                 return "ham";
+                                                                                                                                                                                             }
+                                                                                                                                                                                             if( !message.contains("his") ){
+                                                                                                                                                                                                 if( message.contains("enjoy") ){
+                                                                                                                                                                                                     return "ham";
+                                                                                                                                                                                                 }
+                                                                                                                                                                                                 if( !message.contains("enjoy") ){
+                                                                                                                                                                                                     if( message.contains("ur") ){
+                                                                                                                                                                                                         return "ham";
+                                                                                                                                                                                                     }
+                                                                                                                                                                                                     if( !message.contains("ur") ){
+                                                                                                                                                                                                         if( message.contains("company") ){
+                                                                                                                                                                                                             return "ham";
+                                                                                                                                                                                                         }
+                                                                                                                                                                                                         if( !message.contains("company") ){
+                                                                                                                                                                                                             if( message.contains("IN") ){
+                                                                                                                                                                                                                 return "ham";
+                                                                                                                                                                                                             }
+                                                                                                                                                                                                             if( !message.contains("IN") ){
+                                                                                                                                                                                                                 if( message.contains("Dude") ){
+                                                                                                                                                                                                                     return "ham";
+                                                                                                                                                                                                                 }
+                                                                                                                                                                                                                 if( !message.contains("Dude") ){
+                                                                                                                                                                                                                     if( message.contains("please") ){
+                                                                                                                                                                                                                         return "ham";
+                                                                                                                                                                                                                     }
+                                                                                                                                                                                                                     if( !message.contains("please") ){
+                                                                                                                                                                                                                         if( message.contains("AT") ){
+                                                                                                                                                                                                                             return "ham";
+                                                                                                                                                                                                                         }
+                                                                                                                                                                                                                         if( !message.contains("AT") ){
+                                                                                                                                                                                                                             if( message.contains("on") ){
+                                                                                                                                                                                                                                 return "ham";
+                                                                                                                                                                                                                             }
+                                                                                                                                                                                                                             if( !message.contains("on") ){
+                                                                                                                                                                                                                                 if( message.contains("Okie") ){
+                                                                                                                                                                                                                                     return "ham";
+                                                                                                                                                                                                                                 }
+                                                                                                                                                                                                                                 if( !message.contains("Okie") ){
+                                                                                                                                                                                                                                     if( message.contains("Thats") ){
+                                                                                                                                                                                                                                         return "ham";
+                                                                                                                                                                                                                                     }
+                                                                                                                                                                                                                                     if( !message.contains("Thats") ){
+                                                                                                                                                                                                                                         if( message.contains("class") ){
+                                                                                                                                                                                                                                             return "ham";
+                                                                                                                                                                                                                                         }
+                                                                                                                                                                                                                                         if( !message.contains("class") ){
+                                                                                                                                                                                                                                             if( message.contains("ah") ){
+                                                                                                                                                                                                                                                 return "ham";
+                                                                                                                                                                                                                                             }
+                                                                                                                                                                                                                                             if( !message.contains("ah") ){
+                                                                                                                                                                                                                                                 if( message.contains("That") ){
+                                                                                                                                                                                                                                                     return "ham";
+                                                                                                                                                                                                                                                 }
+                                                                                                                                                                                                                                                 if( !message.contains("That") ){
+                                                                                                                                                                                                                                                     if( message.contains("Where") ){
+                                                                                                                                                                                                                                                         return "ham";
+                                                                                                                                                                                                                                                     }
+                                                                                                                                                                                                                                                     if( !message.contains("Where") ){
+                                                                                                                                                                                                                                                         if( message.contains("eggs") ){
+                                                                                                                                                                                                                                                             return "ham";
+                                                                                                                                                                                                                                                         }
+                                                                                                                                                                                                                                                         if( !message.contains("eggs") ){
+                                                                                                                                                                                                                                                             return "ham";
+                                                                                                                                                                                                                                                         }
+                                                                                                                                                                                                                                                     }
+                                                                                                                                                                                                                                                 }
+                                                                                                                                                                                                                                             }
+                                                                                                                                                                                                                                         }
+                                                                                                                                                                                                                                     }
+                                                                                                                                                                                                                                 }
+                                                                                                                                                                                                                             }
+                                                                                                                                                                                                                         }
+                                                                                                                                                                                                                     }
+                                                                                                                                                                                                                 }
+                                                                                                                                                                                                             }
+                                                                                                                                                                                                         }
+                                                                                                                                                                                                     }
+                                                                                                                                                                                                 }
+                                                                                                                                                                                             }
+                                                                                                                                                                                         }
+                                                                                                                                                                                     }
+                                                                                                                                                                                 }
+                                                                                                                                                                             }
+                                                                                                                                                                         }
+                                                                                                                                                                     }
+                                                                                                                                                                 }
+                                                                                                                                                             }
+                                                                                                                                                         }
+                                                                                                                                                     }
+                                                                                                                                                 }
+                                                                                                                                             }
+                                                                                                                                         }
+                                                                                                                                     }
+                                                                                                                                 }
+                                                                                                                             }
+                                                                                                                         }
+                                                                                                                     }
+                                                                                                                 }
+                                                                                                             }
+                                                                                                         }
+                                                                                                     }
+                                                                                                 }
+                                                                                             }
+                                                                                         }
+                                                                                     }
+                                                                                 }
+                                                                             }
+                                                                         }
+                                                                     }
+                                                                 }
+                                                             }
+                                                         }
+                                                     }
+                                                 }
+                                             }
+                                         }
+                                     }
+                                 }
+                             }
+                         }
+                     }
+                 }
+             }
+         }
+     }
+ }
