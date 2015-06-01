@@ -8,6 +8,8 @@ import org.json.simple.JSONObject;
 
 import javax.net.ssl.*;
 import java.io.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -536,7 +538,7 @@ public class Utils {
 
         // Lets find synonyms
         if( newLocale == null ) {
-            String[][] localeAliasesArr = LOCALE_SYNONYMS.get(dataLocale.substring(0,2));
+            String[][] localeAliasesArr = LOCALE_SYNONYMS.get(dataLocale.substring(0, 2));
             if( localeAliasesArr != null ) {
                 for (String[] localeAliasArr : localeAliasesArr) {
                     Locale localeAlias = toLocale(localeAliasArr[0]);
@@ -704,7 +706,7 @@ public class Utils {
             JSONArray binInfoArr = (JSONArray) binInfo;
             distributionStr.append(String.format("    %s: %.2f%% (%d instance%s)\n",
                     binInfoArr.get(0),
-                    (((Number) binInfoArr.get(1)).intValue() * 1.0 / total),
+                    Utils.roundOff((float) (((Number) binInfoArr.get(1)).intValue() * 1.0 / total), 4) * 100,
                     binInfoArr.get(1),
                     (((Number) binInfoArr.get(1)).intValue() == 1 ? "" : "s")
                     ));
@@ -748,6 +750,23 @@ public class Utils {
         }
 
         return newDistribution;
+    }
+
+
+    /**
+     * Round a float number x to n decimal places
+     */
+    public static float roundOff(float x, int n)  {
+        BigDecimal bd = new BigDecimal(x).setScale(n, RoundingMode.HALF_EVEN);
+        return bd.floatValue();
+    }
+
+    /**
+     * Round a double number x to n decimal places
+     */
+    public static double roundOff(double x, int n)  {
+        BigDecimal bd = new BigDecimal(x).setScale(n, RoundingMode.HALF_EVEN);
+        return bd.doubleValue();
     }
 
     /**
