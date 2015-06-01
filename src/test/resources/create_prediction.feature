@@ -79,6 +79,8 @@ I need to create a model first
     When I create a centroid for "<data_input>"
     And I check the centroid is ok
     Then the centroid is "<centroid>"
+
+# NOT IMPLEMENTED YET IN THE PYTHON BINDING
 #    And I create a dataset from the cluster and the centroid
 #    And I wait until the dataset is ready less than <time_2> secs
 #    And I check that the dataset is created for the cluster and the centroid

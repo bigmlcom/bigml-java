@@ -455,15 +455,11 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
 
     /**
      * Returns a IF-THEN rule set that implements the model.
-     *
-     * @param depth
-     *            controls the size of indentation
      */
     public String rules(Predicate.RuleLanguage language, final String filterId, boolean subtree) {
         List<String> idsPath = getIdsPath(filterId);
         return tree.rules(language, idsPath, subtree);
     }
-
 
     /**
      * Given a prediction string, returns its value in the required type
@@ -811,7 +807,7 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
      *
      * @param out
      */
-    public String summarize(Boolean addFieldImportance) throws IOException {
+    public String   summarize(Boolean addFieldImportance) throws IOException {
 
         StringBuilder summarize = new StringBuilder();
 
@@ -837,7 +833,7 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
                 String fieldId = ((JSONArray) fieldItem).get(0).toString();
                 double importance = ((Number) ((JSONArray) fieldItem).get(1)).doubleValue();
                 summarize.append(String.format("    %s. %s: %.2f%%\n", count++,
-                        Utils.getJSONObject(fields, fieldId + ".name"), (importance * 100)));
+                        Utils.getJSONObject(fields, fieldId + ".name"), (Utils.roundOff(importance, 4) * 100)));
             }
         }
 
@@ -859,7 +855,7 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
             double predPerGroup = (groupPrediction.getTotalPredictions() * 1.0) / tree.getCount();
 
             summarize.append(String.format("\n\n%s : (data %.2f%% / prediction %.2f%%) %s\n",
-                    group, dataPerGroup * 100, predPerGroup * 100, Utils.join(path, " and ")));
+                    group, Utils.roundOff(dataPerGroup, 4) * 100, Utils.roundOff(predPerGroup, 4) * 100, Utils.join(path, " and ")));
 
             if( details.size() == 0 ) {
                 summarize.append("    The model will never predict this class\n");
@@ -880,9 +876,9 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
                             Utils.join(sPath, " and "));
 
                     summarize.append(String.format("    · %.2f%%: %s%s\n",
-                            predPerSubgroup * 100, pathChain,
-                            confidenceError(predictionDetails.getConfidence(),
-                                    predictionDetails.getImpurity())));
+                            Utils.roundOff(predPerSubgroup, 4) * 100, pathChain,
+                                    confidenceError(predictionDetails.getConfidence(),
+                                            predictionDetails.getImpurity())));
                 }
             }
         }
@@ -911,12 +907,14 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
                         int o1Length = o1.getPath().size();
                         int o2Length = o2.getPath().size();
 
-                        // for all different Number types, let's check there double values
-                        if (o1Length < o2Length)
+                        // We use this approach when comparing to maintain the same
+                        //  order as the python counterpart
+                        if (o1Length <= o2Length)
                             return -1;
-                        if (o1Length > o2Length )
-                            return 1;
-                        return 0;
+//                        if (o1Length > o2Length )
+
+                        return 1;
+//                        return 0;
                     }
                 });
 
@@ -947,12 +945,13 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
                         long o1Count = o1.getLeafPredictionsCount();
                         long o2Count = o2.getLeafPredictionsCount();
 
-                        // for all different Number types, let's check there double values
-                        if ( o1Count < o2Count )
+                        // We use this approach when comparing to maintain the same
+                        //  order as the python counterpart
+                        if ( o1Count <= o2Count )
                             return -1;
-                        if ( o1Count > o2Count )
-                            return 1;
-                        return 0;
+//                        if ( o1Count > o2Count )
+                        return 1;
+//                        return 0;
                     }
                 });
 
@@ -971,15 +970,17 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
 
         String impurityLiteral = "";
         if( impurity != null && impurity > 0.0 ) {
-            impurityLiteral = String.format("; impurity: %4.2f%%", impurity);
+            impurityLiteral = String.format("; impurity: %.2f%%", Utils.roundOff(impurity, 4));
         }
 
         String objectiveType = (String) ((JSONObject) fields.get(tree.getObjectiveField())).get("optype");
         if( "numeric".equals(objectiveType) ) {
-            return String.format(" [Error: %s]", value);
+            DecimalFormat df = new DecimalFormat("0");
+            df.setMaximumFractionDigits(5);
+            return String.format(" [Error: %s]", df.format(value));
         } else {
-            return String.format(" [Confidence: %4.2f%%%s]",
-                    ( ((Number) value).doubleValue() * 100), impurityLiteral);
+            return String.format(" [Confidence: %.2f%%%s]",
+                    ( Utils.roundOff(((Number) value).doubleValue(), 4) * 100), impurityLiteral);
         }
     }
 

@@ -1,13 +1,13 @@
 Data distribution:
-    Iris-setosa: 0.34% (16 instances)
-    Iris-versicolor: 0.30% (14 instances)
-    Iris-virginica: 0.36% (17 instances)
+    Iris-setosa: 34.04% (16 instances)
+    Iris-versicolor: 29.79% (14 instances)
+    Iris-virginica: 36.17% (17 instances)
 
 
 Predicted distribution:
-    Iris-setosa: 0.34% (16 instances)
-    Iris-versicolor: 0.30% (14 instances)
-    Iris-virginica: 0.36% (17 instances)
+    Iris-setosa: 34.04% (16 instances)
+    Iris-versicolor: 29.79% (14 instances)
+    Iris-virginica: 36.17% (17 instances)
 
 
 Field importance:
