@@ -1,5 +1,58 @@
 # Changes in the BigML.io Java bindings
 
+## 1.4 version
+
+### New Features
+
+* Added support for Local Anomalies
+
+    A new LocalAnomaly class to score anomalies in a dataset locally or embedded
+    into your application without needing to send requests to BigML.io.
+
+    This class cannot only save you a few credits, but also enormously reduce the
+    latency for each prediction and let you use your models offline.
+
+    Example usage (assuming that you have previously set up the BIGML_USERNAME
+    and BIGML_API_KEY environment variables and that you own the model/id below):
+
+        // API client
+        BigMLClient api = BigMLClient.getInstance();
+
+        // Retrieve a remote anomaly by id
+        JSONObject jsonAnomaly = api.getAnomaly("anomaly/551aa203af447f5484000ec0");
+
+        // A lightweight wrapper around a Anomaly resurce
+        LocalAnomaly localAnomaly = new LocalAnomaly(jsonAnomaly);
+
+        // Input data
+        JSONObject inputData = (JSONObject) JSONValue.parse("{\"src_bytes\": 350}");
+
+        // Calculate score
+        localAnomaly.score(inputData);
+
+
+* Added support for Samples resources.
+
+    Full API documentation on the API can be found from BigML at:
+    https://bigml.com/developers/samples
+
+* Added support for Project resources.
+
+    Full API documentation on the API can be found from BigML at:
+    https://bigml.com/developers/project
+
+* Added support for predictions using Median.
+
+### Improvements
+
+* We improve the predictions responses adding the more information: Distribution,
+    DistributionUnit, Count and Median values associated to the prediction.
+
+* Added methods in LocalModel class to get information of the model. Added methods: Summarize,
+    Data Distribution and Prediction Distribution.
+
+* Added BaseModel and ModelFields base classes to reuse logic in LocalCluster and LocalPredictiveModel
+
 ## 1.3 version
 
 ### New Features
