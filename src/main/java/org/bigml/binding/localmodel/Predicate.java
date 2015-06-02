@@ -317,6 +317,9 @@ public class Predicate {
             return true;
         }
 
+        if( value == null ) {
+            return false;
+        }
 
         if( term != null ) {
             JSONObject allForms = (JSONObject) Utils.getJSONObject((JSONObject) fields.get(field),

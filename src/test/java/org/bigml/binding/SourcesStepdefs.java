@@ -3,12 +3,16 @@ package org.bigml.binding;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
 import org.bigml.binding.resources.AbstractResource;
+import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +60,16 @@ public class SourcesStepdefs {
     @Given("^I create a data source from inline data slurped from \"([^\"]*)\"$")
     public void I_create_a_data_source_from_inline_data_slurped_from(String data)
             throws AuthenticationException {
-        JSONObject resource = BigMLClient.getInstance().createInlineSource(data,
+
+        String inlineData = null;
+        try {
+            FileInputStream downloadFis = new FileInputStream(new File(data));
+            inlineData = Utils.inputStreamAsString(downloadFis, "UTF-8");
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to load the file.", e);
+        }
+
+        JSONObject resource = BigMLClient.getInstance().createInlineSource(inlineData,
                 new JSONObject());
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");

@@ -1054,8 +1054,18 @@ public class MultiVote {
         String distributionUnit = "counts";
 
         for (HashMap<Object, Object> prediction : multiVoteInstance.getPredictions()) {
-            JSONArray predictionDist = (JSONArray) prediction.get("distribution");
-            joinedDist = Utils.mergeDistributions(joinedDist, Utils.convertDistributionArrayToMap(predictionDist));
+//            JSONArray predictionDist = (JSONArray) prediction.get("distribution");
+            HashMap<Object, Number> predictionDist = null;
+            Object distribution = prediction.get("distribution");
+
+            if( distribution instanceof Map ) {
+                predictionDist = (HashMap<Object, Number>) distribution;
+            } else {
+                predictionDist = (HashMap<Object, Number>) Utils.convertDistributionArrayToMap((JSONArray) distribution);
+            }
+
+//            joinedDist = Utils.mergeDistributions(joinedDist, Utils.convertDistributionArrayToMap(predictionDist));
+            joinedDist = Utils.mergeDistributions(joinedDist, predictionDist);
 
             if( "counts".equals(distributionUnit) && joinedDist.size() > BINS_LIMIT) {
                 distributionUnit = "bins";

@@ -7,7 +7,7 @@ import cucumber.junit.Cucumber;
 @RunWith(Cucumber.class)
 // @Cucumber.Options(format = {"pretty", "html:target/cucumber-html-report"})
 //@Cucumber.Options(format = { "pretty", "html:target/cucumber-html-report" }, features = {
-//        "src/test/resources/inspect_model.feature",
+//        "src/test/resources/create_prediction_local_ensemble.feature",
 //        "src/test/resources/delete_all_dev_data.feature" })
 @Cucumber.Options(format = { "pretty", "html:target/cucumber-html-report" }, features = {
         "src/test/resources/compare_predictions.feature",

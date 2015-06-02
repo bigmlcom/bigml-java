@@ -13,9 +13,9 @@ Feature: Download the sample to filesystem
         And I wait until the sample is ready less than <time_3> secs
         And I update the sample with "<params>" waiting less than <time_4> secs
         And I wait until the sample is ready less than <time_3> secs
-        And I download the sample file to "<local_file>" with <rows> rows and "<seed>" seed
 		Then I check the sample name <name>
         Then delete test data
+#        And I download the sample file to "<local_file>" with <rows> rows and "<seed>" seed
 
         Examples:
         | data          | seed  | time_1  | time_2 | time_3 |   time_4  |   rows  |   params                            |   name                 |

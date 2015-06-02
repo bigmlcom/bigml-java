@@ -87,7 +87,7 @@ I need to create a model first
 
   Examples:
   | data                |  seed  |  time_1  | time_2 | time_3 | data_input    | centroid  |
-  | data/diabetes.csv | BigML |  10      | 10     | 30     | {"pregnancies": 0, "plasma glucose": 118, "blood pressure": 84, "triceps skin thickness": 47, "insulin": 230, "bmi": 45.8, "diabetes pedigree": 0.551, "age": 31, "diabetes": "true"} | Cluster 6 |
+  | data/diabetes.csv | BigML |  10      | 10     | 30     | {"pregnancies": 0, "plasma glucose": 118, "blood pressure": 84, "triceps skin thickness": 47, "insulin": 230, "bmi": 45.8, "diabetes pedigree": 0.551, "age": 31, "diabetes": "true"} | Cluster 5 |
 
   Scenario Outline: Successfully creating an anomaly score:
     Given I create a data source uploading a "<data>" file

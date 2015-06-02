@@ -272,7 +272,7 @@ public abstract class AbstractResource {
         // Check the cache first
         if( cacheManager != null ) {
             resourceId = urlString.substring(BIGML_URL.length(), urlString.length());
-            if( cacheManager.exists(resourceId, null) ) {
+            if( cacheManager.exists(resourceId, queryString) ) {
                 resource = cacheManager.get(resourceId, queryString);
 
                 JSONObject result = new JSONObject();

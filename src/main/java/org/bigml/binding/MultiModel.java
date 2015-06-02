@@ -231,6 +231,10 @@ public class MultiModel {
             toFile = true;
         }
 
+        if (useMedian == null) {
+            useMedian = false;
+        }
+
         List<MultiVote> votes = new ArrayList<MultiVote>();
         int order = 0;
 
@@ -276,7 +280,7 @@ public class MultiModel {
                     index++;
                 }
             } catch (Exception e) {
-                throw new Exception("Error generating the CSV !!!");
+                throw new Exception("Error generating the CSV !!!", e);
             }
 
             if( toFile ) {
