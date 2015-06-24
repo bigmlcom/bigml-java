@@ -60,7 +60,7 @@ public class LocalEnsemble {
 
     public LocalEnsemble(JSONObject ensemble, String storage, Integer max)
             throws Exception {
-        this(ensemble);
+        this(ensemble, max);
     }
 
     /**
@@ -74,11 +74,16 @@ public class LocalEnsemble {
         if (ensemble.get("objects") != null) {
             throw new IllegalArgumentException("Embedded objects unsupported");
         } else {
-            this.ensembleId = (String) ensemble.get("resource");
+            String prefix = Utils.getJSONObject(ensemble, "object") != null ? "object."
+                    : "";
+
+            this.ensembleId = (String) Utils.getJSONObject(ensemble,
+                    prefix + "resource");
+
             JSONArray modelsJson = (JSONArray) Utils.getJSONObject(ensemble,
-                    "models");
+                    prefix + "models");
             distribution = (JSONArray) Utils.getJSONObject(ensemble,
-                    "distributions");
+                    prefix + "distributions");
 
 
             int mn = modelsJson.size();
@@ -112,11 +117,15 @@ public class LocalEnsemble {
         if (ensemble.get("objects") != null) {
             throw new IllegalArgumentException("Embedded objects unsupported");
         } else {
-            this.ensembleId = (String) ensemble.get("resource");
+            String prefix = Utils.getJSONObject(ensemble, "object") != null ? "object."
+                    : "";
+
+            this.ensembleId = (String) Utils.getJSONObject(ensemble,
+                    prefix + "resource");
             JSONArray modelsJson = (JSONArray) Utils.getJSONObject(ensemble,
-                    "models");
+                    prefix + "models");
             distribution = (JSONArray) Utils.getJSONObject(ensemble,
-                    "distributions");
+                    prefix + "distributions");
 
             int mn = modelsJson.size();
             modelsIds = new String[mn];
