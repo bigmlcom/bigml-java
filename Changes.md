@@ -1,5 +1,11 @@
 # Changes in the BigML.io Java bindings
 
+## 1.4.1 version
+
+### Bugs
+
+* Fix bug in the constructor of the LocalEnsemble. The JSON path used to access objects was wrong.
+
 ## 1.4 version
 
 ### New Features
