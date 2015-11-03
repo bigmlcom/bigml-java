@@ -92,3 +92,20 @@ Feature: Create Predictions locally from Ensembles
     Examples:
       | data            | seed      |  time_1  | time_2 | time_3 | number_of_models | tlp   |  data_input    |prediction  |
       | data/grades.csv   | BigML     |  10      | 10     | 50     | 2                | 1     | {}             | 67.8816    |
+
+
+  Scenario Outline: Successfully creating a local prediction from an Ensemble with max models:
+    Given that I use production mode with seed="<seed>"
+    Given I create a data source uploading a "<data>" file
+    And I wait until the source is ready less than <time_1> secs
+    And I add the unitTest tag to the data source waiting less than <time_1> secs
+    And I create a dataset
+    And I wait until the dataset is ready less than <time_2> secs
+    And I create an ensemble of <number_of_models> models and <tlp> tlp
+    And I wait until the ensemble is ready less than <time_3> secs
+    And I create a local ensemble with max models <max_models>
+    When the local ensemble prediction for "<data_input>" is "<prediction>"
+
+    Examples:
+      | data            | seed    |  time_1  | time_2 | time_3 | time_4 | number_of_models | tlp   | max_models |  data_input    |prediction  |
+      | data/iris.csv   | BigML   |  10      | 10     | 50     | 20     | 5                | 1     | 2          | {"petal width": 0.5} | Iris-versicolor |

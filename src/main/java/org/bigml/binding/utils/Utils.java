@@ -505,7 +505,7 @@ public class Utils {
 
 
     public static int[] getRange(int start, int stop, int step) {
-        int maxItems = ((stop - start) / step);
+        int maxItems = ((stop - start + 1) / step);
         int[] items = new int[maxItems];
         int pos = 0;
         for(int index = start; index < stop; index += step) {

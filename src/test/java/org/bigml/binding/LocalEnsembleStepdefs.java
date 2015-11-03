@@ -42,6 +42,12 @@ public class LocalEnsembleStepdefs {
         assertTrue("", predictiveEnsemble != null);
     }
 
+    @Given("^I create a local ensemble with max models (\\d+)$")
+    public void I_create_a_local_ensemble_with_max_models(int maxModels) throws Exception {
+        predictiveEnsemble = new LocalEnsemble(context.ensemble, maxModels);
+        assertTrue("", predictiveEnsemble != null);
+    }
+
     @Given("^I create a local ensemble$")
     public void I_create_a_local_ensemble() throws Exception {
         predictiveEnsemble = new LocalEnsemble(context.ensemble);

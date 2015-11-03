@@ -145,9 +145,11 @@ public class LocalEnsemble {
         if( maxModels != null && maxModels > 1 ) {
             int[] items = Utils.getRange(0, numberOfModels, maxModels);
             for (int item : items) {
-                JSONArray arrayOfModels = new JSONArray();
-                arrayOfModels.addAll(models.subList(item, item+maxModels));
-                models_split.add(arrayOfModels);
+                if( item+maxModels <= numberOfModels ) {
+                    JSONArray arrayOfModels = new JSONArray();
+                    arrayOfModels.addAll(models.subList(item, item + maxModels));
+                    models_split.add(arrayOfModels);
+                }
             }
         }
 
