@@ -117,7 +117,7 @@ public class AnomalyTree {
 
         // root node: if predicates are met, depth becomes 1, otherwise is 0
         if( depth == 0 ) {
-            if( !this.predicates.apply(inputData, fields) ) {
+            if( !this.apply(inputData) ) {
                 return new AnomalyDepth(path, depth);
             }
 
@@ -128,7 +128,7 @@ public class AnomalyTree {
             for (AnomalyTree child : this.children) {
                 if( child.apply(inputData) ) {
                     path.add(child.toRule());
-                    return child.depth(inputData, path, ++depth);
+                    return child.depth(inputData, path, depth+1);
                 }
             }
         }
