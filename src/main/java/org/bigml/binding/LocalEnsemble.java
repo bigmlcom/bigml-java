@@ -22,6 +22,7 @@
 
 package org.bigml.binding;
 
+import java.io.Serializable;
 import java.util.*;
 
 import org.bigml.binding.utils.Utils;
@@ -38,7 +39,8 @@ import org.slf4j.LoggerFactory;
  * can be used to generate predictions locally.
  * 
  */
-public class LocalEnsemble {
+public class LocalEnsemble implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     /**
      * Logging
