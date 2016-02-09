@@ -73,7 +73,7 @@ public class MultiVote {
 
     /**
      * Check if this is a regression model
-     * 
+     *
      * @return {boolean} True if all the predictions are numbers.
      */
     private boolean is_regression() {
@@ -164,7 +164,7 @@ public class MultiVote {
 
     /**
      * Wilson score interval computation of the distribution for the prediction
-     * 
+     *
      * @param prediction {object} prediction Value of the prediction for which confidence
      *        is computed
      * @param distribution {array} distribution Distribution-like structure of predictions
@@ -212,7 +212,7 @@ public class MultiVote {
 
     /**
      * Average for regression models' predictions
-     * 
+     *
      */
     private HashMap<Object, Object> avg(Boolean withConfidence, Boolean addConfidence,
                                         Boolean addDistribution, Boolean addCount,
@@ -278,7 +278,7 @@ public class MultiVote {
 
     /**
      * Returns the prediction combining votes using error to compute weight
-     * 
+     *
      * @return {{'prediction': {string|number}, 'confidence': {number}}} The
      *         combined error is an average of the errors in the MultiVote
      *         predictions.
@@ -347,7 +347,7 @@ public class MultiVote {
 
     /**
      * Normalizes error to a [0, top_range] range and builds probabilities
-     * 
+     *
      * @param topRange {number} The top range of error to which the original error is
      *        normalized.
      * @return {number} The normalization factor as the sum of the normalized
@@ -398,11 +398,10 @@ public class MultiVote {
      * Creates a new predictions array based on the training data probability
      */
     public HashMap<Object, Object>[] probabilityWeight() {
-        int index, len, total, order, instances;
+        int index, len, total, order;
 
-        HashMap<Object, Object> prediction = new HashMap<Object, Object>();
-        HashMap<String, Object> distribution;
-        ArrayList predictionsList = new ArrayList();
+        Map<Object, Object> prediction = new HashMap<Object, Object>();
+        List<Map<Object, Object>> predictionsList = new ArrayList<Map<Object, Object>>();
 
         for (index = 0, len = this.predictions.length; index < len; index++) {
             prediction = this.predictions[index];
@@ -425,22 +424,19 @@ public class MultiVote {
             }
 
             order = (Integer) prediction.get("order");
-            distribution = (HashMap<String, Object>) prediction
-                    .get("distribution");
 
-            for (String key : distribution.keySet()) {
-                instances = (Integer) distribution.get(key);
-                HashMap<String, Object> predictionHash = new HashMap<String, Object>();
-                predictionHash.put("prediction", key);
-                predictionHash.put("probability", (double) instances / total);
-                predictionHash.put("count", instances);
+            for (List<Object> distributionItem : (List<List>)prediction.get("distribution")) {
+                Long count = (Long)distributionItem.get(1);
+                HashMap<Object, Object> predictionHash = new HashMap<Object, Object>();
+                predictionHash.put("prediction", distributionItem.get(0));
+                predictionHash.put("probability", count.doubleValue() / total);
+                predictionHash.put("count", count.intValue());
                 predictionHash.put("order", order);
 
                 predictionsList.add(predictionHash);
             }
         }
-        HashMap<Object, Object>[] predictions = (HashMap<Object, Object>[]) new HashMap[predictionsList
-                .size()];
+        HashMap<Object, Object>[] predictions = new HashMap[predictionsList.size()];
         for (index = 0, len = predictions.length; index < len; index++) {
             predictions[index] = (HashMap<Object, Object>) predictionsList
                     .get(index);
@@ -450,12 +446,12 @@ public class MultiVote {
 
     /**
      * Returns the prediction combining votes by using the given weight
-     * 
+     *
      * @param weightLabel {string} weightLabel Type of combination method: 'plurality':
      *        plurality (1 vote per prediction) 'confidence': confidence
      *        weighted (confidence as a vote value) 'probability': probability
      *        weighted (probability as a vote value)
-     * 
+     *
      *        Will also return the combined confidence, as a weighted average of
      *        the confidences of the votes.
      */
@@ -559,7 +555,7 @@ public class MultiVote {
 
     /**
      * Compute the combined weighted confidence from a list of predictions
-     * 
+     *
      * @param combinedPrediction {object} combinedPrediction Prediction object
      * @param weightLabel {string} weightLabel Label of the value in the prediction object
      *        that will be used to weight confidence
@@ -625,7 +621,7 @@ public class MultiVote {
 
     /**
      * Builds a distribution based on the predictions of the MultiVote
-     * 
+     *
      * @param weightLabel {string} weightLabel Label of the value in the prediction object
      *        whose sum will be used as count in the distribution
      */
@@ -668,7 +664,7 @@ public class MultiVote {
     /**
      * Reduces a number of predictions voting for classification and averaging
      * predictions for regression using the PLURALITY method and without confidence
-     * 
+     *
      * @return {{"prediction": prediction}}
      */
     public HashMap<Object, Object> combine() {
@@ -1034,6 +1030,7 @@ public class MultiVote {
          */
     class TupleComparator implements Comparator<Object[]> {
 
+        @Override
         public int compare(Object[] o1, Object[] o2) {
             HashMap hash1 = (HashMap) o1[1];
             HashMap hash2 = (HashMap) o2[1];
