@@ -146,35 +146,86 @@ for).
 
 You can easily generate a prediction following these steps:
 
-.. code-block:: Java
+.. code-block:: java
 
     BigMLClient api = BigMLClient.getInstance();
 
-    source = api.create_source('./data/iris.csv')
-    dataset = api.create_dataset(source)
-    model = api.create_model(dataset)
-    prediction = api.create_prediction(model, {'sepal length': 5, 'sepal width': 2.5})
+    JSONObject args = null;
 
-You can then print the prediction using the ``pprint`` method:
+    JSONObject source = api.createSource("./data/iris.csv",
+        "Iris Source", args);
 
-.. code-block:: python
+    while (!api.sourceIsReady(source)) Thread.sleep(1000);
 
-    >>> api.pprint(prediction)
-    species for {"sepal width": 2.5, "sepal length": 5} is Iris-virginica
+    JSONObject dataset = api.createDataset(
+        (String)source.get("resource"), args, null, null);
+
+    while (!api.datasetIsReady(dataset)) Thread.sleep(1000);
+
+    JSONObject model = api.createModel(
+        (String)dataset.get("resource"), args, null, null);
+
+    while (!api.modelIsReady(model)) Thread.sleep(1000);
+
+    JSONObject inputData = new JSONObject();
+    inputData.put("sepal length", 5);
+    inputData.put("sepal width", 2.5);
+
+    JSONObject prediction = api.createPrediction(
+        (String)model.get("resource"), inputData, true,
+        args, null, null);
+
+You can then get the prediction result:
+
+.. code-block:: java
+
+     while (!api.predictionIsReady(prediction)) {
+        prediction = api.getPrediction(prediction);
+        Thread.sleep(1000);
+    }
+
+and print the result:
+
+.. code-block:: java
+
+    String output = (String)Utils.getJSONObject(
+        prediction, "object.output");
+    System.out.println("Prediction result: " + output);
+
+.. code-block:: bash
+
+    >>> Prediction result: Iris-virginica
 
 and also generate an evaluation for the model by using:
 
-.. code-block:: python
+.. code-block:: java
 
-    test_source = api.create_source('./data/test_iris.csv')
-    test_dataset = api.create_dataset(test_source)
-    evaluation = api.create_evaluation(model, test_dataset)
+    JSONObject testSource = api.createSource("./data/test_iris.csv",
+        "Test Iris Source", args);
+
+    while (!api.sourceIsReady(source)) Thread.sleep(1000);
+
+    JSONObject testDataset = api.createDataset(
+        (String)testSource.get("resource"), args, null, null);
+
+    while (!api.datasetIsReady(dataset)) Thread.sleep(1000);
+
+    JSONObject evaluation = api.createEvaluation(
+        (String)model.get("resource"), (String)dataset.get("resource"),
+        args, null, null);
 
 Setting the ``storage`` argument in the api instantiation:
 
-.. code-block:: python
+.. code-block:: java
 
-    api = BigML(storage='./storage')
+    BigMLClient api = BigMLClient.getInstance("./storage");
+
+or:
+
+.. code-block:: java
+
+    BigMLClient api = BigMLClient.getInstance("myusername",
+        "ae579e7e53fb9abd646a6ff8aa99d4afe83ac291", true, "./storage");
 
 all the generated, updated or retrieved resources will be automatically
 saved to the chosen directory.
@@ -182,38 +233,54 @@ saved to the chosen directory.
 Fields
 ------
 
-BigML automatically generates idenfiers for each field. To see the
-fields and the ids and types that have been assigned to a source you can
-use ``get_fields``:
+BigML automatically generates identifiers for each field. The following
+example shows how to retrieve the fields, ids, and its types that have
+been assigned to a source:
 
-.. code-block:: python
+.. code-block:: java
 
-    >>> source = api.get_source(source)
-    >>> api.pprint(api.get_fields(source))
-    {   u'000000': {   u'column_number': 0,
-                       u'name': u'sepal length',
-                       u'optype': u'numeric'},
-        u'000001': {   u'column_number': 1,
-                       u'name': u'sepal width',
-                       u'optype': u'numeric'},
-        u'000002': {   u'column_number': 2,
-                       u'name': u'petal length',
-                       u'optype': u'numeric'},
-        u'000003': {   u'column_number': 3,
-                       u'name': u'petal width',
-                       u'optype': u'numeric'},
-        u'000004': {   u'column_number': 4,
-                       u'name': u'species',
-                       u'optype': u'categorical'}}
+    source = api.getSource(source);
+    JSONObject fields = (JSONObject) Utils.getJSONObject(source, "object.fields");
 
-When the number of fields becomes very large, it can be useful to exclude or
-filter them. This can be done using a query string expression, for instance:
+source ``fields`` object:
 
-.. code-block:: python
+.. code-block:: json
 
-    >>> source = api.get_source(source, "limit=10&order_by=name")
-
-would include in the retrieved dictionary the first 10 fields sorted by name.
+    {
+        "000000":{
+            "name":"sepal length",
+            "column_number":0,
+            "optype":"numeric",
+            "order":0
+        },
+        "000001":{
+            "name":"sepal width",
+            "column_number":1,
+            "optype":"numeric",
+            "order":1
+        },
+        "000002":{
+            "name":"petal length",
+            "column_number":2,
+            "optype":"numeric",
+            "order":2
+        },
+        "000003":{
+            "name":"petal width",
+            "column_number":3,
+            "optype":"numeric",
+            "order":3
+        },
+        "000004":{
+            "column_number":4,
+            "name":"species",
+            "optype":"categorical",
+            "order":4,
+            "term_analysis":{
+                "enabled":true
+            }
+        }
+    }
 
 Dataset
 -------
@@ -222,46 +289,63 @@ If you want to get some basic statistics for each field you can retrieve
 the ``fields`` from the dataset as follows to get a dictionary keyed by
 field id:
 
-.. code-block:: python
+.. code-block:: java
 
-    >>> dataset = api.get_dataset(dataset)
-    >>> api.pprint(api.get_fields(dataset))
-    {   u'000000': {   u'column_number': 0,
-                       u'datatype': u'double',
-                       u'name': u'sepal length',
-                       u'optype': u'numeric',
-                       u'summary': {   u'maximum': 7.9,
-                                       u'median': 5.77889,
-                                       u'minimum': 4.3,
-                                       u'missing_count': 0,
-                                       u'population': 150,
-                                       u'splits': [   4.51526,
-                                                      4.67252,
-                                                      4.81113,
+    dataset = api.getDataset(dataset);
+    JSONOoject fields = (JSONObject) Utils.getJSONObject(dataset, "object.fields");
 
-                         [... snip ... ]
+dataset ``fields`` object:
 
+.. code-block:: json
 
-        u'000004': {   u'column_number': 4,
-                       u'datatype': u'string',
-                       u'name': u'species',
-                       u'optype': u'categorical',
-                       u'summary': {   u'categories': [   [   u'Iris-versicolor',
-                                                              50],
-                                                          [u'Iris-setosa', 50],
-                                                          [   u'Iris-virginica',
-                                                              50]],
-                                       u'missing_count': 0}}}
+    {
+        "000000": {
+            "column_number": 0,
+            "datatype": "double",
+            "name": "sepal length",
+            "optype": "numeric",
+            "order": 0,
+            "preferred": true,
+            "summary": {
+                "bins": [
+                    [4.3, 1],
+                    [4.425, 4],
 
+                    ...snip...
 
-The field filtering options are also available using a query string expression,
-for instance:
+                    [7.9, 1]
+                ],
+                "kurtosis": -0.57357,
+                "maximum": 7.9,
+                "mean": 5.84333,
+                "median": 5.8,
+                "minimum": 4.3,
+                "missing_count": 0,
+                "population": 150,
+                "skewness": 0.31175,
+                "splits": [
+                    4.51526,
+                    4.67252,
 
-.. code-block:: python
+                    ...snip...
 
-    >>> dataset = api.get_dataset(dataset, "limit=20")
+                    7.64746
+                ],
+                "standard_deviation": 0.82807,
+                "sum": 876.5,
+                "sum_squares": 5223.85,
+                "variance": 0.68569
+            }
+        },
 
-limits the number of fields that will be included in ``dataset`` to 20.
+        ...snip...
+
+        "000004": {
+
+            ...snip...
+
+        }
+    }
 
 Model
 -----
@@ -270,47 +354,76 @@ One of the greatest things about BigML is that the models that it
 generates for you are fully white-boxed. To get the explicit tree-like
 predictive model for the example above:
 
-.. code-block:: python
+.. code-block:: java
 
-    >>> model = api.get_model(model)
-    >>> api.pprint(model['object']['model']['root'])
-    {u'children': [
-      {u'children': [
-        {u'children': [{u'count': 38,
-                        u'distribution': [[u'Iris-virginica', 38]],
-                        u'output': u'Iris-virginica',
-                        u'predicate': {u'field': u'000002',
-                        u'operator': u'>',
-                        u'value': 5.05}},
-                        u'children': [
+    model = api.getModel(model);
+    JSONObject tree = (JSONObject) Utils.getJSONObject(model, "object.model.root");
 
-                            [ ... ]
+model ``tree`` object:
 
-                           {u'count': 50,
-                            u'distribution': [[u'Iris-setosa', 50]],
-                            u'output': u'Iris-setosa',
-                            u'predicate': {u'field': u'000002',
-                                           u'operator': u'<=',
-                                           u'value': 2.45}}]},
-                        {u'count': 150,
-                         u'distribution': [[u'Iris-virginica', 50],
-                                           [u'Iris-versicolor', 50],
-                                           [u'Iris-setosa', 50]],
-                         u'output': u'Iris-virginica',
-                         u'predicate': True}]}}}
+.. code-block:: json
+
+    {
+        "children":[{
+            "children":[{
+                "children":[{
+                    "confidence":0.91799,
+                    "count":43,
+                    "id":3,
+                    "objective_summary":{
+                        "categories":[
+                            [
+                                "Iris-virginica",
+                                43
+                            ]
+                        ]
+                    },
+                    "output":"Iris-virginica",
+                    "predicate":{
+                        "field":"000002",
+                        "operator":">",
+                        "value":4.85
+                    }
+                }, {
+                    "children":[{
+                        "confidence":0.20654,
+                        "count":1,
+                        "id":5,
+                        "objective_summary":{
+                            "categories":[
+                                [
+                                    "Iris-versicolor",
+                                    1
+                                ]
+                            ]
+                        },
+                        "output":"Iris-versicolor",
+                        "predicate":{
+                            "field":"000001",
+                            "operator":">",
+                            "value":3.1
+                        }
+                    },
+
+                    ...snip...
+
+                },
+
+                ...snip...
+
+            },
+
+            ...snip...
+
+        },
+
+        ...snip...
+    }
+
 
 (Note that we have abbreviated the output in the snippet above for
 readability: the full predictive model you'll get is going to contain
 much more details).
-
-Again, filtering options are also available using a query string expression,
-for instance:
-
-.. code-block:: python
-
-    >>> model = api.get_model(model, "limit=5")
-
-limits the number of fields that will be included in ``model`` to 5.
 
 Evaluation
 ----------
@@ -321,71 +434,145 @@ create an evaluation you need the id of the model you are evaluating and the id
 of the dataset that contains the data to be tested with. The result is shown
 as:
 
-.. code-block:: python
+.. code-block:: java
 
-    >>> evaluation = api.get_evaluation(evaluation)
-    >>> api.pprint(evaluation['object']['result'])
-    {   'class_names': ['0', '1'],
-        'mode': {   'accuracy': 0.9802,
-                    'average_f_measure': 0.495,
-                    'average_phi': 0,
-                    'average_precision': 0.5,
-                    'average_recall': 0.4901,
-                    'confusion_matrix': [[99, 0], [2, 0]],
-                    'per_class_statistics': [   {   'accuracy': 0.9801980198019802,
-                                                    'class_name': '0',
-                                                    'f_measure': 0.99,
-                                                    'phi_coefficient': 0,
-                                                    'precision': 1.0,
-                                                    'present_in_test_data': True,
-                                                    'recall': 0.9801980198019802},
-                                                {   'accuracy': 0.9801980198019802,
-                                                    'class_name': '1',
-                                                    'f_measure': 0,
-                                                    'phi_coefficient': 0,
-                                                    'precision': 0.0,
-                                                    'present_in_test_data': True,
-                                                    'recall': 0}]},
-        'model': {   'accuracy': 0.9901,
-                     'average_f_measure': 0.89746,
-                     'average_phi': 0.81236,
-                     'average_precision': 0.99495,
-                     'average_recall': 0.83333,
-                     'confusion_matrix': [[98, 1], [0, 2]],
-                     'per_class_statistics': [   {   'accuracy': 0.9900990099009901,
-                                                     'class_name': '0',
-                                                     'f_measure': 0.9949238578680203,
-                                                     'phi_coefficient': 0.8123623944599232,
-                                                     'precision': 0.98989898989899,
-                                                     'present_in_test_data': True,
-                                                     'recall': 1.0},
-                                                 {   'accuracy': 0.9900990099009901,
-                                                     'class_name': '1',
-                                                     'f_measure': 0.8,
-                                                     'phi_coefficient': 0.8123623944599232,
-                                                     'precision': 1.0,
-                                                     'present_in_test_data': True,
-                                                     'recall': 0.6666666666666666}]},
-        'random': {   'accuracy': 0.50495,
-                      'average_f_measure': 0.36812,
-                      'average_phi': 0.13797,
-                      'average_precision': 0.74747,
-                      'average_recall': 0.51923,
-                      'confusion_matrix': [[49, 50], [0, 2]],
-                      'per_class_statistics': [   {   'accuracy': 0.504950495049505,
-                                                      'class_name': '0',
-                                                      'f_measure': 0.6621621621621622,
-                                                      'phi_coefficient': 0.1379728923974526,
-                                                      'precision': 0.494949494949495,
-                                                      'present_in_test_data': True,
-                                                      'recall': 1.0},
-                                                  {   'accuracy': 0.504950495049505,
-                                                      'class_name': '1',
-                                                      'f_measure': 0.07407407407407407,
-                                                      'phi_coefficient': 0.1379728923974526,
-                                                      'precision': 1.0,
-                                                      'present_in_test_data': True,
-                                                      'recall': 0.038461538461538464}]}}
+    evaluation = api.getEvaluation(evaluation);
+    JSONObject result = (JSONObject) Utils.getJSONObject(evaluation, "object.result");
+
+evaluation ``result`` object:
+
+.. code-block:: json
+
+    {
+        "class_names":[
+            "Iris-setosa",
+            "Iris-versicolor",
+            "Iris-virginica"
+        ],
+        "mode":{
+            "accuracy":0.33333,
+            "average_f_measure":0.16667,
+            "average_phi":0,
+            "average_precision":0.11111,
+            "average_recall":0.33333,
+            "confusion_matrix":[
+                [50, 0, 0],
+                [50, 0, 0],
+                [50, 0, 0]
+            ],
+            "per_class_statistics":[
+                {
+                    "accuracy":0.3333333333333333,
+                    "class_name":"Iris-setosa",
+                    "f_measure":0.5,
+                    "phi_coefficient":0,
+                    "precision":0.3333333333333333,
+                    "present_in_test_data":true,
+                    "recall":1.0
+                },
+                {
+                    "accuracy":0.6666666666666667,
+                    "class_name":"Iris-versicolor",
+                    "f_measure":0,
+                    "phi_coefficient":0,
+                    "precision":0,
+                    "present_in_test_data":true,
+                    "recall":0.0
+                },
+                {
+                    "accuracy":0.6666666666666667,
+                    "class_name":"Iris-virginica",
+                    "f_measure":0,
+                    "phi_coefficient":0,
+                    "precision":0,
+                    "present_in_test_data":true,
+                    "recall":0.0
+                }
+            ]
+        },
+        "model":{
+            "accuracy":1,
+            "average_f_measure":1,
+            "average_phi":1,
+            "average_precision":1,
+            "average_recall":1,
+            "confusion_matrix":[
+                [50, 0, 0],
+                [0, 50, 0],
+                [0, 0, 50]
+            ],
+            "per_class_statistics":[
+                {
+                    "accuracy":1.0,
+                    "class_name":"Iris-setosa",
+                    "f_measure":1.0,
+                    "phi_coefficient":1.0,
+                    "precision":1.0,
+                    "present_in_test_data":true,
+                    "recall":1.0
+                },
+                {
+                    "accuracy":1.0,
+                    "class_name":"Iris-versicolor",
+                    "f_measure":1.0,
+                    "phi_coefficient":1.0,
+                    "precision":1.0,
+                    "present_in_test_data":true,
+                    "recall":1.0
+                },
+                {
+                    "accuracy":1.0,
+                    "class_name":"Iris-virginica",
+                    "f_measure":1.0,
+                    "phi_coefficient":1.0,
+                    "precision":1.0,
+                    "present_in_test_data":true,
+                    "recall":1.0
+                }
+            ]
+        },
+        "random":{
+            "accuracy":0.28,
+            "average_f_measure":0.27789,
+            "average_phi":-0.08123,
+            "average_precision":0.27683,
+            "average_recall":0.28,
+            "confusion_matrix":[
+                [14, 19, 17],
+                [19, 10, 21],
+                [15, 17, 18]
+            ],
+            "per_class_statistics":[
+                {
+                    "accuracy":0.5333333333333333,
+                    "class_name":"Iris-setosa",
+                    "f_measure":0.2857142857142857,
+                    "phi_coefficient":-0.06063390625908324,
+                    "precision":0.2916666666666667,
+                    "present_in_test_data":true,
+                    "recall":0.28
+                },
+                {
+                    "accuracy":0.4933333333333333,
+                    "class_name":"Iris-versicolor",
+                    "f_measure":0.20833333333333331,
+                    "phi_coefficient":-0.16357216402190614,
+                    "precision":0.21739130434782608,
+                    "present_in_test_data":true,
+                    "recall":0.2
+                },
+                {
+                    "accuracy":0.5333333333333333,
+                    "class_name":"Iris-virginica",
+                    "f_measure":0.33962264150943394,
+                    "phi_coefficient":-0.019492029389636262,
+                    "precision":0.32142857142857145,
+                    "present_in_test_data":true,
+                    "recall":0.36
+                }
+            ]
+        }
+    }
 
 where two levels of detail are easily identified. For classifications,
 the first level shows these keys:

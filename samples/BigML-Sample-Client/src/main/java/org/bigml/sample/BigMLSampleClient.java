@@ -12,12 +12,12 @@
  */
 package org.bigml.sample;
 
-import java.util.HashMap;
-
 import org.bigml.binding.AuthenticationException;
 import org.bigml.binding.BigMLClient;
 import org.bigml.binding.InputDataParseException;
 import org.bigml.binding.LocalPredictiveModel;
+import org.bigml.binding.MissingStrategy;
+import org.bigml.binding.localmodel.Prediction;
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONObject;
 
@@ -27,35 +27,95 @@ public class BigMLSampleClient {
     private static final boolean DEV_MODE = true;
 
     // BigML's credentials
-    private static final String BIGML_USERNAME = "set-your-bigml-username";
-    private static final String BIGML_API_KEY = "set-your-bigml-api-key";
+     private static final String BIGML_USERNAME = "set-your-bigml-username";
+     private static final String BIGML_API_KEY = "set-your-bigml-api-key";
 
     /**
      * A simple Java Class to integrate the BigML API
-     * 
+     *
      * @param args
      */
     @SuppressWarnings("unchecked")
     public static void main(String[] args) {
-        BigMLClient bigml = null;
+        BigMLClient api = null;
+        JSONObject emptyArgs = null;
+
         try {
-            bigml = BigMLClient.getInstance(BIGML_USERNAME, BIGML_API_KEY,
+            api = BigMLClient.getInstance(BIGML_USERNAME, BIGML_API_KEY,
                     DEV_MODE);
         } catch (AuthenticationException e) {
             e.printStackTrace();
             return;
         }
         // Create a datasource by upload a file
-        JSONObject resource = bigml.createSource("data/iris.csv",
-                "My Test Source", null);
+        JSONObject source = api.createSource("data/iris.csv", "Iris Source",
+                emptyArgs);
+
+        while (!api.sourceIsReady(source)) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        source = api.getSource(source);
+        JSONObject fields = (JSONObject) Utils.getJSONObject(source, "object.fields");
+//        System.out.print(fields);
 
         // Create a dataset using the datasource created
-        resource = bigml.createDataset((String) resource.get("resource"), null,
-                null, null);
+        JSONObject dataset = api.createDataset((String) source.get("resource"),
+                emptyArgs, null, null);
+
+        while (!api.datasetIsReady(dataset)) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        dataset = api.getDataset(dataset);
+        fields = (JSONObject) Utils.getJSONObject(dataset, "object.fields");
+//        System.out.print(fields);
 
         // Create a model using the dataset created above
-        JSONObject model = bigml.createModel((String) resource.get("resource"),
-                null, null, null);
+        JSONObject model = api.createModel((String) dataset.get("resource"),
+                emptyArgs, null, null);
+
+        while (!api.modelIsReady(model)) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        model = api.getModel(model);
+        fields = (JSONObject) Utils.getJSONObject(model, "object.model.fields");
+        JSONObject tree = (JSONObject) Utils.getJSONObject(model, "object.model.root");
+//        System.out.print(fields);
+//        System.out.print(tree);
+
+        JSONObject evaluation = api.createEvaluation(
+                (String)model.get("resource"), (String)dataset.get("resource"),
+                emptyArgs, null, null);
+
+        while (!api.evaluationIsReady(evaluation)) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        evaluation = api.getEvaluation(evaluation);
+        JSONObject result = (JSONObject) Utils.getJSONObject(evaluation, "object.result");
+        System.out.print(result);
 
         // Create a prediction using created model
         /*
@@ -65,17 +125,17 @@ public class BigMLSampleClient {
          */
         boolean byName = true;
         JSONObject inputData = new JSONObject();
-        inputData.put("petal width", 1.9);
-        inputData.put("petal length", 3.5);
+        inputData.put("sepal length", 5);
+        inputData.put("sepal width", 2.5);
 
         // This is a remote prediction, that is a prediction made by BigML and
         // it will consume BigML credits (~0.01)
-        JSONObject remotePrediction = bigml.createPrediction(
-                (String) model.get("resource"), inputData, byName, null, null,
-                null);
-        while (!bigml.predictionIsReady(remotePrediction)) {
+        JSONObject remotePrediction = api.createPrediction(
+                (String) model.get("resource"), inputData, byName, emptyArgs,
+                null, null);
+        while (!api.predictionIsReady(remotePrediction)) {
             try {
-                remotePrediction = bigml.getPrediction(remotePrediction);
+                remotePrediction = api.getPrediction(remotePrediction);
                 Thread.sleep(1000);
             } catch (Exception e) {
                 System.err
@@ -92,19 +152,20 @@ public class BigMLSampleClient {
          * created model. A LocalPredictiveModel allow you to predict faster,
          * you're predicting without HTTPS round trips, and for FREE, this won't
          * consume BigML's credits.
-         * 
+         *
          * @see org.bigml.binding.LocalPredictiveModel
          */
         // Retrieve the model that should be Finished and ready to predict with
         // it
-        model = bigml.getModel(model);
+        model = api.getModel(model);
         LocalPredictiveModel localModel = null;
-        HashMap<Object, Object> localPrediction = null;
+        Prediction localPrediction = null;
         try {
             localModel = new LocalPredictiveModel(
                     (JSONObject) model.get("object"));
 
-            localPrediction = localModel.predict(inputData, byName, true);
+            localPrediction = localModel.predict(inputData, byName,
+                    MissingStrategy.PROPORTIONAL);
 
             System.out.println("Prediction result: "
                     + localPrediction.get("prediction") + ". With confidence: "
@@ -125,6 +186,7 @@ public class BigMLSampleClient {
                     .println("*** Remember that the resources created in this "
                             + "sample are placed in your DEV mode environment at BigML.com ***");
         }
+
     }
 
 }
