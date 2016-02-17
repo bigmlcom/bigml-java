@@ -100,6 +100,40 @@ public class BigMLSampleClient {
 //        System.out.print(fields);
 //        System.out.print(tree);
 
+        // Create a cluster using the dataset created above
+        JSONObject cluster = api.createCluster((String) dataset.get("resource"),
+                emptyArgs, null, null);
+
+        while (!api.clusterIsReady(cluster)) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        cluster = api.getCluster(cluster);
+        JSONObject object = (JSONObject) Utils.getJSONObject(cluster, "object");
+//        System.out.print(object);
+
+        // Create a cluster using the dataset created above
+        JSONObject anomaly = api.createAnomaly((String) dataset.get("resource"),
+                emptyArgs, null, null);
+
+        while (!api.anomalyIsReady(anomaly)) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        anomaly = api.getAnomaly(anomaly);
+        object = (JSONObject) Utils.getJSONObject(anomaly, "object");
+//        System.out.print(object);
+
         JSONObject evaluation = api.createEvaluation(
                 (String)model.get("resource"), (String)dataset.get("resource"),
                 emptyArgs, null, null);
@@ -115,7 +149,7 @@ public class BigMLSampleClient {
 
         evaluation = api.getEvaluation(evaluation);
         JSONObject result = (JSONObject) Utils.getJSONObject(evaluation, "object.result");
-        System.out.print(result);
+//        System.out.print(result);
 
         // Create a prediction using created model
         /*
