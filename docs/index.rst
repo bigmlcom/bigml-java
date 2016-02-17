@@ -98,7 +98,7 @@ or:
     BigMLClient api = BigMLClient.getInstance("myusername",
         "ae579e7e53fb9abd646a6ff8aa99d4afe83ac291", true);
 
-For Virtual Private Cloud setups, you can change the remote server URL
+For `Virtual Private Cloud <https://bigml.com/pricing/vpc>`_ setups, you can change the remote server URL
 to the VPC particular one by either setting the ``BIGML_URL`` or
 ``BIGML_DEV_URL`` in ``binding.properties`` or in the JVM environment.
 For example:
