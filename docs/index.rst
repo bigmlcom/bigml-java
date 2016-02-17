@@ -226,6 +226,9 @@ or:
 all the generated, updated or retrieved resources will be automatically
 saved to the chosen directory.
 
+You can also find a sample API client code from `here
+<https://github.com/bigmlcom/bigml-java/blob/master/samples/BigML-Sample-Client/src/main/java/org/bigml/sample/BigMLSampleClient.java>`_.
+
 Fields
 ------
 
@@ -774,14 +777,13 @@ much more details).
 Anomaly Detector
 ----------------
 
-For anomaly detection problems, BigML anomaly detector uses iforest as an
-unsupervised kind of model that detects anomalous data in a dataset. The
-information it returns encloses a `top_anomalies` block
-that contains a list of the most anomalous
-points. For each, we capture a `score` from 0 to 1.  The closer to 1,
-the more anomalous. We also capture the `row` which gives values for
-each field in the order defined by `input_fields`.  Similarly we give
-a list of `importances` which match the `row` values.  These
+For anomaly detection problems, BigML uses iforest as an unsupervised
+kind of model that detects anomalous data in a dataset. The information
+it returns encloses a ``top_anomalies`` block that contains a list of
+the most anomalous points. For each, we capture a ``score`` from 0 to 1.
+The closer to 1, the more anomalous. We also capture the ``row`` which gives
+values for each field in the order defined by ``input_fields``. Similarly
+we give a list of ``importances`` which match the ``row`` values. These
 importances tell us which values contributed most to the anomaly
 score. Thus, the structure of an anomaly detector is similar to:
 
