@@ -1,4 +1,4 @@
-BigML Python Bindings
+BigML Java Bindings
 =====================
 
 `BigML <https://bigml.com>`_ makes machine learning easy by taking care
