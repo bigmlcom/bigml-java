@@ -968,7 +968,7 @@ anomaly ``object`` object:
                             }]
                         }],
                         "population":126,
-                        "predicates":[True, {
+                        "predicates":[true, {
                             "field":"000018",
                             "op":"=",
                             "value":0
