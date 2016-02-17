@@ -22,10 +22,6 @@ Support
 Please report problems and bugs to our `BigML Java Binding
 issue tracker <https://github.com/bigmlcom/bigml-java/issues>`_.
 
-Discussions about the different bindings take place in the general
-`BigML mailing list <http://groups.google.com/group/bigml>`_. Or join us
-in our `Campfire chatroom <https://bigmlinc.campfirenow.com/f20a0>`_.
-
 Requirements
 ------------
 
