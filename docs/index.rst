@@ -190,7 +190,7 @@ and print the result:
 
 .. code-block:: bash
 
-    >>> Prediction result: Iris-virginica
+    Prediction result: Iris-virginica
 
 and also generate an evaluation for the model by using:
 
