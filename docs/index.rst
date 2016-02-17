@@ -210,7 +210,7 @@ and also generate an evaluation for the model by using:
         (String)model.get("resource"), (String)dataset.get("resource"),
         args, null, null);
 
-Setting the ``storage`` argument in the api instantiation:
+Setting the ``storage`` argument in the api client instantiation:
 
 .. code-block:: java
 
