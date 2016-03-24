@@ -1,27 +1,45 @@
 package org.bigml.binding.utils;
 
-import org.bigml.binding.BigMLClient;
-import org.bigml.binding.Constants;
-import org.bigml.binding.localmodel.Tree;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-
-import javax.net.ssl.*;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.text.MessageFormat;
-import java.text.Normalizer;
-import java.text.Normalizer.Form;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+
+import org.bigml.binding.BigMLClient;
+import org.bigml.binding.Constants;
+import org.bigml.binding.localmodel.Tree;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 public class Utils {
 
@@ -145,7 +163,8 @@ public class Utils {
 
             // Sending the body to the server
             OutputStreamWriter output = new OutputStreamWriter(connection.getOutputStream());
-            output.write(body);
+
+            output.write(Utils.unescapeJSONString(body));
             output.flush();
             output.close();
         }
@@ -185,7 +204,7 @@ public class Utils {
 
     /**
      * Converts a InputStream to a String.
-     * 
+     *
      */
     public static String inputStreamAsString(InputStream stream, String encoding)
             throws IOException {
@@ -244,7 +263,7 @@ public class Utils {
 //
     /**
      * Returns True if value is a valid URL.
-     * 
+     *
      */
     public static boolean isUrl(String value) {
         try {
@@ -257,7 +276,7 @@ public class Utils {
 
     /**
      * Returns JSONObject child.
-     * 
+     *
      */
     public static Object getJSONObject(JSONObject json, String path) {
         String field = path;
@@ -343,7 +362,7 @@ public class Utils {
 
     /**
      * Inverts a dictionary changing keys per values
-     * 
+     *
      * @param json
      *            the json object to invert
      * @return the dictionary inverting keys per values
@@ -900,4 +919,10 @@ public class Utils {
         return String.format("%s%s", text, (num == 1 ? "" : "s"));
     }
 
+    /**
+     * JSON library Hack - unescape forward slashes from already escaped JSON string
+     */
+    public static String unescapeJSONString(String jsonString) {
+        return jsonString.replaceAll("\\\\/", "/");
+    }
 }

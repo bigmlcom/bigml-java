@@ -19,16 +19,13 @@ import org.bigml.binding.LocalPredictiveModel;
 import org.bigml.binding.MissingStrategy;
 import org.bigml.binding.localmodel.Prediction;
 import org.bigml.binding.utils.Utils;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 public class BigMLSampleClient {
 
     // BigML's DEV mode enabled
     private static final boolean DEV_MODE = true;
-
-    // BigML's credentials
-     private static final String BIGML_USERNAME = "set-your-bigml-username";
-     private static final String BIGML_API_KEY = "set-your-bigml-api-key";
 
     /**
      * A simple Java Class to integrate the BigML API
@@ -41,15 +38,21 @@ public class BigMLSampleClient {
         JSONObject emptyArgs = null;
 
         try {
-            api = BigMLClient.getInstance(BIGML_USERNAME, BIGML_API_KEY,
-                    DEV_MODE);
+            // Create BigMLClient with the properties in binding.properties
+            api = BigMLClient.getInstance();
         } catch (AuthenticationException e) {
             e.printStackTrace();
             return;
         }
+
+        JSONObject sourceParser = new JSONObject();
+        JSONArray missingTokens = new JSONArray();
+        missingTokens.add("N/A");
+        sourceParser.put("missing_tokens", missingTokens);
+
         // Create a datasource by upload a file
         JSONObject source = api.createSource("data/iris.csv", "Iris Source",
-                emptyArgs);
+                sourceParser, emptyArgs);
 
         while (!api.sourceIsReady(source)) {
             try {
@@ -167,19 +170,10 @@ public class BigMLSampleClient {
         JSONObject remotePrediction = api.createPrediction(
                 (String) model.get("resource"), inputData, byName, emptyArgs,
                 null, null);
-        while (!api.predictionIsReady(remotePrediction)) {
-            try {
-                remotePrediction = api.getPrediction(remotePrediction);
-                Thread.sleep(1000);
-            } catch (Exception e) {
-                System.err
-                        .println("Something wen't wrong while checking prediction status");
-                e.printStackTrace();
-            }
-        }
+        remotePrediction = api.getPrediction(remotePrediction);
         String predictionOutput = (String) Utils.getJSONObject(
                 remotePrediction, "object.output");
-        System.out.println("Prediction result: " + predictionOutput);
+        System.out.println("Remote prediction result: " + predictionOutput);
 
         /**
          * It is possible to build a LocalPredictiveModel using a previously
@@ -201,7 +195,7 @@ public class BigMLSampleClient {
             localPrediction = localModel.predict(inputData, byName,
                     MissingStrategy.PROPORTIONAL);
 
-            System.out.println("Prediction result: "
+            System.out.println("Local prediction result: "
                     + localPrediction.get("prediction") + ". With confidence: "
                     + localPrediction.get("confidence"));
 

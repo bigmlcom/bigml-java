@@ -60,7 +60,7 @@ and `API key <https://bigml.com/account/apikey>`_ and are always
 transmitted over HTTPS.
 
 This module will look for your username and API key in the
-``binding.properties`` file. Alternatively, you can respectively set
+``src/main/resources/binding.properties`` file. Alternatively, you can respectively set
 the JVM parameters ``BIGML_USERNAME`` and ``BIGML_API_KEY``  with ``-D``.
 
 With that set up, connecting to BigML is a breeze.
@@ -82,10 +82,12 @@ the BigMLClient class as follows:
 .. code-block:: java
 
     BigMLClient api = BigMLClient.getInstance("myusername",
-        "ae579e7e53fb9abd646a6ff8aa99d4afe83ac291");
+        "ae579e7e53fb9abd646a6ff8aa99d4afe83ac291", false);
 
-Also, you can initialize the library to work in the Sandbox
-environment by passing the parameter ``dev_mode``:
+Note that the 3rd parameter ``devMode`` determines where your resources will
+be created, either production or development.
+You can initialize the library to work in the Sandbox environment by passing
+``true`` for this parameter:
 
 .. code-block:: java
 
@@ -98,15 +100,25 @@ or:
     BigMLClient api = BigMLClient.getInstance("myusername",
         "ae579e7e53fb9abd646a6ff8aa99d4afe83ac291", true);
 
+WARNING: ``getInstance`` also takes 2-String parameters, and they are NOT
+your username and API key, but ``seed`` and ``storage``.
+
 For `Virtual Private Cloud <https://bigml.com/pricing/vpc>`_ setups, you can change the remote server URL
 to the VPC particular one by either setting the ``BIGML_URL`` or
 ``BIGML_DEV_URL`` in ``binding.properties`` or in the JVM environment.
-For example:
+By default, they have the following values:
 
 .. code-block:: java
 
     BIGML_URL=https://bigml.io/andromeda/
     BIGML_DEV_URL=https://bigml.io/dev/andromeda/
+
+If you are in Australia or New Zealand, you can change them to:
+
+.. code-block:: java
+
+    BIGML_URL=https://au.bigml.io/andromeda/
+    BIGML_DEV_URL=https://au.bigml.io/dev/andromeda/
 
 The corresponding SSL REST calls will be directed to your private domain
 henceforth.
@@ -144,6 +156,7 @@ You can easily generate a prediction following these steps:
 
 .. code-block:: java
 
+    // Create BigMLClient with the properties in binding.properties
     BigMLClient api = BigMLClient.getInstance();
 
     JSONObject args = null;
@@ -175,10 +188,7 @@ You can then get the prediction result:
 
 .. code-block:: java
 
-     while (!api.predictionIsReady(prediction)) {
-        prediction = api.getPrediction(prediction);
-        Thread.sleep(1000);
-    }
+    prediction = api.getPrediction(prediction);
 
 and print the result:
 
