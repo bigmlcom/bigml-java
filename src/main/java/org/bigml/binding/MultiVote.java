@@ -140,7 +140,7 @@ public class MultiVote {
 
     /**
      * Checks the presence of each of the keys in each of the predictions
-     * 
+     *
      * @param predictions {array} predictions Array of prediction objects
      * @param keys {array} keys Array of key strings
      */
@@ -403,6 +403,13 @@ public class MultiVote {
         Map<Object, Object> prediction = new HashMap<Object, Object>();
         List<Map<Object, Object>> predictionsList = new ArrayList<Map<Object, Object>>();
 
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Predictions: [");
+            for (HashMap<Object, Object> curPrediction : predictions) {
+                LOGGER.debug(String.format("%s", JSONObject.toJSONString(curPrediction)));
+            }
+        }
+
         for (index = 0, len = this.predictions.length; index < len; index++) {
             prediction = this.predictions[index];
             if (!prediction.containsKey("distribution")
@@ -425,10 +432,11 @@ public class MultiVote {
 
             order = (Integer) prediction.get("order");
 
-            for (List<Object> distributionItem : (List<List>)prediction.get("distribution")) {
-                Long count = (Long)distributionItem.get(1);
+            HashMap map = (HashMap)prediction.get("distribution");
+            for (Object key : map.keySet()) {
+                Integer count = (Integer)map.get(key);
                 HashMap<Object, Object> predictionHash = new HashMap<Object, Object>();
-                predictionHash.put("prediction", distributionItem.get(0));
+                predictionHash.put("prediction", key);
                 predictionHash.put("probability", count.doubleValue() / total);
                 predictionHash.put("count", count.intValue());
                 predictionHash.put("order", order);
