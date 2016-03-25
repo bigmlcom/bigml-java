@@ -1,27 +1,27 @@
- if( (src_bytes != null && src_bytes > 312) ){
-     if( (dst_host_count != null && dst_host_count > 1) ){
-         if( (dst_host_srv_diff_host_rate != null && dst_host_srv_diff_host_rate > 0.035) ){
-             if( (dst_host_same_src_port_rate != null && dst_host_same_src_port_rate > 0.03) ){
-                 if( (dst_host_same_src_port_rate != null && dst_host_same_src_port_rate > 0.095) ){
-                     return 0;
-                 }
-                 if( (dst_host_same_src_port_rate != null && dst_host_same_src_port_rate <= 0.095) ){
-                     return 0.01;
-                 }
-             }
-             if( (dst_host_same_src_port_rate != null && dst_host_same_src_port_rate <= 0.03) ){
-                 return 0;
-             }
-         }
-         if( (dst_host_srv_diff_host_rate != null && dst_host_srv_diff_host_rate <= 0.035) ){
-             return 0;
-         }
-     }
-     if( (dst_host_count != null && dst_host_count <= 1) ){
+ if( (src_bytes != null && src_bytes > 315) ){
+     if( (dst_host_same_src_port_rate != null && dst_host_same_src_port_rate > 0.75) ){
          return 0.01;
      }
+     if( (dst_host_same_src_port_rate != null && dst_host_same_src_port_rate <= 0.75) ){
+         if( (src_bytes != null && src_bytes > 325) ){
+             return 0;
+         }
+         if( (src_bytes != null && src_bytes <= 325) ){
+             if( (count != null && count > 10) ){
+                 return 0.01;
+             }
+             if( (count != null && count <= 10) ){
+                 if( (src_bytes != null && src_bytes > 323) ){
+                     return 0.01;
+                 }
+                 if( (src_bytes != null && src_bytes <= 323) ){
+                     return 0;
+                 }
+             }
+         }
+     }
  }
- if( (src_bytes != null && src_bytes <= 312) ){
+ if( (src_bytes != null && src_bytes <= 315) ){
      if( (dst_bytes != null && dst_bytes > 25045) ){
          if( (dst_host_count != null && dst_host_count > 8) ){
              return 0;
@@ -31,11 +31,11 @@
          }
      }
      if( (dst_bytes != null && dst_bytes <= 25045) ){
-         if( (src_bytes != null && src_bytes > 166) ){
-             if( (dst_host_count != null && dst_host_count > 48) ){
+         if( (src_bytes != null && src_bytes > 167) ){
+             if( (dst_host_count != null && dst_host_count > 47) ){
                  return 0;
              }
-             if( (dst_host_count != null && dst_host_count <= 48) ){
+             if( (dst_host_count != null && dst_host_count <= 47) ){
                  if( (dst_host_count != null && dst_host_count > 43) ){
                      if( (count != null && count > 9) ){
                          return 0;
@@ -54,7 +54,7 @@
                  }
              }
          }
-         if( (src_bytes != null && src_bytes <= 166) ){
+         if( (src_bytes != null && src_bytes <= 167) ){
              if( (src_bytes != null && src_bytes > 161) ){
                  if( (dst_host_count != null && dst_host_count > 97) ){
                      return 0;
