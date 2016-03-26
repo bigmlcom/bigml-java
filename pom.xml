@@ -238,6 +238,14 @@
                 </configuration>
             </plugin>
 
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.9</version>
+                <configuration>
+                    <argLine>-Duser.language=en -Duser.region=US</argLine>
+                </configuration>
+           </plugin>
         </plugins>
     </build>
 
