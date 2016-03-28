@@ -73,7 +73,7 @@ public class MultipartUtility {
         writer.append("Content-Type: text/plain; charset=" + charset).append(
                 LINE_FEED);
         writer.append(LINE_FEED);
-        writer.append(value).append(LINE_FEED);
+        writer.append(value);
         writer.flush();
     }
 

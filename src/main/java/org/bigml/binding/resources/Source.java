@@ -2,6 +2,7 @@ package org.bigml.binding.resources;
 
 import java.io.File;
 import java.net.HttpURLConnection;
+import java.util.Set;
 
 import org.bigml.binding.utils.CacheManager;
 import org.bigml.binding.utils.MultipartUtility;
@@ -13,11 +14,11 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Entry point to create, retrieve, list, update, and delete sources.
- * 
+ *
  * Full API documentation on the API can be found from BigML at:
  * https://bigml.com/developers/sources
- * 
- * 
+ *
+ *
  */
 public class Source extends AbstractResource {
 
@@ -26,7 +27,7 @@ public class Source extends AbstractResource {
 
     /**
      * Constructor
-     * 
+     *
      */
     public Source() {
         this.bigmlApiKey = System.getProperty("BIGML_API_KEY");
@@ -38,7 +39,7 @@ public class Source extends AbstractResource {
 
     /**
      * Constructor
-     * 
+     *
      */
     public Source(final String apiUser, final String apiKey,
             final boolean devMode) {
@@ -74,16 +75,17 @@ public class Source extends AbstractResource {
      * @param resource the resource to be checked
      * @return true if its an Source
      */
-    public boolean isInstance(JSONObject resource) {
+    @Override
+    public boolean isInstance(final JSONObject resource) {
         return ((String) resource.get("resource")).matches(SOURCE_RE);
     }
 
     /**
      * Creates a source using a local file.
-     * 
+     *
      * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: multipart/form-data;
-     * 
+     *
      * @param fileName
      *            file containing your data in csv format. It can be compressed,
      *            gzipped, or zipped. Required multipart/form-data;
@@ -103,10 +105,10 @@ public class Source extends AbstractResource {
 
     /**
      * Creates a source using a local file.
-     * 
+     *
      * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: multipart/form-data;
-     * 
+     *
      * @param fileName
      *            file containing your data in csv format. It can be compressed,
      *            gzipped, or zipped. Required multipart/form-data;
@@ -115,10 +117,32 @@ public class Source extends AbstractResource {
      *            the name you want to give to the new source. Optional
      * @param sourceParser
      *            set of parameters to parse the source. Optional
-     * 
+     *
      */
-    public JSONObject createLocalSource(final String fileName, String name,
-            JSONObject sourceParser) {
+    public JSONObject createLocalSource(final String fileName, final String name,
+            final JSONObject sourceParser) {
+        return this.createLocalSource(fileName, name, sourceParser, null);
+    }
+
+    /**
+     * Creates a source using a local file.
+     *
+     * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: multipart/form-data;
+     *
+     * @param fileName
+     *            file containing your data in csv format. It can be compressed,
+     *            gzipped, or zipped. Required multipart/form-data;
+     *            charset=utf-8
+     * @param name
+     *            the name you want to give to the new source. Optional
+     * @param sourceParser
+     *            set of parameters to parse the source. Optional
+     * @param args
+     *            set of parameters for the new model. Optional
+     */
+    public JSONObject createLocalSource(final String fileName, final String name,
+            final JSONObject sourceParser, final JSONObject args) {
         int code = HTTP_INTERNAL_SERVER_ERROR;
         String resourceId = null;
         JSONObject resource = null;
@@ -141,7 +165,13 @@ public class Source extends AbstractResource {
 
             // Source parser
             if (sourceParser != null) {
-                multipartUtility.addFormField("source_parser", sourceParser.toJSONString());
+                multipartUtility.addFormField("source_parser", Utils.unescapeJSONString(sourceParser.toJSONString()));
+            }
+
+            if (args != null) {
+                for (String key : (Set<String>)args.keySet()) {
+                    multipartUtility.addFormField(key, Utils.unescapeJSONString(String.valueOf(args.get(key))));
+                }
             }
 
             HttpURLConnection connection = multipartUtility.finish();
@@ -185,23 +215,42 @@ public class Source extends AbstractResource {
 
     /**
      * Creates a source using a Batch Prediction Id.
-     * 
+     *
      * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json;
-     * 
+     *
      * @param batchPredictionId
      *            the ID of the batch prediction resource to use
      * @param sourceParser
      *            set of parameters to create the source. Optional
-     * 
+     *
      */
     public JSONObject createSourceFromBatchPrediction(final String batchPredictionId,
             final JSONObject sourceParser) {
 
+        return this.createSourceFromBatchPrediction(batchPredictionId, sourceParser, null);
+    }
+
+    /**
+     * Creates a source using a Batch Prediction Id.
+     *
+     * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json;
+     *
+     * @param batchPredictionId
+     *            the ID of the batch prediction resource to use
+     * @param sourceParser
+     *            set of parameters to create the source. Optional
+     * @param args
+     *            set of parameters for the new model. Optional
+     */
+    public JSONObject createSourceFromBatchPrediction(final String batchPredictionId,
+            final JSONObject sourceParser, final JSONObject args) {
+
         String url = String.format("%s%s%s%s", BIGML_URL, batchPredictionId,
                 BatchPrediction.DOWNLOAD_DIR, bigmlAuth);
 
-        return createRemoteSource(url, sourceParser);
+        return createRemoteSource(url, sourceParser, args);
     }
 
     /**
@@ -219,10 +268,29 @@ public class Source extends AbstractResource {
     public JSONObject createSourceFromBatchAnomalyScore(final String anomalyScoreId,
             final JSONObject sourceParser) {
 
+        return this.createSourceFromBatchAnomalyScore(anomalyScoreId, sourceParser, null);
+    }
+
+    /**
+     * Creates a source using an Anomaly Score Id.
+     *
+     * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json;
+     *
+     * @param anomalyScoreId
+     *            the ID of the anomaly score resource to use
+     * @param sourceParser
+     *            set of parameters to create the source. Optional
+     * @param args
+     *            set of parameters for the new model. Optional
+     */
+    public JSONObject createSourceFromBatchAnomalyScore(final String anomalyScoreId,
+            final JSONObject sourceParser, final JSONObject args) {
+
         String url = String.format("%s%s%s%s", BIGML_URL, anomalyScoreId,
                 BatchPrediction.DOWNLOAD_DIR, bigmlAuth);
 
-        return createRemoteSource(url, sourceParser);
+        return createRemoteSource(url, sourceParser, args);
     }
 
     /**
@@ -247,22 +315,43 @@ public class Source extends AbstractResource {
 
     /**
      * Creates a source using a URL.
-     * 
+     *
      * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json;
-     * 
+     *
      * @param url
      *            url for remote source
      * @param sourceParser
      *            set of parameters to create the source. Optional
-     * 
+     *
      */
     public JSONObject createRemoteSource(final String url,
             final JSONObject sourceParser) {
+        return this.createRemoteSource(url, sourceParser, null);
+    }
+
+    /**
+     * Creates a source using a URL.
+     *
+     * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json;
+     *
+     * @param url
+     *            url for remote source
+     * @param sourceParser
+     *            set of parameters to create the source. Optional
+     * @param args
+     *            set of parameters for the new model. Optional
+     */
+    public JSONObject createRemoteSource(final String url,
+            final JSONObject sourceParser, final JSONObject args) {
         try {
             JSONObject requestObject = new JSONObject();
             if (sourceParser != null) {
                 requestObject = sourceParser;
+            }
+            if (args != null) {
+                requestObject.putAll(args);
             }
             requestObject.put("remote", url);
 
@@ -275,15 +364,15 @@ public class Source extends AbstractResource {
 
     /**
      * Creates a source using inline data.
-     * 
+     *
      * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json;
-     * 
+     *
      * @param data
      *            inline data for source
      * @param sourceParser
      *            set of parameters to create the source. Optional
-     * 
+     *
      */
     @Deprecated
     public JSONObject createInlineSource(final String data,
@@ -296,15 +385,15 @@ public class Source extends AbstractResource {
 
     /**
      * Creates a source using inline data.
-     * 
+     *
      * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json;
-     * 
+     *
      * @param data
      *            inline data for source
      * @param sourceParser
      *            set of parameters to create the source. Optional
-     * 
+     *
      */
     public JSONObject createInlineSource(final String data,
             final JSONObject sourceParser) {
@@ -323,14 +412,14 @@ public class Source extends AbstractResource {
 
     /**
      * Retrieves a remote source.
-     * 
+     *
      * GET /andromeda/source/4f64be4003ce890b4500000b?username=$BIGML_USERNAME;
      * api_key=$BIGML_API_KEY; HTTP/1.1 Host: bigml.io
-     * 
+     *
      * @param sourceId
      *            a unique identifier in the form source/id where id is a string
      *            of 24 alpha-numeric chars.
-     * 
+     *
      */
     @Override
     public JSONObject get(final String sourceId) {
@@ -345,13 +434,13 @@ public class Source extends AbstractResource {
 
     /**
      * Retrieves a remote source.
-     * 
+     *
      * GET /andromeda/source/4f64be4003ce890b4500000b?username=$BIGML_USERNAME;
      * api_key=$BIGML_API_KEY; HTTP/1.1 Host: bigml.io
-     * 
+     *
      * @param source
      *            a source JSONObject.
-     * 
+     *
      */
     @Override
     public JSONObject get(final JSONObject source) {
@@ -361,11 +450,11 @@ public class Source extends AbstractResource {
 
     /**
      * Checks whether a source's status is FINISHED.
-     * 
+     *
      * @param sourceId
      *            a unique identifier in the form source/id where id is a string
      *            of 24 alpha-numeric chars.
-     * 
+     *
      */
     @Override
     public boolean isReady(final String sourceId) {
@@ -374,10 +463,10 @@ public class Source extends AbstractResource {
 
     /**
      * Checks whether a source's status is FINISHED.
-     * 
+     *
      * @param source
      *            a source JSONObject
-     * 
+     *
      */
     @Override
     public boolean isReady(final JSONObject source) {
@@ -387,13 +476,13 @@ public class Source extends AbstractResource {
 
     /**
      * Lists all your remote sources.
-     * 
+     *
      * GET /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * Host: bigml.io
-     * 
+     *
      * @param queryString
      *            query filtering the listing.
-     * 
+     *
      */
     @Override
     public JSONObject list(final String queryString) {
@@ -402,19 +491,19 @@ public class Source extends AbstractResource {
 
     /**
      * Updates a source.
-     * 
+     *
      * Updates remote `source` with `changes'.
-     * 
+     *
      * POST /andromeda/source/4f64191d03ce89860a000000?username=$BIGML_USERNAME;
      * api_key=$BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type:
      * application/json
-     * 
+     *
      * @param sourceId
      *            a unique identifier in the form source/id where id is a string
      *            of 24 alpha-numeric chars.
      * @param changes
      *            set of parameters to update the source. Optional
-     * 
+     *
      */
     @Override
     public JSONObject update(final String sourceId, final String changes) {
@@ -428,18 +517,18 @@ public class Source extends AbstractResource {
 
     /**
      * Updates a source.
-     * 
+     *
      * Updates remote `source` with `changes'.
-     * 
+     *
      * POST /andromeda/source/4f64191d03ce89860a000000?username=$BIGML_USERNAME;
      * api_key=$BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type:
      * application/json
-     * 
+     *
      * @param source
      *            a source JSONObject
      * @param changes
      *            set of parameters to update the source. Optional
-     * 
+     *
      */
     @Override
     public JSONObject update(final JSONObject source, final JSONObject changes) {
@@ -449,15 +538,15 @@ public class Source extends AbstractResource {
 
     /**
      * Deletes a remote source permanently.
-     * 
+     *
      * DELETE
      * /andromeda/source/4f603fe203ce89bb2d000000?username=$BIGML_USERNAME
      * ;api_key=$BIGML_API_KEY; HTTP/1.1
-     * 
+     *
      * @param sourceId
      *            a unique identifier in the form source/id where id is a string
      *            of 24 alpha-numeric chars.
-     * 
+     *
      */
     @Override
     public JSONObject delete(final String sourceId) {
@@ -471,14 +560,14 @@ public class Source extends AbstractResource {
 
     /**
      * Deletes a remote source permanently.
-     * 
+     *
      * DELETE
      * /andromeda/source/4f603fe203ce89bb2d000000?username=$BIGML_USERNAME
      * ;api_key=$BIGML_API_KEY; HTTP/1.1
-     * 
+     *
      * @param source
      *            a source JSONObject
-     * 
+     *
      */
     @Override
     public JSONObject delete(final JSONObject source) {

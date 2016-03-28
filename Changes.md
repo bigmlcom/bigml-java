@@ -1,10 +1,27 @@
 # Changes in the BigML.io Java bindings
 
+## 1.4.2 version
+
+### Bugs
+
+* Fixed a LocalEnsemble prediction bug with the comparability option.
+
+* Fixed invalid samples and errors/typos.
+
+* Provided a workaround for JSON escaping forward slashes (/).
+
+### Improvements
+
+* Source didn't accept arguments other than name and source_parser. It now accepts all other arguments.
+
+* An initial version of BigML Java binding document is created and published at http://bigml-java.readthedocs.org.
+
+
 ## 1.4.1 version
 
 ### Bugs
 
-* Fix bug in the constructor of the LocalEnsemble. The JSON path used to access objects was wrong.
+* Fixed bug in the constructor of the LocalEnsemble. The JSON path used to access objects was wrong.
 
 ## 1.4 version
 

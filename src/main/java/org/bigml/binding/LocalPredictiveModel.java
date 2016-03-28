@@ -18,7 +18,7 @@
   import org.bigml.binding.BigMLClient;
   import org.bigml.binding.resources.Model;
 
-  BigMLClient bigmlClient = new BigMLClient();
+  BigMLClient bigmlClient = BigMLClient.getInstance();
 
   Model model = new Model(bigmlClient.getModel('model/5026965515526876630001b2'));
   model.predict("{\"petal length\": 3, \"petal width\": 1}");
@@ -54,10 +54,10 @@ import java.util.*;
 
 /**
  * A lightweight wrapper around a Tree model.
- * 
+ *
  * Uses a BigML remote model to build a local version that can be used to
  * generate prediction locally.
- * 
+ *
  */
 public class LocalPredictiveModel extends BaseModel implements PredictionConverter {
 
@@ -103,7 +103,7 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
 
     /**
      * Constructor
-     * 
+     *
      * @param model
      *            the json representation for the remote model
      */
@@ -190,9 +190,9 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
 
     /**
      * Makes a prediction based on a number of field values.
-     * 
+     *
      * The input fields must be keyed by field name.
-     * 
+     *
      */
     public Prediction predict(final String args)
             throws InputDataParseException {
@@ -223,7 +223,7 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
 
     /**
      * Makes a prediction based on a number of field values.
-     * 
+     *
      * The input fields must be keyed by field name.
      */
     public Prediction predict(final JSONObject args)
@@ -233,7 +233,7 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
 
     /**
      * Makes a prediction based on a number of field values using a Last Prediction Strategy
-     * 
+     *
      * The input fields must be keyed by field name.
      */
     public Prediction predict(final JSONObject args, Boolean byName)
@@ -467,6 +467,7 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
      * @param valueAsString the prediction value as string
      * @return
      */
+    @Override
     public Object toPrediction(String valueAsString, Locale locale) {
         locale = (locale != null ? locale : BigMLClient.DEFAUL_LOCALE);
 
@@ -715,6 +716,7 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
         distribution.addAll(tree.getDistribution());
 
         Collections.sort(distribution, new Comparator<JSONArray>() {
+            @Override
             public int compare(JSONArray o1, JSONArray o2) {
                 Object o1Val = o1.get(0);
                 Object o2Val = o2.get(0);
@@ -774,6 +776,7 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
         }
 
         Collections.sort(predictions, new Comparator<JSONArray>() {
+            @Override
             public int compare(JSONArray o1, JSONArray o2) {
                 Object o1Val = o1.get(0);
                 Object o2Val = o2.get(0);
