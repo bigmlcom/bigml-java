@@ -42,7 +42,7 @@ dependency in your project's ``pom.xml``.
     <dependency>
         <groupId>org.bigml</groupId>
         <artifactId>bigml-binding</artifactId>
-        <version>1.4.1</version>
+        <version>1.4.2</version>
     </dependency>
 
 You can also download the development version of the bindings directly
