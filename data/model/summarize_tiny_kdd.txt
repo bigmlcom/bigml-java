@@ -23,15 +23,15 @@ Field importance:
     · 4.12%: src_bytes <= 315 and dst_bytes > 25045 and dst_host_count > 8 [Error: 0.00302]
     · 3.61%: src_bytes <= 315 and dst_bytes <= 25045 and src_bytes <= 167 and src_bytes <= 161 [Error: 0.00293]
     · 3.09%: src_bytes > 315 and dst_host_same_src_port_rate <= 0.75 and src_bytes <= 325 and count <= 10 and src_bytes <= 323 [Error: 0.00447]
-    · 1.03%: src_bytes <= 315 and dst_bytes <= 25045 and src_bytes > 167 and dst_host_count <= 47 and dst_host_count > 43 and count > 9 [Error: 0.01438]
     · 1.03%: src_bytes <= 315 and dst_bytes <= 25045 and src_bytes <= 167 and src_bytes > 161 and dst_host_count > 97 [Error: 0.02075]
+    · 1.03%: src_bytes <= 315 and dst_bytes <= 25045 and src_bytes > 167 and dst_host_count <= 47 and dst_host_count > 43 and count > 9 [Error: 0.01438]
     · 0.52%: src_bytes <= 315 and dst_bytes <= 25045 and src_bytes > 167 and dst_host_count <= 47 and dst_host_count > 43 and count <= 9 and dst_host_count > 44 [Error: 0.05268]
 
 
 0.01 : (data 3.00% / prediction 3.00%) 
-    · 16.67%: src_bytes > 315 and dst_host_same_src_port_rate > 0.75 [Error: 0.0061]
-    · 16.67%: src_bytes > 315 and dst_host_same_src_port_rate <= 0.75 and src_bytes <= 325 and count > 10 [Error: 0.01254]
-    · 16.67%: src_bytes > 315 and dst_host_same_src_port_rate <= 0.75 and src_bytes <= 325 and count <= 10 and src_bytes > 323 [Error: 0.01095]
-    · 16.67%: src_bytes <= 315 and dst_bytes > 25045 and dst_host_count <= 8 [Error: 0.00855]
-    · 16.67%: src_bytes <= 315 and dst_bytes <= 25045 and src_bytes > 167 and dst_host_count <= 47 and dst_host_count > 43 and count <= 9 and dst_host_count <= 44 [Error: 0.05268]
     · 16.67%: src_bytes <= 315 and dst_bytes <= 25045 and src_bytes <= 167 and src_bytes > 161 and dst_host_count <= 97 [Error: 0.02934]
+    · 16.67%: src_bytes <= 315 and dst_bytes <= 25045 and src_bytes > 167 and dst_host_count <= 47 and dst_host_count > 43 and count <= 9 and dst_host_count <= 44 [Error: 0.05268]
+    · 16.67%: src_bytes <= 315 and dst_bytes > 25045 and dst_host_count <= 8 [Error: 0.00855]
+    · 16.67%: src_bytes > 315 and dst_host_same_src_port_rate <= 0.75 and src_bytes <= 325 and count <= 10 and src_bytes > 323 [Error: 0.01095]
+    · 16.67%: src_bytes > 315 and dst_host_same_src_port_rate <= 0.75 and src_bytes <= 325 and count > 10 [Error: 0.01254]
+    · 16.67%: src_bytes > 315 and dst_host_same_src_port_rate > 0.75 [Error: 0.0061]

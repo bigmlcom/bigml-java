@@ -134,8 +134,8 @@ Field importance:
 
 
 45.56 : (data 0.00% / prediction 2.60%) Midterm <= 75.47
-    · 50.00%: Midterm <= 75.47 and Midterm > 45.315 and TakeHome > 53.055 and TakeHome > 72.035 and Midterm <= 74.69 and Tutorial <= 72.89 and Tutorial > 64.285 [Error: 27.76046]
     · 50.00%: Midterm <= 75.47 and Midterm <= 45.315 and Tutorial <= 70.66 and TakeHome > 67.685 and Tutorial <= 57.645 [Error: 32.18528]
+    · 50.00%: Midterm <= 75.47 and Midterm > 45.315 and TakeHome > 53.055 and TakeHome > 72.035 and Midterm <= 74.69 and Tutorial <= 72.89 and Tutorial > 64.285 [Error: 27.76046]
 
 
 46.67 : (data 0.00% / prediction 1.30%) Midterm <= 75.47 and Midterm <= 45.315 and Tutorial > 70.66 and TakeHome <= 92.685 and TakeHome > 51.295 and Midterm > 40
@@ -143,13 +143,13 @@ Field importance:
 
 
 47.78 : (data 0.00% / prediction 2.60%) Midterm <= 75.47
-    · 50.00%: Midterm <= 75.47 and Midterm > 45.315 and TakeHome <= 53.055 and Tutorial <= 102.275 and Midterm > 46.875 and Assignment > 68.98 and TakeHome > 20.025 and Tutorial <= 85.96 [Error: 8.74428]
     · 50.00%: Midterm <= 75.47 and Midterm <= 45.315 and Tutorial > 70.66 and TakeHome <= 92.685 and TakeHome > 51.295 and Midterm <= 40 and Tutorial > 105.745 [Error: 3.7362]
+    · 50.00%: Midterm <= 75.47 and Midterm > 45.315 and TakeHome <= 53.055 and Tutorial <= 102.275 and Midterm > 46.875 and Assignment > 68.98 and TakeHome > 20.025 and Tutorial <= 85.96 [Error: 8.74428]
 
 
 48.89 : (data 0.00% / prediction 2.60%) Midterm <= 75.47
-    · 50.00%: Midterm <= 75.47 and Midterm > 45.315 and TakeHome > 53.055 and TakeHome > 72.035 and Midterm <= 74.69 and Tutorial > 72.89 and TakeHome > 72.5 and Midterm > 50.315 and Midterm <= 62.5 and Tutorial > 95.71 and Tutorial <= 103.585 and Prefix > 7 and Tutorial <= 96.205 [Error: 3.25702]
     · 50.00%: Midterm <= 75.47 and Midterm <= 45.315 and Tutorial > 70.66 and TakeHome <= 92.685 and TakeHome > 51.295 and Midterm <= 40 and Tutorial <= 105.745 and Tutorial <= 92.845 [Error: 1.47494]
+    · 50.00%: Midterm <= 75.47 and Midterm > 45.315 and TakeHome > 53.055 and TakeHome > 72.035 and Midterm <= 74.69 and Tutorial > 72.89 and TakeHome > 72.5 and Midterm > 50.315 and Midterm <= 62.5 and Tutorial > 95.71 and Tutorial <= 103.585 and Prefix > 7 and Tutorial <= 96.205 [Error: 3.25702]
 
 
 49.17 : (data 0.00% / prediction 1.30%) Midterm <= 75.47 and Midterm <= 45.315 and Tutorial > 70.66 and TakeHome <= 92.685 and TakeHome > 51.295 and Midterm <= 40 and Tutorial <= 105.745 and Tutorial > 92.845
@@ -165,8 +165,8 @@ Field importance:
 
 
 50.83 : (data 0.00% / prediction 2.60%) Midterm <= 75.47 and Midterm > 45.315
-    · 50.00%: Midterm <= 75.47 and Midterm > 45.315 and TakeHome > 53.055 and TakeHome > 72.035 and Midterm <= 74.69 and Tutorial <= 72.89 and Tutorial <= 64.285 [Error: 27.76046]
     · 50.00%: Midterm <= 75.47 and Midterm > 45.315 and TakeHome <= 53.055 and Tutorial <= 102.275 and Midterm > 46.875 and Assignment > 68.98 and TakeHome <= 20.025 and Tutorial > 91.09 [Error: 13.1691]
+    · 50.00%: Midterm <= 75.47 and Midterm > 45.315 and TakeHome > 53.055 and TakeHome > 72.035 and Midterm <= 74.69 and Tutorial <= 72.89 and Tutorial <= 64.285 [Error: 27.76046]
 
 
 51.67 : (data 0.00% / prediction 1.30%) Midterm <= 75.47 and Midterm <= 45.315 and Tutorial <= 70.66 and TakeHome > 67.685 and Tutorial > 57.645
@@ -234,8 +234,8 @@ Field importance:
 
 
 65.28 : (data 0.00% / prediction 2.60%) Midterm <= 75.47
-    · 50.00%: Midterm <= 75.47 and Midterm > 45.315 and TakeHome > 53.055 and TakeHome <= 72.035 and Assignment > 79.485 and Tutorial > 91.875 and Midterm > 63.745 [Error: 7.32202]
     · 50.00%: Midterm <= 75.47 and Midterm <= 45.315 and Tutorial <= 70.66 and TakeHome <= 67.685 and Midterm > 42.19 [Error: 71.69257]
+    · 50.00%: Midterm <= 75.47 and Midterm > 45.315 and TakeHome > 53.055 and TakeHome <= 72.035 and Assignment > 79.485 and Tutorial > 91.875 and Midterm > 63.745 [Error: 7.32202]
 
 
 65.56 : (data 0.00% / prediction 1.30%) Midterm <= 75.47 and Midterm > 45.315 and TakeHome > 53.055 and TakeHome > 72.035 and Midterm <= 74.69 and Tutorial > 72.89 and TakeHome > 72.5 and Midterm > 50.315 and Midterm > 62.5 and Tutorial <= 89.94 and Prefix > 6 and Assignment > 93.53
@@ -259,13 +259,13 @@ Field importance:
 
 
 68.33 : (data 0.00% / prediction 2.60%) Midterm <= 75.47 and Midterm > 45.315 and TakeHome > 53.055
-    · 50.00%: Midterm <= 75.47 and Midterm > 45.315 and TakeHome > 53.055 and TakeHome > 72.035 and Midterm <= 74.69 and Tutorial > 72.89 and TakeHome > 72.5 and Midterm > 50.315 and Midterm > 62.5 and Tutorial > 89.94 and Tutorial > 101.44 and Tutorial > 104.6 [Error: 14.67128]
     · 50.00%: Midterm <= 75.47 and Midterm > 45.315 and TakeHome > 53.055 and TakeHome <= 72.035 and Assignment <= 79.485 and TakeHome <= 58.61 and Tutorial <= 70.18 [Error: 30.71034]
+    · 50.00%: Midterm <= 75.47 and Midterm > 45.315 and TakeHome > 53.055 and TakeHome > 72.035 and Midterm <= 74.69 and Tutorial > 72.89 and TakeHome > 72.5 and Midterm > 50.315 and Midterm > 62.5 and Tutorial > 89.94 and Tutorial > 101.44 and Tutorial > 104.6 [Error: 14.67128]
 
 
 72.22 : (data 2.60% / prediction 2.60%) 
-    · 50.00%: Midterm > 75.47 and Midterm <= 95.31 and Midterm > 90.935 and Tutorial <= 100.745 and Tutorial > 89.615 and Assignment <= 93.16 and Tutorial > 96.055 [Error: 8.79696]
     · 50.00%: Midterm <= 75.47 and Midterm > 45.315 and TakeHome > 53.055 and TakeHome > 72.035 and Midterm <= 74.69 and Tutorial > 72.89 and TakeHome > 72.5 and Midterm <= 50.315 and Tutorial <= 93.13 [Error: 43.93211]
+    · 50.00%: Midterm > 75.47 and Midterm <= 95.31 and Midterm > 90.935 and Tutorial <= 100.745 and Tutorial > 89.615 and Assignment <= 93.16 and Tutorial > 96.055 [Error: 8.79696]
 
 
 73.89 : (data 1.30% / prediction 1.30%) Midterm > 75.47 and Midterm <= 95.31 and Midterm > 90.935 and Tutorial <= 100.745 and Tutorial > 89.615 and Assignment <= 93.16 and Tutorial <= 96.055
@@ -281,8 +281,8 @@ Field importance:
 
 
 78.89 : (data 2.60% / prediction 2.60%) 
-    · 50.00%: Midterm > 75.47 and Midterm <= 95.31 and Midterm <= 90.935 and Midterm <= 90 and Tutorial > 100.63 and Tutorial <= 108.145 [Error: 23.38832]
     · 50.00%: Midterm <= 75.47 and Midterm <= 45.315 and Tutorial <= 70.66 and TakeHome <= 67.685 and Midterm <= 42.19 [Error: 71.69257]
+    · 50.00%: Midterm > 75.47 and Midterm <= 95.31 and Midterm <= 90.935 and Midterm <= 90 and Tutorial > 100.63 and Tutorial <= 108.145 [Error: 23.38832]
 
 
 80 : (data 0.00% / prediction 1.30%) Midterm <= 75.47 and Midterm > 45.315 and TakeHome > 53.055 and TakeHome <= 72.035 and Assignment <= 79.485 and TakeHome > 58.61 and Midterm > 66.25 and Midterm > 69.69
@@ -318,8 +318,8 @@ Field importance:
 
 
 88.89 : (data 0.00% / prediction 2.60%) 
-    · 50.00%: Midterm > 75.47 and Midterm > 95.31 and TakeHome <= 102.13 and Tutorial > 105.45 [Error: 25.04266]
     · 50.00%: Midterm <= 75.47 and Midterm > 45.315 and TakeHome > 53.055 and TakeHome <= 72.035 and Assignment <= 79.485 and TakeHome > 58.61 and Midterm > 66.25 and Midterm <= 69.69 [Error: 46.82931]
+    · 50.00%: Midterm > 75.47 and Midterm > 95.31 and TakeHome <= 102.13 and Tutorial > 105.45 [Error: 25.04266]
 
 
 89.17 : (data 0.00% / prediction 1.30%) Midterm > 75.47 and Midterm <= 95.31 and Midterm > 90.935 and Tutorial <= 100.745 and Tutorial <= 89.615
