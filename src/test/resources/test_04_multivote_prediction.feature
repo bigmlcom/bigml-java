@@ -15,6 +15,7 @@ Feature: Compute MultiVote predictions
           | data/predictions_c.json| 1            | a             | 0.552021302649        |
           | data/predictions_c.json| 2            | a             | 0.403632421178        |
 
+
     Scenario Outline: Successfully computing predictions combinations:
         Given I create a MultiVote for the set of predictions in file <predictions>
         When I compute the prediction with confidence using method "<method>"

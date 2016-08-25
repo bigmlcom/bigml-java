@@ -14,4 +14,4 @@ Feature: Testing projects REST api calls
 
         Examples:
         | seed  | time_1  | name                |   params                            |   new_name             |
-        | BigML |   30    | "my sample name"    |   {"name": "my new sample name"}    | "my new sample name"   |
+        | BigML |   50    | "my project"    |   {"name": "my new project"}    | "my new project"   |
