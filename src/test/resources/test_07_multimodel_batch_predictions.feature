@@ -20,6 +20,7 @@ Feature: Create Batch Predictions from Multi Models
     And I combine the votes in "<path>"
     Then the plurality combined predictions are "<predictions>"
     And the confidence weighted predictions are "<predictions>"
+    Then delete test data
 
   Examples:
     | data          | seed        | time_1  | time_2 | time_3 | params                         |  tag  |  data_input    | path | predictions  |

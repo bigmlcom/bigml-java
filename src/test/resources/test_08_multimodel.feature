@@ -22,6 +22,7 @@ Feature:  Create a model from a dataset list
           | data                | seed      |  time_1  | time_2 | time_3 |  time_4 |
           | data/iris.csv    | BigML     |   10     | 10     | 10     |  10     |
 
+
     Scenario Outline: Successfully creating a model from a dataset list and predicting with it using median:
         Given that I use development mode with seed="<seed>"
         Given I create a data source uploading a "<data>" file
