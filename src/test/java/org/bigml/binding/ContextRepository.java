@@ -41,6 +41,8 @@ public class ContextRepository {
     JSONArray correlations = null;
     JSONObject statisticaltest = null;
     JSONArray statisticaltests = null;
+    JSONObject logisticregression = null;
+    JSONArray logisticregressions = null;
 
     Map<String, Long> datasetErrorCounts;
     Map<String, Long> datasetMissingCounts;
@@ -310,6 +312,22 @@ public class ContextRepository {
 
     public void setStatisticaltests(JSONArray statisticaltests) {
         this.statisticaltests = statisticaltests;
+    }
+
+    public JSONObject getLogisticregression() {
+        return logisticregression;
+    }
+
+    public void setLogisticregression(JSONObject logisticregression) {
+        this.logisticregression = logisticregression;
+    }
+
+    public JSONArray getLogisticregressions() {
+        return logisticregressions;
+    }
+
+    public void setLogisticregressions(JSONArray logisticregressions) {
+        this.logisticregressions = logisticregressions;
     }
 
 }

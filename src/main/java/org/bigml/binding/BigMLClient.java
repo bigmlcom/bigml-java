@@ -78,6 +78,7 @@ public class BigMLClient {
     private Sample sample;
     private Correlation correlation;
     private StatisticalTest statisticalTest;
+    private LogisticRegression logisticRegression;
 
     private Properties props;
     private Boolean devMode = false;
@@ -477,6 +478,8 @@ public class BigMLClient {
         correlation = new Correlation(this.bigmlUser, this.bigmlApiKey,
                 this.devMode, cacheManager);
         statisticalTest = new StatisticalTest(this.bigmlUser, this.bigmlApiKey,
+                this.devMode, cacheManager);
+        logisticRegression = new LogisticRegression(this.bigmlUser, this.bigmlApiKey,
                 this.devMode, cacheManager);
     }
 
@@ -4549,7 +4552,6 @@ public class BigMLClient {
     }
 
 
-
     // ################################################################
     // #
     // # Correlations
@@ -4916,4 +4918,228 @@ public class BigMLClient {
         return statisticalTest.delete(statisticaltestJSON);
     }
 
+
+
+    // ################################################################
+    // #
+    // # LogisticRegression
+    // # https://bigml.com/developers/logisticregressions
+    // #
+    // ################################################################
+
+    /**
+     * Creates a new logistic regression.
+     *
+     * POST /andromeda/logisticregression?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param datasetId
+     *            a unique identifier in the form dataset/id where id is a
+     *            string of 24 alpha-numeric chars for the dataset to attach the
+     *            logisticr egression.
+     * @param args
+     *            set of parameters for the new logistic regression. Optional
+     * @param waitTime
+     *            time to wait for next check of FINISHED status for dataset
+     *            before to start to create the logistic regression. Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     *
+     */
+    public JSONObject createLogisticRegression(final String datasetId, JSONObject args,
+            Integer waitTime, Integer retries) {
+
+        // Setting the seed automatically if it was informed during the initialization
+        if( seed != null && !seed.equals("") ) {
+            if( args == null ) {
+                args = new JSONObject();
+            }
+            if( !args.containsKey("seed") ) {
+                args.put("seed", seed);
+            }
+        }
+
+        return logisticRegression.create(datasetId, args, waitTime, retries);
+    }
+
+    /**
+     * Creates an logistic regression from a list of `datasets`.
+     *
+     * POST /andromeda/logisticregression?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param datasetsIds
+     *            list of identifiers in the form dataset/id where id is a
+     *            string of 24 alpha-numeric chars for the dataset to attach the
+     *            logistic regression.
+     * @param args
+     *            set of parameters for the new logistic regression. Optional
+     * @param waitTime
+     *            time (milliseconds) to wait for next check of FINISHED status
+     *            for source before to start to create the logistic regression.
+     *            Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     *
+     */
+    public JSONObject createLogisticRegression(final List datasetsIds, JSONObject args,
+            Integer waitTime, Integer retries) {
+
+        // Setting the seed automatically if it was informed during the initialization
+        if( seed != null && !seed.equals("") ) {
+            if( args == null ) {
+                args = new JSONObject();
+            }
+            if( !args.containsKey("seed") ) {
+                args.put("seed", seed);
+            }
+        }
+
+        return logisticRegression.create(datasetsIds, args, waitTime, retries);
+    }
+
+    /**
+     * Retrieves a logistic regression.
+     *
+     * A logistic regression is an evolving object that is processed until it
+     * reaches the FINISHED or FAULTY state, the method will return a JSONObject
+     * that encloses the logistic Regression values and state info available at
+     * the time it is called.
+     *
+     * GET
+     * /andromeda/logisticregression/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io
+     *
+     * @param logisticRegressionId
+     *            a unique identifier in the form logisticregression/id where id
+     *            is a string of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject getLogisticRegression(final String logisticRegressionId) {
+        return logisticRegression.get(logisticRegressionId);
+    }
+
+    /**
+     * Retrieves a logisticRegression.
+     *
+     * A logisticRegression is an evolving object that is processed until it
+     * reaches the FINISHED or FAULTY state, the method will return a JSONObject
+     * that encloses the logistic Regression values and state info available at
+     * the time it is called.
+     *
+     * GET
+     * /andromeda/logisticRegression/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io
+     *
+     * @param logisticRegressionJSON
+     *            a logisticRegression JSONObject.
+     *
+     */
+    public JSONObject getLogisticRegression(final JSONObject logisticRegressionJSON) {
+        return logisticRegression.get(logisticRegressionJSON);
+    }
+
+    /**
+     * Check whether a logisticRegression's status is FINISHED.
+     *
+     * @param logisticRegressionId
+     *            a unique identifier in the form logisticregression/id where id is a
+     *            string of 24 alpha-numeric chars.
+     *
+     */
+    public boolean logisticRegressionIsReady(final String logisticRegressionId) {
+        return logisticRegression.isReady(logisticRegressionId);
+    }
+
+    /**
+     * Check whether a logisticRegression's status is FINISHED.
+     *
+     * @param logisticRegressionJSON
+     *            a logisticRegression JSONObject.
+     *
+     */
+    public boolean logisticRegressionIsReady(final JSONObject logisticRegressionJSON) {
+        return logisticRegression.isReady(logisticRegressionJSON);
+    }
+
+    /**
+     * Lists all your logisticRegressions.
+     *
+     * GET /andromeda/logisticRegression?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param queryString
+     *            query filtering the listing.
+     *
+     */
+    public JSONObject listLogisticRegressions(final String queryString) {
+        return logisticRegression.list(queryString);
+    }
+
+    /**
+     * Updates a logisticRegression.
+     *
+     * PUT
+     * /andromeda/logisticRegression/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param logisticRegressionId
+     *            a unique identifier in the form logisticregression/id where id is a
+     *            string of 24 alpha-numeric chars.
+     * @param changes
+     *            set of parameters to update the logistic regression. Optional
+     *
+     */
+    public JSONObject updateLogisticRegression(final String logisticRegressionId,
+            final String changes) {
+        return logisticRegression.update(logisticRegressionId, changes);
+    }
+
+    /**
+     * Updates a logisticRegression.
+     *
+     * PUT
+     * /andromeda/logisticRegression/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param logisticRegressionJSON
+     *            a logisticRegression JSONObject
+     * @param changes
+     *            set of parameters to update the logisticRegression. Optional
+     */
+    public JSONObject updateLogisticRegression(final JSONObject logisticRegressionJSON,
+            final JSONObject changes) {
+        return logisticRegression.update(logisticRegressionJSON, changes);
+    }
+
+    /**
+     * Deletes a logisticRegression.
+     *
+     * DELETE
+     * /andromeda/logisticRegression/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1
+     *
+     * @param logisticRegressionId
+     *            a unique identifier in the form logisticregression/id where id is a
+     *            string of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject deleteLogisticRegression(final String logisticRegressionId) {
+        return logisticRegression.delete(logisticRegressionId);
+    }
+
+    /**
+     * Deletes a logisticRegression.
+     *
+     * DELETE
+     * /andromeda/logisticRegression/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1
+     *
+     * @param logisticRegressionJSON
+     *            a logisticRegression JSONObject.
+     *
+     */
+    public JSONObject deleteLogisticRegression(final JSONObject logisticRegressionJSON) {
+        return logisticRegression.delete(logisticRegressionJSON);
+    }
 }
