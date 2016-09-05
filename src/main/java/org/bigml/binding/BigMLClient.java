@@ -77,6 +77,7 @@ public class BigMLClient {
     private Project project;
     private Sample sample;
     private Correlation correlation;
+    private StatisticalTest statisticalTest;
 
     private Properties props;
     private Boolean devMode = false;
@@ -474,6 +475,8 @@ public class BigMLClient {
         sample = new Sample(this.bigmlUser, this.bigmlApiKey,
                 this.devMode, cacheManager);
         correlation = new Correlation(this.bigmlUser, this.bigmlApiKey,
+                this.devMode, cacheManager);
+        statisticalTest = new StatisticalTest(this.bigmlUser, this.bigmlApiKey,
                 this.devMode, cacheManager);
     }
 
@@ -4728,6 +4731,189 @@ public class BigMLClient {
      */
     public JSONObject deleteCorrelation(final JSONObject correlationJSON) {
         return correlation.delete(correlationJSON);
+    }
+
+    // ################################################################
+    // #
+    // # StatisticalTests
+    // # https://bigml.com/developers/statisticaltests
+    // #
+    // ################################################################
+
+    /**
+     * Creates a new statisticaltest.
+     *
+     * POST /andromeda/statisticaltest?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param datasetId
+     *            a unique identifier in the form dataset/id where id is a
+     *            string of 24 alpha-numeric chars for the dataset to attach the
+     *            statisticaltest.
+     * @param args
+     *            set of parameters for the new statisticaltest. Optional
+     * @param waitTime
+     *            time to wait for next check of FINISHED status for dataset
+     *            before to start to create the statisticaltest. Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     *
+     */
+    public JSONObject createStatisticalTest(final String datasetId, JSONObject args,
+            Integer waitTime, Integer retries) {
+
+        // Setting the seed automatically if it was informed during the initialization
+        if( seed != null && !seed.equals("") ) {
+            if( args == null ) {
+                args = new JSONObject();
+            }
+        }
+
+        return statisticalTest.create(datasetId, args, waitTime, retries);
+    }
+
+    /**
+     * Retrieves a statisticaltest.
+     *
+     * A statisticaltest is an evolving object that is processed until it reaches the
+     * FINISHED or FAULTY state, the method will return a JSONObject that
+     * encloses the statisticaltest values and state info available at the time it is
+     * called.
+     *
+     * GET
+     * /andromeda/ensemble/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io
+     *
+     * @param statisticaltestId
+     *            a unique identifier in the form statisticaltest/id where id is a
+     *            string of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject getStatisticalTest(final String statisticaltestId) {
+        return statisticalTest.get(statisticaltestId);
+    }
+
+    /**
+     * Retrieves an statisticaltest.
+     *
+     * A statisticaltest is an evolving object that is processed until it reaches the
+     * FINISHED or FAULTY state, the method will return a JSONObject that
+     * encloses the ensemble values and state info available at the time it is
+     * called.
+     *
+     * GET
+     * /andromeda/statisticaltest/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io
+     *
+     * @param statisticaltestJSON
+     *            an statisticaltest JSONObject.
+     *
+     */
+    public JSONObject getStatisticalTest(final JSONObject statisticaltestJSON) {
+        return statisticalTest.get(statisticaltestJSON);
+    }
+
+    /**
+     * Check whether a statisticaltest's status is FINISHED.
+     *
+     * @param statisticaltestId
+     *            a unique identifier in the form statisticaltest/id where id is a
+     *            string of 24 alpha-numeric chars.
+     *
+     */
+    public boolean statisticalTestIsReady(final String statisticaltestId) {
+        return statisticalTest.isReady(statisticaltestId);
+    }
+
+    /**
+     * Check whether a statisticaltest's status is FINISHED.
+     *
+     * @param statisticaltestJSON
+     *            an statisticaltest JSONObject.
+     *
+     */
+    public boolean statisticalTestIsReady(final JSONObject statisticaltestJSON) {
+        return statisticalTest.isReady(statisticaltestJSON);
+    }
+
+    /**
+     * Lists all your statisticaltests.
+     *
+     * GET /andromeda/statisticaltest?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param queryString
+     *            query filtering the listing.
+     *
+     */
+    public JSONObject listStatisticalTests(final String queryString) {
+        return statisticalTest.list(queryString);
+    }
+
+    /**
+     * Updates a statisticaltest.
+     *
+     * PUT
+     * /andromeda/statisticaltest/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param statisticaltestId
+     *            a unique identifier in the form statisticaltest/id where id is a
+     *            string of 24 alpha-numeric chars.
+     * @param changes
+     *            set of parameters to update the statisticaltest. Optional
+     *
+     */
+    public JSONObject updateStatisticalTest(final String statisticaltestId, final String changes) {
+        return statisticalTest.update(statisticaltestId, changes);
+    }
+
+    /**
+     * Updates a statisticaltest.
+     *
+     * PUT
+     * /andromeda/statisticaltest/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param statisticaltestJSON
+     *            an statisticaltest JSONObject
+     * @param changes
+     *            set of parameters to update the statisticaltest. Optional
+     */
+    public JSONObject updateStatisticalTest(final JSONObject statisticaltestJSON,
+            final JSONObject changes) {
+        return statisticalTest.update(statisticaltestJSON, changes);
+    }
+
+    /**
+     * Deletes a statisticaltest.
+     *
+     * DELETE
+     * /andromeda/statisticaltest/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1
+     *
+     * @param statisticaltestId
+     *            a unique identifier in the form statisticaltest/id where id is a
+     *            string of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject deleteStatisticalTest(final String statisticaltestId) {
+        return statisticalTest.delete(statisticaltestId);
+    }
+
+    /**
+     * Deletes a statisticaltest.
+     *
+     * DELETE
+     * /andromeda/statisticaltest/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1
+     *
+     * @param statisticaltestJSON
+     *            an statisticaltest JSONObject.
+     *
+     */
+    public JSONObject deleteStatisticalTest(final JSONObject statisticaltestJSON) {
+        return statisticalTest.delete(statisticaltestJSON);
     }
 
 }

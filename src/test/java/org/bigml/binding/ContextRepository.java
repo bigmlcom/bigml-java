@@ -39,6 +39,8 @@ public class ContextRepository {
     List<MultiVote> votes = null;
     JSONObject correlation = null;
     JSONArray correlations = null;
+    JSONObject statisticaltest = null;
+    JSONArray statisticaltests = null;
 
     Map<String, Long> datasetErrorCounts;
     Map<String, Long> datasetMissingCounts;
@@ -292,6 +294,22 @@ public class ContextRepository {
 
     public void setCorrelations(JSONArray correlations) {
         this.correlations = correlations;
+    }
+
+    public JSONObject getStatisticaltest() {
+        return statisticaltest;
+    }
+
+    public void setStatisticaltest(JSONObject statisticaltest) {
+        this.statisticaltest = statisticaltest;
+    }
+
+    public JSONArray getStatisticaltests() {
+        return statisticaltests;
+    }
+
+    public void setStatisticaltests(JSONArray statisticaltests) {
+        this.statisticaltests = statisticaltests;
     }
 
 }

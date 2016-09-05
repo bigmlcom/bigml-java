@@ -48,6 +48,7 @@ public abstract class AbstractResource {
     public final static String PROJECT_PATH = "project";
     public final static String SAMPLE_PATH = "sample";
     public final static String CORRELATION_PATH = "correlation";
+    public final static String STATISTICALTEST_PATH = "statisticaltest";
 
     // Base Resource regular expressions
     static String SOURCE_RE = "^" + SOURCE_PATH + "/[a-f,0-9]{24}$";
@@ -78,6 +79,8 @@ public abstract class AbstractResource {
     static String SAMPLE_RE = "^" + SAMPLE_PATH
             + "/[a-f,0-9]{24}$";
     static String CORRELATION_RE = "^" + CORRELATION_PATH
+            + "/[a-f,0-9]{24}$";
+    static String STATISTICALTEST_RE = "^" + STATISTICALTEST_PATH
             + "/[a-f,0-9]{24}$";
 
     // HTTP Status Codes from https://bigml.com/developers/status_codes
@@ -150,6 +153,7 @@ public abstract class AbstractResource {
     protected String PROJECT_URL;
     protected String SAMPLE_URL;
     protected String CORRELATION_URL;
+    protected String STATISTICALTEST_URL;
 
     public final static String DOWNLOAD_DIR = "/download";
 
@@ -174,6 +178,7 @@ public abstract class AbstractResource {
             PROJECT_URL = BIGML_URL + PROJECT_PATH;
             SAMPLE_URL = BIGML_URL + SAMPLE_PATH;
             CORRELATION_URL = BIGML_URL + CORRELATION_PATH;
+            STATISTICALTEST_URL = BIGML_URL + STATISTICALTEST_PATH;
 
             this.cacheManager = cacheManager;
         } catch (AuthenticationException ae) {
