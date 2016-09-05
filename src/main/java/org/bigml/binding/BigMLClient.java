@@ -76,6 +76,7 @@ public class BigMLClient {
     private BatchCentroid batchCentroid;
     private Project project;
     private Sample sample;
+    private Correlation correlation;
 
     private Properties props;
     private Boolean devMode = false;
@@ -471,6 +472,8 @@ public class BigMLClient {
         project = new Project(this.bigmlUser, this.bigmlApiKey,
                 this.devMode, cacheManager);
         sample = new Sample(this.bigmlUser, this.bigmlApiKey,
+                this.devMode, cacheManager);
+        correlation = new Correlation(this.bigmlUser, this.bigmlApiKey,
                 this.devMode, cacheManager);
     }
 
@@ -4540,6 +4543,191 @@ public class BigMLClient {
      */
     public JSONObject deleteProject(final JSONObject projectJSON) {
         return project.delete(projectJSON);
+    }
+
+
+
+    // ################################################################
+    // #
+    // # Correlations
+    // # https://bigml.com/developers/correlations
+    // #
+    // ################################################################
+
+    /**
+     * Creates a new correlation.
+     *
+     * POST /andromeda/correlation?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param datasetId
+     *            a unique identifier in the form dataset/id where id is a
+     *            string of 24 alpha-numeric chars for the dataset to attach the
+     *            correlation.
+     * @param args
+     *            set of parameters for the new correlation. Optional
+     * @param waitTime
+     *            time to wait for next check of FINISHED status for dataset
+     *            before to start to create the correlation. Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     *
+     */
+    public JSONObject createCorrelation(final String datasetId, JSONObject args,
+            Integer waitTime, Integer retries) {
+
+        // Setting the seed automatically if it was informed during the initialization
+        if( seed != null && !seed.equals("") ) {
+            if( args == null ) {
+                args = new JSONObject();
+            }
+        }
+
+        return correlation.create(datasetId, args, waitTime, retries);
+    }
+
+    /**
+     * Retrieves a correlation.
+     *
+     * A correlation is an evolving object that is processed until it reaches the
+     * FINISHED or FAULTY state, the method will return a JSONObject that
+     * encloses the correlation values and state info available at the time it is
+     * called.
+     *
+     * GET
+     * /andromeda/ensemble/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io
+     *
+     * @param correlationId
+     *            a unique identifier in the form correlation/id where id is a
+     *            string of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject getCorrelation(final String correlationId) {
+        return correlation.get(correlationId);
+    }
+
+    /**
+     * Retrieves an correlation.
+     *
+     * A correlation is an evolving object that is processed until it reaches the
+     * FINISHED or FAULTY state, the method will return a JSONObject that
+     * encloses the ensemble values and state info available at the time it is
+     * called.
+     *
+     * GET
+     * /andromeda/correlation/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io
+     *
+     * @param correlationJSON
+     *            an correlation JSONObject.
+     *
+     */
+    public JSONObject getCorrelation(final JSONObject correlationJSON) {
+        return correlation.get(correlationJSON);
+    }
+
+    /**
+     * Check whether a correlation's status is FINISHED.
+     *
+     * @param correlationId
+     *            a unique identifier in the form correlation/id where id is a
+     *            string of 24 alpha-numeric chars.
+     *
+     */
+    public boolean correlationIsReady(final String correlationId) {
+        return correlation.isReady(correlationId);
+    }
+
+    /**
+     * Check whether a correlation's status is FINISHED.
+     *
+     * @param correlationJSON
+     *            an correlation JSONObject.
+     *
+     */
+    public boolean correlationIsReady(final JSONObject correlationJSON) {
+        return correlation.isReady(correlationJSON);
+    }
+
+    /**
+     * Lists all your correlations.
+     *
+     * GET /andromeda/correlation?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param queryString
+     *            query filtering the listing.
+     *
+     */
+    public JSONObject listCorrelations(final String queryString) {
+        return correlation.list(queryString);
+    }
+
+    /**
+     * Updates a correlation.
+     *
+     * PUT
+     * /andromeda/correlation/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param correlationId
+     *            a unique identifier in the form correlation/id where id is a
+     *            string of 24 alpha-numeric chars.
+     * @param changes
+     *            set of parameters to update the correlation. Optional
+     *
+     */
+    public JSONObject updateCorrelation(final String correlationId, final String changes) {
+        return correlation.update(correlationId, changes);
+    }
+
+    /**
+     * Updates a correlation.
+     *
+     * PUT
+     * /andromeda/correlation/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param correlationJSON
+     *            an correlation JSONObject
+     * @param changes
+     *            set of parameters to update the correlation. Optional
+     */
+    public JSONObject updateCorrelation(final JSONObject correlationJSON,
+            final JSONObject changes) {
+        return correlation.update(correlationJSON, changes);
+    }
+
+    /**
+     * Deletes a correlation.
+     *
+     * DELETE
+     * /andromeda/correlation/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1
+     *
+     * @param correlationId
+     *            a unique identifier in the form correlation/id where id is a
+     *            string of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject deleteCorrelation(final String correlationId) {
+        return correlation.delete(correlationId);
+    }
+
+    /**
+     * Deletes a correlation.
+     *
+     * DELETE
+     * /andromeda/correlation/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1
+     *
+     * @param correlationJSON
+     *            an correlation JSONObject.
+     *
+     */
+    public JSONObject deleteCorrelation(final JSONObject correlationJSON) {
+        return correlation.delete(correlationJSON);
     }
 
 }

@@ -37,6 +37,8 @@ public class ContextRepository {
     JSONArray samples = null;
     MultiModel multiModel = null;
     List<MultiVote> votes = null;
+    JSONObject correlation = null;
+    JSONArray correlations = null;
 
     Map<String, Long> datasetErrorCounts;
     Map<String, Long> datasetMissingCounts;
@@ -275,4 +277,21 @@ public class ContextRepository {
     public void setMultiModel(MultiModel multiModel) {
         this.multiModel = multiModel;
     }
+
+    public JSONObject getCorrelation() {
+        return correlation;
+    }
+
+    public void setCorrelation(JSONObject correlation) {
+        this.correlation = correlation;
+    }
+
+    public JSONArray getCorrelations() {
+        return correlations;
+    }
+
+    public void setCorrelations(JSONArray correlations) {
+        this.correlations = correlations;
+    }
+
 }

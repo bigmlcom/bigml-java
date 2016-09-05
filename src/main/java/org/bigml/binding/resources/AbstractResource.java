@@ -21,11 +21,11 @@ import java.util.List;
 /**
  * Entry point to create, retrieve, list, update, and delete sources, datasets,
  * models and predictions.
- * 
+ *
  * Full API documentation on the API can be found from BigML at:
  * https://bigml.com/developers
- * 
- * 
+ *
+ *
  */
 public abstract class AbstractResource {
 
@@ -47,6 +47,7 @@ public abstract class AbstractResource {
     public final static String BATCHANOMALYSCORE_PATH = "batchanomalyscore";
     public final static String PROJECT_PATH = "project";
     public final static String SAMPLE_PATH = "sample";
+    public final static String CORRELATION_PATH = "correlation";
 
     // Base Resource regular expressions
     static String SOURCE_RE = "^" + SOURCE_PATH + "/[a-f,0-9]{24}$";
@@ -75,6 +76,8 @@ public abstract class AbstractResource {
     static String PROJECT_RE = "^" + PROJECT_PATH
             + "/[a-f,0-9]{24}$";
     static String SAMPLE_RE = "^" + SAMPLE_PATH
+            + "/[a-f,0-9]{24}$";
+    static String CORRELATION_RE = "^" + CORRELATION_PATH
             + "/[a-f,0-9]{24}$";
 
     // HTTP Status Codes from https://bigml.com/developers/status_codes
@@ -146,6 +149,7 @@ public abstract class AbstractResource {
     protected String BATCHANOMALYSCORE_URL;
     protected String PROJECT_URL;
     protected String SAMPLE_URL;
+    protected String CORRELATION_URL;
 
     public final static String DOWNLOAD_DIR = "/download";
 
@@ -169,6 +173,7 @@ public abstract class AbstractResource {
             BATCHANOMALYSCORE_URL = BIGML_URL + BATCHANOMALYSCORE_PATH;
             PROJECT_URL = BIGML_URL + PROJECT_PATH;
             SAMPLE_URL = BIGML_URL + SAMPLE_PATH;
+            CORRELATION_URL = BIGML_URL + CORRELATION_PATH;
 
             this.cacheManager = cacheManager;
         } catch (AuthenticationException ae) {
@@ -478,7 +483,7 @@ public abstract class AbstractResource {
 
     /**
      * Return a dictionary of fields
-     * 
+     *
      */
     public JSONObject getFields(final String resourceId) {
         if (resourceId == null
@@ -511,7 +516,7 @@ public abstract class AbstractResource {
 
     /**
      * Maps status code to string.
-     * 
+     *
      */
     public String status(final String resourceId) {
         if (resourceId == null
@@ -539,10 +544,10 @@ public abstract class AbstractResource {
 
     /**
      * Check whether a resource' status is FINISHED.
-     * 
+     *
      * @param resource
      *            a resource
-     * 
+     *
      */
     public boolean isResourceReady(final JSONObject resource) {
         if (resource == null) {
@@ -578,56 +583,56 @@ public abstract class AbstractResource {
 
     /**
      * Retrieve a resource.
-     * 
+     *
      */
     abstract JSONObject get(final String resourceId);
 
     /**
      * Retrieve a resource.
-     * 
+     *
      */
     abstract JSONObject get(final JSONObject resource);
 
     /**
      * Check whether a resource' status is FINISHED.
-     * 
+     *
      */
     abstract boolean isReady(final String resourceId);
 
     /**
      * Check whether a resource' status is FINISHED.
-     * 
+     *
      */
     abstract boolean isReady(final JSONObject resource);
 
     /**
      * List all your resource.
-     * 
+     *
      */
     abstract public JSONObject list(final String queryString);
 
     /**
      * Update a resource.
-     * 
+     *
      */
     abstract public JSONObject update(final String resourceId, final String json);
 
     /**
      * Update a resource.
-     * 
+     *
      */
     abstract public JSONObject update(final JSONObject resource,
             final JSONObject json);
 
     /**
      * Delete a resource.
-     * 
+     *
      */
     abstract public JSONObject delete(final String resourceId);
 
     /**
      * Delete a resource.
-     * 
+     *
      */
     abstract public JSONObject delete(final JSONObject resource);
 
