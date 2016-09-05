@@ -9,16 +9,18 @@ import org.json.simple.JSONValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Entry point to create, retrieve, list, update, and delete datasets.
- * 
+ *
  * Full API documentation on the API can be found from BigML at:
  * https://bigml.com/developers/dataset
- * 
- * 
+ *
+ *
  */
 public class Dataset extends AbstractResource {
 
@@ -29,7 +31,7 @@ public class Dataset extends AbstractResource {
 
     /**
      * Constructor
-     * 
+     *
      */
     public Dataset() {
         this.bigmlUser = System.getProperty("BIGML_USERNAME");
@@ -42,7 +44,7 @@ public class Dataset extends AbstractResource {
 
     /**
      * Constructor
-     * 
+     *
      */
     public Dataset(final String apiUser, final String apiKey,
             final boolean devMode) {
@@ -84,15 +86,15 @@ public class Dataset extends AbstractResource {
 
     /**
      * Creates a remote dataset.
-     * 
+     *
      * Uses remote `source` to create a new dataset using the arguments in
      * `args`. If `wait_time` is higher than 0 then the dataset creation request
      * is not sent until the `source` has been created successfuly.
-     * 
-     * 
+     *
+     *
      * POST /andromeda/dataset?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     * 
+     *
      * @param sourceId
      *            a unique identifier in the form source/id where id is a string
      *            of 24 alpha-numeric chars for the source to attach the
@@ -104,7 +106,7 @@ public class Dataset extends AbstractResource {
      *            for source before to start to create the dataset. Optional
      * @param retries
      *            number of times to try the operation. Optional
-     * 
+     *
      */
     @Deprecated
     public JSONObject create(final String sourceId, String args,
@@ -118,7 +120,7 @@ public class Dataset extends AbstractResource {
 
     /**
      * Creates a remote dataset.
-     * 
+     *
      * Uses a remote resource to create a new dataset using the
      * arguments in `args`.
      *
@@ -136,7 +138,7 @@ public class Dataset extends AbstractResource {
      *            for source before to start to create the dataset. Optional
      * @param retries
      *            number of times to try the operation. Optional
-     * 
+     *
      */
     public JSONObject create(final String resourceId, JSONObject args,
             Integer waitTime, Integer retries) {
@@ -232,16 +234,77 @@ public class Dataset extends AbstractResource {
 
 
     /**
+     * Creates a remote dataset.
+     *
+     * Uses a lists of remote datasets to create a new dataset using the
+     * arguments in `args`.
+     *
+     * If `wait_time` is higher than 0 then the dataset creation
+     * request is not sent until the `source` has been created successfuly.
+     *
+     * @param datasetsIds
+     *            list of dataset Ids.
+     * @param args
+     *            set of parameters for the new dataset. Optional
+     * @param waitTime
+     *            time to wait for next check of FINISHED status for source
+     *            before to start to create the dataset. Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     *
+     */
+    public JSONObject create(final List<String> datasetsIds, JSONObject args,
+            Integer waitTime, Integer retries) {
+
+        if (datasetsIds == null || datasetsIds.size() == 0 ) {
+            logger.info("Wrong datasets ids. Ids cannot be null");
+            return null;
+        }
+
+        try {
+            JSONObject requestObject = new JSONObject();
+
+            waitTime = waitTime != null ? waitTime : 3000;
+            retries = retries != null ? retries : 10;
+
+            List originDatasetsIds = new ArrayList<String>();
+            for (String resourceId : datasetsIds) {
+                if (waitTime > 0) {
+                    int count = 0;
+                    while (count < retries
+                            && !BigMLClient.getInstance(this.devMode)
+                            .datasetIsReady(resourceId)) {
+                        Thread.sleep(waitTime);
+                        count++;
+                    }
+                }
+                originDatasetsIds.add(resourceId);
+            }
+
+            if (args != null) {
+                requestObject = args;
+            }
+
+            requestObject.put("origin_datasets", originDatasetsIds);
+
+            return createResource(DATASET_URL, requestObject.toJSONString());
+        } catch (Throwable e) {
+            logger.error("Failed to generate the dataset.", e);
+            return null;
+        }
+    }
+
+    /**
      * Retrieves a dataset.
-     * 
+     *
      * GET
      * /andromeda/dataset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io
-     * 
+     *
      * @param datasetId
      *            a unique identifier in the form datset/id where id is a string
      *            of 24 alpha-numeric chars.
-     * 
+     *
      */
     @Override
     public JSONObject get(final String datasetId) {
@@ -256,14 +319,14 @@ public class Dataset extends AbstractResource {
 
     /**
      * Retrieves a dataset.
-     * 
+     *
      * GET
      * /andromeda/dataset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io
-     * 
+     *
      * @param dataset
      *            a dataset JSONObject
-     * 
+     *
      */
     @Override
     public JSONObject get(final JSONObject dataset) {
@@ -273,11 +336,11 @@ public class Dataset extends AbstractResource {
 
     /**
      * Checks whether a dataset's status is FINISHED.
-     * 
+     *
      * @param datasetId
      *            a unique identifier in the form dataset/id where id is a
      *            string of 24 alpha-numeric chars.
-     * 
+     *
      */
     @Override
     public boolean isReady(final String datasetId) {
@@ -286,10 +349,10 @@ public class Dataset extends AbstractResource {
 
     /**
      * Checks whether a dataset's status is FINISHED.
-     * 
+     *
      * @param dataset
      *            a dataset JSONObject
-     * 
+     *
      */
     @Override
     public boolean isReady(final JSONObject dataset) {
@@ -299,13 +362,13 @@ public class Dataset extends AbstractResource {
 
     /**
      * Lists all your datasources.
-     * 
+     *
      * GET /andromeda/dataset?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * Host: bigml.io
-     * 
+     *
      * @param queryString
      *            query filtering the listing.
-     * 
+     *
      */
     @Override
     public JSONObject list(final String queryString) {
@@ -314,17 +377,17 @@ public class Dataset extends AbstractResource {
 
     /**
      * Updates a dataset.
-     * 
+     *
      * PUT
      * /andromeda/dataset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     * 
+     *
      * @param datasetId
      *            a unique identifier in the form dataset/id where id is a
      *            string of 24 alpha-numeric chars.
      * @param changes
      *            set of parameters to update the source. Optional
-     * 
+     *
      */
     @Override
     public JSONObject update(final String datasetId, final String changes) {
@@ -338,16 +401,16 @@ public class Dataset extends AbstractResource {
 
     /**
      * Updates a dataset.
-     * 
+     *
      * PUT
      * /andromeda/dataset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     * 
+     *
      * @param dataset
      *            a dataset JSONObject
      * @param changes
      *            set of parameters to update the source. Optional
-     * 
+     *
      */
     @Override
     public JSONObject update(final JSONObject dataset, final JSONObject changes) {
@@ -357,15 +420,15 @@ public class Dataset extends AbstractResource {
 
     /**
      * Deletes a dataset.
-     * 
+     *
      * DELETE
      * /andromeda/dataset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1
-     * 
+     *
      * @param datasetId
      *            a unique identifier in the form dataset/id where id is a
      *            string of 24 alpha-numeric chars.
-     * 
+     *
      */
     @Override
     public JSONObject delete(final String datasetId) {
@@ -379,14 +442,14 @@ public class Dataset extends AbstractResource {
 
     /**
      * Deletes a dataset.
-     * 
+     *
      * DELETE
      * /andromeda/dataset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1
-     * 
+     *
      * @param dataset
      *            a dataset JSONObject
-     * 
+     *
      */
     @Override
     public JSONObject delete(final JSONObject dataset) {

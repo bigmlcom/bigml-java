@@ -928,6 +928,32 @@ public class BigMLClient {
     }
 
     /**
+     * Creates a remote dataset.
+     *
+     * Uses a lists of remote datasets to create a new dataset using the
+     * arguments in `args`.
+     *
+     * If `wait_time` is higher than 0 then the dataset creation
+     * request is not sent until the `source` has been created successfuly.
+     *
+     * @param datasetsIds
+     *            list of dataset Ids.
+     * @param args
+     *            set of parameters for the new dataset. Optional
+     * @param waitTime
+     *            time to wait for next check of FINISHED status for source
+     *            before to start to create the dataset. Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     *
+     */
+    public JSONObject createDataset(final List datasetsIds, JSONObject args,
+            Integer waitTime, Integer retries) {
+        return dataset.create(datasetsIds, args, waitTime, retries);
+    }
+
+
+    /**
      * Retrieves a dataset.
      *
      * GET
