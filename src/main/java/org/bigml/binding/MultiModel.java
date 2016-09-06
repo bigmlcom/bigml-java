@@ -34,7 +34,8 @@ import org.json.simple.JSONValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MultiModel {
+public class MultiModel implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     /**
      * Logging
