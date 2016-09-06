@@ -11,13 +11,15 @@ import org.json.simple.JSONValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
+
 /**
  * Entry point to create, retrieve, list, update, and delete predictions.
- * 
+ *
  * Full API documentation on the API can be found from BigML at:
  * https://bigml.com/developers/predictions
- * 
- * 
+ *
+ *
  */
 public class Prediction extends AbstractResource {
 
@@ -26,7 +28,7 @@ public class Prediction extends AbstractResource {
 
     /**
      * Constructor
-     * 
+     *
      */
     public Prediction() {
         this.bigmlUser = System.getProperty("BIGML_USERNAME");
@@ -39,7 +41,7 @@ public class Prediction extends AbstractResource {
 
     /**
      * Constructor
-     * 
+     *
      */
     public Prediction(final String apiUser, final String apiKey,
             final boolean devMode) {
@@ -81,15 +83,16 @@ public class Prediction extends AbstractResource {
 
     /**
      * Creates a new prediction.
-     * 
+     *
      * POST
      * /andromeda/prediction?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     * 
-     * @param modelOrEnsembleId
-     *            a unique identifier in the form model/id or ensembke/id where
-     *            id is a string of 24 alpha-numeric chars for the nodel or
-     *            ensemble to attach the prediction.
+     *
+     * @param model
+     *            a unique identifier in the form model/id, ensemble/id or
+     *            logisticregression/id where id is a string of 24 alpha-numeric
+     *            chars for the nodel, nsemble or logisticregression to attach
+     *            the prediction.
      * @param inputData
      *            an object with field's id/value pairs representing the
      *            instance you want to create a prediction for.
@@ -101,28 +104,28 @@ public class Prediction extends AbstractResource {
      *            for model before to start to create the prediction. Optional
      * @param retries
      *            number of times to try the operation. Optional
-     * 
+     *
      */
     @Deprecated
-    public JSONObject create(final String modelOrEnsembleId,
+    public JSONObject create(final String model,
             JSONObject inputData, Boolean byName, String args,
             Integer waitTime, Integer retries) {
         JSONObject argsJSON = (JSONObject) JSONValue.parse(args);
-        return create(modelOrEnsembleId, inputData, byName, argsJSON, waitTime,
-                retries);
+        return create(model, inputData, byName, argsJSON, waitTime, retries);
     }
 
     /**
      * Creates a new prediction.
-     * 
+     *
      * POST
      * /andromeda/prediction?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     * 
-     * @param modelOrEnsembleId
-     *            a unique identifier in the form model/id or ensembke/id where
-     *            id is a string of 24 alpha-numeric chars for the nodel or
-     *            ensemble to attach the prediction.
+     *
+     * @param model
+     *            a unique identifier in the form model/id, ensemble/id or
+     *            logisticregression/id where id is a string of 24 alpha-numeric
+     *            chars for the nodel, nsemble or logisticregression to attach
+     *            the prediction.
      * @param inputData
      *            an object with field's id/value pairs representing the
      *            instance you want to create a prediction for.
@@ -134,68 +137,69 @@ public class Prediction extends AbstractResource {
      *            for model before to start to create the prediction. Optional
      * @param retries
      *            number of times to try the operation. Optional
-     * 
+     *
      */
-    public JSONObject create(final String modelOrEnsembleId,
+    public JSONObject create(final String model,
             JSONObject inputData, Boolean byName, JSONObject args,
             Integer waitTime, Integer retries) {
-        JSONObject ensemble = null;
-        JSONObject model = null;
-        String ensembleId = null;
-        String modelId = null;
 
-        waitTime = waitTime != null ? waitTime : 3000;
-        retries = retries != null ? retries : 10;
+        JSONObject modelJSON = null;
 
-        try {
-            ensemble = BigMLClient.getInstance(this.devMode).getEnsemble(
-                    modelOrEnsembleId);
-            if (ensemble != null) {
-                ensembleId = modelOrEnsembleId;
-                if (waitTime > 0) {
-                    int count = 0;
-                    while (count < retries
-                            && !BigMLClient.getInstance(this.devMode)
-                                    .ensembleIsReady(ensemble)) {
-                        Thread.sleep(waitTime);
-                        count++;
-                    }
-                    try {
-                        modelId = (String) ((JSONArray) Utils.getJSONObject(
-                                ensemble, "object.models")).get(0);
-                        model = BigMLClient.getInstance(this.devMode).getModel(
-                                modelId);
-                    } catch (Exception e) {
-                        logger.error(
-                                "The ensemble has no valid model information",
-                                e);
-                        modelId = null;
-                    }
-                }
-            }
-
-        } catch (Throwable e) {
-        }
-
-        // No ensemble
-        if (modelId == null) {
-            try {
-                model = BigMLClient.getInstance(this.devMode).getModel(
-                        modelOrEnsembleId);
-                modelId = modelOrEnsembleId;
-            } catch (Throwable ex) {
-            }
-
+        if (model == null || model.length() == 0 ||
+            !(model.matches(MODEL_RE) || model.matches(ENSEMBLE_RE) || model.matches(LOGISTICREGRESSION_RE))) {
+            logger.info("Wrong model, ensemble or logisticregression id");
+            return null;
         }
 
         try {
-            if (model != null) {
-                if (ensemble == null) {
+            waitTime = waitTime != null ? waitTime : 3000;
+            retries = retries != null ? retries : 10;
+
+            if (model.matches(ENSEMBLE_RE)) {
+                JSONObject ensembleObj = BigMLClient.getInstance(this.devMode).getEnsemble(
+                        model);
+                if (ensembleObj != null) {
+                    modelJSON = ensembleObj;
                     if (waitTime > 0) {
                         int count = 0;
                         while (count < retries
                                 && !BigMLClient.getInstance(this.devMode)
-                                        .modelIsReady(model)) {
+                                        .ensembleIsReady(ensembleObj)) {
+                            Thread.sleep(waitTime);
+                            count++;
+                        }
+                    }
+                }
+            }
+
+            if (model.matches(MODEL_RE)) {
+                JSONObject modelObj = BigMLClient.getInstance(this.devMode).getModel(
+                            model);
+                if (modelObj != null) {
+                    modelJSON = modelObj;
+                    if (waitTime > 0) {
+                        int count = 0;
+                        while (count < retries
+                                && !BigMLClient.getInstance(this.devMode)
+                                        .modelIsReady(modelObj)) {
+                            Thread.sleep(waitTime);
+                            count++;
+                        }
+                    }
+                }
+            }
+
+            if (model.matches(LOGISTICREGRESSION_RE)) {
+                JSONObject logisticRegressionObj =
+                    BigMLClient.getInstance(this.devMode).getLogisticRegression(
+                            model);
+                if (logisticRegressionObj != null) {
+                    modelJSON = logisticRegressionObj;
+                    if (waitTime > 0) {
+                        int count = 0;
+                        while (count < retries
+                                && !BigMLClient.getInstance(this.devMode)
+                                        .logisticRegressionIsReady(logisticRegressionObj)) {
                             Thread.sleep(waitTime);
                             count++;
                         }
@@ -209,18 +213,23 @@ public class Prediction extends AbstractResource {
                 inputDataJSON = new JSONObject();
             } else {
                 if (byName) {
-                    JSONObject fields = (JSONObject) Utils.getJSONObject(model,
+                    JSONObject fields = (JSONObject) Utils.getJSONObject(modelJSON,
                             "object.model.fields");
 
-                    JSONObject invertedFields = Utils.invertDictionary(fields);
-                    inputDataJSON = new JSONObject();
-                    Iterator iter = inputData.keySet().iterator();
-                    while (iter.hasNext()) {
-                        String key = (String) iter.next();
-                        if (invertedFields.get(key) != null) {
-                            inputDataJSON.put( ((JSONObject) invertedFields.get(key)).get("fieldID"), inputData.get(key));
+                    if (fields != null) {
+                        JSONObject invertedFields = Utils.invertDictionary(fields);
+                        inputDataJSON = new JSONObject();
+                        Iterator iter = inputData.keySet().iterator();
+                        while (iter.hasNext()) {
+                            String key = (String) iter.next();
+                            if (invertedFields.get(key) != null) {
+                                inputDataJSON.put( ((JSONObject) invertedFields.get(key)).get("fieldID"), inputData.get(key));
+                            }
                         }
+                    } else {
+                        inputDataJSON = new JSONObject();
                     }
+
                 } else {
                     inputDataJSON = inputData;
                 }
@@ -231,14 +240,20 @@ public class Prediction extends AbstractResource {
                 requestObject = args;
             }
 
-            if (ensemble == null) {
-                requestObject.put("model", modelId);
-            } else {
-                requestObject.put("ensemble", ensembleId);
+            if (model.matches(MODEL_RE)) {
+                requestObject.put("model", model);
             }
+            if (model.matches(ENSEMBLE_RE)) {
+                requestObject.put("ensemble", model);
+            }
+            if (model.matches(LOGISTICREGRESSION_RE)) {
+                requestObject.put("logisticregression", model);
+            }
+
             requestObject.put("input_data", inputDataJSON);
 
             return createResource(PREDICTION_URL, requestObject.toJSONString());
+
         } catch (Throwable e) {
             logger.error("Error creating prediction", e);
             return null;
@@ -248,14 +263,14 @@ public class Prediction extends AbstractResource {
 
     /**
      * Retrieves a prediction.
-     * 
+     *
      * GET /andromeda/prediction/id?username=$BIGML_USERNAME;api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
-     * 
+     *
      * @param predictionId
      *            a unique identifier in the form prediction/id where id is a
      *            string of 24 alpha-numeric chars.
-     * 
+     *
      */
     @Override
     public JSONObject get(final String predictionId) {
@@ -270,13 +285,13 @@ public class Prediction extends AbstractResource {
 
     /**
      * Retrieves a prediction.
-     * 
+     *
      * GET /andromeda/prediction/id?username=$BIGML_USERNAME;api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
-     * 
+     *
      * @param prediction
      *            an prediction JSONObject
-     * 
+     *
      */
     @Override
     public JSONObject get(final JSONObject prediction) {
@@ -286,11 +301,11 @@ public class Prediction extends AbstractResource {
 
     /**
      * Checks whether a prediction's status is FINISHED.
-     * 
+     *
      * @param predictionId
      *            a unique identifier in the form prediction/id where id is a
      *            string of 24 alpha-numeric chars.
-     * 
+     *
      */
     @Override
     public boolean isReady(final String predictionId) {
@@ -299,10 +314,10 @@ public class Prediction extends AbstractResource {
 
     /**
      * Checks whether a prediction's status is FINISHED.
-     * 
+     *
      * @param prediction
      *            a prediction JSONObject
-     * 
+     *
      */
     @Override
     public boolean isReady(final JSONObject prediction) {
@@ -312,14 +327,14 @@ public class Prediction extends AbstractResource {
 
     /**
      * Lists all your predictions.
-     * 
+     *
      * GET
      * /andromeda/prediction?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * Host: bigml.io
-     * 
+     *
      * @param queryString
      *            query filtering the listing.
-     * 
+     *
      */
     @Override
     public JSONObject list(final String queryString) {
@@ -328,16 +343,16 @@ public class Prediction extends AbstractResource {
 
     /**
      * Updates a prediction.
-     * 
+     *
      * PUT /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     * 
+     *
      * @param predictionId
      *            a unique identifier in the form prediction/id where id is a
      *            string of 24 alpha-numeric chars.
      * @param changes
      *            set of parameters to update the source. Optional
-     * 
+     *
      */
     @Override
     public JSONObject update(final String predictionId, final String changes) {
@@ -351,15 +366,15 @@ public class Prediction extends AbstractResource {
 
     /**
      * Updates a prediction.
-     * 
+     *
      * PUT /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     * 
+     *
      * @param prediction
      *            a prediction JSONObject
      * @param changes
      *            set of parameters to update the source. Optional
-     * 
+     *
      */
     @Override
     public JSONObject update(final JSONObject prediction,
@@ -370,14 +385,14 @@ public class Prediction extends AbstractResource {
 
     /**
      * Deletes a prediction.
-     * 
+     *
      * DELETE /andromeda/prediction/id?username=$BIGML_USERNAME;api_key=
      * $BIGML_API_KEY; HTTP/1.1
-     * 
+     *
      * @param predictionId
      *            a unique identifier in the form prediction/id where id is a
      *            string of 24 alpha-numeric chars
-     * 
+     *
      */
     @Override
     public JSONObject delete(final String predictionId) {
@@ -391,13 +406,13 @@ public class Prediction extends AbstractResource {
 
     /**
      * Deletes a prediction.
-     * 
+     *
      * DELETE /andromeda/prediction/id?username=$BIGML_USERNAME;api_key=
      * $BIGML_API_KEY; HTTP/1.1
-     * 
+     *
      * @param prediction
      *            a prediction JSONObject
-     * 
+     *
      */
     @Override
     public JSONObject delete(final JSONObject prediction) {

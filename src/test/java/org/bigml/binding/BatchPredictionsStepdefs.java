@@ -69,6 +69,23 @@ public class BatchPredictionsStepdefs {
         commonSteps.the_resource_has_been_created_with_status(context.status);
     }
 
+    @When("^I create a batch prediction for the dataset with the logistic regression$")
+    public void I_create_a_batch_prediction_for_the_dataset_with_the_logistic_regression()
+            throws Throwable {
+        String logisticRegresionId = (String) context.logisticregression.get("resource");
+        String datasetId = (String) context.dataset.get("resource");
+
+        JSONObject args = new JSONObject();
+        args.put("tags", Arrays.asList("unitTest"));
+
+        JSONObject resource = BigMLClient.getInstance().createBatchPrediction(
+                logisticRegresionId, datasetId, args, 5, 3);
+        context.status = (Integer) resource.get("code");
+        context.location = (String) resource.get("location");
+        context.batchPrediction = (JSONObject) resource.get("object");
+        commonSteps.the_resource_has_been_created_with_status(context.status);
+    }
+
     @Given("^I wait until the batchprediction status code is either (\\d) or (\\d) less than (\\d+)")
     public void I_wait_until_batch_prediction_status_code_is(int code1,
             int code2, int secs) throws AuthenticationException {
