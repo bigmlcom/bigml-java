@@ -6,6 +6,8 @@ import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import java.io.Serializable;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +41,9 @@ import java.util.Map;
  * localAnomaly.score(inputData);
  *
  */
-public class LocalAnomaly extends ModelFields {
+public class LocalAnomaly extends ModelFields implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private JSONObject anomaly;
 

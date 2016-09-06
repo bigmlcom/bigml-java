@@ -5,6 +5,8 @@ import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import java.io.Serializable;
+
 import java.util.Iterator;
 import java.util.List;
 
@@ -14,7 +16,9 @@ import java.util.List;
  * Uses a BigML remote model to build a local version that contains the
  * main features of a model, except its tree structure.
  */
-public class BaseModel extends ModelFields {
+public class BaseModel extends ModelFields implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     protected JSONObject model;
     protected String description;

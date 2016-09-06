@@ -15,11 +15,11 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Entry point to create, retrieve, list, update, and delete batch predictions.
- * 
+ *
  * Full API documentation on the API can be found from BigML at:
  * https://bigml.com/developers/batch_predictions
- * 
- * 
+ *
+ *
  */
 public class BatchPrediction extends AbstractResource {
 
@@ -28,7 +28,7 @@ public class BatchPrediction extends AbstractResource {
 
     /**
      * Constructor
-     * 
+     *
      */
     public BatchPrediction() {
         this.bigmlApiKey = System.getProperty("BIGML_API_KEY");
@@ -40,7 +40,7 @@ public class BatchPrediction extends AbstractResource {
 
     /**
      * Constructor
-     * 
+     *
      */
     public BatchPrediction(final String apiUser, final String apiKey,
             final boolean devMode) {
@@ -82,14 +82,15 @@ public class BatchPrediction extends AbstractResource {
 
     /**
      * Creates a new batch prediction.
-     * 
+     *
      * POST /andromeda/batchprediction?username=$BIGML_USERNAME;api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
-     * 
-     * @param modelOrEnsembleId
-     *            a unique identifier in the form model/id or ensemble/id where
-     *            id is a string of 24 alpha-numeric chars for the
-     *            model/ensemble to attach the evaluation.
+     *
+     * @param model
+     *            a unique identifier in the form model/id, ensemble/id or
+     *            logisticregression/id where id is a string of 24 alpha-numeric
+     *            chars for the nodel, nsemble or logisticregression to attach
+     *            the prediction.
      * @param datasetId
      *            a unique identifier in the form dataset/id where id is a
      *            string of 24 alpha-numeric chars for the dataset to attach the
@@ -102,26 +103,27 @@ public class BatchPrediction extends AbstractResource {
      *            Optional
      * @param retries
      *            number of times to try the operation. Optional
-     * 
+     *
      */
     @Deprecated
-    public JSONObject create(final String modelOrEnsembleId,
+    public JSONObject create(final String model,
             final String datasetId, String args, Integer waitTime,
             Integer retries) {
         JSONObject argsJSON = (JSONObject) JSONValue.parse(args);
-        return create(modelOrEnsembleId, datasetId, argsJSON, waitTime, retries);
+        return create(model, datasetId, argsJSON, waitTime, retries);
     }
 
     /**
      * Creates a new batch prediction.
-     * 
+     *
      * POST /andromeda/batchprediction?username=$BIGML_USERNAME;api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
-     * 
-     * @param modelOrEnsembleId
-     *            a unique identifier in the form model/id or ensemble/id where
-     *            id is a string of 24 alpha-numeric chars for the
-     *            model/ensemble to attach the evaluation.
+     *
+     * @param model
+     *            a unique identifier in the form model/id, ensemble/id or
+     *            logisticregression/id where id is a string of 24 alpha-numeric
+     *            chars for the nodel, nsemble or logisticregression to attach
+     *            the prediction.
      * @param datasetId
      *            a unique identifier in the form dataset/id where id is a
      *            string of 24 alpha-numeric chars for the dataset to attach the
@@ -134,16 +136,15 @@ public class BatchPrediction extends AbstractResource {
      *            Optional
      * @param retries
      *            number of times to try the operation. Optional
-     * 
+     *
      */
-    public JSONObject create(final String modelOrEnsembleId,
+    public JSONObject create(final String model,
             final String datasetId, JSONObject args, Integer waitTime,
             Integer retries) {
-        if (modelOrEnsembleId == null
-                || modelOrEnsembleId.length() == 0
-                || !(modelOrEnsembleId.matches(MODEL_RE) || modelOrEnsembleId
-                        .matches(ENSEMBLE_RE))) {
-            logger.info("Wrong model or ensemble id");
+
+        if (model == null || model.length() == 0 ||
+            !(model.matches(MODEL_RE) || model.matches(ENSEMBLE_RE) || model.matches(LOGISTICREGRESSION_RE))) {
+            logger.info("Wrong model, ensemble or logisticregression id");
             return null;
         }
         if (datasetId == null || datasetId.length() == 0
@@ -158,19 +159,28 @@ public class BatchPrediction extends AbstractResource {
             if (waitTime > 0) {
                 int count = 0;
 
-                if (modelOrEnsembleId.matches(MODEL_RE)) {
+                if (model.matches(MODEL_RE)) {
                     while (count < retries
                             && !BigMLClient.getInstance(this.devMode)
-                                    .modelIsReady(modelOrEnsembleId)) {
+                                    .modelIsReady(model)) {
                         Thread.sleep(waitTime);
                         count++;
                     }
                 }
 
-                if (modelOrEnsembleId.matches(ENSEMBLE_RE)) {
+                if (model.matches(ENSEMBLE_RE)) {
                     while (count < retries
                             && !BigMLClient.getInstance(this.devMode)
-                                    .ensembleIsReady(modelOrEnsembleId)) {
+                                    .ensembleIsReady(model)) {
+                        Thread.sleep(waitTime);
+                        count++;
+                    }
+                }
+
+                if (model.matches(LOGISTICREGRESSION_RE)) {
+                    while (count < retries
+                            && !BigMLClient.getInstance(this.devMode)
+                                    .logisticRegressionIsReady(model)) {
                         Thread.sleep(waitTime);
                         count++;
                     }
@@ -190,11 +200,14 @@ public class BatchPrediction extends AbstractResource {
                 requestObject = args;
             }
 
-            if (modelOrEnsembleId.matches(MODEL_RE)) {
-                requestObject.put("model", modelOrEnsembleId);
+            if (model.matches(MODEL_RE)) {
+                requestObject.put("model", model);
             }
-            if (modelOrEnsembleId.matches(ENSEMBLE_RE)) {
-                requestObject.put("ensemble", modelOrEnsembleId);
+            if (model.matches(ENSEMBLE_RE)) {
+                requestObject.put("ensemble", model);
+            }
+            if (model.matches(LOGISTICREGRESSION_RE)) {
+                requestObject.put("logisticregression", model);
             }
             requestObject.put("dataset", datasetId);
 
@@ -208,14 +221,14 @@ public class BatchPrediction extends AbstractResource {
 
     /**
      * Retrieves a batch prediction.
-     * 
+     *
      * GET /andromeda/batchprediction/id?username=$BIGML_USERNAME;api_key=
      * $BIGML_API_KEY; Host: bigml.io
-     * 
+     *
      * @param batchPredictionId
      *            a unique identifier in the form batchPrediction/id where id is
      *            a string of 24 alpha-numeric chars.
-     * 
+     *
      */
     @Override
     public JSONObject get(final String batchPredictionId) {
@@ -230,13 +243,13 @@ public class BatchPrediction extends AbstractResource {
 
     /**
      * Retrieves a batch prediction.
-     * 
+     *
      * GET /andromeda/batchprediction/id?username=$BIGML_USERNAME;api_key=
      * $BIGML_API_KEY; Host: bigml.io
-     * 
+     *
      * @param batchPrediction
      *            a batch prediction JSONObject.
-     * 
+     *
      */
     @Override
     public JSONObject get(final JSONObject batchPrediction) {
@@ -246,17 +259,17 @@ public class BatchPrediction extends AbstractResource {
 
     /**
      * Retrieves the batch predictions file.
-     * 
+     *
      * Downloads predictions, that are stored in a remote CSV file. If a path is
      * given in filename, the contents of the file are downloaded and saved
      * locally. A file-like object is returned otherwise.
-     * 
+     *
      * @param batchPredictionId
      *            a unique identifier in the form batchPrediction/id where id is
      *            a string of 24 alpha-numeric chars.
      * @param filename
      *            Path to save file locally
-     * 
+     *
      */
     public JSONObject downloadBatchPrediction(final String batchPredictionId,
             final String filename) {
@@ -273,16 +286,16 @@ public class BatchPrediction extends AbstractResource {
 
     /**
      * Retrieves the batch predictions file.
-     * 
+     *
      * Downloads predictions, that are stored in a remote CSV file. If a path is
      * given in filename, the contents of the file are downloaded and saved
      * locally. A file-like object is returned otherwise.
-     * 
+     *
      * @param batchPrediction
      *            a batch prediction JSONObject.
      * @param filename
      *            Path to save file locally
-     * 
+     *
      */
     public JSONObject downloadBatchPrediction(final JSONObject batchPrediction,
             final String filename) {
@@ -292,11 +305,11 @@ public class BatchPrediction extends AbstractResource {
 
     /**
      * Check whether a batch prediction's status is FINISHED.
-     * 
+     *
      * @param batchPredictionId
      *            a unique identifier in the form batchPrediction/id where id is
      *            a string of 24 alpha-numeric chars.
-     * 
+     *
      */
     @Override
     public boolean isReady(final String batchPredictionId) {
@@ -305,10 +318,10 @@ public class BatchPrediction extends AbstractResource {
 
     /**
      * Check whether a batch prediction's status is FINISHED.
-     * 
+     *
      * @param batchPrediction
      *            a batchPrediction JSONObject.
-     * 
+     *
      */
     @Override
     public boolean isReady(final JSONObject batchPrediction) {
@@ -318,13 +331,13 @@ public class BatchPrediction extends AbstractResource {
 
     /**
      * Lists all your batch predictions.
-     * 
+     *
      * GET /andromeda/batchprediction?username=$BIGML_USERNAME;api_key=
      * $BIGML_API_KEY; Host: bigml.io
-     * 
+     *
      * @param queryString
      *            query filtering the listing.
-     * 
+     *
      */
     @Override
     public JSONObject list(final String queryString) {
@@ -333,16 +346,16 @@ public class BatchPrediction extends AbstractResource {
 
     /**
      * Updates a batch prediction.
-     * 
+     *
      * PUT /andromeda/batchprediction/id?username=$BIGML_USERNAME;api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
-     * 
+     *
      * @param batchPredictionId
      *            a unique identifier in the form batchprediction/id where id is
      *            a string of 24 alpha-numeric chars.
      * @param changes
      *            set of parameters to update the evaluation. Optional
-     * 
+     *
      */
     @Override
     public JSONObject update(final String batchPredictionId,
@@ -357,15 +370,15 @@ public class BatchPrediction extends AbstractResource {
 
     /**
      * Updates a batch prediction.
-     * 
+     *
      * PUT /andromeda/batchprediction/id?username=$BIGML_USERNAME;api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
-     * 
+     *
      * @param batchPrediction
      *            a batchPrediction JSONObject
      * @param changes
      *            set of parameters to update the batch prediction. Optional
-     * 
+     *
      */
     @Override
     public JSONObject update(final JSONObject batchPrediction,
@@ -376,14 +389,14 @@ public class BatchPrediction extends AbstractResource {
 
     /**
      * Deletes a batch prediction.
-     * 
+     *
      * DELETE /andromeda/batchprediction/id?username=$BIGML_USERNAME;api_key=
      * $BIGML_API_KEY; HTTP/1.1
-     * 
+     *
      * @param batchPredictionId
      *            a unique identifier in the form batchprediction/id where id is
      *            a string of 24 alpha-numeric chars.
-     * 
+     *
      */
     @Override
     public JSONObject delete(final String batchPredictionId) {
@@ -397,13 +410,13 @@ public class BatchPrediction extends AbstractResource {
 
     /**
      * Deletes a batch prediction.
-     * 
+     *
      * DELETE /andromeda/batchprediction/id?username=$BIGML_USERNAME;api_key=
      * $BIGML_API_KEY; HTTP/1.1
-     * 
+     *
      * @param batchPrediction
      *            a batchPrediction JSONObject.
-     * 
+     *
      */
     @Override
     public JSONObject delete(final JSONObject batchPrediction) {

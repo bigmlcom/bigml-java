@@ -6,13 +6,16 @@ import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
  * A lightweight wrapper of the field information in the model, cluster
  * or anomaly objects
  */
-public class ModelFields {
+public class ModelFields implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     // Logging
     Logger LOGGER = LoggerFactory.getLogger(ModelFields.class);

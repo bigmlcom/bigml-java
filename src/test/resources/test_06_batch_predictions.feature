@@ -100,3 +100,24 @@ Feature: Create Batch Predictions
         Examples:
           | data             | time_1  | time_2 | time_3 | time_4 | local_file | predictions_file       |
           | data/tiny_kdd.csv | 30      | 30     | 50     | 50     | data/downloaded_batch_predictions_a.csv | data/batch_predictions_a.csv |
+
+
+
+
+    Scenario Outline: Successfully creating a batch prediction for a logistic regression:
+        Given that I use development mode with seed="<seed>"
+        Given I create a data source uploading a "<data>" file
+        And I wait until the source is ready less than <time_1> secs
+        And I add the unitTest tag to the data source waiting less than <time_1> secs
+        And I create a dataset
+        And I wait until the dataset is ready less than <time_2> secs
+        And I create a logisticregression from a dataset
+        And I wait until the logisticregression is ready less than <time_3> secs
+        When I create a batch prediction for the dataset with the logistic regression
+        And I wait until the batch prediction is ready less than <time_4> secs
+        And I download the created predictions file to "<local_file>"
+        Then the batch prediction file "<local_file>" is like "<predictions_file>"
+
+        Examples:
+          | data              | seed      |  time_1   | time_2 | time_3 | time_4 | local_file | predictions_file       |
+          | data/iris.csv     | BigML     |   30      | 30     | 50     | 50     | data/downloaded_batch_predictions_lr.csv | data/batch_predictions_lr.csv |

@@ -2011,10 +2011,11 @@ public class BigMLClient {
      * /andromeda/prediction?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
-     * @param modelOrEnsembleId
-     *            a unique identifier in the form model/id or ensembke/id where
-     *            id is a string of 24 alpha-numeric chars for the nodel or
-     *            ensemble to attach the prediction.
+     * @param modelId
+     *            a unique identifier in the form model/id, ensemble/id or
+     *            logisticregression/id where id is a string of 24 alpha-numeric
+     *            chars for the nodel, nsemble or logisticregression to attach
+     *            the prediction.
      * @param inputData
      *            an object with field's id/value pairs representing the
      *            instance you want to create a prediction for.
@@ -2029,11 +2030,10 @@ public class BigMLClient {
      *
      */
     @Deprecated
-    public JSONObject createPrediction(final String modelOrEnsembleId,
+    public JSONObject createPrediction(final String modelId,
             JSONObject inputData, Boolean byName, String args,
             Integer waitTime, Integer retries) {
-        return prediction.create(modelOrEnsembleId, inputData, byName, args,
-                waitTime, retries);
+        return prediction.create(modelId, inputData, byName, args, waitTime, retries);
     }
 
     /**
@@ -2043,10 +2043,11 @@ public class BigMLClient {
      * /andromeda/prediction?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
-     * @param modelOrEnsembleId
-     *            a unique identifier in the form model/id or ensembke/id where
-     *            id is a string of 24 alpha-numeric chars for the nodel or
-     *            ensemble to attach the prediction.
+     * @param modelId
+     *            a unique identifier in the form model/id, ensemble/id or
+     *            logisticregression/id where id is a string of 24 alpha-numeric
+     *            chars for the nodel, nsemble or logisticregression to attach
+     *            the prediction.
      * @param inputData
      *            an object with field's id/value pairs representing the
      *            instance you want to create a prediction for.
@@ -2060,10 +2061,10 @@ public class BigMLClient {
      *            number of times to try the operation. Optional
      *
      */
-    public JSONObject createPrediction(final String modelOrEnsembleId,
+    public JSONObject createPrediction(final String modelId,
             JSONObject inputData, Boolean byName, JSONObject args,
             Integer waitTime, Integer retries) {
-        return prediction.create(modelOrEnsembleId, inputData, byName, args,
+        return prediction.create(modelId, inputData, byName, args,
                 waitTime, retries);
     }
 
@@ -2943,10 +2944,11 @@ public class BigMLClient {
      * POST /andromeda/batchprediction?username=$BIGML_USERNAME;api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
-     * @param modelOrEnsembleId
-     *            a unique identifier in the form model/id or ensemble/id where
-     *            id is a string of 24 alpha-numeric chars for the
-     *            model/ensemble to attach the evaluation.
+     * @param modelId
+     *            a unique identifier in the form model/id, ensemble/id or
+     *            logisticregression/id where id is a string of 24 alpha-numeric
+     *            chars for the nodel, nsemble or logisticregression to attach
+     *            the prediction.
      * @param datasetId
      *            a unique identifier in the form dataset/id where id is a
      *            string of 24 alpha-numeric chars for the dataset to attach the
@@ -2962,10 +2964,10 @@ public class BigMLClient {
      *
      */
     @Deprecated
-    public JSONObject createBatchPrediction(final String modelOrEnsembleId,
+    public JSONObject createBatchPrediction(final String modelId,
             final String datasetId, String args, Integer waitTime,
             Integer retries) {
-        return batchPrediction.create(modelOrEnsembleId, datasetId, args,
+        return batchPrediction.create(modelId, datasetId, args,
                 waitTime, retries);
     }
 
@@ -2975,10 +2977,11 @@ public class BigMLClient {
      * POST /andromeda/batchprediction?username=$BIGML_USERNAME;api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
-     * @param modelOrEnsembleId
-     *            a unique identifier in the form model/id or ensemble/id where
-     *            id is a string of 24 alpha-numeric chars for the
-     *            model/ensemble to attach the evaluation.
+     * @param modelId
+     *            a unique identifier in the form model/id, ensemble/id or
+     *            logisticregression/id where id is a string of 24 alpha-numeric
+     *            chars for the nodel, nsemble or logisticregression to attach
+     *            the prediction.
      * @param datasetId
      *            a unique identifier in the form dataset/id where id is a
      *            string of 24 alpha-numeric chars for the dataset to attach the
@@ -2993,10 +2996,10 @@ public class BigMLClient {
      *            number of times to try the operation. Optional
      *
      */
-    public JSONObject createBatchPrediction(final String modelOrEnsembleId,
+    public JSONObject createBatchPrediction(final String modelId,
             final String datasetId, JSONObject args, Integer waitTime,
             Integer retries) {
-        return batchPrediction.create(modelOrEnsembleId, datasetId, args,
+        return batchPrediction.create(modelId, datasetId, args,
                 waitTime, retries);
     }
 

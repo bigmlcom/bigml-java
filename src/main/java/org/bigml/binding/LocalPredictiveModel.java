@@ -59,7 +59,9 @@ import java.util.*;
  * generate prediction locally.
  *
  */
-public class LocalPredictiveModel extends BaseModel implements PredictionConverter {
+public class LocalPredictiveModel extends BaseModel implements PredictionConverter, Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     /**
      * Logging

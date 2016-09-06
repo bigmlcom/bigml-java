@@ -4,6 +4,8 @@ import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import java.io.Serializable;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -15,7 +17,9 @@ import java.util.Map;
  * This module defines an auxiliary Centroid predicate structure that is used
  * in the cluster.
  */
-public class LocalCentroid {
+public class LocalCentroid implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     protected static final String[] STATISTIC_MEASURES = {
             "Minimum", "Mean", "Median", "Maximum", "Standard deviation" };
