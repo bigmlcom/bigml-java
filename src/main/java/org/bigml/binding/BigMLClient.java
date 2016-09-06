@@ -1148,9 +1148,10 @@ public class BigMLClient {
      * POST /andromeda/model?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
-     * @param datasetId
-     *            a unique identifier in the form datset/id where id is a string
-     *            of 24 alpha-numeric chars for the dataset to attach the model.
+     * @param resourceId
+     *            a unique identifier in the form [dataset|cluster]/id
+     *            where id is a string of 24 alpha-numeric chars for the
+     *            remote resource to attach the model.
      * @param args
      *            set of parameters for the new model. Optional
      * @param waitTime
@@ -1161,9 +1162,9 @@ public class BigMLClient {
      *
      */
     @Deprecated
-    public JSONObject createModel(final String datasetId, String args,
+    public JSONObject createModel(final String resourceId, String args,
             Integer waitTime, Integer retries) {
-        return model.create(datasetId, args, waitTime, retries);
+        return model.create(resourceId, args, waitTime, retries);
     }
 
     /**
@@ -1172,9 +1173,10 @@ public class BigMLClient {
      * POST /andromeda/model?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
-     * @param datasetId
-     *            a unique identifier in the form datset/id where id is a string
-     *            of 24 alpha-numeric chars for the dataset to attach the model.
+     * @param resourceId
+     *            a unique identifier in the form [dataset|cluster]/id
+     *            where id is a string of 24 alpha-numeric chars for the
+     *            remote resource to attach the model.
      * @param args
      *            set of parameters for the new model. Optional
      * @param waitTime
@@ -1184,7 +1186,7 @@ public class BigMLClient {
      *            number of times to try the operation. Optional
      *
      */
-    public JSONObject createModel(final String datasetId, JSONObject args,
+    public JSONObject createModel(final String resourceId, JSONObject args,
             Integer waitTime, Integer retries) {
 
         // Setting the seed automatically if it was informed during the initialization
@@ -1197,7 +1199,7 @@ public class BigMLClient {
             }
         }
 
-        return model.create(datasetId, args, waitTime, retries);
+        return model.create(resourceId, args, waitTime, retries);
     }
 
     /**
