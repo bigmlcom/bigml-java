@@ -50,6 +50,9 @@ public abstract class AbstractResource {
     public final static String CORRELATION_PATH = "correlation";
     public final static String STATISTICALTEST_PATH = "statisticaltest";
     public final static String LOGISTICREGRESSION_PATH = "logisticregression";
+    public final static String SCRIPT_PATH = "script";
+    public final static String EXECUTION_PATH = "execution";
+    public final static String LIBRARY_PATH = "library";
 
 
     // Base Resource regular expressions
@@ -86,6 +89,9 @@ public abstract class AbstractResource {
             + "/[a-f,0-9]{24}$";
     static String LOGISTICREGRESSION_RE = "^" + LOGISTICREGRESSION_PATH
             + "/[a-f,0-9]{24}$";
+    static String SCRIPT_RE = "^" + SCRIPT_PATH + "/[a-f,0-9]{24}$";
+    static String EXECUTION_RE = "^" + EXECUTION_PATH + "/[a-f,0-9]{24}$";
+    static String LIBRARY_RE = "^" + LIBRARY_PATH + "/[a-f,0-9]{24}$";
 
     // HTTP Status Codes from https://bigml.com/developers/status_codes
     public static int HTTP_OK = 200;
@@ -159,6 +165,9 @@ public abstract class AbstractResource {
     protected String CORRELATION_URL;
     protected String STATISTICALTEST_URL;
     protected String LOGISTICREGRESSION_URL;
+    protected String SCRIPT_URL;
+    protected String EXECUTION_URL;
+    protected String LIBRARY_URL;
 
     public final static String DOWNLOAD_DIR = "/download";
 
@@ -185,6 +194,9 @@ public abstract class AbstractResource {
             CORRELATION_URL = BIGML_URL + CORRELATION_PATH;
             STATISTICALTEST_URL = BIGML_URL + STATISTICALTEST_PATH;
             LOGISTICREGRESSION_URL = BIGML_URL + LOGISTICREGRESSION_PATH;
+            SCRIPT_URL = BIGML_URL + SCRIPT_PATH;
+            EXECUTION_URL = BIGML_URL + EXECUTION_PATH;
+            LIBRARY_URL = BIGML_URL + LIBRARY_PATH;
 
             this.cacheManager = cacheManager;
         } catch (AuthenticationException ae) {

@@ -79,6 +79,9 @@ public class BigMLClient {
     private Correlation correlation;
     private StatisticalTest statisticalTest;
     private LogisticRegression logisticRegression;
+    private Script script;
+    private Execution execution;
+    private Library library;
 
     private Properties props;
     private Boolean devMode = false;
@@ -480,6 +483,12 @@ public class BigMLClient {
         statisticalTest = new StatisticalTest(this.bigmlUser, this.bigmlApiKey,
                 this.devMode, cacheManager);
         logisticRegression = new LogisticRegression(this.bigmlUser, this.bigmlApiKey,
+                this.devMode, cacheManager);
+        script = new Script(this.bigmlUser, this.bigmlApiKey,
+                this.devMode, cacheManager);
+        execution = new Execution(this.bigmlUser, this.bigmlApiKey,
+                this.devMode, cacheManager);
+        library = new Library(this.bigmlUser, this.bigmlApiKey,
                 this.devMode, cacheManager);
     }
 
@@ -5146,5 +5155,533 @@ public class BigMLClient {
      */
     public JSONObject deleteLogisticRegression(final JSONObject logisticRegressionJSON) {
         return logisticRegression.delete(logisticRegressionJSON);
+    }
+
+
+    // ################################################################
+    // #
+    // # Whizzml Script
+    // # https://bigml.com/developers/scripts
+    // #
+    // ################################################################
+
+    /**
+     * Creates a whizzml script from its source code.
+     *
+     * POST /andromeda/script?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param source
+     *            source code for the script. It can be either
+     *              - string: source code
+     *              - script id: the ID for an existing whizzml script
+     *              - path: the path to a file containing the source code
+     * @param args
+     *            set of parameters for the new script. Optional
+     * @param waitTime
+     *            time (milliseconds) to wait for next check of FINISHED status
+     *            for source before to start to create the script. Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     *
+     */
+    public JSONObject createScript(final String source, JSONObject args,
+        Integer waitTime, Integer retries) {
+
+        return script.create(source, args, waitTime, retries);
+    }
+
+    /**
+     * Retrieves a whizzml script.
+     *
+     * GET
+     * /andromeda/script/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param scriptId
+     *            a unique identifier in the form script/id where id is a
+     *            string of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject getScript(final String scriptId) {
+        return script.get(scriptId);
+    }
+
+    /**
+     * Retrieves a whizzml script.
+     *
+     * GET
+     * /andromeda/script/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param scriptJSON
+     *            a script JSONObject
+     *
+     */
+    public JSONObject getScript(final JSONObject scriptJSON) {
+        return script.get(scriptJSON);
+    }
+
+    /**
+     * Checks whether a whizzml script's status is FINISHED.
+     *
+     * @param scriptId
+     *            a unique identifier in the form script/id where id is a
+     *            string of 24 alpha-numeric chars.
+     *
+     */
+    public boolean scriptIsReady(final String scriptId) {
+        return script.isReady(scriptId);
+    }
+
+    /**
+     * Checks whether a whizzml script status is FINISHED.
+     *
+     * @param scriptJSON
+     *            a script JSONObject
+     *
+     */
+    public boolean scriptIsReady(final JSONObject scriptJSON) {
+        return script.isReady(scriptJSON);
+    }
+
+    /**
+     * Lists all your whizzml libraries.
+     *
+     * GET /andromeda/script?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param queryString
+     *            query filtering the listing.
+     *
+     */
+    public JSONObject listScripts(final String queryString) {
+        return script.list(queryString);
+    }
+
+    /**
+     * Updates a whizzml script.
+     *
+     * PUT
+     * /andromeda/script/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param scriptId
+     *            a unique identifier in the form script/id where id is a
+     *            string of 24 alpha-numeric chars.
+     * @param changes
+     *            set of parameters to update the script. Optional
+     *
+     */
+    public JSONObject updateScript(final String scriptId, final String changes) {
+        return script.update(scriptId, changes);
+    }
+
+    /**
+     * Updates a whizzml script.
+     *
+     * PUT
+     * /andromeda/script/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param scriptJSON
+     *            a script JSONObject
+     * @param changes
+     *            set of parameters to update the script. Optional
+     *
+     */
+    public JSONObject updateScript(final JSONObject scriptJSON,
+            final JSONObject changes) {
+        return script.update(scriptJSON, changes);
+    }
+
+    /**
+     * Deletes a whizzml script.
+     *
+     * DELETE
+     * /andromeda/script/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1
+     *
+     * @param scriptId
+     *            a unique identifier in the form script/id where id is a
+     *            string of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject deleteScript(final String scriptId) {
+        return script.delete(scriptId);
+    }
+
+    /**
+     * Deletes a script.
+     *
+     * DELETE
+     * /andromeda/script/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1
+     *
+     * @param scriptJSON
+     *            a script JSONObject
+     *
+     */
+    public JSONObject deleteScript(final JSONObject scriptJSON) {
+        return script.delete(scriptJSON);
+    }
+
+
+    // ################################################################
+    // #
+    // # Whizzml Execution
+    // # https://bigml.com/developers/executions
+    // #
+    // ################################################################
+
+    /**
+     * Creates a whizzml execution for a script.
+     *
+     * POST /andromeda/execution?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param script
+     *            a unique identifier in the form script/id where id is a string
+     *            of 24 alpha-numeric chars for the script to attach the execution.
+     * @param args
+     *            set of parameters for the new execution. Optional
+     * @param waitTime
+     *            time (milliseconds) to wait for next check of FINISHED status
+     *            for source before to start to create the execution. Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     *
+     */
+    public JSONObject createExecution(final String script, JSONObject args,
+        Integer waitTime, Integer retries) {
+
+        return execution.create(script, args, waitTime, retries);
+    }
+
+    /**
+     * Creates a whizzml execution for a list of scripts.
+     *
+     * POST /andromeda/execution?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param scripts
+     *            a list of identifiers in the form script/id where id is a string
+     *            of 24 alpha-numeric chars for the script to attach the execution.
+     * @param args
+     *            set of parameters for the new execution. Optional
+     * @param waitTime
+     *            time (milliseconds) to wait for next check of FINISHED status
+     *            for source before to start to create the execution. Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     *
+     */
+    public JSONObject createExecution(List scripts, JSONObject args,
+                                      Integer waitTime, Integer retries) {
+        return execution.create(scripts, args, waitTime, retries);
+    }
+
+    /**
+     * Retrieves a whizzml execution.
+     *
+     * GET
+     * /andromeda/execution/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param executionId
+     *            a unique identifier in the form execution/id where id is a
+     *            string of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject getExecution(final String executionId) {
+        return execution.get(executionId);
+    }
+
+    /**
+     * Retrieves a whizzml execution.
+     *
+     * GET
+     * /andromeda/execution/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param executionJSON
+     *            a execution JSONObject
+     *
+     */
+    public JSONObject getExecution(final JSONObject executionJSON) {
+        return execution.get(executionJSON);
+    }
+
+    /**
+     * Checks whether a whizzml execution's status is FINISHED.
+     *
+     * @param executionId
+     *            a unique identifier in the form execution/id where id is a
+     *            string of 24 alpha-numeric chars.
+     *
+     */
+    public boolean executionIsReady(final String executionId) {
+        return execution.isReady(executionId);
+    }
+
+    /**
+     * Checks whether a whizzml execution status is FINISHED.
+     *
+     * @param executionJSON
+     *            a execution JSONObject
+     *
+     */
+    public boolean executionIsReady(final JSONObject executionJSON) {
+        return execution.isReady(executionJSON);
+    }
+
+    /**
+     * Lists all your whizzml executions.
+     *
+     * GET /andromeda/execution?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param queryString
+     *            query filtering the listing.
+     *
+     */
+    public JSONObject listExecutions(final String queryString) {
+        return execution.list(queryString);
+    }
+
+    /**
+     * Updates a whizzml execution.
+     *
+     * PUT
+     * /andromeda/execution/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param executionId
+     *            a unique identifier in the form execution/id where id is a
+     *            string of 24 alpha-numeric chars.
+     * @param changes
+     *            set of parameters to update the execution. Optional
+     *
+     */
+    public JSONObject updateExecution(final String executionId, final String changes) {
+        return execution.update(executionId, changes);
+    }
+
+    /**
+     * Updates a whizzml execution.
+     *
+     * PUT
+     * /andromeda/execution/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param executionJSON
+     *            a execution JSONObject
+     * @param changes
+     *            set of parameters to update the execution. Optional
+     *
+     */
+    public JSONObject updateExecution(final JSONObject executionJSON,
+            final JSONObject changes) {
+        return execution.update(executionJSON, changes);
+    }
+
+    /**
+     * Deletes a whizzml execution.
+     *
+     * DELETE
+     * /andromeda/execution/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1
+     *
+     * @param executionId
+     *            a unique identifier in the form execution/id where id is a
+     *            string of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject deleteExecution(final String executionId) {
+        return execution.delete(executionId);
+    }
+
+    /**
+     * Deletes a whizzml execution.
+     *
+     * DELETE
+     * /andromeda/execution/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1
+     *
+     * @param executionJSON
+     *            a execution JSONObject
+     *
+     */
+    public JSONObject deleteExecution(final JSONObject executionJSON) {
+        return execution.delete(executionJSON);
+    }
+
+
+    // ################################################################
+    // #
+    // # Whizzml Library
+    // # https://bigml.com/developers/libraries
+    // #
+    // ################################################################
+
+    /**
+     * Creates a whizzml library from its source code.
+     *
+     * POST /andromeda/library?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param source
+     *            source code for the library. It can be either
+     *              - string: source code
+     *              - library id: the ID for an existing whizzml library
+     *              - path: the path to a file containing the source code
+     * @param args
+     *            set of parameters for the new library. Optional
+     * @param waitTime
+     *            time (milliseconds) to wait for next check of FINISHED status
+     *            for source before to start to create the library. Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     *
+     */
+    public JSONObject createLibrary(final String source, JSONObject args,
+        Integer waitTime, Integer retries) {
+
+        return library.create(source, args, waitTime, retries);
+    }
+
+    /**
+     * Retrieves a whizzml library.
+     *
+     * GET
+     * /andromeda/library/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param libraryId
+     *            a unique identifier in the form library/id where id is a
+     *            string of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject getLibrary(final String libraryId) {
+        return library.get(libraryId);
+    }
+
+    /**
+     * Retrieves a whizzml library.
+     *
+     * GET
+     * /andromeda/library/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param executionJSON
+     *            a library JSONObject
+     *
+     */
+    public JSONObject getLibrary(final JSONObject executionJSON) {
+        return library.get(executionJSON);
+    }
+
+    /**
+     * Checks whether a whizzml library's status is FINISHED.
+     *
+     * @param libraryId
+     *            a unique identifier in the form library/id where id is a
+     *            string of 24 alpha-numeric chars.
+     *
+     */
+    public boolean libraryIsReady(final String libraryId) {
+        return library.isReady(libraryId);
+    }
+
+    /**
+     * Checks whether a whizzml library status is FINISHED.
+     *
+     * @param executionJSON
+     *            a library JSONObject
+     *
+     */
+    public boolean libraryIsReady(final JSONObject executionJSON) {
+        return library.isReady(executionJSON);
+    }
+
+    /**
+     * Lists all your whizzml libraries.
+     *
+     * GET /andromeda/library?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param queryString
+     *            query filtering the listing.
+     *
+     */
+    public JSONObject listLibraries(final String queryString) {
+        return library.list(queryString);
+    }
+
+    /**
+     * Updates a whizzml library.
+     *
+     * PUT
+     * /andromeda/library/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param libraryId
+     *            a unique identifier in the form library/id where id is a
+     *            string of 24 alpha-numeric chars.
+     * @param changes
+     *            set of parameters to update the library. Optional
+     *
+     */
+    public JSONObject updateLibrary(final String libraryId, final String changes) {
+        return library.update(libraryId, changes);
+    }
+
+    /**
+     * Updates a whizzml library.
+     *
+     * PUT
+     * /andromeda/library/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param executionJSON
+     *            a library JSONObject
+     * @param changes
+     *            set of parameters to update the library. Optional
+     *
+     */
+    public JSONObject updateLibrary(final JSONObject executionJSON,
+            final JSONObject changes) {
+        return library.update(executionJSON, changes);
+    }
+
+    /**
+     * Deletes a whizzml library.
+     *
+     * DELETE
+     * /andromeda/library/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1
+     *
+     * @param libraryId
+     *            a unique identifier in the form library/id where id is a
+     *            string of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject deleteLibrary(final String libraryId) {
+        return library.delete(libraryId);
+    }
+
+    /**
+     * Deletes a library.
+     *
+     * DELETE
+     * /andromeda/library/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1
+     *
+     * @param library
+     *            a library JSONObject
+     *
+     */
+    public JSONObject deleteLibrary(final JSONObject executionJSON) {
+        return library.delete(executionJSON);
     }
 }

@@ -3,6 +3,7 @@ package org.bigml.binding;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -43,12 +44,20 @@ public class ContextRepository {
     JSONArray statisticaltests = null;
     JSONObject logisticregression = null;
     JSONArray logisticregressions = null;
+    JSONObject script = null;
+    JSONArray scripts = null;
+    JSONObject execution = null;
+    JSONArray executions = null;
+    JSONObject library = null;
+    JSONArray libraries = null;
 
     Map<String, Long> datasetErrorCounts;
     Map<String, Long> datasetMissingCounts;
 
     Map<String, Long> sampleErrorCounts;
     Map<String, Long> sampleMissingCounts;
+
+    ArrayList<String> scriptsIds = new ArrayList<String>();
 
     public int getStatus() {
         return status;
@@ -328,6 +337,54 @@ public class ContextRepository {
 
     public void setLogisticregressions(JSONArray logisticregressions) {
         this.logisticregressions = logisticregressions;
+    }
+
+    public JSONObject getScript() {
+        return script;
+    }
+
+    public void setScript(JSONObject script) {
+        this.script = script;
+    }
+
+    public JSONArray getScripts() {
+        return scripts;
+    }
+
+    public void setScripts(JSONArray scripts) {
+        this.scripts = scripts;
+    }
+
+    public JSONObject getExecution() {
+        return execution;
+    }
+
+    public void setExecution(JSONObject execution) {
+        this.execution = execution;
+    }
+
+    public JSONArray getExecutions() {
+        return executions;
+    }
+
+    public void setExecutions(JSONArray executions) {
+        this.executions = executions;
+    }
+
+    public JSONObject getLibrary() {
+        return library;
+    }
+
+    public void setLibrary(JSONObject library) {
+        this.library = library;
+    }
+
+    public JSONArray getLibraries() {
+        return libraries;
+    }
+
+    public void setLibraries(JSONArray libraries) {
+        this.libraries = libraries;
     }
 
 }
