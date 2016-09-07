@@ -334,6 +334,60 @@ public class CommonStepdefs {
 
         BigMLClient.getInstance().getCacheManager().cleanCache();
 
+        // Whizzml Libraries
+        JSONArray libraries = (JSONArray) BigMLClient.getInstance()
+                .listLibraries(";tags__in=unitTest").get("objects");
+        for (int i = 0; i < libraries.size(); i++) {
+            JSONObject library = (JSONObject) libraries.get(i);
+            BigMLClient.getInstance().deleteLibrary(
+                    (String) library.get("resource"));
+        }
+
+        // Whizzml Scripts
+        JSONArray scripts = (JSONArray) BigMLClient.getInstance()
+                .listScripts(";tags__in=unitTest").get("objects");
+        for (int i = 0; i < scripts.size(); i++) {
+            JSONObject script = (JSONObject) scripts.get(i);
+            BigMLClient.getInstance().deleteScript(
+                    (String) script.get("resource"));
+        }
+
+        // Whizzml Executions
+        JSONArray executions = (JSONArray) BigMLClient.getInstance()
+                .listExecutions(";tags__in=unitTest").get("objects");
+        for (int i = 0; i < executions.size(); i++) {
+            JSONObject execution = (JSONObject) executions.get(i);
+            BigMLClient.getInstance().deleteExecution(
+                    (String) execution.get("resource"));
+        }
+
+        // LogisticRegression
+        JSONArray logisticRegressions = (JSONArray) BigMLClient.getInstance()
+                .listLogisticRegressions(";tags__in=unitTest").get("objects");
+        for (int i = 0; i < logisticRegressions.size(); i++) {
+            JSONObject logisticRegression = (JSONObject) logisticRegressions.get(i);
+            BigMLClient.getInstance().deleteLogisticRegression(
+                    (String) logisticRegression.get("resource"));
+        }
+
+        // StatisticalTest
+        JSONArray statisticalTests = (JSONArray) BigMLClient.getInstance()
+                .listStatisticalTests(";tags__in=unitTest").get("objects");
+        for (int i = 0; i < statisticalTests.size(); i++) {
+            JSONObject statisticalTest = (JSONObject) statisticalTests.get(i);
+            BigMLClient.getInstance().deleteStatisticalTest(
+                    (String) statisticalTest.get("resource"));
+        }
+
+        // Correlations
+        JSONArray correlations = (JSONArray) BigMLClient.getInstance()
+                .listCorrelations(";tags__in=unitTest").get("objects");
+        for (int i = 0; i < correlations.size(); i++) {
+            JSONObject correlation = (JSONObject) correlations.get(i);
+            BigMLClient.getInstance().deleteCorrelation(
+                    (String) correlation.get("resource"));
+        }
+
         // BatchCentroids
         JSONArray batchCentroids = (JSONArray) BigMLClient.getInstance()
                 .listBatchCentroids(";tags__in=unitTest").get("objects");
