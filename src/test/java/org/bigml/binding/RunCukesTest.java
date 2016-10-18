@@ -34,7 +34,7 @@ import cucumber.junit.Cucumber;
         "src/test/resources/test_26_statistical_test.feature",
         "src/test/resources/test_27_logistic_regression.feature",
         "src/test/resources/test_29_script.feature",
-        "src/test/resources/test_30_execution.feature"
+        "src/test/resources/test_30_execution.feature",
         "src/test/resources/test_31_library.feature",
         "src/test/resources/delete_all_dev_data.feature" })
 public class RunCukesTest {
