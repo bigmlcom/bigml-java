@@ -1,5 +1,20 @@
 # Changes in the BigML.io Java bindings
 
+## 1.5 version    
+
+### Improvements
+
+* Create dataset from list of Datasets
+* Correlation Resource
+* StatisticalTest Resource
+* Logistic Regression Resource
+* Tests renaming and fixing
+* Made Local Ensemble and dependencies serializable
+* Preditcion/BatchPrediction: create from LogisticRegression
+* Create model from cluster
+* Whizzml Resources
+
+
 ## 1.4.2 version
 
 ### Bugs
