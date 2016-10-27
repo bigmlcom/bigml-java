@@ -1,5 +1,11 @@
 # Changes in the BigML.io Java bindings
 
+## 1.5.1 version    
+
+### Improvements
+
+* Create evaluation from Logistic Regression
+
 ## 1.5 version    
 
 ### Improvements
