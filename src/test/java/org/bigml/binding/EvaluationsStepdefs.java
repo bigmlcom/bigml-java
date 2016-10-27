@@ -68,6 +68,26 @@ public class EvaluationsStepdefs {
         commonSteps.the_resource_has_been_created_with_status(context.status);
     }
 
+
+    @When("^I create an evaluation for the logistic regression with the dataset$")
+    public void I_create_an_evaluation_for_the_logistic_regression_with_the_dataset()
+            throws Throwable {
+
+        String logisticRegressionId = (String) context.logisticregression.get("resource");
+        String datasetId = (String) context.dataset.get("resource");
+
+        JSONObject args = new JSONObject();
+        args.put("tags", Arrays.asList("unitTest"));
+
+        JSONObject resource = BigMLClient.getInstance().createEvaluation(
+                logisticRegressionId, datasetId, args, 5, 3);
+        context.status = (Integer) resource.get("code");
+        context.location = (String) resource.get("location");
+        context.evaluation = (JSONObject) resource.get("object");
+        commonSteps.the_resource_has_been_created_with_status(context.status);
+    }
+
+
     @Given("^I wait until the evaluation status code is either (\\d) or (\\d) less than (\\d+)")
     public void I_wait_until_evaluation_status_code_is(int code1, int code2,
             int secs) throws AuthenticationException {
@@ -116,10 +136,6 @@ public class EvaluationsStepdefs {
     @Then("^the measured \"([^\"]*)\" is equals to ([\\d,.]+)$")
     public void the_measured_is_equals_to(String measure, double value)
             throws Throwable {
-
-        System.out.println("1 ...... "
-                + Utils.getJSONObject(context.evaluation, "result.model."
-                        + measure));
 
         double measureLong = (Double) Utils.getJSONObject(context.evaluation,
                 "result.model." + measure);

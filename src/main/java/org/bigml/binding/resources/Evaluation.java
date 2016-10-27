@@ -9,11 +9,11 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Entry point to create, retrieve, list, update, and delete evaluations.
- * 
+ *
  * Full API documentation on the API can be found from BigML at:
  * https://bigml.com/developers/evaluations
- * 
- * 
+ *
+ *
  */
 public class Evaluation extends AbstractResource {
 
@@ -22,7 +22,7 @@ public class Evaluation extends AbstractResource {
 
     /**
      * Constructor
-     * 
+     *
      */
     public Evaluation() {
         this.bigmlApiKey = System.getProperty("BIGML_API_KEY");
@@ -34,7 +34,7 @@ public class Evaluation extends AbstractResource {
 
     /**
      * Constructor
-     * 
+     *
      */
     public Evaluation(final String apiUser, final String apiKey,
             final boolean devMode) {
@@ -76,15 +76,16 @@ public class Evaluation extends AbstractResource {
 
     /**
      * Create a new evaluation.
-     * 
+     *
      * POST
      * /andromeda/evaluation?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     * 
-     * @param modelOrEnsembleId
-     *            a unique identifier in the form model/id or ensemble/id where
-     *            id is a string of 24 alpha-numeric chars for the
-     *            model/ensemble to attach the evaluation.
+     *
+     * @param model
+     *            a unique identifier in the form model/id, ensemble/id or
+     *            logisticregression/id where id is a string of 24 alpha-numeric
+     *            chars for the nodel, nsemble or logisticregression to attach
+     *            the prediction.
      * @param datasetId
      *            a unique identifier in the form dataset/id where id is a
      *            string of 24 alpha-numeric chars for the dataset to attach the
@@ -96,27 +97,27 @@ public class Evaluation extends AbstractResource {
      *            for model before to start to create the evaluation. Optional
      * @param retries
      *            number of times to try the operation. Optional
-     * 
+     *
      */
     @Deprecated
-    public JSONObject create(final String modelOrEnsembleId,
-            final String datasetId, String args, Integer waitTime,
-            Integer retries) {
+    public JSONObject create(final String model, final String datasetId,
+            String args, Integer waitTime, Integer retries) {
         JSONObject argsJSON = (JSONObject) JSONValue.parse(args);
-        return create(modelOrEnsembleId, datasetId, argsJSON, waitTime, retries);
+        return create(model, datasetId, argsJSON, waitTime, retries);
     }
 
     /**
      * Create a new evaluation.
-     * 
+     *
      * POST
      * /andromeda/evaluation?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     * 
-     * @param modelOrEnsembleId
-     *            a unique identifier in the form model/id or ensemble/id where
-     *            id is a string of 24 alpha-numeric chars for the
-     *            model/ensemble to attach the evaluation.
+     *
+     * @param model
+     *            a unique identifier in the form model/id, ensemble/id or
+     *            logisticregression/id where id is a string of 24 alpha-numeric
+     *            chars for the nodel, nsemble or logisticregression to attach
+     *            the prediction.
      * @param datasetId
      *            a unique identifier in the form dataset/id where id is a
      *            string of 24 alpha-numeric chars for the dataset to attach the
@@ -128,18 +129,17 @@ public class Evaluation extends AbstractResource {
      *            for model before to start to create the evaluation. Optional
      * @param retries
      *            number of times to try the operation. Optional
-     * 
+     *
      */
-    public JSONObject create(final String modelOrEnsembleId,
-            final String datasetId, JSONObject args, Integer waitTime,
-            Integer retries) {
-        if (modelOrEnsembleId == null
-                || modelOrEnsembleId.length() == 0
-                || !(modelOrEnsembleId.matches(MODEL_RE) || modelOrEnsembleId
-                        .matches(ENSEMBLE_RE))) {
-            logger.info("Wrong model id");
+    public JSONObject create(final String model, final String datasetId,
+            JSONObject args, Integer waitTime, Integer retries) {
+
+        if (model == null || model.length() == 0 ||
+            !(model.matches(MODEL_RE) || model.matches(ENSEMBLE_RE) || model.matches(LOGISTICREGRESSION_RE))) {
+            logger.info("Wrong model, ensemble or logisticregression id");
             return null;
         }
+
         if (datasetId == null || datasetId.length() == 0
                 || !datasetId.matches(DATASET_RE)) {
             logger.info("Wrong dataset id");
@@ -152,19 +152,28 @@ public class Evaluation extends AbstractResource {
             if (waitTime > 0) {
                 int count = 0;
 
-                if (modelOrEnsembleId.matches(MODEL_RE)) {
+                if (model.matches(MODEL_RE)) {
                     while (count < retries
                             && !BigMLClient.getInstance(this.devMode)
-                                    .modelIsReady(modelOrEnsembleId)) {
+                                    .modelIsReady(model)) {
                         Thread.sleep(waitTime);
                         count++;
                     }
                 }
 
-                if (modelOrEnsembleId.matches(ENSEMBLE_RE)) {
+                if (model.matches(ENSEMBLE_RE)) {
                     while (count < retries
                             && !BigMLClient.getInstance(this.devMode)
-                                    .ensembleIsReady(modelOrEnsembleId)) {
+                                    .ensembleIsReady(model)) {
+                        Thread.sleep(waitTime);
+                        count++;
+                    }
+                }
+
+                if (model.matches(LOGISTICREGRESSION_RE)) {
+                    while (count < retries
+                            && !BigMLClient.getInstance(this.devMode)
+                                    .logisticRegressionIsReady(model)) {
                         Thread.sleep(waitTime);
                         count++;
                     }
@@ -184,11 +193,14 @@ public class Evaluation extends AbstractResource {
                 requestObject = args;
             }
 
-            if (modelOrEnsembleId.matches(MODEL_RE)) {
-                requestObject.put("model", modelOrEnsembleId);
+            if (model.matches(MODEL_RE)) {
+                requestObject.put("model", model);
             }
-            if (modelOrEnsembleId.matches(ENSEMBLE_RE)) {
-                requestObject.put("ensemble", modelOrEnsembleId);
+            if (model.matches(ENSEMBLE_RE)) {
+                requestObject.put("ensemble", model);
+            }
+            if (model.matches(LOGISTICREGRESSION_RE)) {
+                requestObject.put("logisticregression", model);
             }
             requestObject.put("dataset", datasetId);
 
@@ -201,19 +213,19 @@ public class Evaluation extends AbstractResource {
 
     /**
      * Retrieves an evaluation.
-     * 
+     *
      * An evaluation is an evolving object that is processed until it reaches
      * the FINISHED or FAULTY state, the method will return a JSONObject that
      * encloses the evaluation values and state info available at the time it is
      * called.
-     * 
+     *
      * GET /andromeda/evaluation/id?username=$BIGML_USERNAME;api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
-     * 
+     *
      * @param evaluationId
      *            a unique identifier in the form evaluation/id where id is a
      *            string of 24 alpha-numeric chars.
-     * 
+     *
      */
     @Override
     public JSONObject get(final String evaluationId) {
@@ -228,18 +240,18 @@ public class Evaluation extends AbstractResource {
 
     /**
      * Retrieves an evaluation.
-     * 
+     *
      * An evaluation is an evolving object that is processed until it reaches
      * the FINISHED or FAULTY state, the method will return a JSONObject that
      * encloses the evaluation values and state info available at the time it is
      * called.
-     * 
+     *
      * GET /andromeda/evaluation/id?username=$BIGML_USERNAME;api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
-     * 
+     *
      * @param evaluation
      *            an evaluation JSONObject.
-     * 
+     *
      */
     @Override
     public JSONObject get(final JSONObject evaluation) {
@@ -249,11 +261,11 @@ public class Evaluation extends AbstractResource {
 
     /**
      * Check whether an evaluation's status is FINISHED.
-     * 
+     *
      * @param evaluationId
      *            a unique identifier in the form evaluation/id where id is a
      *            string of 24 alpha-numeric chars.
-     * 
+     *
      */
     @Override
     public boolean isReady(final String evaluationId) {
@@ -262,10 +274,10 @@ public class Evaluation extends AbstractResource {
 
     /**
      * Check whether an evaluation's status is FINISHED.
-     * 
+     *
      * @param evaluation
      *            an evaluation JSONObject.
-     * 
+     *
      */
     @Override
     public boolean isReady(final JSONObject evaluation) {
@@ -275,14 +287,14 @@ public class Evaluation extends AbstractResource {
 
     /**
      * Lists all your evaluations.
-     * 
+     *
      * GET
      * /andromeda/evaluation?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * Host: bigml.io
-     * 
+     *
      * @param queryString
      *            query filtering the listing.
-     * 
+     *
      */
     @Override
     public JSONObject list(final String queryString) {
@@ -291,16 +303,16 @@ public class Evaluation extends AbstractResource {
 
     /**
      * Updates an evaluation.
-     * 
+     *
      * PUT /andromeda/evaluation/id?username=$BIGML_USERNAME;api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
-     * 
+     *
      * @param evaluationId
      *            a unique identifier in the form evaluation/id where id is a
      *            string of 24 alpha-numeric chars.
      * @param changes
      *            set of parameters to update the evaluation. Optional
-     * 
+     *
      */
     @Override
     public JSONObject update(final String evaluationId, final String changes) {
@@ -314,15 +326,15 @@ public class Evaluation extends AbstractResource {
 
     /**
      * Updates an evaluation.
-     * 
+     *
      * PUT /andromeda/evaluation/id?username=$BIGML_USERNAME;api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
-     * 
+     *
      * @param evaluation
      *            an evaluation JSONObject
      * @param changes
      *            set of parameters to update the evaluation. Optional
-     * 
+     *
      */
     @Override
     public JSONObject update(final JSONObject evaluation,
@@ -333,14 +345,14 @@ public class Evaluation extends AbstractResource {
 
     /**
      * Deletes an evaluation.
-     * 
+     *
      * DELETE /andromeda/evaluation/id?username=$BIGML_USERNAME;api_key=
      * $BIGML_API_KEY; HTTP/1.1
-     * 
+     *
      * @param evaluationId
      *            a unique identifier in the form evaluation/id where id is a
      *            string of 24 alpha-numeric chars.
-     * 
+     *
      */
     @Override
     public JSONObject delete(final String evaluationId) {
@@ -354,13 +366,13 @@ public class Evaluation extends AbstractResource {
 
     /**
      * Deletes an evaluation.
-     * 
+     *
      * DELETE /andromeda/evaluation/id?username=$BIGML_USERNAME;api_key=
      * $BIGML_API_KEY; HTTP/1.1
-     * 
+     *
      * @param evaluation
      *            an evaluation JSONObject.
-     * 
+     *
      */
     @Override
     public JSONObject delete(final JSONObject evaluation) {

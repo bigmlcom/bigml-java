@@ -2464,10 +2464,11 @@ public class BigMLClient {
      * /andromeda/evaluation?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
-     * @param modelOrEnsembleId
-     *            a unique identifier in the form model/id or ensemble/id where
-     *            id is a string of 24 alpha-numeric chars for the
-     *            model/ensemble to attach the evaluation.
+     * @param modelId
+     *            a unique identifier in the form model/id, ensemble/id or
+     *            logisticregression/id where id is a string of 24 alpha-numeric
+     *            chars for the nodel, nsemble or logisticregression to attach
+     *            the prediction.
      * @param datasetId
      *            a unique identifier in the form dataset/id where id is a
      *            string of 24 alpha-numeric chars for the dataset to attach the
@@ -2482,9 +2483,9 @@ public class BigMLClient {
      *
      */
     @Deprecated
-    public JSONObject createEvaluation(final String modelOrEnsembleId,
+    public JSONObject createEvaluation(final String modelId,
             final String datasetId, String args, Integer waitTime, Integer retries) {
-        return evaluation.create(modelOrEnsembleId, datasetId, args, waitTime,
+        return evaluation.create(modelId, datasetId, args, waitTime,
                 retries);
     }
 
@@ -2495,10 +2496,11 @@ public class BigMLClient {
      * /andromeda/evaluation?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
-     * @param modelOrEnsembleId
-     *            a unique identifier in the form model/id or ensemble/id where
-     *            id is a string of 24 alpha-numeric chars for the
-     *            model/ensemble to attach the evaluation.
+     * @param modelId
+     *            a unique identifier in the form model/id, ensemble/id or
+     *            logisticregression/id where id is a string of 24 alpha-numeric
+     *            chars for the nodel, nsemble or logisticregression to attach
+     *            the prediction.
      * @param datasetId
      *            a unique identifier in the form dataset/id where id is a
      *            string of 24 alpha-numeric chars for the dataset to attach the
@@ -2512,7 +2514,7 @@ public class BigMLClient {
      *            number of times to try the operation. Optional
      *
      */
-    public JSONObject createEvaluation(final String modelOrEnsembleId,
+    public JSONObject createEvaluation(final String modelId,
             final String datasetId, JSONObject args, Integer waitTime,
             Integer retries) {
 
@@ -2526,8 +2528,7 @@ public class BigMLClient {
             }
         }
 
-        return evaluation.create(modelOrEnsembleId, datasetId, args, waitTime,
-                retries);
+        return evaluation.create(modelId, datasetId, args, waitTime, retries);
     }
 
     /**
