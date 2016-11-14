@@ -489,7 +489,7 @@ public abstract class AbstractResource {
                 }
             }
         } catch (Throwable e) {
-            logger.error("Error deleting resource ", e);
+            logger.error("Error deleting resource: ", urlString);
         }
 
         // Delete the resource from the cache
