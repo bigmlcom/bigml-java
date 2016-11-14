@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.FileInputStream;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -174,13 +175,13 @@ public class ClustersStepdefs {
         assertEquals(result, context.centroid.get("centroid_name"));
 
         BigDecimal centroidDist = new BigDecimal(((Number) context.centroid.get("distance")).doubleValue());
-        centroidDist = centroidDist.setScale(8, BigDecimal.ROUND_UP);
+        centroidDist = centroidDist.setScale(5, RoundingMode.HALF_EVEN);
 
         BigDecimal expectedDistance = new BigDecimal(distance);
-        expectedDistance = expectedDistance.setScale(8, BigDecimal.ROUND_UP);
+        expectedDistance = expectedDistance.setScale(5, RoundingMode.HALF_EVEN);
 
-        String confidenceValue = String.format("%.8g", centroidDist);
-        assertTrue(confidenceValue.equals(String.format("%.8g", expectedDistance)));
+        String confidenceValue = String.format("%.5g", centroidDist);
+        assertTrue(confidenceValue.equals(String.format("%.5g", expectedDistance)));
     }
 
     @Then("the local centroid is \"([^\"]*)\" with distance (.*)$")
@@ -188,13 +189,13 @@ public class ClustersStepdefs {
         assertEquals(result, context.localCentroid.get("centroid_name"));
 
         BigDecimal centroidDist = new BigDecimal(((Number) context.centroid.get("distance")).doubleValue());
-        centroidDist = centroidDist.setScale(8, BigDecimal.ROUND_UP);
+        centroidDist = centroidDist.setScale(5, RoundingMode.HALF_EVEN);
 
         BigDecimal expectedDistance = new BigDecimal(distance);
-        expectedDistance = expectedDistance.setScale(8, BigDecimal.ROUND_UP);
+        expectedDistance = expectedDistance.setScale(5, RoundingMode.HALF_EVEN);
 
-        String confidenceValue = String.format("%.8g", centroidDist);
-        assertTrue(confidenceValue.equals(String.format("%.8g", expectedDistance)));
+        String confidenceValue = String.format("%.5g", centroidDist);
+        assertTrue(confidenceValue.equals(String.format("%.5g", expectedDistance)));
     }
 
     @Then("the centroid is \"([^\"]*)\"$")
