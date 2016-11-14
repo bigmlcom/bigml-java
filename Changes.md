@@ -1,5 +1,11 @@
 # Changes in the BigML.io Java bindings
 
+## 1.5.2 version    
+
+### Bugs
+
+* Fixed test suite
+
 ## 1.5.1 version    
 
 ### Improvements
