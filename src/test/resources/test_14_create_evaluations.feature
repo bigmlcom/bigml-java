@@ -56,4 +56,4 @@ Feature: Create Evaluations
 
         Examples:
         | data             | seed      | time_1  | time_2 | tlp | time_3 | time_4 | measure       | value  |
-        | data/iris.csv | BigML | 30      | 30     | 5                | 50     | 30     | average_phi   | 0.94107   |
+        | data/iris.csv | BigML | 30      | 30     | 5                | 50     | 30     | average_phi   | 0.89054   |

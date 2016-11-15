@@ -87,7 +87,7 @@ public class ProjectsStepdefs {
     @Given("^I wait until the project is ready less than (\\d+) secs$")
     public void I_wait_until_the_project_is_ready_less_than_secs(int secs)
             throws AuthenticationException {
-        I_wait_until_project_status_code_is(AbstractResource.HTTP_OK,
+        I_wait_until_project_status_code_is(AbstractResource.HTTP_CREATED,
                 AbstractResource.HTTP_NOT_FOUND, secs);
     }
 

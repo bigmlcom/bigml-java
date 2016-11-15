@@ -44,10 +44,15 @@ public class EnsemblesStepdefs {
     @Given("^I create an ensemble of (\\d+) models and (\\d+) tlp$")
     public void I_create_an_ensemble_of_models_and_tlp(int numberOfModels,
             int tlp) throws Throwable {
+
+        JSONObject ensembleSample = new JSONObject();
+        ensembleSample.put("rate", 0.70);
+        ensembleSample.put("seed", "BigML");
+
         JSONObject args = new JSONObject();
         args.put("number_of_models", numberOfModels);
         args.put("tlp", tlp);
-        args.put("sample_rate", 0.70);
+        args.put("ensemble_sample", ensembleSample);
 
         args.put("tags", Arrays.asList("unitTest"));
 
