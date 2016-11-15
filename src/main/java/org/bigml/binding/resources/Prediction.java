@@ -158,6 +158,7 @@ public class Prediction extends AbstractResource {
             if (model.matches(ENSEMBLE_RE)) {
                 JSONObject ensembleObj = BigMLClient.getInstance(this.devMode).getEnsemble(
                         model);
+
                 if (ensembleObj != null) {
                     modelJSON = ensembleObj;
                     if (waitTime > 0) {
@@ -212,7 +213,7 @@ public class Prediction extends AbstractResource {
             if (inputData == null) {
                 inputDataJSON = new JSONObject();
             } else {
-                if (byName) {
+                if (byName && !model.matches(ENSEMBLE_RE)) {
                     JSONObject fields = (JSONObject) Utils.getJSONObject(modelJSON,
                             "object.model.fields");
 

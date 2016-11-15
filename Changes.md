@@ -4,13 +4,15 @@
 
 ### Bugs
 
-* Fixed test suite
+* Fixed bug creating prediction from ensemble, input data was no being used for the prediction.
+
+* Fixed test suite.
 
 ## 1.5.1 version    
 
 ### Improvements
 
-* Create evaluation from Logistic Regression
+* Create evaluation from Logistic Regression.
 
 ## 1.5 version    
 
