@@ -2,6 +2,10 @@
 
 ## 1.5.2 version    
 
+### Improvements
+
+* Association Resource
+
 ### Bugs
 
 * Fixed bug creating prediction from ensemble, input data was no being used for the prediction.

@@ -50,6 +50,7 @@ public class ContextRepository {
     JSONArray executions = null;
     JSONObject library = null;
     JSONArray libraries = null;
+    JSONObject association = null;
 
     Map<String, Long> datasetErrorCounts;
     Map<String, Long> datasetMissingCounts;
@@ -387,4 +388,11 @@ public class ContextRepository {
         this.libraries = libraries;
     }
 
+    public JSONObject getAssociation() {
+        return association;
+    }
+
+    public void setAssociation(JSONObject association) {
+        this.association = association;
+    }
 }

@@ -10,8 +10,7 @@
     <name>BigML.io Java bindings</name>
     <description>An open source Java client that gives you a simple binding to interact with BigML. You can use it to
         easily create, retrieve, list, update, and delete BigML resources (i.e., sources, datasets, models, ensembles,
-        clusters, anomalies, predictions, centroids, anomaly score, batch predictions, batch centroids,
-        batch anomaly score, evaluations)
+        clusters, anomalies, predictions, centroids, anomaly score, batch predictions, batch centroids, batch anomaly score, evaluations, associations)
     </description>
     <url>https://github.com/bigmlcom/bigml-java</url>
 

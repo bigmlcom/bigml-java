@@ -334,6 +334,15 @@ public class CommonStepdefs {
 
         BigMLClient.getInstance().getCacheManager().cleanCache();
 
+        // Associations
+        JSONArray associations = (JSONArray) BigMLClient.getInstance()
+                .listAssociations(";tags__in=unitTest").get("objects");
+        for (int i = 0; i < associations.size(); i++) {
+            JSONObject association = (JSONObject) associations.get(i);
+            BigMLClient.getInstance().deleteAssociation(
+                    (String) association.get("resource"));
+        }
+
         // Whizzml Libraries
         JSONArray libraries = (JSONArray) BigMLClient.getInstance()
                 .listLibraries(";tags__in=unitTest").get("objects");
