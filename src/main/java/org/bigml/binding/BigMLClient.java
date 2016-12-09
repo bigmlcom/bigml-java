@@ -83,6 +83,7 @@ public class BigMLClient {
     private Execution execution;
     private Library library;
     private Association association;
+    private AssociationSet associationSet;
 
     private Properties props;
     private Boolean devMode = false;
@@ -492,7 +493,9 @@ public class BigMLClient {
         library = new Library(this.bigmlUser, this.bigmlApiKey,
                 this.devMode, cacheManager);
         association = new Association(this.bigmlUser, this.bigmlApiKey,
-                                      this.devMode, cacheManager);
+                this.devMode, cacheManager);
+        associationSet = new AssociationSet(this.bigmlUser, this.bigmlApiKey,
+                this.devMode, cacheManager);
     }
 
     public String getBigMLUrl() {
@@ -5891,4 +5894,205 @@ public class BigMLClient {
         return association.delete(associationJSON);
     }
 
+
+    // ################################################################
+    // #
+    // # AssociationSets
+    // # https://bigml.com/developers/associationsets
+    // #
+    // ################################################################
+
+    /**
+     * Creates a new associationset.
+     *
+     * POST /andromeda/associationset?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param associationId
+     *            a unique identifier in the form association/id where id is a
+     *            string of 24 alpha-numeric chars for the association to attach
+     *            the associationset.
+     * @param args
+     *            set of parameters for the new associationset. Optional
+     * @param waitTime
+     *            time to wait for next check of FINISHED status for association
+     *            before to start to create the associationset. Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     *
+     */
+    @Deprecated
+    public JSONObject createAssociationSet(final String associationId,
+            String args, Integer waitTime, Integer retries) {
+        return associationSet.create(associationId, args, waitTime, retries);
+    }
+
+    /**
+     * Creates a new associationset.
+     *
+     * POST /andromeda/associationset?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param datasetId
+     *            a unique identifier in the form association/id where id is a
+     *            string of 24 alpha-numeric chars for the dataset to attach the
+     *            associationset.
+     * @param args
+     *            set of parameters for the new association. Optional
+     * @param waitTime
+     *            time to wait for next check of FINISHED status for association
+     *            before to start to create the associationset. Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     *
+     */
+    public JSONObject createAssociationSet(final String associationId,
+            JSONObject args, Integer waitTime, Integer retries) {
+
+        return associationSet.create(associationId, args, waitTime, retries);
+    }
+
+    /**
+     * Retrieves a associationset.
+     *
+     * A associationset is an evolving object that is processed until it reaches
+     * the FINISHED or FAULTY state, the method will return a JSONObject that
+     * encloses the associationset values and state info available at the time
+     * it is called.
+     *
+     * GET
+     * /andromeda/associationset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io
+     *
+     * @param associationSetId
+     *            a unique identifier in the form associationset/id where id is
+     *            a string of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject getAssociationSet(final String associationSetId) {
+        return associationSet.get(associationSetId);
+    }
+
+    /**
+     * Retrieves an associationset.
+     *
+     * A associationset is an evolving object that is processed until it reaches
+     * the FINISHED or FAULTY state, the method will return a JSONObject that
+     * encloses the association values and state info available at the time it is
+     * called.
+     *
+     * GET
+     * /andromeda/associationset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io
+     *
+     * @param associationsetJSON
+     *            an associationset JSONObject.
+     *
+     */
+    public JSONObject getAssociationSet(final JSONObject associationsetJSON) {
+        return associationSet.get(associationsetJSON);
+    }
+
+    /**
+     * Check whether a associationset's status is FINISHED.
+     *
+     * @param associationSetId
+     *            a unique identifier in the form associationset/id where id is
+     *            a string of 24 alpha-numeric chars.
+     *
+     */
+    public boolean associationSetIsReady(final String associationSetId) {
+        return associationSet.isReady(associationSetId);
+    }
+
+    /**
+     * Check whether a associationset's status is FINISHED.
+     *
+     * @param associationSetJSON
+     *            an associationset JSONObject.
+     *
+     */
+    public boolean associationSetIsReady(final JSONObject associationSetJSON) {
+        return associationSet.isReady(associationSetJSON);
+    }
+
+    /**
+     * Lists all your associationset.
+     *
+     * GET /andromeda/associationset?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param queryString
+     *            query filtering the listing.
+     *
+     */
+    public JSONObject listAssociationSets(final String queryString) {
+        return associationSet.list(queryString);
+    }
+
+    /**
+     * Updates a associationset.
+     *
+     * PUT
+     * /andromeda/associationset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param associationSetId
+     *            a unique identifier in the form associationset/id where id is
+     *            a string of 24 alpha-numeric chars.
+     * @param changes
+     *            set of parameters to update the associationset. Optional
+     *
+     */
+    public JSONObject updateAssociationSet(final String associationSetId, final String changes) {
+        return associationSet.update(associationSetId, changes);
+    }
+
+    /**
+     * Updates a associationset.
+     *
+     * PUT
+     * /andromeda/associationset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param associationSetJSON
+     *            an associationset JSONObject
+     * @param changes
+     *            set of parameters to update the association. Optional
+     */
+    public JSONObject updateAssociationSet(final JSONObject associationSetJSON,
+            final JSONObject changes) {
+        return associationSet.update(associationSetJSON, changes);
+    }
+
+    /**
+     * Deletes a associationset.
+     *
+     * DELETE
+     * /andromeda/associationset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1
+     *
+     * @param associationSetId
+     *            a unique identifier in the form associationset/id where id is
+     *            a string of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject deleteAssociationSet(final String associationSetId) {
+        return associationSet.delete(associationSetId);
+    }
+
+    /**
+     * Deletes a associationset.
+     *
+     * DELETE
+     * /andromeda/associationset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1
+     *
+     * @param associationSetJSON
+     *            an associationset JSONObject.
+     *
+     */
+    public JSONObject deleteAssociationSet(final JSONObject associationSetJSON) {
+        return associationSet.delete(associationSetJSON);
+    }
 }

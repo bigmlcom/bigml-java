@@ -5,6 +5,7 @@
 ### Improvements
 
 * Association Resource
+* AssociationSet Resource
 
 ### Bugs
 

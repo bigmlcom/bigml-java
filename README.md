@@ -4,7 +4,7 @@ In this repository you'll find an open source Java client that gives
 you a simple binding to interact with [BigML](https://bigml.io). You
 can use it to easily create, retrieve, list, update, and delete BigML
 resources (i.e., sources, datasets, models, ensembles, clusters, 
-predictions, centroids, batch predictions, batch centroids, evaluations, associations).
+predictions, centroids, batch predictions, batch centroids, evaluations, associations, associationsets).
 
 This client is licensed under the
 [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html).
