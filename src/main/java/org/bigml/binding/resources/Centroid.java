@@ -10,11 +10,11 @@ import sun.misc.Cache;
 
 /**
  * Entry point to create, retrieve, list, update, and delete centroids.
- * 
+ *
  * Full API documentation on the API can be found from BigML at:
- * https://bigml.com/developers/centroids
- * 
- * 
+ * https://bigml.com/api/centroids
+ *
+ *
  */
 public class Centroid extends AbstractResource {
 
@@ -23,7 +23,7 @@ public class Centroid extends AbstractResource {
 
     /**
      * Constructor
-     * 
+     *
      */
     public Centroid() {
         this.bigmlApiKey = System.getProperty("BIGML_API_KEY");
@@ -35,7 +35,7 @@ public class Centroid extends AbstractResource {
 
     /**
      * Constructor
-     * 
+     *
      */
     public Centroid(final String apiUser, final String apiKey,
             final boolean devMode) {
@@ -66,21 +66,22 @@ public class Centroid extends AbstractResource {
     }
 
     /**
-     * Check if the current resource is an Centroid
+     * Check if the current resource is a Centroid
      *
      * @param resource the resource to be checked
-     * @return true if its an Centroid
+     * @return true if it's a Centroid
      */
+    @Override
     public boolean isInstance(JSONObject resource) {
         return ((String) resource.get("resource")).matches(CENTROID_RE);
     }
 
     /**
      * Creates a new centroid.
-     * 
+     *
      * POST /andromeda/centroid?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     * 
+     *
      * @param clusterId
      *            a unique identifier in the form cluster/id where id is a
      *            string of 24 alpha-numeric chars for the cluster.
@@ -91,7 +92,7 @@ public class Centroid extends AbstractResource {
      *            for centroid before to start to create the centroid. Optional
      * @param retries
      *            number of times to try the operation. Optional
-     * 
+     *
      */
     @Deprecated
     public JSONObject create(final String clusterId, JSONObject inputDataJSON,
@@ -102,10 +103,10 @@ public class Centroid extends AbstractResource {
 
     /**
      * Creates a new centroid.
-     * 
+     *
      * POST /andromeda/centroid?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     * 
+     *
      * @param clusterId
      *            a unique identifier in the form cluster/id where id is a
      *            string of 24 alpha-numeric chars for the cluster.
@@ -116,7 +117,7 @@ public class Centroid extends AbstractResource {
      *            for centroid before to start to create the centroid. Optional
      * @param retries
      *            number of times to try the operation. Optional
-     * 
+     *
      */
     public JSONObject create(final String clusterId, JSONObject inputDataJSON,
             JSONObject args, Integer waitTime, Integer retries) {
@@ -155,20 +156,20 @@ public class Centroid extends AbstractResource {
 
     /**
      * Retrieves a centroid.
-     * 
+     *
      * A centroid is an evolving object that is processed until it reaches the
      * FINISHED or FAULTY state, the method will return a JSONObject that
      * encloses the centroid values and state info available at the time it is
      * called.
-     * 
+     *
      * GET
      * /andromeda/centroid/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io
-     * 
+     *
      * @param centroidId
      *            a unique identifier in the form centroid/id where id is a
      *            string of 24 alpha-numeric chars.
-     * 
+     *
      */
     @Override
     public JSONObject get(final String centroidId) {
@@ -183,19 +184,19 @@ public class Centroid extends AbstractResource {
 
     /**
      * Retrieves a centroid.
-     * 
+     *
      * A centroid is an evolving object that is processed until it reaches the
      * FINISHED or FAULTY state, the method will return a JSONObject that
      * encloses the centroid values and state info available at the time it is
      * called.
-     * 
+     *
      * GET
      * /andromeda/centroid/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io
-     * 
+     *
      * @param centroid
      *            a centroid JSONObject.
-     * 
+     *
      */
     @Override
     public JSONObject get(final JSONObject centroid) {
@@ -205,11 +206,11 @@ public class Centroid extends AbstractResource {
 
     /**
      * Check whether a centroid's status is FINISHED.
-     * 
+     *
      * @param centroidId
      *            a unique identifier in the form centroid/id where id is a
      *            string of 24 alpha-numeric chars.
-     * 
+     *
      */
     @Override
     public boolean isReady(final String centroidId) {
@@ -218,10 +219,10 @@ public class Centroid extends AbstractResource {
 
     /**
      * Check whether a centroid's status is FINISHED.
-     * 
+     *
      * @param centroid
      *            a centroid JSONObject.
-     * 
+     *
      */
     @Override
     public boolean isReady(final JSONObject centroid) {
@@ -231,13 +232,13 @@ public class Centroid extends AbstractResource {
 
     /**
      * Lists all your centroids.
-     * 
+     *
      * GET /andromeda/centroid?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * Host: bigml.io
-     * 
+     *
      * @param queryString
      *            query filtering the listing.
-     * 
+     *
      */
     @Override
     public JSONObject list(final String queryString) {
@@ -246,17 +247,17 @@ public class Centroid extends AbstractResource {
 
     /**
      * Updates a centroid.
-     * 
+     *
      * PUT
      * /andromeda/centroid/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     * 
+     *
      * @param centroidId
      *            a unique identifier in the form centroid/id where id is a
      *            string of 24 alpha-numeric chars.
      * @param changes
      *            set of parameters to update the centroid. Optional
-     * 
+     *
      */
     @Override
     public JSONObject update(final String centroidId, final String changes) {
@@ -270,16 +271,16 @@ public class Centroid extends AbstractResource {
 
     /**
      * Updates a centroid.
-     * 
+     *
      * PUT
      * /andromeda/centroid/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     * 
+     *
      * @param centroid
      *            an centroid JSONObject
      * @param changes
      *            set of parameters to update the centroid. Optional
-     * 
+     *
      */
     @Override
     public JSONObject update(final JSONObject centroid, final JSONObject changes) {
@@ -289,15 +290,15 @@ public class Centroid extends AbstractResource {
 
     /**
      * Deletes a centroid.
-     * 
+     *
      * DELETE
      * /andromeda/centroid/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1
-     * 
+     *
      * @param centroidId
      *            a unique identifier in the form centroid/id where id is a
      *            string of 24 alpha-numeric chars.
-     * 
+     *
      */
     @Override
     public JSONObject delete(final String centroidId) {
@@ -311,14 +312,14 @@ public class Centroid extends AbstractResource {
 
     /**
      * Deletes a centroid.
-     * 
+     *
      * DELETE
      * /andromeda/centroid/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1
-     * 
+     *
      * @param centroid
      *            an centroid JSONObject.
-     * 
+     *
      */
     @Override
     public JSONObject delete(final JSONObject centroid) {

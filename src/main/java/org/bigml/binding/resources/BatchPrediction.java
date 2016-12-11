@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
  * Entry point to create, retrieve, list, update, and delete batch predictions.
  *
  * Full API documentation on the API can be found from BigML at:
- * https://bigml.com/developers/batch_predictions
+ * https://bigml.com/api/batch_predictions
  *
  *
  */
@@ -71,11 +71,12 @@ public class BatchPrediction extends AbstractResource {
     }
 
     /**
-     * Check if the current resource is an BatchPrediction
+     * Check if the current resource is a BatchPrediction
      *
      * @param resource the resource to be checked
-     * @return true if its an BatchPrediction
+     * @return true if it's an BatchPrediction
      */
+    @Override
     public boolean isInstance(JSONObject resource) {
         return ((String) resource.get("resource")).matches(BATCH_PREDICTION_RE);
     }

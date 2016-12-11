@@ -51,6 +51,10 @@ public class ContextRepository {
     JSONObject library = null;
     JSONArray libraries = null;
     JSONObject association = null;
+    JSONObject topicModel = null;
+    JSONObject topicDistribution = null;
+    JSONObject batchTopicDistribution = null;
+    JSONObject configuration = null;
 
     Map<String, Long> datasetErrorCounts;
     Map<String, Long> datasetMissingCounts;
@@ -394,5 +398,37 @@ public class ContextRepository {
 
     public void setAssociation(JSONObject association) {
         this.association = association;
+    }
+
+    public JSONObject getTopicModel() {
+        return topicModel;
+    }
+
+    public void setTopicModel(JSONObject topicModel) {
+        this.topicModel = topicModel;
+    }
+
+    public JSONObject getTopicDistribution() {
+        return topicDistribution;
+    }
+
+    public void setTopicDistribution(JSONObject topicDistribution) {
+        this.topicDistribution = topicDistribution;
+    }
+
+    public JSONObject getBatchTopicDistribution() {
+        return batchTopicDistribution;
+    }
+
+    public void setBatchTopicDistribution(JSONObject batchTopicDistribution) {
+        this.batchTopicDistribution = batchTopicDistribution;
+    }
+
+    public JSONObject getConfiguration() {
+        return configuration;
+    }
+
+    public void setConfiguration(JSONObject configuration) {
+        this.configuration = configuration;
     }
 }

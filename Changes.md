@@ -1,25 +1,31 @@
 # Changes in the BigML.io Java bindings
 
-## 1.5.2 version    
+## 1.5.2 version
 
 ### Improvements
 
 * Association Resource
 * AssociationSet Resource
+* TopicModel Resource
+* TopicDistribution Resource
+* BatchTopicDistribution Resource
+* Configuration Resource
 
 ### Bugs
 
 * Fixed bug creating prediction from ensemble, input data was no being used for the prediction.
 
+* Fixed typos and updated document URLs.
+
 * Fixed test suite.
 
-## 1.5.1 version    
+## 1.5.1 version
 
 ### Improvements
 
 * Create evaluation from Logistic Regression.
 
-## 1.5 version    
+## 1.5 version
 
 ### Improvements
 

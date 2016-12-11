@@ -18,7 +18,7 @@ import java.util.Map;
  * It should not be instantiated independently.
  *
  * Full API documentation on the API can be found from BigML at:
- * https://bigml.com/developers/libraries
+ * https://bigml.com/api/libraries
  *
  */
 public class Library extends AbstractResource {
@@ -75,8 +75,9 @@ public class Library extends AbstractResource {
      * Check if the current resource is a Library
      *
      * @param resource the resource to be checked
-     * @return true if its an Library
+     * @return true if it's a Library
      */
+    @Override
     public boolean isInstance(JSONObject resource) {
         return ((String) resource.get("resource")).matches(LIBRARY_RE);
     }

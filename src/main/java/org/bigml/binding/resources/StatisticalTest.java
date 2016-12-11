@@ -15,7 +15,7 @@ import java.util.Map;
  * It should not be instantiated independently.
  *
  * Full API documentation on the API can be found from BigML at:
- * https://bigml.com/developers/statisticaltests
+ * https://bigml.com/api/statisticaltests
  *
  *
  */
@@ -73,8 +73,9 @@ public class StatisticalTest extends AbstractResource {
      * Check if the current resource is a StatisticalTest
      *
      * @param resource the resource to be checked
-     * @return true if its an StatisticalTest
+     * @return true if it's a StatisticalTest
      */
+    @Override
     public boolean isInstance(JSONObject resource) {
         return ((String) resource.get("resource")).matches(STATISTICALTEST_RE);
     }

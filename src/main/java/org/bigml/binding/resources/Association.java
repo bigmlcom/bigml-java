@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
  * Entry point to create, retrieve, list, update, and delete associations.
  *
  * Full API documentation on the API can be found from BigML at:
- * https://bigml.com/developers/associations
+ * https://bigml.com/api/associations
  *
  *
  */
@@ -70,14 +70,15 @@ public class Association extends AbstractResource {
      * Check if the current resource is an Association
      *
      * @param resource the resource to be checked
-     * @return true if its an Association
+     * @return true if it's an Association
      */
+    @Override
     public boolean isInstance(JSONObject resource) {
         return ((String) resource.get("resource")).matches(ASSOCIATION_RE);
     }
 
     /**
-     * Creates a association from a `dataset`.
+     * Creates an association from a `dataset`.
      *
      * POST /andromeda/association?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
@@ -106,7 +107,7 @@ public class Association extends AbstractResource {
     }
 
     /**
-     * Creates a association from a `dataset`.
+     * Creates an association from a `dataset`.
      *
      * POST /andromeda/association?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
@@ -134,7 +135,7 @@ public class Association extends AbstractResource {
     }
 
     /**
-     * Creates a association from a list of `datasets`.
+     * Creates an association from a list of `datasets`.
      *
      * POST /andromeda/association?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
@@ -162,7 +163,7 @@ public class Association extends AbstractResource {
     }
 
     /**
-     * Creates a association from a list of `datasets`.
+     * Creates an association from a list of `datasets`.
      *
      * POST /andromeda/association?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json

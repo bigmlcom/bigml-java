@@ -10,11 +10,11 @@ import java.util.List;
 
 /**
  * Entry point to create, retrieve, list, update, and delete anomaly detectors.
- * 
+ *
  * Full API documentation on the API can be found from BigML at:
- * https://bigml.com/developers/anomalies
- * 
- * 
+ * https://bigml.com/api/anomalies
+ *
+ *
  */
 public class Anomaly extends AbstractResource {
 
@@ -71,18 +71,19 @@ public class Anomaly extends AbstractResource {
      * Check if the current resource is an Anomaly
      *
      * @param resource the resource to be checked
-     * @return true if its an Anomaly
+     * @return true if it's an Anomaly
      */
+    @Override
     public boolean isInstance(JSONObject resource) {
         return ((String) resource.get("resource")).matches(ANOMALY_RE);
     }
 
     /**
      * Creates a new anomaly.
-     * 
+     *
      * POST /andromeda/anomaly?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     * 
+     *
      * @param datasetId
      *            a unique identifier in the form datset/id where id is a string
      *            of 24 alpha-numeric chars for the dataset to attach the anomaly.
@@ -93,7 +94,7 @@ public class Anomaly extends AbstractResource {
      *            for source before to start to create the anomaly. Optional
      * @param retries
      *            number of times to try the operation. Optional
-     * 
+     *
      */
     public JSONObject create(final String datasetId, JSONObject args,
             Integer waitTime, Integer retries) {
@@ -106,10 +107,10 @@ public class Anomaly extends AbstractResource {
 
     /**
      * Creates an anomaly from a list of `datasets`.
-     * 
+     *
      * POST /andromeda/anomaly?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     * 
+     *
      * @param datasetsIds
      *            list of identifiers in the form dataset/id where id is a
      *            string of 24 alpha-numeric chars for the dataset to attach the
@@ -121,7 +122,7 @@ public class Anomaly extends AbstractResource {
      *            for source before to start to create the anomaly. Optional
      * @param retries
      *            number of times to try the operation. Optional
-     * 
+     *
      */
     public JSONObject create(final List datasetsIds, JSONObject args,
             Integer waitTime, Integer retries) {
@@ -133,14 +134,14 @@ public class Anomaly extends AbstractResource {
 
     /**
      * Retrieves an anomaly.
-     * 
+     *
      * GET /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * Host: bigml.io
-     * 
+     *
      * @param anomalyId
      *            a unique identifier in the form anomaly/id where id is a string
      *            of 24 alpha-numeric chars.
-     * 
+     *
      */
     @Override
     public JSONObject get(final String anomalyId) {
@@ -149,10 +150,10 @@ public class Anomaly extends AbstractResource {
 
     /**
      * Retrieves an anomaly.
-     * 
+     *
      * GET /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * Host: bigml.io
-     * 
+     *
      * @param anomalyId
      *            a unique identifier in the form anomaly/id where id is a string
      *            of 24 alpha-numeric chars.
@@ -160,7 +161,7 @@ public class Anomaly extends AbstractResource {
      *            API user
      * @param apiKey
      *            API key
-     * 
+     *
      */
     public JSONObject get(final String anomalyId, final String apiUser,
             final String apiKey) {
@@ -175,13 +176,13 @@ public class Anomaly extends AbstractResource {
 
     /**
      * Retrieves an anomaly.
-     * 
+     *
      * GET /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * Host: bigml.io
-     * 
+     *
      * @param anomaly
      *            an anomaly JSONObject
-     * 
+     *
      */
     @Override
     public JSONObject get(final JSONObject anomaly) {
@@ -191,17 +192,17 @@ public class Anomaly extends AbstractResource {
 
     /**
      * Retrieves an anomaly.
-     * 
+     *
      * GET /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * Host: bigml.io
-     * 
+     *
      * @param anomaly
-     *            a anomaly JSONObject
+     *            an anomaly JSONObject
      * @param apiUser
      *            API user
      * @param apiKey
      *            API key
-     * 
+     *
      */
     public JSONObject get(final JSONObject anomaly, final String apiUser,
             final String apiKey) {
@@ -211,16 +212,16 @@ public class Anomaly extends AbstractResource {
 
     /**
      * Retrieves an anomaly.
-     * 
+     *
      * GET /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * Host: bigml.io
-     * 
+     *
      * @param anomalyId
      *            a unique identifier in the form anomaly/id where id is a string
      *            of 24 alpha-numeric chars.
      * @param queryString
      *            query for filtering.
-     * 
+     *
      */
     public JSONObject get(final String anomalyId, final String queryString) {
         return get(anomalyId, queryString, null, null);
@@ -228,10 +229,10 @@ public class Anomaly extends AbstractResource {
 
     /**
      * Retrieves an anomaly.
-     * 
+     *
      * GET /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * Host: bigml.io
-     * 
+     *
      * @param anomalyId
      *            a unique identifier in the form anomaly/id where id is a string
      *            of 24 alpha-numeric chars.
@@ -241,7 +242,7 @@ public class Anomaly extends AbstractResource {
      *            API user
      * @param apiKey
      *            API key
-     * 
+     *
      */
     public JSONObject get(final String anomalyId, final String queryString,
             final String apiUser, final String apiKey) {
@@ -256,15 +257,15 @@ public class Anomaly extends AbstractResource {
 
     /**
      * Retrieves an anomaly.
-     * 
+     *
      * GET /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * Host: bigml.io
-     * 
+     *
      * @param anomaly
      *            a model JSONObject
      * @param queryString
      *            query for filtering
-     * 
+     *
      */
     public JSONObject get(final JSONObject anomaly, final String queryString) {
         String resourceId = (String) anomaly.get("resource");
@@ -273,19 +274,19 @@ public class Anomaly extends AbstractResource {
 
     /**
      * Retrieves an anomaly.
-     * 
+     *
      * GET /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * Host: bigml.io
-     * 
+     *
      * @param anomaly
-     *            a anomaly JSONObject
+     *            an anomaly JSONObject
      * @param queryString
      *            query for filtering
      * @param apiUser
      *            API user
      * @param apiKey
      *            API key
-     * 
+     *
      */
     public JSONObject get(final JSONObject anomaly, final String queryString,
             final String apiUser, final String apiKey) {
@@ -295,11 +296,11 @@ public class Anomaly extends AbstractResource {
 
     /**
      * Checks whether an anomaly's status is FINISHED.
-     * 
+     *
      * @param anomalyId
      *            a unique identifier in the form anomaly/id where id is a string
      *            of 24 alpha-numeric chars.
-     * 
+     *
      */
     @Override
     public boolean isReady(final String anomalyId) {
@@ -308,10 +309,10 @@ public class Anomaly extends AbstractResource {
 
     /**
      * Checks whether an anomaly's status is FINISHED.
-     * 
+     *
      * @param anomaly
      *            an anomaly JSONObject
-     * 
+     *
      */
     @Override
     public boolean isReady(final JSONObject anomaly) {
@@ -321,13 +322,13 @@ public class Anomaly extends AbstractResource {
 
     /**
      * Lists all your anomalies.
-     * 
+     *
      * GET /andromeda/anomaly?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * Host: bigml.io
-     * 
+     *
      * @param queryString
      *            query filtering the listing.
-     * 
+     *
      */
     @Override
     public JSONObject list(final String queryString) {
@@ -336,16 +337,16 @@ public class Anomaly extends AbstractResource {
 
     /**
      * Updates an anomaly.
-     * 
+     *
      * PUT /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     * 
+     *
      * @param anomalyId
      *            a unique identifier in the form anomaly/id where id is a string
      *            of 24 alpha-numeric chars.
      * @param changes
      *            set of parameters to update the source. Optional
-     * 
+     *
      */
     @Override
     public JSONObject update(final String anomalyId, final String changes) {
@@ -359,15 +360,15 @@ public class Anomaly extends AbstractResource {
 
     /**
      * Updates an anomaly.
-     * 
+     *
      * PUT /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     * 
+     *
      * @param anomaly
      *            an anomaly JSONObject
      * @param changes
      *            set of parameters to update the source. Optional
-     * 
+     *
      */
     @Override
     public JSONObject update(final JSONObject anomaly, final JSONObject changes) {
@@ -376,16 +377,16 @@ public class Anomaly extends AbstractResource {
     }
 
     /**
-     * Deletes a anomaly.
-     * 
+     * Deletes an anomaly.
+     *
      * DELETE
      * /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1
-     * 
+     *
      * @param anomalyId
      *            a unique identifier in the form anomaly/id where id is a string
      *            of 24 alpha-numeric chars.
-     * 
+     *
      */
     @Override
     public JSONObject delete(final String anomalyId) {
@@ -399,14 +400,14 @@ public class Anomaly extends AbstractResource {
 
     /**
      * Deletes an anomaly.
-     * 
+     *
      * DELETE
      * /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1
-     * 
+     *
      * @param anomaly
      *            an anomaly JSONObject
-     * 
+     *
      */
     @Override
     public JSONObject delete(final JSONObject anomaly) {

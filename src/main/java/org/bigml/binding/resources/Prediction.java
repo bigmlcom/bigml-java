@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
  * Entry point to create, retrieve, list, update, and delete predictions.
  *
  * Full API documentation on the API can be found from BigML at:
- * https://bigml.com/developers/predictions
+ * https://bigml.com/api/predictions
  *
  *
  */
@@ -72,11 +72,12 @@ public class Prediction extends AbstractResource {
     }
 
     /**
-     * Check if the current resource is an Prediction
+     * Check if the current resource is a Prediction
      *
      * @param resource the resource to be checked
-     * @return true if its an Prediction
+     * @return true if it's a Prediction
      */
+    @Override
     public boolean isInstance(JSONObject resource) {
         return ((String) resource.get("resource")).matches(PREDICTION_RE);
     }

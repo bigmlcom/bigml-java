@@ -55,7 +55,10 @@ public abstract class AbstractResource {
     public final static String LIBRARY_PATH = "library";
     public final static String ASSOCIATION_PATH = "association";
     public final static String ASSOCIATIONSET_PATH = "associationset";
-
+    public final static String TOPICMODEL_PATH = "topicmodel";
+    public final static String TOPICDISTRIBUTION_PATH = "topicdistribution";
+    public final static String BATCH_TOPICDISTRIBUTION_PATH = "batchtopicdistribution";
+    public final static String CONFIGURATION_PATH = "configuration";
 
     // Base Resource regular expressions
     static String SOURCE_RE = "^" + SOURCE_PATH + "/[a-f,0-9]{24}$";
@@ -98,8 +101,16 @@ public abstract class AbstractResource {
             + "/[a-f,0-9]{24}$";
     static String ASSOCIATIONSET_RE = "^" + ASSOCIATIONSET_PATH
             + "/[a-f,0-9]{24}$";
+    static String TOPICMODEL_RE = "^" + TOPICMODEL_PATH
+            + "/[a-f,0-9]{24}$";
+    static String TOPICDISTRIBUTION_RE = "^" + TOPICDISTRIBUTION_PATH
+            + "/[a-f,0-9]{24}$";
+    static String BATCH_TOPICDISTRIBUTION_RE = "^" + BATCH_TOPICDISTRIBUTION_PATH
+            + "/[a-f,0-9]{24}$";
+    static String CONFIGURATION_RE = "^" + CONFIGURATION_PATH
+            + "/[a-f,0-9]{24}$";
 
-    // HTTP Status Codes from https://bigml.com/developers/status_codes
+    // HTTP Status Codes from https://bigml.com/api/status_codes
     public static int HTTP_OK = 200;
     public static int HTTP_CREATED = 201;
     public static int HTTP_ACCEPTED = 202;
@@ -176,6 +187,10 @@ public abstract class AbstractResource {
     protected String LIBRARY_URL;
     protected String ASSOCIATION_URL;
     protected String ASSOCIATIONSET_URL;
+    protected String TOPICMODEL_URL;
+    protected String TOPICDISTRIBUTION_URL;
+    protected String BATCH_TOPICDISTRIBUTION_URL;
+    protected String CONFIGURATION_URL;
 
     public final static String DOWNLOAD_DIR = "/download";
 
@@ -207,6 +222,10 @@ public abstract class AbstractResource {
             LIBRARY_URL = BIGML_URL + LIBRARY_PATH;
             ASSOCIATION_URL = BIGML_URL + ASSOCIATION_PATH;
             ASSOCIATIONSET_URL = BIGML_URL + ASSOCIATIONSET_PATH;
+            TOPICMODEL_URL = BIGML_URL + TOPICMODEL_PATH;
+            TOPICDISTRIBUTION_URL = BIGML_URL + TOPICDISTRIBUTION_PATH;
+            BATCH_TOPICDISTRIBUTION_URL = BIGML_URL + BATCH_TOPICDISTRIBUTION_PATH;
+            CONFIGURATION_URL = BIGML_URL + CONFIGURATION_PATH;
 
             this.cacheManager = cacheManager;
         } catch (AuthenticationException ae) {
@@ -218,7 +237,7 @@ public abstract class AbstractResource {
      * Check if the current resource is an instance of this resource
      *
      * @param resource the resource to be checked
-     * @return true if its an instance
+     * @return true if it's an instance
      */
     public abstract boolean isInstance(JSONObject resource);
 

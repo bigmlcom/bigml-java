@@ -222,7 +222,7 @@ public class AnomaliesStepdefs {
         assertEquals(AbstractResource.HTTP_NO_CONTENT, context.status);
     }
 
-    @Given("^I create a anomaly detector with \"(.*)\"$")
+    @Given("^I create an anomaly detector with \"(.*)\"$")
     public void I_create_an_anomaly_with_params(String args) throws Throwable {
         String datasetId = (String) context.dataset.get("resource");
         JSONObject argsJSON = (JSONObject) JSONValue.parse(args);

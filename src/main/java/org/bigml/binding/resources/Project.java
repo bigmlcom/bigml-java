@@ -14,11 +14,11 @@ import java.util.Map;
  * This class is used by the BigML class as a mixin that provides the Project' REST calls.
  *
  * It should not be instantiated independently.
- * 
+ *
  * Full API documentation on the API can be found from BigML at:
- * https://bigml.com/developers/project
- * 
- * 
+ * https://bigml.com/api/project
+ *
+ *
  */
 public class Project extends AbstractResource {
 
@@ -74,15 +74,16 @@ public class Project extends AbstractResource {
      * Check if the current resource is a Project
      *
      * @param resource the resource to be checked
-     * @return true if its an Project
+     * @return true if it's a Project
      */
+    @Override
     public boolean isInstance(JSONObject resource) {
         return ((String) resource.get("resource")).matches(PROJECT_RE);
     }
 
     /**
      * Creates a project.
-     * 
+     *
      * Uses a remote resource to create a new project using the
      * arguments in `args`.
      *
@@ -108,15 +109,15 @@ public class Project extends AbstractResource {
 
     /**
      * Retrieves a project.
-     * 
+     *
      * GET
      * /andromeda/project/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io
-     * 
+     *
      * @param projectId
      *            a unique identifier in the form project/id where id is a string
      *            of 24 alpha-numeric chars.
-     * 
+     *
      */
     @Override
     public JSONObject get(final String projectId) {
@@ -131,14 +132,14 @@ public class Project extends AbstractResource {
 
     /**
      * Retrieves a project.
-     * 
+     *
      * GET
      * /andromeda/project/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io
-     * 
+     *
      * @param project
      *            a project JSONObject
-     * 
+     *
      */
     @Override
     public JSONObject get(final JSONObject project) {
@@ -232,11 +233,11 @@ public class Project extends AbstractResource {
 
     /**
      * Checks whether a project's status is FINISHED.
-     * 
+     *
      * @param projectId
      *            a unique identifier in the form project/id where id is a
      *            string of 24 alpha-numeric chars.
-     * 
+     *
      */
     @Override
     public boolean isReady(final String projectId) {
@@ -245,10 +246,10 @@ public class Project extends AbstractResource {
 
     /**
      * Checks whether a project's status is FINISHED.
-     * 
+     *
      * @param project
      *            a project JSONObject
-     * 
+     *
      */
     @Override
     public boolean isReady(final JSONObject project) {
@@ -258,13 +259,13 @@ public class Project extends AbstractResource {
 
     /**
      * Lists all your projects.
-     * 
+     *
      * GET /andromeda/project?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * Host: bigml.io
-     * 
+     *
      * @param queryString
      *            query filtering the listing.
-     * 
+     *
      */
     @Override
     public JSONObject list(final String queryString) {
@@ -273,17 +274,17 @@ public class Project extends AbstractResource {
 
     /**
      * Updates a project.
-     * 
+     *
      * PUT
      * /andromeda/sample/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     * 
+     *
      * @param projectId
      *            a unique identifier in the form project/id where id is a
      *            string of 24 alpha-numeric chars.
      * @param changes
      *            set of parameters to update the project. Optional
-     * 
+     *
      */
     @Override
     public JSONObject update(final String projectId, final String changes) {
@@ -297,16 +298,16 @@ public class Project extends AbstractResource {
 
     /**
      * Updates a project.
-     * 
+     *
      * PUT
      * /andromeda/project/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     * 
+     *
      * @param project
      *            a project JSONObject
      * @param changes
      *            set of parameters to update the project. Optional
-     * 
+     *
      */
     @Override
     public JSONObject update(final JSONObject project, final JSONObject changes) {
@@ -316,15 +317,15 @@ public class Project extends AbstractResource {
 
     /**
      * Deletes a project.
-     * 
+     *
      * DELETE
      * /andromeda/project/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1
-     * 
+     *
      * @param projectId
      *            a unique identifier in the form project/id where id is a
      *            string of 24 alpha-numeric chars.
-     * 
+     *
      */
     @Override
     public JSONObject delete(final String projectId) {
@@ -338,14 +339,14 @@ public class Project extends AbstractResource {
 
     /**
      * Deletes a project.
-     * 
+     *
      * DELETE
      * /andromeda/project/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1
-     * 
+     *
      * @param project
      *            a project JSONObject
-     * 
+     *
      */
     @Override
     public JSONObject delete(final JSONObject project) {

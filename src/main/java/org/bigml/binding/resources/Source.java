@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
  * Entry point to create, retrieve, list, update, and delete sources.
  *
  * Full API documentation on the API can be found from BigML at:
- * https://bigml.com/developers/sources
+ * https://bigml.com/api/sources
  *
  *
  */
@@ -73,7 +73,7 @@ public class Source extends AbstractResource {
      * Check if the current resource is an Source
      *
      * @param resource the resource to be checked
-     * @return true if its an Source
+     * @return true if it's a Source
      */
     @Override
     public boolean isInstance(final JSONObject resource) {

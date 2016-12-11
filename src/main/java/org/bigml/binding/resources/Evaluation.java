@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
  * Entry point to create, retrieve, list, update, and delete evaluations.
  *
  * Full API documentation on the API can be found from BigML at:
- * https://bigml.com/developers/evaluations
+ * https://bigml.com/api/evaluations
  *
  *
  */
@@ -68,7 +68,7 @@ public class Evaluation extends AbstractResource {
      * Check if the current resource is an Evaluation
      *
      * @param resource the resource to be checked
-     * @return true if its an Evaluation
+     * @return true if it's an Evaluation
      */
     public boolean isInstance(JSONObject resource) {
         return ((String) resource.get("resource")).matches(EVALUATION_RE);

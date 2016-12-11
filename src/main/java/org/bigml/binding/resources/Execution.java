@@ -18,7 +18,7 @@ import java.util.Map;
  * It should not be instantiated independently.
  *
  * Full API documentation on the API can be found from BigML at:
- * https://bigml.com/developers/executions
+ * https://bigml.com/api/executions
  *
  */
 public class Execution extends AbstractResource {
@@ -72,11 +72,12 @@ public class Execution extends AbstractResource {
     }
 
     /**
-     * Check if the current resource is a Execution
+     * Check if the current resource is an Execution
      *
      * @param resource the resource to be checked
-     * @return true if its an Execution
+     * @return true if it's an Execution
      */
+    @Override
     public boolean isInstance(JSONObject resource) {
         return ((String) resource.get("resource")).matches(EXECUTION_RE);
     }

@@ -12,6 +12,9 @@
  */
 package org.bigml.sample;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.bigml.binding.AuthenticationException;
 import org.bigml.binding.BigMLClient;
 import org.bigml.binding.InputDataParseException;
@@ -65,7 +68,7 @@ public class BigMLSampleClient {
 
         source = api.getSource(source);
         JSONObject fields = (JSONObject) Utils.getJSONObject(source, "object.fields");
-//        System.out.print(fields);
+//        System.out.println(fields);
 
         // Create a dataset using the datasource created
         JSONObject dataset = api.createDataset((String) source.get("resource"),
@@ -82,7 +85,7 @@ public class BigMLSampleClient {
 
         dataset = api.getDataset(dataset);
         fields = (JSONObject) Utils.getJSONObject(dataset, "object.fields");
-//        System.out.print(fields);
+//        System.out.println(fields);
 
         // Create a model using the dataset created above
         JSONObject model = api.createModel((String) dataset.get("resource"),
@@ -100,8 +103,8 @@ public class BigMLSampleClient {
         model = api.getModel(model);
         fields = (JSONObject) Utils.getJSONObject(model, "object.model.fields");
         JSONObject tree = (JSONObject) Utils.getJSONObject(model, "object.model.root");
-//        System.out.print(fields);
-//        System.out.print(tree);
+//        System.out.println(fields);
+//        System.out.println(tree);
 
         // Create a cluster using the dataset created above
         JSONObject cluster = api.createCluster((String) dataset.get("resource"),
@@ -118,9 +121,9 @@ public class BigMLSampleClient {
 
         cluster = api.getCluster(cluster);
         JSONObject object = (JSONObject) Utils.getJSONObject(cluster, "object");
-//        System.out.print(object);
+//        System.out.println(object);
 
-        // Create a cluster using the dataset created above
+        // Create a anomaly using the dataset created above
         JSONObject anomaly = api.createAnomaly((String) dataset.get("resource"),
                 emptyArgs, null, null);
 
@@ -135,7 +138,25 @@ public class BigMLSampleClient {
 
         anomaly = api.getAnomaly(anomaly);
         object = (JSONObject) Utils.getJSONObject(anomaly, "object");
-//        System.out.print(object);
+//        System.out.println(object);
+
+        // Create a association using the dataset created above
+        JSONObject association = api.createAssociation((String) dataset.get("resource"),
+                emptyArgs, null, null);
+
+        while (!api.associationIsReady(association)) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        association = api.getAssociation(association);
+        object = (JSONObject) Utils.getJSONObject(association, "object");
+//        System.out.println(object);
+
 
         JSONObject evaluation = api.createEvaluation(
                 (String)model.get("resource"), (String)dataset.get("resource"),
@@ -215,6 +236,80 @@ public class BigMLSampleClient {
                             + "sample are placed in your DEV mode environment at BigML.com ***");
         }
 
+        runTopicModel(api);
     }
 
+    public static void runTopicModel(final BigMLClient api) {
+        JSONObject emptyArgs = null;
+
+        // Create a datasource for topic model
+        JSONObject source = api.createSource("data/airbnb.csv", "Airbnb Source", null, null);
+
+        while (!api.sourceIsReady(source)) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        JSONObject changes = new JSONObject(){{
+            put("fields", new HashMap<String, Map>() {{
+                put("000005", new HashMap<String, String>() {{
+                    put("optype", "text");
+                }});
+            }});
+        }};
+
+        api.updateSource(source, changes);
+        source = api.getSource(source);
+        JSONObject fields = (JSONObject) Utils.getJSONObject(source, "object.fields");
+//      System.out.println(fields);
+
+        // Create a dataset
+        JSONObject dataset = api.createDataset((String) source.get("resource"),
+                emptyArgs, null, null);
+
+        while (!api.datasetIsReady(dataset)) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        dataset = api.getDataset(dataset);
+        fields = (JSONObject) Utils.getJSONObject(dataset, "object.fields");
+//        System.out.println(fields);
+
+        // Create a association using the dataset created above
+        JSONObject topicModel = api.createTopicModel((String) dataset.get("resource"),
+                emptyArgs, null, null);
+
+        while (!api.topicModelIsReady(topicModel)) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        topicModel = api.getTopicModel(topicModel);
+        JSONObject object = (JSONObject) Utils.getJSONObject(topicModel, "object");
+//        System.out.println(object);
+
+        // This is a remote topic distribution
+        JSONObject inputData = new JSONObject();
+        inputData.put("000005", "hotel shower double heater");
+
+        JSONObject remoteTopicDistribution = api.createTopicDistribution(
+                (String) topicModel.get("resource"), inputData, emptyArgs,
+                null, null);
+        remoteTopicDistribution = api.getTopicDistribution(remoteTopicDistribution);
+        JSONObject distributionOutput = (JSONObject) Utils.getJSONObject(
+                remoteTopicDistribution, "object.topic_distribution");
+//        System.out.println(distributionOutput);
+    }
 }

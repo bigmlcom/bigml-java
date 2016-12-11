@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.bigml</groupId>
     <artifactId>bigml-binding-sample-client</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
 
     <name>BigML.io Java Bindings Sample Clients</name>
     <url>https://github.com/bigmlcom/bigml-java</url>
@@ -21,7 +21,7 @@
         <dependency>
             <groupId>org.bigml</groupId>
             <artifactId>bigml-binding</artifactId>
-            <version>1.4.2</version>
+            <version>1.5.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

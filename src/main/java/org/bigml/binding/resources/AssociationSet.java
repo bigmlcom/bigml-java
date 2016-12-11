@@ -11,10 +11,10 @@ import org.slf4j.LoggerFactory;
 
 
 /**
- * Entry point to create, retrieve, list, update, and delete associationsets.
+ * Entry point to create, retrieve, list, update, and delete association sets.
  *
  * Full API documentation on the API can be found from BigML at:
- * https://bigml.com/developers/associationsets
+ * https://bigml.com/api/associationsets
  *
  *
  */
@@ -70,44 +70,18 @@ public class AssociationSet extends AbstractResource {
     }
 
     /**
-     * Check if the current resource is an associationset
+     * Check if the current resource is an AssociationSet
      *
      * @param resource the resource to be checked
-     * @return true if its an AssociationSet
+     * @return true if it's an AssociationSet
      */
+    @Override
     public boolean isInstance(JSONObject resource) {
         return ((String) resource.get("resource")).matches(ASSOCIATIONSET_RE);
     }
 
     /**
-     * Creates a associationset from an association.
-     *
-     * POST /andromeda/associationset?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     *
-     * @param associationId
-     *            a unique identifier in the form association/id where id is a
-     *            string of 24 alpha-numeric chars for the associationset to
-     *            attach the associationset.
-     * @param args
-     *            set of parameters for the new associationset. Optional
-     * @param waitTime
-     *            time (milliseconds) to wait for next check of FINISHED status
-     *            for source before to start to create the associationset. Optional
-     * @param retries
-     *            number of times to try the operation. Optional
-     *
-     */
-    @Deprecated
-    public JSONObject create(final String associationId, String args,
-            Integer waitTime, Integer retries) {
-
-        return create(associationId, (JSONObject) JSONValue.parse(args),
-                      waitTime, retries);
-    }
-
-    /**
-     * Creates a associationset from an association.
+     * Creates an association set from an association.
      *
      * POST /andromeda/associationset?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
@@ -115,18 +89,25 @@ public class AssociationSet extends AbstractResource {
      * @param associationId
      *            a unique identifier in the form association/id where id is a
      *            string of 24 alpha-numeric chars for the association to attach
-     *            the associationset.
+     *            the association set.
+     * @param inputData
+     *            an object with field's id/value pairs representing the
+     *            instance you want to create an association set for.
+     * @param byName
+     *            if we use the name of the fields instead of the internal code
+     *            as the key to locate the fields in the inputData map.
      * @param args
-     *            set of parameters for the new associationset. Optional
+     *            set of parameters for the new association set. Optional
      * @param waitTime
      *            time (milliseconds) to wait for next check of FINISHED status
-     *            for source before to start to create the associationset.
+     *            for source before to start to create the association set.
      *            Optional
      * @param retries
      *            number of times to try the operation. Optional
      *
      */
-    public JSONObject create(final String associationId, JSONObject args,
+    public JSONObject create(final String associationId,
+            JSONObject inputData, JSONObject args,
             Integer waitTime, Integer retries) {
 
         if (associationId == null || associationId.length() == 0 ) {
@@ -147,22 +128,32 @@ public class AssociationSet extends AbstractResource {
                 }
             }
 
+            // Input data
+            JSONObject inputDataJSON = null;
+            if (inputData == null) {
+                inputDataJSON = new JSONObject();
+            } else {
+                inputDataJSON = inputData;
+            }
+
             JSONObject requestObject = new JSONObject();
             if (args != null) {
                 requestObject = args;
             }
+
             requestObject.put("association", associationId);
+            requestObject.put("input_data", inputData);
 
             return createResource(ASSOCIATIONSET_URL,
                                   requestObject.toJSONString());
         } catch (Throwable e) {
-            logger.error("Error creating associationset");
+            logger.error("Error creating an association set");
             return null;
         }
     }
 
     /**
-     * Retrieves an associationset.
+     * Retrieves an association set.
      *
      * GET /andromeda/associationset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * Host: bigml.io
@@ -176,7 +167,7 @@ public class AssociationSet extends AbstractResource {
     public JSONObject get(final String associationSetId) {
         if (associationSetId == null || associationSetId.length() == 0
                 || !associationSetId.matches(ASSOCIATIONSET_RE)) {
-            logger.info("Wrong associationset id");
+            logger.info("Wrong association set id");
             return null;
         }
 
@@ -184,13 +175,13 @@ public class AssociationSet extends AbstractResource {
     }
 
     /**
-     * Retrieves an associationset.
+     * Retrieves an association set.
      *
      * GET /andromeda/associationset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * Host: bigml.io
      *
      * @param associationSet
-     *            an associationset JSONObject
+     *            an association set JSONObject
      *
      */
     @Override
@@ -201,11 +192,11 @@ public class AssociationSet extends AbstractResource {
 
 
     /**
-     * Checks whether an associationset's status is FINISHED.
+     * Checks whether an association set's status is FINISHED.
      *
      * @param associationSetId
      *            a unique identifier in the form associationset/id where id
-     *            is a stringof 24 alpha-numeric chars.
+     *            is a string of 24 alpha-numeric chars.
      *
      */
     @Override
@@ -214,10 +205,10 @@ public class AssociationSet extends AbstractResource {
     }
 
     /**
-     * Checks whether an associationset's status is FINISHED.
+     * Checks whether an association set's status is FINISHED.
      *
      * @param associationSet
-     *            an associationSet JSONObject
+     *            an association set JSONObject
      *
      */
     @Override
@@ -227,7 +218,7 @@ public class AssociationSet extends AbstractResource {
     }
 
     /**
-     * Lists all your associationsets.
+     * Lists all your association sets.
      *
      * GET /andromeda/associationset?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * Host: bigml.io
@@ -242,7 +233,7 @@ public class AssociationSet extends AbstractResource {
     }
 
     /**
-     * Updates an associationset.
+     * Updates an association set.
      *
      * PUT /andromeda/associationset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
@@ -251,29 +242,29 @@ public class AssociationSet extends AbstractResource {
      *            a unique identifier in the form associationset/id where id is a string
      *            of 24 alpha-numeric chars.
      * @param changes
-     *            set of parameters to update the associationset. Optional
+     *            set of parameters to update the association set. Optional
      *
      */
     @Override
     public JSONObject update(final String associationSetId, final String changes) {
         if (associationSetId == null || associationSetId.length() == 0
                 || !(associationSetId.matches(ASSOCIATIONSET_RE))) {
-            logger.info("Wrong associationset id");
+            logger.info("Wrong association set id");
             return null;
         }
         return updateResource(BIGML_URL + associationSetId, changes);
     }
 
     /**
-     * Updates an associationset.
+     * Updates an association set.
      *
      * PUT /andromeda/associationset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param associationSet
-     *            an associationset JSONObject
+     *            an association set JSONObject
      * @param changes
-     *            set of parameters to update the associationset. Optional
+     *            set of parameters to update the association set. Optional
      *
      */
     @Override
@@ -283,7 +274,7 @@ public class AssociationSet extends AbstractResource {
     }
 
     /**
-     * Deletes an associationset.
+     * Deletes an association set.
      *
      * DELETE
      * /andromeda/associationset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
@@ -298,21 +289,21 @@ public class AssociationSet extends AbstractResource {
     public JSONObject delete(final String associationSetId) {
         if (associationSetId == null || associationSetId.length() == 0
                 || !(associationSetId.matches(ASSOCIATIONSET_RE))) {
-            logger.info("Wrong associationset id");
+            logger.info("Wrong association set id");
             return null;
         }
         return deleteResource(BIGML_URL + associationSetId);
     }
 
     /**
-     * Deletes an associationset.
+     * Deletes an association set.
      *
      * DELETE
      * /andromeda/associationset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1
      *
      * @param associationSet
-     *            an associationset JSONObject
+     *            an association set JSONObject
      *
      */
     @Override

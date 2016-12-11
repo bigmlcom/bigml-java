@@ -18,7 +18,7 @@ import java.util.Map;
  * Entry point to create, retrieve, list, update, and delete datasets.
  *
  * Full API documentation on the API can be found from BigML at:
- * https://bigml.com/developers/dataset
+ * https://bigml.com/api/dataset
  *
  *
  */
@@ -75,11 +75,12 @@ public class Dataset extends AbstractResource {
     }
 
     /**
-     * Check if the current resource is an Dataset
+     * Check if the current resource is a Dataset
      *
      * @param resource the resource to be checked
-     * @return true if its an Dataset
+     * @return true if it's a Dataset
      */
+    @Override
     public boolean isInstance(JSONObject resource) {
         return ((String) resource.get("resource")).matches(DATASET_RE);
     }

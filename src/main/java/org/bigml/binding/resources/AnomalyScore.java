@@ -13,11 +13,11 @@ import java.util.Iterator;
 
 /**
  * Entry point to create, retrieve, list, update, and delete anomaly scores.
- * 
+ *
  * Full API documentation on the API can be found from BigML at:
- * https://bigml.com/developers/anomalyscores
- * 
- * 
+ * https://bigml.com/api/anomalyscores
+ *
+ *
  */
 public class AnomalyScore extends AbstractResource {
 
@@ -73,19 +73,20 @@ public class AnomalyScore extends AbstractResource {
      * Check if the current resource is an AnomalyScore
      *
      * @param resource the resource to be checked
-     * @return true if its an AnomalyScore
+     * @return true if it's an AnomalyScore
      */
+    @Override
     public boolean isInstance(JSONObject resource) {
         return ((String) resource.get("resource")).matches(ANOMALYSCORE_RE);
     }
 
     /**
      * Creates a new anomaly score.
-     * 
+     *
      * POST
      * /andromeda/anomalyscore?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     * 
+     *
      * @param anomalyId
      *            a unique identifier in the form anomaly/id where
      *            id is a string of 24 alpha-numeric chars for the anomaly
@@ -103,7 +104,7 @@ public class AnomalyScore extends AbstractResource {
      *            for anomaly before to start to create the anomaly score. Optional
      * @param retries
      *            number of times to try the operation. Optional
-     * 
+     *
      */
     @Deprecated
     public JSONObject create(final String anomalyId,
@@ -116,11 +117,11 @@ public class AnomalyScore extends AbstractResource {
 
     /**
      * Creates a new anomaly score.
-     * 
+     *
      * POST
      * /andromeda/anomalyscore?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     * 
+     *
      * @param anomalyId
      *            a unique identifier in the form anomaly where
      *            id is a string of 24 alpha-numeric chars for the anomaly
@@ -138,7 +139,7 @@ public class AnomalyScore extends AbstractResource {
      *            for anomaly before to start to create the anomaly score. Optional
      * @param retries
      *            number of times to try the operation. Optional
-     * 
+     *
      */
     public JSONObject create(final String anomalyId,
             JSONObject inputData, Boolean byName, JSONObject args,
@@ -208,14 +209,14 @@ public class AnomalyScore extends AbstractResource {
 
     /**
      * Retrieves an anomaly score.
-     * 
+     *
      * GET /andromeda/anomalyscore/id?username=$BIGML_USERNAME;api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
-     * 
+     *
      * @param anomalyScoreId
      *            a unique identifier in the form anomalyScore/id where id is a
      *            string of 24 alpha-numeric chars.
-     * 
+     *
      */
     @Override
     public JSONObject get(final String anomalyScoreId) {
@@ -230,13 +231,13 @@ public class AnomalyScore extends AbstractResource {
 
     /**
      * Retrieves an anomaly score.
-     * 
+     *
      * GET /andromeda/anomalyscore/id?username=$BIGML_USERNAME;api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
-     * 
+     *
      * @param anomalyScore
      *            an anomaly score JSONObject
-     * 
+     *
      */
     @Override
     public JSONObject get(final JSONObject anomalyScore) {
@@ -246,11 +247,11 @@ public class AnomalyScore extends AbstractResource {
 
     /**
      * Checks whether an anomaly score's status is FINISHED.
-     * 
+     *
      * @param anomalyScoreId
      *            a unique identifier in the form anomalyScore/id where id is a
      *            string of 24 alpha-numeric chars.
-     * 
+     *
      */
     @Override
     public boolean isReady(final String anomalyScoreId) {
@@ -258,11 +259,11 @@ public class AnomalyScore extends AbstractResource {
     }
 
     /**
-     * Checks whether a anomaly score's status is FINISHED.
-     * 
+     * Checks whether an anomaly score's status is FINISHED.
+     *
      * @param anomalyScore
      *            an anomaly score JSONObject
-     * 
+     *
      */
     @Override
     public boolean isReady(final JSONObject anomalyScore) {
@@ -272,14 +273,14 @@ public class AnomalyScore extends AbstractResource {
 
     /**
      * Lists all your anomaly scores.
-     * 
+     *
      * GET
      * /andromeda/anomalyscore?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * Host: bigml.io
-     * 
+     *
      * @param queryString
      *            query filtering the listing.
-     * 
+     *
      */
     @Override
     public JSONObject list(final String queryString) {
@@ -288,16 +289,16 @@ public class AnomalyScore extends AbstractResource {
 
     /**
      * Updates an anomaly score.
-     * 
+     *
      * PUT /andromeda/anomalyscore/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     * 
+     *
      * @param anomalyScoreId
      *            a unique identifier in the form anomalyScore/id where id is a
      *            string of 24 alpha-numeric chars.
      * @param changes
      *            set of parameters to update the source. Optional
-     * 
+     *
      */
     @Override
     public JSONObject update(final String anomalyScoreId, final String changes) {
@@ -311,15 +312,15 @@ public class AnomalyScore extends AbstractResource {
 
     /**
      * Updates an anomaly score.
-     * 
+     *
      * PUT /andromeda/anomalyscore/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     * 
+     *
      * @param anomalyScore
      *            a prediction JSONObject
      * @param changes
      *            set of parameters to update the source. Optional
-     * 
+     *
      */
     @Override
     public JSONObject update(final JSONObject anomalyScore,
@@ -330,14 +331,14 @@ public class AnomalyScore extends AbstractResource {
 
     /**
      * Deletes an anomaly score.
-     * 
+     *
      * DELETE /andromeda/anomalyscore/id?username=$BIGML_USERNAME;api_key=
      * $BIGML_API_KEY; HTTP/1.1
-     * 
+     *
      * @param anomalyScoreId
      *            a unique identifier in the form anomalyScore/id where id is a
      *            string of 24 alpha-numeric chars
-     * 
+     *
      */
     @Override
     public JSONObject delete(final String anomalyScoreId) {
@@ -351,65 +352,17 @@ public class AnomalyScore extends AbstractResource {
 
     /**
      * Deletes an anomaly score.
-     * 
+     *
      * DELETE /andromeda/anomalyscore/id?username=$BIGML_USERNAME;api_key=
      * $BIGML_API_KEY; HTTP/1.1
-     * 
+     *
      * @param anomalyScore
      *            an anomaly score JSONObject
-     * 
+     *
      */
     @Override
     public JSONObject delete(final JSONObject anomalyScore) {
         String resourceId = (String) anomalyScore.get("resource");
         return delete(resourceId);
     }
-
-
-    /**
-     * Retrieves the anomaly score file.
-     *
-     * Downloads scores, that are stored in a remote CSV file. If a path is
-     * given in filename, the contents of the file are downloaded and saved
-     * locally. A file-like object is returned otherwise.
-     *
-     * @param anomalyScoreId
-     *            a unique identifier in the form anomalyScore/id where id is
-     *            a string of 24 alpha-numeric chars.
-     * @param filename
-     *            Path to save file locally
-     *
-     */
-    public JSONObject downloadAnomalyScore(final String anomalyScoreId,
-                                           final String filename) {
-
-        if (anomalyScoreId == null || anomalyScoreId.length() == 0
-                || !anomalyScoreId.matches(ANOMALYSCORE_RE)) {
-            logger.info("Wrong anomaly score id");
-            return null;
-        }
-
-        String url = BIGML_URL + anomalyScoreId + DOWNLOAD_DIR;
-        return download(url, filename);
-    }
-
-    /**
-     * Retrieves the anomaly scores file.
-     *
-     * Downloads scores, that are stored in a remote CSV file. If a path is
-     * given in filename, the contents of the file are downloaded and saved
-     * locally. A file-like object is returned otherwise.
-     *
-     * @param anomalyScore
-     *            a anomaly score JSONObject.
-     * @param filename
-     *            Path to save file locally
-     *
-     */
-    public JSONObject downloadAnomalyScore(final JSONObject anomalyScore,
-                                              final String filename) {
-        String anomalyScoreId = (String) anomalyScore.get("resource");
-        return downloadAnomalyScore(anomalyScoreId, filename);
-    }
-
 }

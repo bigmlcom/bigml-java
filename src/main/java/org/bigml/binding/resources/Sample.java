@@ -15,11 +15,11 @@ import java.util.Map;
  * This class is used by the BigML class as a mixin that provides the samples' REST calls.
  *
  * It should not be instantiated independently.
- * 
+ *
  * Full API documentation on the API can be found from BigML at:
- * https://bigml.com/developers/samples
- * 
- * 
+ * https://bigml.com/api/samples
+ *
+ *
  */
 public class Sample extends AbstractResource {
 
@@ -75,15 +75,16 @@ public class Sample extends AbstractResource {
      * Check if the current resource is a Sample
      *
      * @param resource the resource to be checked
-     * @return true if its an Sample
+     * @return true if it's a Sample
      */
+    @Override
     public boolean isInstance(JSONObject resource) {
         return ((String) resource.get("resource")).matches(SAMPLE_RE);
     }
 
     /**
      * Creates a remote sample from a dataset.
-     * 
+     *
      * Uses a remote resource to create a new sample using the
      * arguments in `args`.
      *
@@ -101,7 +102,7 @@ public class Sample extends AbstractResource {
      *            for source before to start to create the sample. Optional
      * @param retries
      *            number of times to try the operation. Optional
-     * 
+     *
      */
     public JSONObject create(final String datasetId, JSONObject args,
             Integer waitTime, Integer retries) {
@@ -148,15 +149,15 @@ public class Sample extends AbstractResource {
 
     /**
      * Retrieves a sample.
-     * 
+     *
      * GET
      * /andromeda/sample/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io
-     * 
+     *
      * @param sampleId
      *            a unique identifier in the form sample/id where id is a string
      *            of 24 alpha-numeric chars.
-     * 
+     *
      */
     @Override
     public JSONObject get(final String sampleId) {
@@ -171,14 +172,14 @@ public class Sample extends AbstractResource {
 
     /**
      * Retrieves a sample.
-     * 
+     *
      * GET
      * /andromeda/sample/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io
-     * 
+     *
      * @param sample
      *            a sample JSONObject
-     * 
+     *
      */
     @Override
     public JSONObject get(final JSONObject sample) {
@@ -272,11 +273,11 @@ public class Sample extends AbstractResource {
 
     /**
      * Checks whether a sample's status is FINISHED.
-     * 
+     *
      * @param sampleId
      *            a unique identifier in the form sample/id where id is a
      *            string of 24 alpha-numeric chars.
-     * 
+     *
      */
     @Override
     public boolean isReady(final String sampleId) {
@@ -285,10 +286,10 @@ public class Sample extends AbstractResource {
 
     /**
      * Checks whether a sample's status is FINISHED.
-     * 
+     *
      * @param sample
      *            a sample JSONObject
-     * 
+     *
      */
     @Override
     public boolean isReady(final JSONObject sample) {
@@ -298,13 +299,13 @@ public class Sample extends AbstractResource {
 
     /**
      * Lists all your samples.
-     * 
+     *
      * GET /andromeda/sample?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * Host: bigml.io
-     * 
+     *
      * @param queryString
      *            query filtering the listing.
-     * 
+     *
      */
     @Override
     public JSONObject list(final String queryString) {
@@ -313,17 +314,17 @@ public class Sample extends AbstractResource {
 
     /**
      * Updates a sample.
-     * 
+     *
      * PUT
      * /andromeda/sample/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     * 
+     *
      * @param sampleId
      *            a unique identifier in the form sample/id where id is a
      *            string of 24 alpha-numeric chars.
      * @param changes
      *            set of parameters to update the sample. Optional
-     * 
+     *
      */
     @Override
     public JSONObject update(final String sampleId, final String changes) {
@@ -337,16 +338,16 @@ public class Sample extends AbstractResource {
 
     /**
      * Updates a sample.
-     * 
+     *
      * PUT
      * /andromeda/sample/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     * 
+     *
      * @param sample
      *            a sample JSONObject
      * @param changes
      *            set of parameters to update the sample. Optional
-     * 
+     *
      */
     @Override
     public JSONObject update(final JSONObject sample, final JSONObject changes) {
@@ -356,15 +357,15 @@ public class Sample extends AbstractResource {
 
     /**
      * Deletes a sample.
-     * 
+     *
      * DELETE
      * /andromeda/sample/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1
-     * 
+     *
      * @param sampleId
      *            a unique identifier in the form sample/id where id is a
      *            string of 24 alpha-numeric chars.
-     * 
+     *
      */
     @Override
     public JSONObject delete(final String sampleId) {
@@ -378,14 +379,14 @@ public class Sample extends AbstractResource {
 
     /**
      * Deletes a sample.
-     * 
+     *
      * DELETE
      * /andromeda/sample/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1
-     * 
+     *
      * @param sample
      *            a sample JSONObject
-     * 
+     *
      */
     @Override
     public JSONObject delete(final JSONObject sample) {

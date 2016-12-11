@@ -9,11 +9,11 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Entry point to create, retrieve, list, update, and delete clusters.
- * 
+ *
  * Full API documentation on the API can be found from BigML at:
- * https://bigml.com/developers/clusters
- * 
- * 
+ * https://bigml.com/api/clusters
+ *
+ *
  */
 public class Cluster extends AbstractResource {
 
@@ -22,7 +22,7 @@ public class Cluster extends AbstractResource {
 
     /**
      * Constructor
-     * 
+     *
      */
     public Cluster() {
         this.bigmlUser = System.getProperty("BIGML_USERNAME");
@@ -35,7 +35,7 @@ public class Cluster extends AbstractResource {
 
     /**
      * Constructor
-     * 
+     *
      */
     public Cluster(final String apiUser, final String apiKey,
             final boolean devMode) {
@@ -66,21 +66,22 @@ public class Cluster extends AbstractResource {
     }
 
     /**
-     * Check if the current resource is an Cluster
+     * Check if the current resource is a Cluster
      *
      * @param resource the resource to be checked
-     * @return true if its an Cluster
+     * @return true if it's a Cluster
      */
+    @Override
     public boolean isInstance(JSONObject resource) {
         return ((String) resource.get("resource")).matches(CLUSTER_RE);
     }
 
     /**
      * Creates a cluster from a `dataset`.
-     * 
+     *
      * POST /andromeda/cluster?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     * 
+     *
      * @param datasetId
      *            a unique identifier in the form dataset/id where id is a
      *            string of 24 alpha-numeric chars for the dataset to attach the
@@ -92,7 +93,7 @@ public class Cluster extends AbstractResource {
      *            for source before to start to create the cluster. Optional
      * @param retries
      *            number of times to try the operation. Optional
-     * 
+     *
      */
     @Deprecated
     public JSONObject create(final String datasetId, String args,
@@ -106,10 +107,10 @@ public class Cluster extends AbstractResource {
 
     /**
      * Creates a cluster from a `dataset`.
-     * 
+     *
      * POST /andromeda/cluster?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     * 
+     *
      * @param datasetId
      *            a unique identifier in the form dataset/id where id is a
      *            string of 24 alpha-numeric chars for the dataset to attach the
@@ -121,7 +122,7 @@ public class Cluster extends AbstractResource {
      *            for source before to start to create the cluster. Optional
      * @param retries
      *            number of times to try the operation. Optional
-     * 
+     *
      */
     public JSONObject create(final String datasetId, JSONObject args,
             Integer waitTime, Integer retries) {
@@ -134,10 +135,10 @@ public class Cluster extends AbstractResource {
 
     /**
      * Creates a cluster from a list of `datasets`.
-     * 
+     *
      * POST /andromeda/cluster?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     * 
+     *
      * @param datasetsIds
      *            list of identifiers in the form dataset/id where id is a
      *            string of 24 alpha-numeric chars for the dataset to attach the
@@ -149,7 +150,7 @@ public class Cluster extends AbstractResource {
      *            for source before to start to create the cluster. Optional
      * @param retries
      *            number of times to try the operation. Optional
-     * 
+     *
      */
     @Deprecated
     public JSONObject create(final List datasetsIds, String args,
@@ -162,10 +163,10 @@ public class Cluster extends AbstractResource {
 
     /**
      * Creates a cluster from a list of `datasets`.
-     * 
+     *
      * POST /andromeda/cluster?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     * 
+     *
      * @param datasetsIds
      *            list of identifiers in the form dataset/id where id is a
      *            string of 24 alpha-numeric chars for the dataset to attach the
@@ -177,7 +178,7 @@ public class Cluster extends AbstractResource {
      *            for source before to start to create the cluster. Optional
      * @param retries
      *            number of times to try the operation. Optional
-     * 
+     *
      */
     public JSONObject create(final List datasetsIds, JSONObject args,
             Integer waitTime, Integer retries) {
@@ -189,15 +190,15 @@ public class Cluster extends AbstractResource {
 
     /**
      * Retrieves a cluster.
-     * 
+     *
      * GET
      * /andromeda/cluster/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * Host: bigml.io
-     * 
+     *
      * @param clusterId
      *            a unique identifier in the form cluster/id where id is a
      *            string of 24 alpha-numeric chars.
-     * 
+     *
      */
     @Override
     public JSONObject get(final String clusterId) {
@@ -206,11 +207,11 @@ public class Cluster extends AbstractResource {
 
     /**
      * Retrieves a cluster.
-     * 
+     *
      * GET
      * /andromeda/cluster/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * Host: bigml.io
-     * 
+     *
      * @param clusterId
      *            a unique identifier in the form cluster/id where id is a
      *            string of 24 alpha-numeric chars.
@@ -218,7 +219,7 @@ public class Cluster extends AbstractResource {
      *            API user
      * @param apiKey
      *            API key
-     * 
+     *
      */
     public JSONObject get(final String clusterId, final String apiUser,
             final String apiKey) {
@@ -233,14 +234,14 @@ public class Cluster extends AbstractResource {
 
     /**
      * Retrieves a cluster.
-     * 
+     *
      * GET
      * /andromeda/cluster/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * Host: bigml.io
-     * 
+     *
      * @param cluster
      *            a cluster JSONObject
-     * 
+     *
      */
     @Override
     public JSONObject get(final JSONObject cluster) {
@@ -250,18 +251,18 @@ public class Cluster extends AbstractResource {
 
     /**
      * Retrieves a cluster.
-     * 
+     *
      * GET
      * /andromeda/cluster/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * Host: bigml.io
-     * 
+     *
      * @param cluster
      *            a cluster JSONObject
      * @param apiUser
      *            API user
      * @param apiKey
      *            API key
-     * 
+     *
      */
     public JSONObject get(final JSONObject cluster, final String apiUser,
             final String apiKey) {
@@ -271,17 +272,17 @@ public class Cluster extends AbstractResource {
 
     /**
      * Retrieves a cluster.
-     * 
+     *
      * GET
      * /andromeda/cluster/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * Host: bigml.io
-     * 
+     *
      * @param clusterId
      *            a unique identifier in the form cluster/id where id is a
      *            string of 24 alpha-numeric chars.
      * @param queryString
      *            query for filtering.
-     * 
+     *
      */
     public JSONObject get(final String clusterId, final String queryString) {
         return get(clusterId, queryString, null, null);
@@ -289,11 +290,11 @@ public class Cluster extends AbstractResource {
 
     /**
      * Retrieves a cluster.
-     * 
+     *
      * GET
      * /andromeda/cluster/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * Host: bigml.io
-     * 
+     *
      * @param clusterId
      *            a unique identifier in the form cluster/id where id is a
      *            string of 24 alpha-numeric chars.
@@ -303,7 +304,7 @@ public class Cluster extends AbstractResource {
      *            API user
      * @param apiKey
      *            API key
-     * 
+     *
      */
     public JSONObject get(final String clusterId, final String queryString,
             final String apiUser, final String apiKey) {
@@ -318,16 +319,16 @@ public class Cluster extends AbstractResource {
 
     /**
      * Retrieves a cluster.
-     * 
+     *
      * GET
      * /andromeda/cluster/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * Host: bigml.io
-     * 
+     *
      * @param cluster
      *            a cluster JSONObject
      * @param queryString
      *            query for filtering
-     * 
+     *
      */
     public JSONObject get(final JSONObject cluster, final String queryString) {
         String resourceId = (String) cluster.get("resource");
@@ -336,11 +337,11 @@ public class Cluster extends AbstractResource {
 
     /**
      * Retrieves a cluster.
-     * 
+     *
      * GET
      * /andromeda/cluster/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * Host: bigml.io
-     * 
+     *
      * @param cluster
      *            a cluster JSONObject
      * @param queryString
@@ -349,7 +350,7 @@ public class Cluster extends AbstractResource {
      *            API user
      * @param apiKey
      *            API key
-     * 
+     *
      */
     public JSONObject get(final JSONObject cluster, final String queryString,
             final String apiUser, final String apiKey) {
@@ -359,11 +360,11 @@ public class Cluster extends AbstractResource {
 
     /**
      * Checks whether a cluster's status is FINISHED.
-     * 
+     *
      * @param clusterId
      *            a unique identifier in the form cluster/id where id is a
      *            string of 24 alpha-numeric chars.
-     * 
+     *
      */
     @Override
     public boolean isReady(final String clusterId) {
@@ -372,10 +373,10 @@ public class Cluster extends AbstractResource {
 
     /**
      * Checks whether a cluster status is FINISHED.
-     * 
+     *
      * @param cluster
      *            a cluster JSONObject
-     * 
+     *
      */
     @Override
     public boolean isReady(final JSONObject cluster) {
@@ -385,13 +386,13 @@ public class Cluster extends AbstractResource {
 
     /**
      * Lists all your cluster.
-     * 
+     *
      * GET /andromeda/cluster?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * Host: bigml.io
-     * 
+     *
      * @param queryString
      *            query filtering the listing.
-     * 
+     *
      */
     @Override
     public JSONObject list(final String queryString) {
@@ -400,17 +401,17 @@ public class Cluster extends AbstractResource {
 
     /**
      * Updates a cluster.
-     * 
+     *
      * PUT
      * /andromeda/cluster/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     * 
+     *
      * @param clusterId
      *            a unique identifier in the form cluster/id where id is a
      *            string of 24 alpha-numeric chars.
      * @param changes
      *            set of parameters to update the cluster. Optional
-     * 
+     *
      */
     @Override
     public JSONObject update(final String clusterId, final String changes) {
@@ -424,16 +425,16 @@ public class Cluster extends AbstractResource {
 
     /**
      * Updates a cluster.
-     * 
+     *
      * PUT
      * /andromeda/cluster/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     * 
+     *
      * @param cluster
      *            a cluster JSONObject
      * @param changes
      *            set of parameters to update the cluster. Optional
-     * 
+     *
      */
     @Override
     public JSONObject update(final JSONObject cluster, final JSONObject changes) {
@@ -443,15 +444,15 @@ public class Cluster extends AbstractResource {
 
     /**
      * Deletes a cluster.
-     * 
+     *
      * DELETE
      * /andromeda/cluster/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1
-     * 
+     *
      * @param clusterId
      *            a unique identifier in the form cluster/id where id is a
      *            string of 24 alpha-numeric chars.
-     * 
+     *
      */
     @Override
     public JSONObject delete(final String clusterId) {
@@ -465,14 +466,14 @@ public class Cluster extends AbstractResource {
 
     /**
      * Deletes a cluster.
-     * 
+     *
      * DELETE
      * /andromeda/cluster/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1
-     * 
+     *
      * @param cluster
      *            a cluster JSONObject
-     * 
+     *
      */
     @Override
     public JSONObject delete(final JSONObject cluster) {

@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
  * Entry point to create, retrieve, list, update, and delete models.
  *
  * Full API documentation on the API can be found from BigML at:
- * https://bigml.com/developers/models
+ * https://bigml.com/api/models
  *
  *
  */
@@ -70,11 +70,12 @@ public class Model extends AbstractResource {
     }
 
     /**
-     * Check if the current resource is an Model
+     * Check if the current resource is a Model
      *
      * @param resource the resource to be checked
-     * @return true if its an Model
+     * @return true if it's a Model
      */
+    @Override
     public boolean isInstance(JSONObject resource) {
         return ((String) resource.get("resource")).matches(MODEL_RE);
     }

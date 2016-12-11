@@ -31,7 +31,7 @@ import java.util.Map;
  * // Retrieve a remote anomaly by id
  * JSONObject jsonAnomaly = api.getAnomaly("anomaly/551aa203af447f5484000ec0");
  *
- * // A lightweight wrapper around a Anomaly resurce
+ * // A lightweight wrapper around an Anomaly resurce
  * LocalAnomaly localAnomaly = new LocalAnomaly(jsonAnomaly);
  *
  * // Input data

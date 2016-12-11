@@ -15,7 +15,7 @@ import java.util.Map;
  * It should not be instantiated independently.
  *
  * Full API documentation on the API can be found from BigML at:
- * https://bigml.com/developers/correlations
+ * https://bigml.com/api/correlations
  *
  *
  */
@@ -73,8 +73,9 @@ public class Correlation extends AbstractResource {
      * Check if the current resource is a Correlation
      *
      * @param resource the resource to be checked
-     * @return true if its an Correlation
+     * @return true if it's a Correlation
      */
+    @Override
     public boolean isInstance(JSONObject resource) {
         return ((String) resource.get("resource")).matches(CORRELATION_RE);
     }

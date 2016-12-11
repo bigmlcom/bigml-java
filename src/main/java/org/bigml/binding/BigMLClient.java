@@ -84,6 +84,10 @@ public class BigMLClient {
     private Library library;
     private Association association;
     private AssociationSet associationSet;
+    private TopicModel topicModel;
+    private TopicDistribution topicDistribution;
+    private BatchTopicDistribution batchTopicDistribution;
+    private Configuration configuration;
 
     private Properties props;
     private Boolean devMode = false;
@@ -496,6 +500,14 @@ public class BigMLClient {
                 this.devMode, cacheManager);
         associationSet = new AssociationSet(this.bigmlUser, this.bigmlApiKey,
                 this.devMode, cacheManager);
+        topicModel = new TopicModel(this.bigmlUser, this.bigmlApiKey,
+                this.devMode, cacheManager);
+        topicDistribution = new TopicDistribution(this.bigmlUser, this.bigmlApiKey,
+                this.devMode, cacheManager);
+        batchTopicDistribution = new BatchTopicDistribution(this.bigmlUser, this.bigmlApiKey,
+                this.devMode, cacheManager);
+        configuration = new Configuration(this.bigmlUser, this.bigmlApiKey,
+                this.devMode, cacheManager);
     }
 
     public String getBigMLUrl() {
@@ -517,7 +529,7 @@ public class BigMLClient {
     // ################################################################
     // #
     // # Sources
-    // # https://bigml.com/developers/sources
+    // # https://bigml.com/api/sources
     // #
     // ################################################################
 
@@ -885,7 +897,7 @@ public class BigMLClient {
     // ################################################################
     // #
     // # Datasets
-    // # https://bigml.com/developers/datasets
+    // # https://bigml.com/api/datasets
     // #
     // ################################################################
 
@@ -1153,7 +1165,7 @@ public class BigMLClient {
     // ################################################################
     // #
     // # Models
-    // # https://bigml.com/developers/models
+    // # https://bigml.com/api/models
     // #
     // ################################################################
 
@@ -1610,7 +1622,7 @@ public class BigMLClient {
     // ################################################################
     // #
     // # Anomalies
-    // # https://bigml.com/developers/anomalies
+    // # https://bigml.com/api/anomalies
     // #
     // ################################################################
 
@@ -1874,7 +1886,7 @@ public class BigMLClient {
     }
 
     /**
-     * Retrieves a anomaly.
+     * Retrieves an anomaly.
      *
      * GET /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * Host: bigml.io
@@ -1897,7 +1909,7 @@ public class BigMLClient {
      * Host: bigml.io
      *
      * @param anomalyJSON
-     *            a anomaly JSONObject
+     *            an anomaly JSONObject
      * @param queryString
      *            query for filtering.
      * @param apiUser
@@ -1924,7 +1936,7 @@ public class BigMLClient {
     }
 
     /**
-     * Checks whether a anomaly's status is FINISHED.
+     * Checks whether an anomaly's status is FINISHED.
      *
      * @param anomalyJSON
      *            an anomaly JSONObject
@@ -1949,7 +1961,7 @@ public class BigMLClient {
     }
 
     /**
-     * Updates a anomaly.
+     * Updates an anomaly.
      *
      * PUT /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
@@ -2017,7 +2029,7 @@ public class BigMLClient {
     // ################################################################
     // #
     // # Predictions
-    // # https://bigml.com/developers/predictions
+    // # https://bigml.com/api/predictions
     // #
     // ################################################################
 
@@ -2219,7 +2231,7 @@ public class BigMLClient {
     // ################################################################
     // #
     // # Anomaly scores
-    // # https://bigml.com/developers/anomalyscores
+    // # https://bigml.com/api/anomalyscores
     // #
     // ################################################################
 
@@ -2308,50 +2320,11 @@ public class BigMLClient {
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
      *
      * @param anomalyScoreJSON
-     *            a anomaly score JSONObject
+     *            an anomaly score JSONObject
      *
      */
     public JSONObject getAnomalyScore(final JSONObject anomalyScoreJSON) {
         return anomalyScore.get(anomalyScoreJSON);
-    }
-
-    /**
-     * Retrieves the anomaly score file.
-     *
-     * Downloads scores, that are stored in a remote CSV file. If a path is
-     * given in filename, the contents of the file are downloaded and saved
-     * locally. A file-like object is returned otherwise.
-     *
-     * @param anomalyScoreId
-     *            a unique identifier in the form anomalyScore/id where id is
-     *            a string of 24 alpha-numeric chars.
-     * @param filename
-     *            Path to save file locally
-     *
-     */
-    public JSONObject downloadAnomalyScore(
-            final String anomalyScoreId, final String filename) {
-        return anomalyScore.downloadAnomalyScore(anomalyScoreId,
-                filename);
-    }
-
-    /**
-     * Retrieves the anomaly score file.
-     *
-     * Downloads scores, that are stored in a remote CSV file. If a path is
-     * given in filename, the contents of the file are downloaded and saved
-     * locally. A file-like object is returned otherwise.
-     *
-     * @param anomalyScoreJSON
-     *            an anomaly score JSONObject.
-     * @param filename
-     *            Path to save file locally
-     *
-     */
-    public JSONObject downloadAnomalyScore(
-            final JSONObject anomalyScoreJSON, final String filename) {
-        return anomalyScore.downloadAnomalyScore(anomalyScoreJSON,
-                filename);
     }
 
     /**
@@ -2459,7 +2432,7 @@ public class BigMLClient {
     // ################################################################
     // #
     // # Evaluations
-    // # https://bigml.com/developers/evaluations
+    // # https://bigml.com/api/evaluations
     // #
     // ################################################################
 
@@ -2680,7 +2653,7 @@ public class BigMLClient {
     // ################################################################
     // #
     // # Ensembles
-    // # https://bigml.com/developers/ensembles
+    // # https://bigml.com/api/ensembles
     // #
     // ################################################################
 
@@ -2952,7 +2925,7 @@ public class BigMLClient {
     // ################################################################
     // #
     // # Batch predictions
-    // # https://bigml.com/developers/batch_predictions
+    // # https://bigml.com/api/batch_predictions
     // #
     // ################################################################
 
@@ -3206,7 +3179,7 @@ public class BigMLClient {
     // ################################################################
     // #
     // # Batch anomaly scores
-    // # https://bigml.com/developers/batch_anomalyscore
+    // # https://bigml.com/api/batch_anomalyscore
     // #
     // ################################################################
 
@@ -3426,7 +3399,7 @@ public class BigMLClient {
     // ################################################################
     // #
     // # Clusters
-    // # https://bigml.com/developers/clusters
+    // # https://bigml.com/api/clusters
     // #
     // ################################################################
 
@@ -3700,7 +3673,7 @@ public class BigMLClient {
     // ################################################################
     // #
     // # Centroids
-    // # https://bigml.com/developers/centroids
+    // # https://bigml.com/api/centroids
     // #
     // ################################################################
 
@@ -3904,7 +3877,7 @@ public class BigMLClient {
     // ################################################################
     // #
     // # BatchCentroids
-    // # https://bigml.com/developers/batch_centroids
+    // # https://bigml.com/api/batch_centroids
     // #
     // ################################################################
 
@@ -4147,7 +4120,7 @@ public class BigMLClient {
     // ################################################################
     // #
     // # Samples
-    // # https://bigml.com/developers/sample
+    // # https://bigml.com/api/sample
     // #
     // ################################################################
 
@@ -4376,7 +4349,7 @@ public class BigMLClient {
     // ################################################################
     // #
     // # Projects
-    // # https://bigml.com/developers/project
+    // # https://bigml.com/api/project
     // #
     // ################################################################
 
@@ -4576,7 +4549,7 @@ public class BigMLClient {
     // ################################################################
     // #
     // # Correlations
-    // # https://bigml.com/developers/correlations
+    // # https://bigml.com/api/correlations
     // #
     // ################################################################
 
@@ -4759,7 +4732,7 @@ public class BigMLClient {
     // ################################################################
     // #
     // # StatisticalTests
-    // # https://bigml.com/developers/statisticaltests
+    // # https://bigml.com/api/statisticaltests
     // #
     // ################################################################
 
@@ -4944,7 +4917,7 @@ public class BigMLClient {
     // ################################################################
     // #
     // # LogisticRegression
-    // # https://bigml.com/developers/logisticregressions
+    // # https://bigml.com/api/logisticregressions
     // #
     // ################################################################
 
@@ -5168,7 +5141,7 @@ public class BigMLClient {
     // ################################################################
     // #
     // # Whizzml Script
-    // # https://bigml.com/developers/scripts
+    // # https://bigml.com/api/scripts
     // #
     // ################################################################
 
@@ -5337,7 +5310,7 @@ public class BigMLClient {
     // ################################################################
     // #
     // # Whizzml Execution
-    // # https://bigml.com/developers/executions
+    // # https://bigml.com/api/executions
     // #
     // ################################################################
 
@@ -5527,7 +5500,7 @@ public class BigMLClient {
     // ################################################################
     // #
     // # Whizzml Library
-    // # https://bigml.com/developers/libraries
+    // # https://bigml.com/api/libraries
     // #
     // ################################################################
 
@@ -5696,7 +5669,7 @@ public class BigMLClient {
     // ################################################################
     // #
     // # Associations
-    // # https://bigml.com/developers/associations
+    // # https://bigml.com/api/associations
     // #
     // ################################################################
 
@@ -5751,9 +5724,9 @@ public class BigMLClient {
     }
 
     /**
-     * Retrieves a association.
+     * Retrieves an association.
      *
-     * A association is an evolving object that is processed until it reaches the
+     * An association is an evolving object that is processed until it reaches the
      * FINISHED or FAULTY state, the method will return a JSONObject that
      * encloses the association values and state info available at the time it is
      * called.
@@ -5774,7 +5747,7 @@ public class BigMLClient {
     /**
      * Retrieves an association.
      *
-     * A association is an evolving object that is processed until it reaches the
+     * An association is an evolving object that is processed until it reaches the
      * FINISHED or FAULTY state, the method will return a JSONObject that
      * encloses the association values and state info available at the time it is
      * called.
@@ -5792,7 +5765,7 @@ public class BigMLClient {
     }
 
     /**
-     * Check whether a association's status is FINISHED.
+     * Check whether an association's status is FINISHED.
      *
      * @param associationId
      *            a unique identifier in the form association/id where id is a
@@ -5804,7 +5777,7 @@ public class BigMLClient {
     }
 
     /**
-     * Check whether a association's status is FINISHED.
+     * Check whether an association's status is FINISHED.
      *
      * @param associationJSON
      *            an association JSONObject.
@@ -5829,7 +5802,7 @@ public class BigMLClient {
     }
 
     /**
-     * Updates a association.
+     * Updates an association.
      *
      * PUT
      * /andromeda/association/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
@@ -5847,7 +5820,7 @@ public class BigMLClient {
     }
 
     /**
-     * Updates a association.
+     * Updates an association.
      *
      * PUT
      * /andromeda/association/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
@@ -5864,7 +5837,7 @@ public class BigMLClient {
     }
 
     /**
-     * Deletes a association.
+     * Deletes an association.
      *
      * DELETE
      * /andromeda/association/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
@@ -5880,7 +5853,7 @@ public class BigMLClient {
     }
 
     /**
-     * Deletes a association.
+     * Deletes an association.
      *
      * DELETE
      * /andromeda/association/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
@@ -5898,37 +5871,12 @@ public class BigMLClient {
     // ################################################################
     // #
     // # AssociationSets
-    // # https://bigml.com/developers/associationsets
+    // # https://bigml.com/api/associationsets
     // #
     // ################################################################
 
     /**
-     * Creates a new associationset.
-     *
-     * POST /andromeda/associationset?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     *
-     * @param associationId
-     *            a unique identifier in the form association/id where id is a
-     *            string of 24 alpha-numeric chars for the association to attach
-     *            the associationset.
-     * @param args
-     *            set of parameters for the new associationset. Optional
-     * @param waitTime
-     *            time to wait for next check of FINISHED status for association
-     *            before to start to create the associationset. Optional
-     * @param retries
-     *            number of times to try the operation. Optional
-     *
-     */
-    @Deprecated
-    public JSONObject createAssociationSet(final String associationId,
-            String args, Integer waitTime, Integer retries) {
-        return associationSet.create(associationId, args, waitTime, retries);
-    }
-
-    /**
-     * Creates a new associationset.
+     * Creates a new association set.
      *
      * POST /andromeda/associationset?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
@@ -5936,28 +5884,33 @@ public class BigMLClient {
      * @param datasetId
      *            a unique identifier in the form association/id where id is a
      *            string of 24 alpha-numeric chars for the dataset to attach the
-     *            associationset.
+     *            association set.
+     * @param inputData
+     *            an object with field's id/value pairs representing the
+     *            instance you want to create an association set for.
      * @param args
      *            set of parameters for the new association. Optional
      * @param waitTime
      *            time to wait for next check of FINISHED status for association
-     *            before to start to create the associationset. Optional
+     *            before to start to create the association set. Optional
      * @param retries
      *            number of times to try the operation. Optional
      *
      */
     public JSONObject createAssociationSet(final String associationId,
-            JSONObject args, Integer waitTime, Integer retries) {
+            JSONObject inputData, JSONObject args,
+            Integer waitTime, Integer retries) {
 
-        return associationSet.create(associationId, args, waitTime, retries);
+        return associationSet.create(associationId, inputData, args,
+                waitTime, retries);
     }
 
     /**
-     * Retrieves a associationset.
+     * Retrieves an association set.
      *
-     * A associationset is an evolving object that is processed until it reaches
+     * An associationset is an evolving object that is processed until it reaches
      * the FINISHED or FAULTY state, the method will return a JSONObject that
-     * encloses the associationset values and state info available at the time
+     * encloses the association set values and state info available at the time
      * it is called.
      *
      * GET
@@ -5974,9 +5927,9 @@ public class BigMLClient {
     }
 
     /**
-     * Retrieves an associationset.
+     * Retrieves an association set.
      *
-     * A associationset is an evolving object that is processed until it reaches
+     * An associationset is an evolving object that is processed until it reaches
      * the FINISHED or FAULTY state, the method will return a JSONObject that
      * encloses the association values and state info available at the time it is
      * called.
@@ -5986,7 +5939,7 @@ public class BigMLClient {
      * HTTP/1.1 Host: bigml.io
      *
      * @param associationsetJSON
-     *            an associationset JSONObject.
+     *            an association set JSONObject.
      *
      */
     public JSONObject getAssociationSet(final JSONObject associationsetJSON) {
@@ -5994,7 +5947,7 @@ public class BigMLClient {
     }
 
     /**
-     * Check whether a associationset's status is FINISHED.
+     * Check whether an association set's status is FINISHED.
      *
      * @param associationSetId
      *            a unique identifier in the form associationset/id where id is
@@ -6006,10 +5959,10 @@ public class BigMLClient {
     }
 
     /**
-     * Check whether a associationset's status is FINISHED.
+     * Check whether an association set's status is FINISHED.
      *
      * @param associationSetJSON
-     *            an associationset JSONObject.
+     *            an association set JSONObject.
      *
      */
     public boolean associationSetIsReady(final JSONObject associationSetJSON) {
@@ -6031,7 +5984,7 @@ public class BigMLClient {
     }
 
     /**
-     * Updates a associationset.
+     * Updates an association set.
      *
      * PUT
      * /andromeda/associationset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
@@ -6041,7 +5994,7 @@ public class BigMLClient {
      *            a unique identifier in the form associationset/id where id is
      *            a string of 24 alpha-numeric chars.
      * @param changes
-     *            set of parameters to update the associationset. Optional
+     *            set of parameters to update the association set. Optional
      *
      */
     public JSONObject updateAssociationSet(final String associationSetId, final String changes) {
@@ -6049,7 +6002,7 @@ public class BigMLClient {
     }
 
     /**
-     * Updates a associationset.
+     * Updates an association set.
      *
      * PUT
      * /andromeda/associationset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
@@ -6058,7 +6011,7 @@ public class BigMLClient {
      * @param associationSetJSON
      *            an associationset JSONObject
      * @param changes
-     *            set of parameters to update the association. Optional
+     *            set of parameters to update the association set. Optional
      */
     public JSONObject updateAssociationSet(final JSONObject associationSetJSON,
             final JSONObject changes) {
@@ -6066,7 +6019,7 @@ public class BigMLClient {
     }
 
     /**
-     * Deletes a associationset.
+     * Deletes an association set.
      *
      * DELETE
      * /andromeda/associationset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
@@ -6082,17 +6035,780 @@ public class BigMLClient {
     }
 
     /**
-     * Deletes a associationset.
+     * Deletes an association set.
      *
      * DELETE
      * /andromeda/associationset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1
      *
      * @param associationSetJSON
-     *            an associationset JSONObject.
+     *            an association set JSONObject.
      *
      */
     public JSONObject deleteAssociationSet(final JSONObject associationSetJSON) {
         return associationSet.delete(associationSetJSON);
+    }
+
+    // ################################################################
+    // #
+    // # Topic Models
+    // # https://bigml.com/api/topicmodels
+    // #
+    // ################################################################
+
+    /**
+     * Creates a new topic model.
+     *
+     * POST /andromeda/topicmodel?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param datasetId
+     *            a unique identifier in the form dataset/id where id is a
+     *            string of 24 alpha-numeric chars for the dataset to attach the
+     *            topic model.
+     * @param args
+     *            set of parameters for the new topic model. Optional
+     * @param waitTime
+     *            time to wait for next check of FINISHED status for dataset
+     *            before to start to create the topic model. Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     *
+     */
+    public JSONObject createTopicModel(final String datasetId, JSONObject args,
+            Integer waitTime, Integer retries) {
+
+        return topicModel.create(datasetId, args, waitTime, retries);
+    }
+
+    /**
+     * Retrieves a topicmodel.
+     *
+     * A topic model is an evolving object that is processed until it reaches the
+     * FINISHED or FAULTY state, the method will return a JSONObject that
+     * encloses the topic model values and state info available at the time it is
+     * called.
+     *
+     * GET
+     * /andromeda/topicmodel/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io
+     *
+     * @param topicModelId
+     *            a unique identifier in the form topicmodel/id where id is a
+     *            string of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject getTopicModel(final String topicModelId) {
+        return topicModel.get(topicModelId);
+    }
+
+    /**
+     * Retrieves a topicmodel.
+     *
+     * A topic model is an evolving object that is processed until it reaches the
+     * FINISHED or FAULTY state, the method will return a JSONObject that
+     * encloses the topic model values and state info available at the time it is
+     * called.
+     *
+     * GET
+     * /andromeda/topicmodel/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io
+     *
+     * @param topicModelJSON
+     *            a topicmodel JSONObject.
+     *
+     */
+    public JSONObject getTopicModel(final JSONObject topicModelJSON) {
+        return topicModel.get(topicModelJSON);
+    }
+
+    /**
+     * Check whether a topicmodel's status is FINISHED.
+     *
+     * @param topicModelId
+     *            a unique identifier in the form topicmodel/id where id is a
+     *            string of 24 alpha-numeric chars.
+     *
+     */
+    public boolean topicModelIsReady(final String topicModelId) {
+        return topicModel.isReady(topicModelId);
+    }
+
+    /**
+     * Check whether a topicmodel's status is FINISHED.
+     *
+     * @param topicModelJSON
+     *            a topicmodel JSONObject.
+     *
+     */
+    public boolean topicModelIsReady(final JSONObject topicModelJSON) {
+        return topicModel.isReady(topicModelJSON);
+    }
+
+    /**
+     * Lists all your topic models.
+     *
+     * GET /andromeda/topicmodel?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param queryString
+     *            query filtering the listing.
+     *
+     */
+    public JSONObject listTopicModels(final String queryString) {
+        return topicModel.list(queryString);
+    }
+
+    /**
+     * Updates a topicmodel.
+     *
+     * PUT
+     * /andromeda/topicmodel/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param topicModelId
+     *            a unique identifier in the form topicmodel/id where id is a
+     *            string of 24 alpha-numeric chars.
+     * @param changes
+     *            set of parameters to update the topic model. Optional
+     *
+     */
+    public JSONObject updateTopicModel(final String topicModelId, final String changes) {
+        return topicModel.update(topicModelId, changes);
+    }
+
+    /**
+     * Updates a topicmodel.
+     *
+     * PUT
+     * /andromeda/topicmodel/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param topicModelJSON
+     *            a topicmodel JSONObject
+     * @param changes
+     *            set of parameters to update the topic model. Optional
+     */
+    public JSONObject updateTopicModel(final JSONObject topicModelJSON,
+            final JSONObject changes) {
+        return topicModel.update(topicModelJSON, changes);
+    }
+
+    /**
+     * Deletes a topicmodel.
+     *
+     * DELETE
+     * /andromeda/topicmodel/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1
+     *
+     * @param topicModelId
+     *            a unique identifier in the form topicmodel/id where id is a
+     *            string of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject deleteTopicModel(final String topicModelId) {
+        return topicModel.delete(topicModelId);
+    }
+
+    /**
+     * Deletes a topicmodel.
+     *
+     * DELETE
+     * /andromeda/topicmodel/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1
+     *
+     * @param topicModelJSON
+     *            a topicmodel JSONObject.
+     *
+     */
+    public JSONObject deleteTopicModel(final JSONObject topicModelJSON) {
+        return topicModel.delete(topicModelJSON);
+    }
+
+    // ################################################################
+    // #
+    // # Topic distributions
+    // # https://bigml.com/api/topicdistributions
+    // #
+    // ################################################################
+
+    /**
+     * Creates a new topic distribution.
+     *
+     * POST
+     * /andromeda/topicdistribution?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param topicModelId
+     *            a unique identifier in the form topicmodel/id where
+     *            id is a string of 24 alpha-numeric chars for the topic model
+     *            to attach the topic distribution.
+     * @param inputData
+     *            an object with field's id/value pairs representing the
+     *            instance you want to create a topic distribution for.
+     * @param args
+     *            set of parameters for the new topic distribution. Required
+     * @param waitTime
+     *            time to wait for next check of FINISHED status for topic model
+     *            before to start to create the topic distribution. Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     *
+     */
+    public JSONObject createTopicDistribution(final String topicModelId,
+            JSONObject inputData, JSONObject args,
+            Integer waitTime, Integer retries) {
+        return topicDistribution.create(topicModelId, inputData, args,
+                waitTime, retries);
+    }
+
+    /**
+     * Retrieves a topic distribution.
+     *
+     * GET /andromeda/topicdistribution/id?username=$BIGML_USERNAME;api_key=
+     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
+     *
+     * @param topicDistributionId
+     *            a unique identifier in the form topicDistribution/id where id is a
+     *            string of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject getTopicDistribution(final String topicDistributionId) {
+        return topicDistribution.get(topicDistributionId);
+    }
+
+    /**
+     * Retrieves a topic distribution.
+     *
+     * GET /andromeda/topicdistribution/id?username=$BIGML_USERNAME;api_key=
+     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
+     *
+     * @param topicDistributionJSON
+     *            a topic distribution JSONObject
+     *
+     */
+    public JSONObject getTopicDistribution(final JSONObject topicDistributionJSON) {
+        return topicDistribution.get(topicDistributionJSON);
+    }
+
+    /**
+     * Checks whether a topic distribution's status is FINISHED.
+     *
+     * @param topicDistributionId
+     *            a unique identifier in the form topicDistribution/id where id is a
+     *            string of 24 alpha-numeric chars.
+     *
+     */
+    public boolean topicDistributionIsReady(final String topicDistributionId) {
+        return topicDistribution.isReady(topicDistributionId);
+    }
+
+    /**
+     * Checks whether a topic distribution's status is FINISHED.
+     *
+     * @param topicDistributionJSON
+     *            a topic distribution JSONObject
+     *
+     */
+    public boolean topicDistributionIsReady(final JSONObject topicDistributionJSON) {
+        return topicDistribution.isReady(topicDistributionJSON);
+    }
+
+    /**
+     * Lists all your topic distributions.
+     *
+     * GET
+     * /andromeda/topicdistribution?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param queryString
+     *            query filtering the listing.
+     *
+     */
+    public JSONObject listTopicDistributions(final String queryString) {
+        return topicDistribution.list(queryString);
+    }
+
+    /**
+     * Updates a topic distribution.
+     *
+     * PUT /andromeda/topicdistribution/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param topicDistributionId
+     *            a unique identifier in the form topicDistribution/id where id is a
+     *            string of 24 alpha-numeric chars.
+     * @param changes
+     *            set of parameters to update the source. Optional
+     *
+     */
+    public JSONObject updateTopicDistribution(final String topicDistributionId,
+            final String changes) {
+        return topicDistribution.update(topicDistributionId, changes);
+    }
+
+    /**
+     * Updates a topic distribution.
+     *
+     * PUT /andromeda/topicdistribution/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param topicDistributionJSON
+     *            am topic distribution JSONObject
+     * @param changes
+     *            set of parameters to update the source. Optional
+     *
+     */
+    public JSONObject updateTopicDistribution(final JSONObject topicDistributionJSON,
+            final JSONObject changes) {
+        return topicDistribution.update(topicDistributionJSON, changes);
+    }
+
+    /**
+     * Deletes a topic distribution.
+     *
+     * DELETE /andromeda/topicdistribution/id?username=$BIGML_USERNAME;api_key=
+     * $BIGML_API_KEY; HTTP/1.1
+     *
+     * @param topicDistributionId
+     *            a unique identifier in the form topicDistribution/id where id is a
+     *            string of 24 alpha-numeric chars
+     *
+     */
+    public JSONObject deleteTopicDistribution(final String topicDistributionId) {
+        return topicDistribution.delete(topicDistributionId);
+    }
+
+    /**
+     * Deletes a topic distribution.
+     *
+     * DELETE /andromeda/topicdistribution/id?username=$BIGML_USERNAME;api_key=
+     * $BIGML_API_KEY; HTTP/1.1
+     *
+     * @param topicDistributionJSON
+     *            a topic distribution JSONObject
+     *
+     */
+    public JSONObject deleteTopicDistribution(final JSONObject topicDistributionJSON) {
+        return topicDistribution.delete(topicDistributionJSON);
+    }
+
+    // ################################################################
+    // #
+    // # Batch topic distributions
+    // # https://bigml.com/api/batch_topicdistribution
+    // #
+    // ################################################################
+
+    /**
+     * Creates a new batch topic distribution.
+     *
+     * POST /andromeda/batchtopicdistribution?username=$BIGML_USERNAME;api_key=
+     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param topicModelId
+     *            a unique identifier in the form topicmodel/id where
+     *            id is a string of 24 alpha-numeric chars for the
+     *            topic model to attach the evaluation.
+     * @param datasetId
+     *            a unique identifier in the form dataset/id where id is a
+     *            string of 24 alpha-numeric chars for the dataset to attach the
+     *            batch topic distribution.
+     * @param args
+     *            set of parameters for the new batch prediction. Optional
+     * @param waitTime
+     *            time (milliseconds) to wait for next check of FINISHED status
+     *            for model before to start to create the batch prediction.
+     *            Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     *
+     */
+    public JSONObject createBatchTopicDistribution(final String topicModelId,
+            final String datasetId, JSONObject args, Integer waitTime,
+            Integer retries) {
+        return batchTopicDistribution.create(topicModelId, datasetId, args,
+                waitTime, retries);
+    }
+
+    /**
+     * Retrieves a batch topic distribution.
+     *
+     * The batch_topic distribution parameter should be a string containing the
+     * batch_topic distribution id or the dict returned by create_batch_topic distribution. As
+     * batch_topic distribution is an evolving object that is processed until it reaches
+     * the FINISHED or FAULTY state, the function will return a dict that
+     * encloses the batch_topic distribution values and state info available at the time
+     * it is called.
+     *
+     * GET /andromeda/batchtopicdistribution/id?username=$BIGML_USERNAME;api_key=
+     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
+     *
+     * @param batchTopicDistributionId
+     *            a unique identifier in the form batchtopicdistribution/id where id is
+     *            a string of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject getBatchTopicDistribution(final String batchTopicDistributionId) {
+        return batchTopicDistribution.get(batchTopicDistributionId);
+    }
+
+    /**
+     * Retrieves a batch topic distribution.
+     *
+     * The batch_topic distribution parameter should be a string containing the
+     * batch_topic distribution id or the dict returned by create_batch_topic distribution. As
+     * batch_topic distribution is an evolving object that is processed until it reaches
+     * the FINISHED or FAULTY state, the function will return a dict that
+     * encloses the batch_topic distribution values and state info available at the time
+     * it is called.
+     *
+     * GET /andromeda/batchtopicdistribution/id?username=$BIGML_USERNAME;api_key=
+     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
+     *
+     * @param batchTopicDistributionJSON
+     *            a batch topic distribution JSONObject.
+     *
+     */
+    public JSONObject getBatchTopicDistribution(final JSONObject batchTopicDistributionJSON) {
+        return batchTopicDistribution.get(batchTopicDistributionJSON);
+    }
+
+    /**
+     * Retrieves the batch topic distribution file.
+     *
+     * Downloads scores, that are stored in a remote CSV file. If a path is
+     * given in filename, the contents of the file are downloaded and saved
+     * locally. A file-like object is returned otherwise.
+     *
+     * @param batchTopicDistributionId
+     *            a unique identifier in the form batchtopicdistribution/id where id is
+     *            a string of 24 alpha-numeric chars.
+     * @param filename
+     *            Path to save file locally
+     *
+     */
+    public JSONObject downloadBatchTopicDistribution(final String batchTopicDistributionId,
+            final String filename) {
+        return batchTopicDistribution.downloadBatchTopicDistribution(batchTopicDistributionId,
+                filename);
+    }
+
+    /**
+     * Retrieves the batch topic distribution file.
+     *
+     * Downloads scores, that are stored in a remote CSV file. If a path is
+     * given in filename, the contents of the file are downloaded and saved
+     * locally. A file-like object is returned otherwise.
+     *
+     * @param batchTopicDistributionJSON
+     *            a batch topic distribution JSONObject.
+     * @param filename
+     *            Path to save file locally
+     *
+     */
+    public JSONObject downloadBatchTopicDistribution(
+            final JSONObject batchTopicDistributionJSON, final String filename) {
+        return batchTopicDistribution.downloadBatchTopicDistribution(batchTopicDistributionJSON,
+                filename);
+    }
+
+    /**
+     * Check whether a batch topic distribution's status is FINISHED.
+     *
+     * @param batchTopicDistributionId
+     *            a unique identifier in the form batchtopicdistribution/id where id is
+     *            a string of 24 alpha-numeric chars.
+     *
+     */
+    public boolean batchTopicDistributionIsReady(final String batchTopicDistributionId) {
+        return batchTopicDistribution.isReady(batchTopicDistributionId);
+    }
+
+    /**
+     * Check whether a batch topic distribution's status is FINISHED.
+     *
+     * @param batchTopicDistributionJSON
+     *            a batch topic distribution JSONObject.
+     *
+     */
+    public boolean batchTopicDistributionIsReady(final JSONObject batchTopicDistributionJSON) {
+        return batchTopicDistribution.isReady(batchTopicDistributionJSON);
+    }
+
+    /**
+     * Lists all your batch topic distributions.
+     *
+     * GET /andromeda/batchtopicdistribution?username=$BIGML_USERNAME;api_key=
+     * $BIGML_API_KEY; Host: bigml.io
+     *
+     * @param queryString
+     *            query filtering the listing.
+     *
+     */
+    public JSONObject listBatchTopicDistributions(final String queryString) {
+        return batchTopicDistribution.list(queryString);
+    }
+
+    /**
+     * Updates a batch topic distribution.
+     *
+     * PUT /andromeda/batchtopicdistribution/id?username=$BIGML_USERNAME;api_key=
+     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param batchTopicDistributionId
+     *            a unique identifier in the form batchtopicdistribution/id where id is
+     *            a string of 24 alpha-numeric chars.
+     * @param changes
+     *            set of parameters to update the batch topic distribution. Optional
+     *
+     */
+    public JSONObject updateBatchTopicDistribution(final String batchTopicDistributionId,
+            final String changes) {
+        return batchTopicDistribution.update(batchTopicDistributionId, changes);
+    }
+
+    /**
+     * Updates a batch topic distribution.
+     *
+     * PUT /andromeda/batchtopicdistribution/id?username=$BIGML_USERNAME;api_key=
+     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param batchTopicDistributionJSON
+     *            a batch topic distribution JSONObject
+     * @param changes
+     *            set of parameters to update the batch topic distribution. Optional
+     */
+    public JSONObject updateBatchTopicDistribution(
+            final JSONObject batchTopicDistributionJSON, final JSONObject changes) {
+        return batchTopicDistribution.update(batchTopicDistributionJSON, changes);
+    }
+
+    /**
+     * Deletes a batch topic distribution.
+     *
+     * DELETE /andromeda/batchtopicdistribution/id?username=$BIGML_USERNAME;api_key=
+     * $BIGML_API_KEY; HTTP/1.1
+     *
+     * @param batchTopicDistributionId
+     *            a unique identifier in the form batchtopicdistribution/id where id is
+     *            a string of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject deleteBatchTopicDistribution(final String batchTopicDistributionId) {
+        return batchTopicDistribution.delete(batchTopicDistributionId);
+    }
+
+    /**
+     * Deletes a batch topic distribution.
+     *
+     * DELETE /andromeda/batchtopicdistribution/id?username=$BIGML_USERNAME;api_key=
+     * $BIGML_API_KEY; HTTP/1.1
+     *
+     * @param batchTopicDistributionJSON
+     *            a batch topic distribution JSONObject.
+     *
+     */
+    public JSONObject deleteBatchTopicDistribution(final JSONObject batchTopicDistributionJSON) {
+        return batchTopicDistribution.delete(batchTopicDistributionJSON);
+    }
+
+    // ################################################################
+    // #
+    // # Configurations
+    // # https://bigml.com/api/configuration
+    // #
+    // ################################################################
+
+    /**
+     * Creates a remote configuration.
+     *
+     * Create a new configuration using the arguments in `args`.
+     *
+     * POST /andromeda/configuration?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param args
+     *            set of parameters for the new sample. Optional
+     *
+     */
+    public JSONObject createConfiguration(JSONObject args) {
+        return configuration.create(args);
+    }
+
+    /**
+     * Retrieves a configuration.
+     *
+     * GET
+     * /andromeda/configuration/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io
+     *
+     * @param configurationId
+     *            a unique identifier in the form configuration/id where id is a string
+     *            of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject getConfiguration(final String configurationId) {
+        return configuration.get(configurationId);
+    }
+
+    /**
+     * Retrieves a configuration.
+     *
+     * GET
+     * /andromeda/configuration/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io
+     *
+     * @param configurationJSON
+     *            a configuration JSONObject
+     *
+     */
+    public JSONObject getConfiguration(final JSONObject configurationJSON) {
+        return configuration.get(configurationJSON);
+    }
+
+    /**
+     * Retrieves a configuration.
+     *
+     *
+     * GET /andromeda/configuration/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param configurationId
+     *            a unique identifier in the form configuration/id where id is a string
+     *            of 24 alpha-numeric chars.
+     * @param queryString
+     *            query for filtering.
+     *
+     */
+    public JSONObject getConfiguration(final String configurationId, final String queryString) {
+        return getConfiguration(configurationId, queryString, null, null);
+    }
+
+    /**
+     * Retrieves a configuration.
+     *
+     *
+     * GET /andromeda/configuration/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param configurationId
+     *            a unique identifier in the form configuration/id where id is a string
+     *            of 24 alpha-numeric chars.
+     * @param queryString
+     *            query for filtering.
+     * @param apiUser
+     *            API user
+     * @param apiKey
+     *            API key
+     *
+     */
+    public JSONObject getConfiguration(final String configurationId, final String queryString,
+                                final String apiUser, final String apiKey) {
+        return configuration.get(configurationId, queryString, apiUser, apiKey);
+    }
+
+    /**
+     * Check whether a configuration's status is FINISHED.
+     *
+     * @param configurationId
+     *            a unique identifier in the form configuration/id where id is a
+     *            string of 24 alpha-numeric chars.
+     *
+     */
+    public boolean configurationIsReady(final String configurationId) {
+        return configuration.isReady(configurationId);
+    }
+
+    /**
+     * Checks whether a configuration's status is FINISHED.
+     *
+     * @param configurationJSON
+     *            a configuration JSONObject
+     *
+     */
+    public boolean configurationIsReady(final JSONObject configurationJSON) {
+        return configuration.isReady(configurationJSON);
+    }
+
+    /**
+     * Lists all your configurations.
+     *
+     * GET /andromeda/configuration?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param queryString
+     *            query filtering the listing.
+     *
+     */
+    public JSONObject listConfigurations(final String queryString) {
+        return configuration.list(queryString);
+    }
+
+    /**
+     * Updates a configuration.
+     *
+     * PUT
+     * /andromeda/configuration/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param configurationId
+     *            a unique identifier in the form configuration/id where id is a
+     *            string of 24 alpha-numeric chars.
+     * @param changes
+     *            set of parameters to update the configuration. Optional
+     *
+     */
+    public JSONObject updateConfiguration(final String configurationId, final String changes) {
+        return configuration.update(configurationId, changes);
+    }
+
+    /**
+     * Updates a configuration.
+     *
+     * PUT
+     * /andromeda/configuration/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param configurationJSON
+     *            a configuration JSONObject
+     * @param changes
+     *            set of parameters to update the sample. Optional
+     *
+     */
+    public JSONObject updateConfiguration(final JSONObject configurationJSON,
+                                   final JSONObject changes) {
+        return configuration.update(configurationJSON, changes);
+    }
+
+    /**
+     * Deletes a configuration.
+     *
+     * DELETE
+     * /andromeda/configuration/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1
+     *
+     * @param configurationId
+     *            a unique identifier in the form configuration/id where id is a
+     *            string of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject deleteConfiguration(final String configurationId) {
+        return configuration.delete(configurationId);
+    }
+
+    /**
+     * Deletes a configuration.
+     *
+     * DELETE
+     * /andromeda/configuration/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1
+     *
+     * @param configurationJSON
+     *            a configuration JSONObject
+     *
+     */
+    public JSONObject deleteConfiguration(final JSONObject configurationJSON) {
+        return configuration.delete(configurationJSON);
     }
 }

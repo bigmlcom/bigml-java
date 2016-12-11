@@ -334,6 +334,37 @@ public class CommonStepdefs {
 
         BigMLClient.getInstance().getCacheManager().cleanCache();
 
+        /* PLACEHOLDER FOR CONFIGURATION */
+
+        // BatchTopicDistributions
+        JSONArray batchTopicDistributions = (JSONArray) BigMLClient.getInstance()
+                .listBatchTopicDistributions(";tags__in=unitTest").get("objects");
+        for (int i = 0; i < batchTopicDistributions.size(); i++) {
+            JSONObject batchTopicDistribution = (JSONObject) batchTopicDistributions.get(i);
+            BigMLClient.getInstance().deleteTopicDistribution(
+                    (String) batchTopicDistribution.get("resource"));
+        }
+
+        // TopicDistributions
+        JSONArray topicDistributions = (JSONArray) BigMLClient.getInstance()
+                .listTopicDistributions(";tags__in=unitTest").get("objects");
+        for (int i = 0; i < topicDistributions.size(); i++) {
+            JSONObject topicDistribution = (JSONObject) topicDistributions.get(i);
+            BigMLClient.getInstance().deleteTopicDistribution(
+                    (String) topicDistribution.get("resource"));
+        }
+
+        // TopicModels
+        JSONArray topicModels = (JSONArray) BigMLClient.getInstance()
+                .listTopicModels(";tags__in=unitTest").get("objects");
+        for (int i = 0; i < topicModels.size(); i++) {
+            JSONObject topicModel = (JSONObject) topicModels.get(i);
+            BigMLClient.getInstance().deleteTopicModel(
+                    (String) topicModel.get("resource"));
+        }
+
+        /* PLACEHOLDER FOR ASSOCIATIONSET */
+
         // Associations
         JSONArray associations = (JSONArray) BigMLClient.getInstance()
                 .listAssociations(";tags__in=unitTest").get("objects");
@@ -415,7 +446,7 @@ public class CommonStepdefs {
                     (String) centroid.get("resource"));
         }
 
-        // Batch predictions
+        // BatchPredictions
         JSONArray batchPredictions = (JSONArray) BigMLClient.getInstance()
                 .listBatchPredictions(";tags__in=unitTest").get("objects");
         for (int i = 0; i < batchPredictions.size(); i++) {
@@ -469,7 +500,7 @@ public class CommonStepdefs {
                     (String) model.get("resource"));
         }
 
-        // Anomaly Scores
+        // AnomalyScores
         JSONArray anomalyScores = (JSONArray) BigMLClient.getInstance().listAnomalyScores(";tags__in=unitTest")
                 .get("objects");
         for (int i = 0; i < anomalyScores.size(); i++) {
@@ -478,7 +509,7 @@ public class CommonStepdefs {
                     (String) model.get("resource"));
         }
 
-        // Batch Anomaly Scores
+        // BatchAnomalyScores
         JSONArray batchAnomalyScores = (JSONArray) BigMLClient.getInstance().listBatchAnomalyScores(";tags__in=unitTest")
                 .get("objects");
         for (int i = 0; i < batchAnomalyScores.size(); i++) {

@@ -15,12 +15,12 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Entry point to create, retrieve, list, update, and delete
- * batchbatchcentroids.
- * 
+ * batch centroids.
+ *
  * Full API documentation on the API can be found from BigML at:
- * https://bigml.com/developers/batchbatchcentroids
- * 
- * 
+ * https://bigml.com/api/batchcentroids
+ *
+ *
  */
 public class BatchCentroid extends AbstractResource {
 
@@ -31,7 +31,7 @@ public class BatchCentroid extends AbstractResource {
 
     /**
      * Constructor
-     * 
+     *
      */
     public BatchCentroid() {
         this.bigmlApiKey = System.getProperty("BIGML_API_KEY");
@@ -43,7 +43,7 @@ public class BatchCentroid extends AbstractResource {
 
     /**
      * Constructor
-     * 
+     *
      */
     public BatchCentroid(final String apiUser, final String apiKey,
             final boolean devMode) {
@@ -74,21 +74,22 @@ public class BatchCentroid extends AbstractResource {
     }
 
     /**
-     * Check if the current resource is an BatchCentroid
+     * Check if the current resource is a BatchCentroid
      *
      * @param resource the resource to be checked
-     * @return true if its an BatchCentroid
+     * @return true if it's a BatchCentroid
      */
+    @Override
     public boolean isInstance(JSONObject resource) {
         return ((String) resource.get("resource")).matches(BATCH_CENTROID_RE);
     }
 
     /**
-     * Creates a new batchbatchcentroid.
-     * 
-     * POST /andromeda/batchbatchcentroid?username=$BIGML_USERNAME;api_key=
+     * Creates a new batchcentroid.
+     *
+     * POST /andromeda/batchcentroid?username=$BIGML_USERNAME;api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
-     * 
+     *
      * @param clusterId
      *            a unique identifier in the form cluster/id where id is a
      *            string of 24 alpha-numeric chars for the cluster.
@@ -96,14 +97,14 @@ public class BatchCentroid extends AbstractResource {
      *            a unique identifier in the form dataset/id where id is a
      *            string of 24 alpha-numeric chars for the dataset.
      * @param args
-     *            set of parameters for the new batchbatchcentroid. Optional
+     *            set of parameters for the new batchcentroid. Optional
      * @param waitTime
      *            time (milliseconds) to wait for next check of FINISHED status
-     *            for batchbatchcentroid before to start to create the
-     *            batchbatchcentroid. Optional
+     *            for centroid before to start to create the
+     *            batchcentroid. Optional
      * @param retries
      *            number of times to try the operation. Optional
-     * 
+     *
      */
     @Deprecated
     public JSONObject create(final String clusterId, final String datasetId,
@@ -113,11 +114,11 @@ public class BatchCentroid extends AbstractResource {
     }
 
     /**
-     * Creates a new batchbatchcentroid.
-     * 
-     * POST /andromeda/batchbatchcentroid?username=$BIGML_USERNAME;api_key=
+     * Creates a new batchcentroid.
+     *
+     * POST /andromeda/batchcentroid?username=$BIGML_USERNAME;api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
-     * 
+     *
      * @param clusterId
      *            a unique identifier in the form cluster/id where id is a
      *            string of 24 alpha-numeric chars for the cluster.
@@ -125,14 +126,14 @@ public class BatchCentroid extends AbstractResource {
      *            a unique identifier in the form dataset/id where id is a
      *            string of 24 alpha-numeric chars for the dataset.
      * @param args
-     *            set of parameters for the new batchbatchcentroid. Optional
+     *            set of parameters for the new batchcentroid. Optional
      * @param waitTime
      *            time (milliseconds) to wait for next check of FINISHED status
-     *            for batchbatchcentroid before to start to create the
-     *            batchbatchcentroid. Optional
+     *            for centroid before to start to create the
+     *            batchcentroid. Optional
      * @param retries
      *            number of times to try the operation. Optional
-     * 
+     *
      */
     public JSONObject create(final String clusterId, final String datasetId,
             JSONObject args, Integer waitTime, Integer retries) {
@@ -188,19 +189,19 @@ public class BatchCentroid extends AbstractResource {
 
     /**
      * Retrieves a batchcentroid.
-     * 
+     *
      * A batchcentroid is an evolving object that is processed until it reaches
      * the FINISHED or FAULTY state, the method will return a JSONObject that
      * encloses the batchcentroid values and state info available at the time it
      * is called.
-     * 
-     * GET /andromeda/batchbatchcentroid/id?username=$BIGML_USERNAME;api_key=
+     *
+     * GET /andromeda/batchcentroid/id?username=$BIGML_USERNAME;api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
-     * 
+     *
      * @param batchcentroidId
      *            a unique identifier in the form batchcentroid/id where id is a
      *            string of 24 alpha-numeric chars.
-     * 
+     *
      */
     @Override
     public JSONObject get(final String batchcentroidId) {
@@ -215,17 +216,17 @@ public class BatchCentroid extends AbstractResource {
 
     /**
      * Retrieves the batch centroid file.
-     * 
+     *
      * Downloads predictions, that are stored in a remote CSV file. If a path is
      * given in filename, the contents of the file are downloaded and saved
      * locally. A file-like object is returned otherwise.
-     * 
+     *
      * @param batchCentroidId
      *            a unique identifier in the form batchCentroid/id where id is a
      *            string of 24 alpha-numeric chars.
      * @param filename
      *            Path to save file locally
-     * 
+     *
      */
     public JSONObject downloadBatchCentroid(final String batchCentroidId,
             final String filename) {
@@ -242,16 +243,16 @@ public class BatchCentroid extends AbstractResource {
 
     /**
      * Retrieves the batch centroid file.
-     * 
+     *
      * Downloads predictions, that are stored in a remote CSV file. If a path is
      * given in filename, the contents of the file are downloaded and saved
      * locally. A file-like object is returned otherwise.
-     * 
+     *
      * @param batchCentroid
      *            a batch centroid JSONObject.
      * @param filename
      *            Path to save file locally
-     * 
+     *
      */
     public JSONObject downloadBatchCentroid(final JSONObject batchCentroid,
             final String filename) {
@@ -267,18 +268,18 @@ public class BatchCentroid extends AbstractResource {
 
     /**
      * Retrieves a batchcentroid.
-     * 
+     *
      * A batchcentroid is an evolving object that is processed until it reaches
      * the FINISHED or FAULTY state, the method will return a JSONObject that
      * encloses the batchcentroid values and state info available at the time it
      * is called.
-     * 
-     * GET /andromeda/batchbatchcentroid/id?username=$BIGML_USERNAME;api_key=
+     *
+     * GET /andromeda/batchcentroid/id?username=$BIGML_USERNAME;api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
-     * 
+     *
      * @param batchcentroid
      *            a batchcentroid JSONObject.
-     * 
+     *
      */
     @Override
     public JSONObject get(final JSONObject batchcentroid) {
@@ -288,11 +289,11 @@ public class BatchCentroid extends AbstractResource {
 
     /**
      * Check whether a batchcentroid's status is FINISHED.
-     * 
+     *
      * @param batchcentroidId
      *            a unique identifier in the form batchcentroid/id where id is a
      *            string of 24 alpha-numeric chars.
-     * 
+     *
      */
     @Override
     public boolean isReady(final String batchcentroidId) {
@@ -301,10 +302,10 @@ public class BatchCentroid extends AbstractResource {
 
     /**
      * Check whether a batchcentroid's status is FINISHED.
-     * 
+     *
      * @param batchcentroid
      *            a batchcentroid JSONObject.
-     * 
+     *
      */
     @Override
     public boolean isReady(final JSONObject batchcentroid) {
@@ -314,13 +315,13 @@ public class BatchCentroid extends AbstractResource {
 
     /**
      * Lists all your batchcentroids.
-     * 
-     * GET /andromeda/batchbatchcentroid?username=$BIGML_USERNAME;api_key=
+     *
+     * GET /andromeda/batchcentroid?username=$BIGML_USERNAME;api_key=
      * $BIGML_API_KEY; Host: bigml.io
-     * 
+     *
      * @param queryString
      *            query filtering the listing.
-     * 
+     *
      */
     @Override
     public JSONObject list(final String queryString) {
@@ -329,16 +330,16 @@ public class BatchCentroid extends AbstractResource {
 
     /**
      * Updates a batchcentroid.
-     * 
-     * PUT /andromeda/batchbatchcentroid/id?username=$BIGML_USERNAME;api_key=
+     *
+     * PUT /andromeda/batchcentroid/id?username=$BIGML_USERNAME;api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
-     * 
+     *
      * @param batchcentroidId
      *            a unique identifier in the form batchcentroid/id where id is a
      *            string of 24 alpha-numeric chars.
      * @param changes
      *            set of parameters to update the batchcentroid. Optional
-     * 
+     *
      */
     @Override
     public JSONObject update(final String batchcentroidId, final String changes) {
@@ -352,15 +353,15 @@ public class BatchCentroid extends AbstractResource {
 
     /**
      * Updates a batchcentroid.
-     * 
-     * PUT /andromeda/batchbatchcentroid/id?username=$BIGML_USERNAME;api_key=
+     *
+     * PUT /andromeda/batchcentroid/id?username=$BIGML_USERNAME;api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
-     * 
+     *
      * @param batchcentroid
      *            an batchcentroid JSONObject
      * @param changes
      *            set of parameters to update the batchcentroid. Optional
-     * 
+     *
      */
     @Override
     public JSONObject update(final JSONObject batchcentroid,
@@ -371,14 +372,14 @@ public class BatchCentroid extends AbstractResource {
 
     /**
      * Deletes a batchcentroid.
-     * 
-     * DELETE /andromeda/batchbatchcentroid/id?username=$BIGML_USERNAME;api_key=
+     *
+     * DELETE /andromeda/batchcentroid/id?username=$BIGML_USERNAME;api_key=
      * $BIGML_API_KEY; HTTP/1.1
-     * 
+     *
      * @param batchcentroidId
      *            a unique identifier in the form batchcentroid/id where id is a
      *            string of 24 alpha-numeric chars.
-     * 
+     *
      */
     @Override
     public JSONObject delete(final String batchcentroidId) {
@@ -392,13 +393,13 @@ public class BatchCentroid extends AbstractResource {
 
     /**
      * Deletes a batchcentroid.
-     * 
-     * DELETE /andromeda/batchbatchcentroid/id?username=$BIGML_USERNAME;api_key=
+     *
+     * DELETE /andromeda/batchcentroid/id?username=$BIGML_USERNAME;api_key=
      * $BIGML_API_KEY; HTTP/1.1
-     * 
+     *
      * @param batchcentroid
      *            an batchcentroid JSONObject.
-     * 
+     *
      */
     @Override
     public JSONObject delete(final JSONObject batchcentroid) {
