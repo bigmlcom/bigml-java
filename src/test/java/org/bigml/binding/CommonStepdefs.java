@@ -334,7 +334,14 @@ public class CommonStepdefs {
 
         BigMLClient.getInstance().getCacheManager().cleanCache();
 
-        /* PLACEHOLDER FOR CONFIGURATION */
+        // Configurations
+        JSONArray configurations = (JSONArray) BigMLClient.getInstance()
+                .listConfigurations(";tags__in=unitTest").get("objects");
+        for (int i = 0; i < configurations.size(); i++) {
+            JSONObject configuration = (JSONObject) configurations.get(i);
+            BigMLClient.getInstance().deleteConfiguration(
+                    (String) configuration.get("resource"));
+        }
 
         // BatchTopicDistributions
         JSONArray batchTopicDistributions = (JSONArray) BigMLClient.getInstance()
