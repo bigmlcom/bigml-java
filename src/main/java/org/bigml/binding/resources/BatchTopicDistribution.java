@@ -141,7 +141,7 @@ public class BatchTopicDistribution extends AbstractResource {
             requestObject.put("topicmodel", topicModelId);
             requestObject.put("dataset", datasetId);
 
-            return createResource(BATCH_TOPICDISTRIBUTION_RE,
+            return createResource(BATCH_TOPICDISTRIBUTION_URL,
                     requestObject.toJSONString());
         } catch (Throwable e) {
             logger.error("Error creating batch topic distribution");
@@ -281,7 +281,7 @@ public class BatchTopicDistribution extends AbstractResource {
      */
     @Override
     public JSONObject list(final String queryString) {
-        return listResources(BATCH_TOPICDISTRIBUTION_RE, queryString);
+        return listResources(BATCH_TOPICDISTRIBUTION_URL, queryString);
     }
 
     /**
