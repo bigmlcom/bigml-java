@@ -43,8 +43,10 @@ Add the following lines to your project's pom.xml file if you want to use the SN
 
 ## Requirements
 
-You will find in the `binding.properties` file where to setup your BigML credentials
-`BIGML_USERNAME` and `BIGML_API_KEY`, and the `BIGML_SEED` to be used by BigML to make deterministic samples and models.
+You will find in the `binding.properties` file where to setup your BigML
+credentials
+`BIGML_USERNAME` and `BIGML_API_KEY`, and the `BIGML_SEED` to be used by BigML
+to make deterministic samples and models.
 They can be overwritten passing the values as JVM variables with `-D`.
 
 The project uses Maven as project manager.
@@ -63,6 +65,12 @@ or this way, if you want to debug the tests
 ```bash
 $ mvn -Dmaven.surefire.debug="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000 -Xnoagent -Djava.compiler=NONE" test
 ```
+
+## Examples
+
+The `samples` directory contains a maven project named `BigML-Sample-Client`
+that can be imported. It shows some code basic examples of the available calls.
+See the corresponding [readme](samples/README.md) for details.
 
 ## Generated JAR file of the bindings
 
