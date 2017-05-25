@@ -71,7 +71,7 @@ $ mvn -Dmaven.surefire.debug="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,sus
 The `samples` directory contains a maven project named `BigML-Sample-Client`
 that can be imported. It shows some basic examples about how to use the
 bindings to create resources in BigML.
-See the corresponding [readme](samples/README.md) for details.
+See the corresponding [readme](samples/BigML-Sample-Client/README.md) for details.
 
 ## Generated JAR file of the bindings
 
