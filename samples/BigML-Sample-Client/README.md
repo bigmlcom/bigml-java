@@ -15,6 +15,12 @@ It starts with a basic predictive workflow using BigML's API:
   - Create a [Model](https://bigml.com/api/models)
   - Create a [Prediction](https://bigml.com/api/prediction)
 
+It shows how to create local predictions by downloading the contents
+of the remote `Model` JSON object.
+
+  - Create a [LocalPredictiveModel](https://github.com/bigmlcom/bigml-java/blob/master/src/main/java/org/bigml/binding/LocalPredictiveModel.java)
+  - Create a prediction using the `LocalPredictiveModel` instance
+
 Then, it shows how to evaluate your model by sampling your existing dataset:
 
   - Create a training sampled [Model](https://bigml.com/api/models)
@@ -26,11 +32,10 @@ It also shows examples of how to create some unsupervised models:
   -  Create a [Cluster](https://bigml.com/api/clusters)
   -  Create an [Anomaly](https://bigml.com/api/anomalies)
 
-Finally, it shows how to create local predictions by downloading the contents
-of the remote `Model` JSON object.
+And finally, shows examples of how to create topic distributions:
 
-  - Create a [LocalPredictiveModel](https://github.com/bigmlcom/bigml-java/blob/master/src/main/java/org/bigml/binding/LocalPredictiveModel.java)
-  - Create a prediction using the `LocalPredictiveModel` instance
+  -  Create a [Topic Model](https://bigml.com/api/topicmodels)
+  -  Create an [Topic Distributions](https://bigml.com/api/topicdistributions)
 
 BigML API credentials
 ---------------------
