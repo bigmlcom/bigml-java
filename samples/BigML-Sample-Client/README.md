@@ -11,18 +11,18 @@ with a basic predictive workflow using BigML's API:
   - Create a [Dataset](https://bigml.com/developers/datasets)
   - Create a [Model](https://bigml.com/developers/models)
   - Create a [Prediction](https://bigml.com/developers/prediction)
-
-    - Create a [LocalPredictiveModel](https://github.com/javinp/bigml-java/blob/master/src/main/java/org/bigml/binding/LocalPredictiveModel.java)
-    - Create a prediction using the `LocalPredictiveModel` instance
+  - Create a [LocalPredictiveModel](https://github.com/javinp/bigml-java/blob/master/src/main/java/org/bigml/binding/LocalPredictiveModel.java)
+  - Create a prediction using the `LocalPredictiveModel` instance
 
 BigML API credentials
 ---------------------
 
-You'll need to set your own API credentials in
-`org.bigml.sample.BigMLSampleClient.BIGML_USERNAME` and
-`org.bigml.sample.BigMLSampleClient.BIGML_API_KEY` in order to get an instance
-of the `BigMLClient`. You can find your API Key at
-https://bigml.com/account/apikey
+You'll need to set your own API credentials in `src/main/resources/binding.properties` in order to get an instance of the `BigMLClient`. 
 
-Please, feel free to fork it and PR any improvement you may consider.
+You can find your API Key at https://bigml.com/account/apikey
+
+BIGML_URL=https://bigml.io/andromeda/
+BIGML_DEV_URL=https://bigml.io/dev/andromeda/
+BIGML_USERNAME=
+BIGML_API_KEY=
 

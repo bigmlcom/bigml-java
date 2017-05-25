@@ -39,7 +39,8 @@ public class BigMLSampleClient {
     public static void main(String[] args) {
         BigMLClient api = null;
         JSONObject emptyArgs = null;
-
+        
+        System.out.println("Starting predictive workflow ...");
         try {
             // Create BigMLClient with the properties in binding.properties
             api = BigMLClient.getInstance();
@@ -61,7 +62,6 @@ public class BigMLSampleClient {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -78,7 +78,6 @@ public class BigMLSampleClient {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -95,7 +94,6 @@ public class BigMLSampleClient {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -114,7 +112,6 @@ public class BigMLSampleClient {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -131,7 +128,6 @@ public class BigMLSampleClient {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -148,7 +144,6 @@ public class BigMLSampleClient {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -166,7 +161,6 @@ public class BigMLSampleClient {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -249,7 +243,6 @@ public class BigMLSampleClient {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -275,7 +268,6 @@ public class BigMLSampleClient {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
