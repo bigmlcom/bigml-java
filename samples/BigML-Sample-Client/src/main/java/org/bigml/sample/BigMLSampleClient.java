@@ -12,6 +12,9 @@
  */
 package org.bigml.sample;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.bigml.binding.AuthenticationException;
 import org.bigml.binding.BigMLClient;
 import org.bigml.binding.InputDataParseException;
@@ -73,7 +76,7 @@ public class BigMLSampleClient {
         // This is going to be the JSON that the LocalPredictiveModel
         // needs to predict
 
-        JSONObject model = createModel(api, dataset)
+        JSONObject model = createModel(api, dataset);
         predictLocally(model);
 
         // * Third example: Evaluation Workflow
@@ -133,7 +136,6 @@ public class BigMLSampleClient {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -160,7 +162,6 @@ public class BigMLSampleClient {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -187,7 +188,6 @@ public class BigMLSampleClient {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -252,7 +252,6 @@ public class BigMLSampleClient {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -269,7 +268,6 @@ public class BigMLSampleClient {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -292,7 +290,6 @@ public class BigMLSampleClient {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -321,6 +318,15 @@ public class BigMLSampleClient {
 
         LocalPredictiveModel localModel = null;
         Prediction localPrediction = null;
+
+        // Input data object: We can build the input data object using
+        // BigML's field IDs (e.g. "000001") as keys or, like here, the
+        // field name
+        boolean byName = true;
+        JSONObject inputData = new JSONObject();
+        inputData.put("sepal length", 5);
+        inputData.put("sepal width", 2.5);
+
         try {
             localModel = new LocalPredictiveModel(
                     (JSONObject) model.get("object"));
@@ -365,8 +371,8 @@ public class BigMLSampleClient {
         // to a particular string to do deterministic sampling
 
         JSONObject samplingArgs = new JSONObject();
-        samplingArgs.add("sample_rate", 0.8);
-        samplingArgs.add("seed", "My seed");
+        samplingArgs.put("sample_rate", 0.8);
+        samplingArgs.put("seed", "My seed");
 
         JSONObject model = api.createModel((String) dataset.get("resource"),
                                            samplingArgs, // creation args
@@ -378,7 +384,6 @@ public class BigMLSampleClient {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -395,9 +400,9 @@ public class BigMLSampleClient {
 
 
         JSONObject outOfBagArgs = new JSONObject();
-        outOfBagArgs.add("sample_rate", 0.8);
-        outOfBagArgs.add("seed", "My seed");
-        outOfBagArgs.add("out_of_bag", true);
+        outOfBagArgs.put("sample_rate", 0.8);
+        outOfBagArgs.put("seed", "My seed");
+        outOfBagArgs.put("out_of_bag", true);
         JSONObject evaluation = api.createEvaluation(
                 (String)model.get("resource"),   // model ID
                 (String)dataset.get("resource"), // dataset ID
@@ -411,7 +416,6 @@ public class BigMLSampleClient {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -453,7 +457,6 @@ public class BigMLSampleClient {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -481,7 +484,6 @@ public class BigMLSampleClient {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
