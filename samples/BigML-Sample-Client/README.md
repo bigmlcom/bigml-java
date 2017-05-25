@@ -35,7 +35,7 @@ It also shows examples of how to create some unsupervised models:
 And finally, shows examples of how to create topic distributions:
 
   -  Create a [Topic Model](https://bigml.com/api/topicmodels)
-  -  Create an [Topic Distributions](https://bigml.com/api/topicdistributions)
+  -  Create a [Topic Distribution](https://bigml.com/api/topicdistributions)
 
 BigML API credentials
 ---------------------
