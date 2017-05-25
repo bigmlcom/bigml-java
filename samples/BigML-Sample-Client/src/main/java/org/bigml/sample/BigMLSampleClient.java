@@ -41,7 +41,6 @@ public class BigMLSampleClient {
          * the examples in this file
          */
 
-
         // The BigMLClient class stores the information that you need to
         // access BigML's API:
         //   - API domain (default: bigml.io)
@@ -62,27 +61,29 @@ public class BigMLSampleClient {
             return;
         }
 
-        // First example: Prediction workflow
+        // * First example: Prediction workflow
         predictionWorkflow(api);
-
 
         // Common part for all workflows: Creating a Source and a Dataset
         // from a local file
         JSONObject dataset = createDataset(api, "data/iris.csv");
 
-
-        // Second example: Local Predictions
+        // * Second example: Local Predictions
         // To create a local prediction, you will need an existing model.
         // This is going to be the JSON that the LocalPredictiveModel
         // needs to predict
 
         JSONObject model = createModel(api, dataset)
         predictLocally(model);
-        // Third example: Evaluation Workflow
+
+        // * Third example: Evaluation Workflow
         evaluationWorkflow(api, dataset);
 
-        // Fourth example: Creating unsupervised models
+        // * Fourth example: Creating unsupervised models
         creatingUnsupervisedModels(api, dataset);
+
+        // * Fifth example: Creating Topic Distribution
+        topicDistributionWorkflow(api);
 
         System.out.println("BigML sample finished.");
         if (DEV_MODE) {
@@ -90,9 +91,6 @@ public class BigMLSampleClient {
                     .println("*** Remember that the resources created in this "
                             + "sample are placed in your DEV mode environment at BigML.com ***");
         }
-
-        // Fifth example: Creating Topic Distribution
-        topicDistributionWorkflow(api);
     }
 
     public static void predictionWorkflow(final BigMLClient api) {
@@ -148,7 +146,6 @@ public class BigMLSampleClient {
         //                                                      "object.fields");
         // System.out.print(fields);
 
-
         // Creating a `Dataset` from the previous `Source`
         // -----------------------------------------------
         // First argument is the `Source`ID
@@ -170,13 +167,11 @@ public class BigMLSampleClient {
         // obtain the finished resource
         dataset = api.getDataset(dataset);
 
-
         // This code is not needed in the Prediction workflow, but can be
         // useful to inspect the dataset fields structure:
         // JSONObject fields = (JSONObject) Utils.getJSONObject(dataset,
         //                                                      "object.fields");
         // System.out.print(fields);
-
 
         // Creating a `Model` from the previous `Dataset`
         // -----------------------------------------------
@@ -442,7 +437,6 @@ public class BigMLSampleClient {
         // ------------------------------------------------
         // First argument is the `Dataset`ID
 
-
     public static void creatingUnsupervisedModels(final BigMLClient api,
                                                   final JSONObject dataset) {
 
@@ -498,7 +492,6 @@ public class BigMLSampleClient {
         // The `Anomaly` object will contain the top anomalies detected
         // object = (JSONObject) Utils.getJSONObject(anomaly, "object");
         // System.out.print(object);
-
     }
 
     public static void topicDistributionWorkflow(final BigMLClient api) {
