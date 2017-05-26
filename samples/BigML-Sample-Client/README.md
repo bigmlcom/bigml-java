@@ -6,7 +6,7 @@ bigmlcom/bigml-java bindings.
 
 It is a Eclipse project with a simple class
 `org.bigml.sample.BigMLSampleClient` that shows how to create resources and
-local predictins using these bindings.
+local predictions using these bindings.
 
 It starts with a basic predictive workflow using BigML's API:
 
@@ -32,10 +32,13 @@ It also shows examples of how to create some unsupervised models:
   -  Create a [Cluster](https://bigml.com/api/clusters)
   -  Create an [Anomaly](https://bigml.com/api/anomalies)
 
-And finally, shows examples of how to create topic distributions:
+Describes the workflow needed to create Topic Distributions:
 
   -  Create a [Topic Model](https://bigml.com/api/topicmodels)
   -  Create a [Topic Distribution](https://bigml.com/api/topicdistributions)
+
+And finally, it shows how to change the properties of the fields in your
+`Source` or `Dataset`.
 
 BigML API credentials
 ---------------------

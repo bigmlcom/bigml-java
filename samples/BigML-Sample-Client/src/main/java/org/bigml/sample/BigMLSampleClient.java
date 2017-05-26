@@ -1,11 +1,11 @@
 /**
  * Requires BigML Java bindings
  * You can get it from: {@link https://github.com/bigmlcom/bigml-java}
- * 	- Clone it: <code>git clone https://github.com/bigmlcom/bigml-java.git</code>
- * 	- Or download it from: {@link https://github.com/bigmlcom/bigml-java/archive/master.zip}
+ *     - Clone it: <code>git clone https://github.com/bigmlcom/bigml-java.git</code>
+ *     - Or download it from: {@link https://github.com/bigmlcom/bigml-java/archive/master.zip}
  *
  * Once you have the source code, you can install it using Maven:
- * 	<code>mvn install</code>
+ *     <code>mvn install</code>
  *
  * or just include it in your project class path.
  *
@@ -27,8 +27,12 @@ import org.json.simple.JSONObject;
 
 public class BigMLSampleClient {
 
-    // BigML's DEV mode enabled
-    private static final boolean DEV_MODE = true;
+    // Set BigML's DEV mode to true if you want to work in development mode
+    private static final boolean DEV_MODE = false;
+    // Set it to false if you don't want console messages
+    private static final boolean DEBUG = true;
+    // Used in debugging messages to point to the created resources in the Web Dashboard
+    private static final String DASHBOARD_URL = "https://bigml.com/dashboard/";
 
     /**
      * A simple Java Class to integrate the BigML API
@@ -58,7 +62,7 @@ public class BigMLSampleClient {
             // BIGML_API_KEY that should previously be set the
             // binding.properties file
 
-            api = BigMLClient.getInstance();
+            api = BigMLClient.getInstance(DEV_MODE);
         } catch (AuthenticationException e) {
             e.printStackTrace();
             return;
@@ -67,9 +71,18 @@ public class BigMLSampleClient {
         // * First example: Prediction workflow
         predictionWorkflow(api);
 
+        if (DEBUG) {
+            System.out.println("* Preparing for examples: Creating a Dataset");
+        }
+
         // Common part for all workflows: Creating a Source and a Dataset
         // from a local file
         JSONObject dataset = createDataset(api, "data/iris.csv");
+
+        if (DEBUG) { // auxiliary console message
+            System.out.println("Dataset created: " +
+                    DASHBOARD_URL + (String)dataset.get("resource"));
+        }
 
         // * Second example: Local Predictions
         // To create a local prediction, you will need an existing model.
@@ -87,6 +100,9 @@ public class BigMLSampleClient {
 
         // * Fifth example: Creating Topic Distribution
         topicDistributionWorkflow(api);
+
+        // * Sixth example: Changing the field types properties
+        changingFields(api);
 
         System.out.println("BigML sample finished.");
         if (DEV_MODE) {
@@ -110,7 +126,9 @@ public class BigMLSampleClient {
          * To follow these steps, you need to create a connection to the
          * BigML API, that will handle these creation calls.
          */
-
+        if (DEBUG) {
+            System.out.println("* First example: Prediction Workflow");
+        }
 
         // Creating a `Source` by uploading a local file
         // ---------------------------------------------
@@ -142,6 +160,11 @@ public class BigMLSampleClient {
         // obtain the finished resource
         source = api.getSource(source);
 
+        if (DEBUG) { // auxiliary console message
+            System.out.println("Source created: " +
+                    DASHBOARD_URL + (String)source.get("resource"));
+        }
+
         // This code is not needed in the Prediction workflow, but can be
         // useful to inspect the inferred fields structure:
         // JSONObject fields = (JSONObject) Utils.getJSONObject(source,
@@ -168,6 +191,11 @@ public class BigMLSampleClient {
         // obtain the finished resource
         dataset = api.getDataset(dataset);
 
+        if (DEBUG) { // auxiliary console message
+            System.out.println("Dataset created: " +
+                    DASHBOARD_URL + (String)dataset.get("resource"));
+        }
+
         // This code is not needed in the Prediction workflow, but can be
         // useful to inspect the dataset fields structure:
         // JSONObject fields = (JSONObject) Utils.getJSONObject(dataset,
@@ -177,9 +205,20 @@ public class BigMLSampleClient {
         // Creating a `Model` from the previous `Dataset`
         // -----------------------------------------------
         // First argument is the `Dataset`ID
+        // Second argument contains the configuration arguments for the model
+        // In predictive models it is mandatory to specify the `objective_field`
+        // (the name or ID of the field to be predicted). If that's not set,
+        // BigML will use the last categorical or numeric field in your dataset
+        // as `objective field`.
+
+        JSONObject modelConf = new JSONObject();
+        modelConf.put("objective_field", "species"); // this model should predict `species` and
+        modelConf.put("balance_objective", true);    // the instances in your dataset will be
+                                                     // automatically balanced to build the
+                                                     // the model
 
         JSONObject model = api.createModel((String) dataset.get("resource"),
-                                           emptyArgs, // creation args
+                                           modelConf, // creation args
                                            null,      // wait for Dataset
                                            null);     // retries
 
@@ -193,6 +232,11 @@ public class BigMLSampleClient {
         }
         // obtain the finished resource
         model = api.getModel(model);
+
+        if (DEBUG) { // auxiliary console message
+            System.out.println("Model created: " +
+                    DASHBOARD_URL + (String)model.get("resource"));
+        }
 
         // This code is not needed in the Prediction workflow, but can be
         // useful to inspect the model fields structure:
@@ -231,6 +275,11 @@ public class BigMLSampleClient {
         // Predictions are synchronous, you can immediately get the results.
         // No need to wait.
 
+        if (DEBUG) { // auxiliary console message
+            System.out.println("Prediction created: " +
+                    DASHBOARD_URL + (String)remotePrediction.get("resource"));
+        }
+
         // Extracting the prediction information from the `Prediction` object
         String predictionOutput = (String) Utils.getJSONObject(
                 remotePrediction, "object.output");
@@ -258,6 +307,11 @@ public class BigMLSampleClient {
         // obtain the finished resource
         source = api.getSource(source);
 
+        if (DEBUG) { // auxiliary console message
+            System.out.println("Source created: " +
+                    DASHBOARD_URL + (String)source.get("resource"));
+        }
+
         JSONObject dataset = api.createDataset((String) source.get("resource"),
                                                emptyArgs, // creation args
                                                null,      // wait for Source
@@ -271,6 +325,7 @@ public class BigMLSampleClient {
                 e.printStackTrace();
             }
         }
+
         // obtain the finished resource
         return api.getDataset(dataset);
     }
@@ -311,6 +366,9 @@ public class BigMLSampleClient {
          * @see org.bigml.binding.LocalPredictiveModel
          */
 
+        if (DEBUG) {
+            System.out.println("* Second example: Predicting locally");
+        }
 
         // The `LocalPredictiveModel` is the class that encapsulates the
         // `Model` information and provides the `predict` method.
@@ -330,6 +388,12 @@ public class BigMLSampleClient {
         try {
             localModel = new LocalPredictiveModel(
                     (JSONObject) model.get("object"));
+
+        if (DEBUG) { // auxiliary console message
+                System.out.println("Model downloaded: " +
+                        DASHBOARD_URL + (String)model.get("resource"));
+                System.out.println("Ready to predict locally.");
+            }
 
             // Using the `predict` method to predict
             localPrediction = localModel.predict(
@@ -363,6 +427,9 @@ public class BigMLSampleClient {
          *
          */
 
+        if (DEBUG) {
+            System.out.println("* Third example: Evaluating a Model");
+        }
 
         // Creating a training `Model` from the previous `Dataset`
         // -------------------------------------------------------
@@ -389,6 +456,11 @@ public class BigMLSampleClient {
         }
         // obtain the finished resource
         model = api.getModel(model);
+
+        if (DEBUG) { // auxiliary console message
+            System.out.println("Model created: " +
+                    DASHBOARD_URL + (String)model.get("resource"));
+        }
 
         // Creating an `Evaluation` from the previous sampled `Dataset`
         // ------------------------------------------------------------
@@ -423,6 +495,11 @@ public class BigMLSampleClient {
         // obtain the finished resource
         evaluation = api.getEvaluation(evaluation);
 
+        if (DEBUG) { // auxiliary console message
+            System.out.println("Evaluation created: " +
+                    DASHBOARD_URL + (String)evaluation.get("resource"));
+        }
+
         // The result of the evaluation. It contains the model's performance
         // compared to predicting the mode or predicting at random
         // JSONObject result = (JSONObject) Utils.getJSONObject(evaluation,
@@ -444,6 +521,11 @@ public class BigMLSampleClient {
     public static void creatingUnsupervisedModels(final BigMLClient api,
                                                   final JSONObject dataset) {
 
+
+        if (DEBUG) {
+            System.out.println("* Fourth example: Creating unsupervised models");
+        }
+
         JSONObject emptyArgs = null; // the arguments are by default
 
         JSONObject cluster = api.createCluster(
@@ -463,6 +545,11 @@ public class BigMLSampleClient {
 
         // obtain the finished resource
         cluster = api.getCluster(cluster);
+
+        if (DEBUG) { // auxiliary console message
+            System.out.println("Cluster created: " +
+                    DASHBOARD_URL + (String)cluster.get("resource"));
+        }
 
         // The  `Cluster` properties describe the groups defined in the
         // clustering procedure
@@ -491,6 +578,11 @@ public class BigMLSampleClient {
         // obtain the finished resource
         anomaly = api.getAnomaly(anomaly);
 
+        if (DEBUG) { // auxiliary console message
+            System.out.println("Anomaly created: " +
+                    DASHBOARD_URL + (String)anomaly.get("resource"));
+        }
+
         // The `Anomaly` object will contain the top anomalies detected
         // object = (JSONObject) Utils.getJSONObject(anomaly, "object");
         // System.out.print(object);
@@ -509,10 +601,14 @@ public class BigMLSampleClient {
          * 4. Create a `Topic Distribution` using the document input data
          *
          * To follow these steps, you need a connection to the
-         * BigML API, that will hadle these creation calls. That's been passed
+         * BigML API, that will handle these creation calls. That's been passed
          * as the method argument.
          */
 
+
+        if (DEBUG) {
+            System.out.println("* Fifth example: Topic Distribution Workflow");
+        }
 
         JSONObject emptyArgs = null;
 
@@ -538,6 +634,11 @@ public class BigMLSampleClient {
         api.updateSource(source, changes);
         source = api.getSource(source);
 
+        if (DEBUG) { // auxiliary console message
+            System.out.println("Source created: " +
+                    DASHBOARD_URL + (String)source.get("resource"));
+        }
+
         // Create a dataset
         JSONObject dataset = api.createDataset((String) source.get("resource"),
                 emptyArgs, null, null);
@@ -551,6 +652,11 @@ public class BigMLSampleClient {
         }
 
         dataset = api.getDataset(dataset);
+
+        if (DEBUG) { // auxiliary console message
+            System.out.println("Dataset created:" +
+                    DASHBOARD_URL + (String)dataset.get("resource"));
+        }
 
         // Create a Topic Model using the dataset created above
         JSONObject topicModel = api.createTopicModel((String) dataset.get("resource"),
@@ -566,6 +672,11 @@ public class BigMLSampleClient {
 
         topicModel = api.getTopicModel(topicModel);
 
+        if (DEBUG) { // auxiliary console message
+            System.out.println("Topic Model created: " +
+                    DASHBOARD_URL + (String)topicModel.get("resource"));
+        }
+
         // Providing the text for the document that we need to analyze
         JSONObject inputData = new JSONObject();
         inputData.put("000005", "hotel shower double heater");
@@ -576,10 +687,120 @@ public class BigMLSampleClient {
                 null, null);
         remoteTopicDistribution = api.getTopicDistribution(remoteTopicDistribution);
 
+        if (DEBUG) { // auxiliary console message
+            System.out.println("Topic Distribution created:" +
+                    DASHBOARD_URL + (String)remoteTopicDistribution.get("resource"));
+        }
+
         // The Topic Distribution object will contain information about the
         // Topics related to the text in your input data
         // JSONObject distributionOutput = (JSONObject) Utils.getJSONObject(
         //       remoteTopicDistribution, "object.topic_distribution");
         // System.out.println(distributionOutput);
+    }
+
+    public static void changingFields(final BigMLClient api) {
+        /**
+         * Changing the properties of a field, like the type it has been assigned,
+         * is done by updating the `Source` resource in BigML.
+         * The example shows how to:
+         * 1. Create a `Source` from your local data
+         * 2. Change the field's type (or associated properties) for some of the fields
+         *
+         * To follow these steps, you need a connection to the
+         * BigML API, that will handle these creation calls. That's been passed
+         * as the method argument.
+         */
+
+        if (DEBUG) {
+            System.out.println("* Sixth example: Changing fields' properties");
+        }
+
+        JSONObject emptyArgs = null;
+        // Source creation
+        JSONObject source = api.createSource("data/airbnb.csv", // local file
+                                             "Fields change example Source", // Source name
+                                             emptyArgs,                      // parsing args
+                                             emptyArgs);                     // rest of args
+
+        // Source creation is asynchronous. Wait for it to be finished.
+        while (!api.sourceIsReady(source)) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        // obtain the finished resource
+        source = api.getSource(source);
+
+        if (DEBUG) { // auxiliary console message
+            System.out.println("Source created: " +
+                    DASHBOARD_URL + (String)source.get("resource"));
+        }
+
+        // Change the field types: the first field is changed to `categorical` and
+        // the text field options are also modified for the `comments` field (field ID "000005")
+        // for the analysis of the field to be using the text bag-of-words case sensitive method.
+        String changes = "{\"fields\": {\"000000\": {\"optype\": \"categorical\"}," +
+                         "\"000005\":{\"optype\": \"text\"," +
+                         " \"term_analysis\": {\"case_sensitive\": true}}}}";
+        // update call
+        source = api.updateSource(
+                (String) source.get("resource"), // source ID
+                changes);                        // updated attributes
+        // wait for the changes to be applied
+        while (!api.sourceIsReady(source)) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        // obtain the finished resource
+        source = api.getSource(source);
+
+        if (DEBUG) { // auxiliary console message
+            System.out.println("Source updated: " +
+                    DASHBOARD_URL + (String)source.get("resource"));
+        }
+
+        // Creating a dataset from this source, we get some non-preferred fields
+        JSONObject dataset = api.createDataset((String) source.get("resource"),
+                emptyArgs, // creation args
+                null,      // wait for Source
+                null);     // retries
+
+        // Dataset creation is asynchronous. Wait for it to be finished.
+        while (!api.datasetIsReady(dataset)) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (DEBUG) { // auxiliary console message
+            System.out.println("Dataset updated: " +
+                    DASHBOARD_URL + (String)dataset.get("resource"));
+        }
+
+        // Changing the field `reviewer_name` (field ID "000004") to preferred
+        changes = "{\"fields\": {\"000004\": {\"preferred\": true}}}";
+        // update call
+        dataset = api.updateDataset(
+                (String) dataset.get("resource"), // dataset ID
+                changes);                         // updated attributes
+        // wait for the changes to be applied
+        while (!api.datasetIsReady(dataset)) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        // obtain the finished resource
+        dataset = api.getDataset(dataset);
+
     }
 }
