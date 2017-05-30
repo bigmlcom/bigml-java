@@ -104,6 +104,10 @@ public class Execution extends AbstractResource {
                              Integer waitTime, Integer retries) {
 
         try {
+            JSONObject requestObject = new JSONObject();
+            if (args != null) {
+                requestObject = args;
+            }
             if (script != null && script.matches(SCRIPT_RE)) {
                 waitTime = waitTime != null ? waitTime : 3000;
                 retries = retries != null ? retries : 10;
@@ -117,7 +121,6 @@ public class Execution extends AbstractResource {
                     }
                 }
 
-                JSONObject requestObject = new JSONObject();
                 requestObject.put("script", script);
                 return createResource(EXECUTION_URL, requestObject.toJSONString());
             } else {
@@ -158,6 +161,10 @@ public class Execution extends AbstractResource {
         }
 
         try {
+            JSONObject requestObject = new JSONObject();
+            if (args != null) {
+                requestObject = args;
+            }
             List<String> scriptsIds = new ArrayList<String>();
 
             for (String scriptId : scripts) {
@@ -188,7 +195,6 @@ public class Execution extends AbstractResource {
                 }
             }
 
-            JSONObject requestObject = new JSONObject();
             requestObject.put("scripts", scriptsIds);
             return createResource(EXECUTION_URL, requestObject.toJSONString());
         } catch (Throwable e) {

@@ -104,6 +104,10 @@ public class BigMLSampleClient {
         // * Sixth example: Changing the field types properties
         changingFields(api);
 
+        // * Seventh example: Creating a simple WhizzML script and executing it
+        runWhizzML(api);
+
+
         System.out.println("BigML sample finished.");
         if (DEV_MODE) {
             System.out
@@ -389,7 +393,7 @@ public class BigMLSampleClient {
             localModel = new LocalPredictiveModel(
                     (JSONObject) model.get("object"));
 
-        if (DEBUG) { // auxiliary console message
+            if (DEBUG) { // auxiliary console message
                 System.out.println("Model downloaded: " +
                         DASHBOARD_URL + (String)model.get("resource"));
                 System.out.println("Ready to predict locally.");
@@ -802,5 +806,103 @@ public class BigMLSampleClient {
         // obtain the finished resource
         dataset = api.getDataset(dataset);
 
+    }
+
+    public static void runWhizzML(final BigMLClient api) {
+        /**
+         * Creating a simple WhizzML script which adds two variables and executing
+         * it. The example shows how to:
+         * 1. Create a `Script` and defining its inputs and outputs
+         * 2. Create an `Execution` for some particular inputs
+         *
+         * To follow these steps, you need a connection to the
+         * BigML API, that will handle these creation calls. That's been passed
+         * as the method argument.
+         */
+
+        if (DEBUG) {
+            System.out.println("* Seventh example: Creating a Script and executing it");
+        }
+
+        JSONObject scriptArgs = new JSONObject(); // the arguments to create the script
+        String sourceCode = "(define sum (+ a b))";
+        scriptArgs.put("source_code", sourceCode);
+        JSONArray scriptInputs = new JSONArray(); // the inputs are an array of JSONObjects
+        JSONObject input1 = new JSONObject();
+        JSONObject input2 = new JSONObject();
+        input1.put("name", "a");
+        input1.put("type", "number"); // adding first input
+        scriptInputs.add(input1);
+        input2.put("name", "b");
+        input2.put("type", "number"); // adding second input
+        scriptInputs.add(input2);
+        JSONArray scriptOutputs = new JSONArray(); // the outputs are an array of JSONObjects
+        JSONObject output = new JSONObject();
+        output.put("name", "sum");
+        output.put("type", "number");
+        scriptOutputs.add(output);
+        scriptArgs.put("inputs", scriptInputs);
+        scriptArgs.put("outputs", scriptOutputs);
+        scriptArgs.put("name", "simple sum script");
+        System.out.println(scriptArgs.toString());
+        // Script creation
+        JSONObject script = api.createScript(sourceCode,  // WhizzML source code
+                                             scriptArgs,  // script args: inputs and outputs
+                                             null,        // wait time
+                                             null);       // retries
+
+        // Script creation is asynchronous. Wait for it to be finished.
+        while (!api.scriptIsReady(script)) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        // obtain the finished resource
+        script = api.getScript(script);
+
+        if (DEBUG) { // auxiliary console message
+            System.out.println("Script created: " +
+                    DASHBOARD_URL + (String)script.get("resource"));
+        }
+
+        // Execute the `Script` by creating an execution.
+        // Concrete values for the inputs need to be provided as args
+           JSONObject execution = null;
+        JSONObject executionArgs = new JSONObject();
+        JSONArray executionInputs = new JSONArray(); // inputs need to be an array of arrays
+        JSONArray exeInput1 = new JSONArray();
+        JSONArray exeInput2 = new JSONArray();
+        exeInput1.add("a");
+        exeInput1.add(2);
+        executionInputs.add(exeInput1); // setting first variable `a` to 2
+        exeInput2.add("b");
+        exeInput2.add(3);
+        executionInputs.add(exeInput2); // setting second variable `b` to 3
+        executionArgs.put("inputs", executionInputs);
+        System.out.println(executionArgs.toString());
+        // execution call
+        execution = api.createExecution(
+                (String) script.get("resource"), // script ID
+                executionArgs,                   // execution arguments: inputs
+                null,                            // wait for script time
+                null);                           // retries
+        // Execution creation is asynchronous. Wait for it to be finished.
+        while (!api.executionIsReady(execution)) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        // obtain the finished resource
+        execution = api.getExecution(execution);
+
+        if (DEBUG) { // auxiliary console message
+            System.out.println("Execution created: " +
+                    DASHBOARD_URL + (String)execution.get("resource"));
+            System.out.println("Result: " +  ((JSONObject) ((JSONObject) execution.get("object")).get("execution")).get("result"));
+        }
     }
 }
