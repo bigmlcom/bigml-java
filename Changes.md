@@ -1,5 +1,16 @@
 # Changes in the BigML.io Java bindings
 
+## 1.6.2 version
+
+### Improvements
+
+* BigML-Sample-Client extended with new examples and inproved the documentation
+
+### Bugs
+
+* Execution creation was ignoring arguments passed by the user.
+
+
 ## 1.6.0 version
 
 ### Improvements
