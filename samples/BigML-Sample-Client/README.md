@@ -8,37 +8,42 @@ It is a Eclipse project with a simple class
 `org.bigml.sample.BigMLSampleClient` that shows how to create resources and
 local predictions using these bindings.
 
-It starts with a basic predictive workflow using BigML's API:
+The examples include:
+
+A basic predictive workflow using BigML's API:
 
   - Create a [Source](https://bigml.com/api/sources)
   - Create a [Dataset](https://bigml.com/api/datasets)
   - Create a [Model](https://bigml.com/api/models)
   - Create a [Prediction](https://bigml.com/api/prediction)
 
-It shows how to create local predictions by downloading the contents
+Creatinge local predictions by downloading the contents
 of the remote `Model` JSON object.
 
   - Create a [LocalPredictiveModel](https://github.com/bigmlcom/bigml-java/blob/master/src/main/java/org/bigml/binding/LocalPredictiveModel.java)
   - Create a prediction using the `LocalPredictiveModel` instance
 
-Then, it shows how to evaluate your model by sampling your existing dataset:
+Evaluating your model by sampling your existing dataset:
 
   - Create a training sampled [Model](https://bigml.com/api/models)
   - Create an [Evaluation](https://bigml.com/api/evaluations) with the out of
     bag test data
 
-It also shows examples of how to create some unsupervised models:
+Creating some unsupervised models:
 
   -  Create a [Cluster](https://bigml.com/api/clusters)
   -  Create an [Anomaly](https://bigml.com/api/anomalies)
 
-Describes the workflow needed to create Topic Distributions:
+The workflow needed to create Topic Distributions:
 
   -  Create a [Topic Model](https://bigml.com/api/topicmodels)
   -  Create a [Topic Distribution](https://bigml.com/api/topicdistributions)
 
-And finally, it shows how to change the properties of the fields in your
+How to change the properties of the fields in your
 `Source` or `Dataset`.
+
+How to create a `WhizzML Script` and execute
+it for some `inputs` by creating an `Execution`.
 
 BigML API credentials
 ---------------------
