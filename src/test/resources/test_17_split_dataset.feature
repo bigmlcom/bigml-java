@@ -13,6 +13,7 @@ Feature: Create a split dataset
         And I wait until the dataset is ready less than <time_3> secs
         When I compare the datasets' instances
         Then the proportion of instances between datasets is <rate>
+        Then delete test data
 
 	Examples:
 		| data             | seed      | time_1  | time_2 | time_3 | rate |

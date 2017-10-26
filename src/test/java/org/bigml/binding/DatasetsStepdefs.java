@@ -73,6 +73,26 @@ public class DatasetsStepdefs {
         commonSteps.the_resource_has_been_created_with_status(context.status);
     }
 
+
+
+    @Then("^I create a dataset from the cluster and the centroid$")
+    public void I_create_a_dataset_from_the_cluster_and_the_centroid() throws Throwable {
+        String clusterId = (String) context.cluster.get("resource");
+        String centroidId = (String) context.centroid.get("centroid_id");
+
+        JSONObject args = new JSONObject();
+        args.put("tags", Arrays.asList("unitTest"));
+        args.put("centroid", centroidId);
+
+        JSONObject resource = BigMLClient.getInstance().createDataset(clusterId,
+                args, 5, null);
+        context.status = (Integer) resource.get("code");
+        context.location = (String) resource.get("location");
+        context.dataset = (JSONObject) resource.get("object");
+        commonSteps.the_resource_has_been_created_with_status(context.status);
+    }
+
+
     @Given("^I wait until the dataset status code is either (\\d) or (\\d) less than (\\d+)")
     public void I_wait_until_dataset_status_code_is(int code1, int code2,
             int secs) throws AuthenticationException {
@@ -157,6 +177,28 @@ public class DatasetsStepdefs {
         }
     }
 
+    @Then("^I create a dataset with only the anomalies$")
+    public void I_create_a_dataset_with_only_the_anomalies()
+        throws AuthenticationException, Exception {
+
+        String datasetId = (String) context.dataset.get("resource");
+        LocalAnomaly localAnomaly = new LocalAnomaly(context.anomaly);
+
+        JSONObject args = new JSONObject();
+        args.put("tags", Arrays.asList("unitTest"));
+        args.put("lisp_filter", localAnomaly.filter(true));
+
+        JSONObject resource = BigMLClient.getInstance().createDataset(datasetId,
+                args, 5, null);
+
+        context.dataset = (JSONObject) resource.get("object");
+        commonSteps.the_resource_has_been_created_with_status(context.status);
+    }
+
+    @Then("^I check that the dataset has (\\d+) rows$")
+    public void I_check_that_the_dataset_has_rows(long rows) throws Exception {
+        assertEquals(context.dataset.get("rows"), rows);
+    }
 
     // ---------------------------------------------------------------------
     // split_dataset.feature
@@ -199,25 +241,6 @@ public class DatasetsStepdefs {
         assertEquals( (long) (datasetOrigRows * rate), datasetRatedRows);
     }
 
-    /*
-     * world.origin_dataset = world.dataset resource =
-     * world.api.create_dataset(world.dataset['resource'], {'sample_rate':
-     * float(rate)}) world.status = resource['code'] assert world.status ==
-     * HTTP_CREATED world.location = resource['location'] world.dataset =
-     * resource['object'] world.datasets.append(resource['resource'])
-     */
-
-    /*
-     * @When("^I compare the datasets' instances$") public void
-     * I_compare_the_datasets_instances() throws Throwable { // Express the
-     * Regexp above with the code you wish you had throw new PendingException();
-     * }
-     * 
-     * @Then("^the proportion of instances between datasets is (\\d+).(\\d+)$")
-     * public void the_proportion_of_instances_between_datasets_is_(int arg1,
-     * int arg2) throws Throwable { // Express the Regexp above with the code
-     * you wish you had throw new PendingException(); }
-     */
 
     // ---------------------------------------------------------------------
     // create_public_dataset.feature
@@ -260,15 +283,16 @@ public class DatasetsStepdefs {
         changes.put("private", new Boolean(false));
 
         JSONObject resource = BigMLClient.getInstance().getCluster(
-                (JSONObject) context.cluster.get("resource"));
-        context.status = (Integer) resource.get("code");
+            (String) context.cluster.get("resource"));
 
+        context.status = (Integer) resource.get("code");
         assertEquals(AbstractResource.HTTP_OK, context.status);
 
+        /*
         assertEquals(context.getDataset().get("resource"), String.format("dataset/%s",
                 Utils.getJSONObject(resource,
                         String.format("object.cluster_datasets.%s", context.centroid.get("centroid_id")) )));
-
+        */
     }
 
     @When("^I download the dataset file to \"([^\"]*)\"$")

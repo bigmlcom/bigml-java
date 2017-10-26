@@ -334,6 +334,24 @@ public class CommonStepdefs {
 
         BigMLClient.getInstance().getCacheManager().cleanCache();
 
+        // Forecasts
+        JSONArray forecasts = (JSONArray) BigMLClient.getInstance()
+                .listForecasts(";tags__in=unitTest").get("objects");
+        for (int i = 0; i < forecasts.size(); i++) {
+            JSONObject forecast = (JSONObject) forecasts.get(i);
+            BigMLClient.getInstance().deleteForecast(
+                    (String) forecast.get("resource"));
+        }
+
+        // TimeSeries
+        JSONArray timeSeries = (JSONArray) BigMLClient.getInstance()
+                .listTimeSeries(";tags__in=unitTest").get("objects");
+        for (int i = 0; i < timeSeries.size(); i++) {
+            JSONObject timeSeries_ = (JSONObject) timeSeries.get(i);
+            BigMLClient.getInstance().deleteTimeSeries(
+                    (String) timeSeries_.get("resource"));
+        }
+
         // Configurations
         JSONArray configurations = (JSONArray) BigMLClient.getInstance()
                 .listConfigurations(";tags__in=unitTest").get("objects");

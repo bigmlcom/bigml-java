@@ -2,6 +2,7 @@ package org.bigml.binding;
 
 import cucumber.annotation.en.Given;
 import cucumber.annotation.en.Then;
+import cucumber.annotation.en.When;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -68,6 +69,7 @@ public class LocalEnsembleStepdefs {
             assertTrue("", false);
         }
     }
+
 
     @Then("^the local ensemble prediction using median with confidence for \"(.*)\" is \"([^\"]*)\"$")
     public void the_local_prediction_using_median_with_confidence_for_is(String args, String expectedPrediction) {

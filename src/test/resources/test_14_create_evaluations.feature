@@ -18,7 +18,7 @@ Feature: Create Evaluations
 
         Examples:
         | data             | seed      | time_1  | time_2 | time_3 | time_4 | measure       | value  |
-        | data/iris.csv | BigML | 30      | 30     | 30     | 30     | average_phi   | 1      |
+        | data/iris.csv | BigML | 50      | 50     | 50     | 50     | average_phi   | 1      |
 
 
     Scenario Outline: Successfully creating an evaluation for an ensemble:
@@ -37,7 +37,7 @@ Feature: Create Evaluations
 
         Examples:
         | data             | seed      | time_1  | time_2 | number_of_models | tlp | time_3 | time_4 | measure       | value  |
-        | data/iris.csv | BigML | 30      | 30     | 5                | 1   | 50     | 30     | average_phi   | 0.98029   |
+        | data/iris.csv | BigML | 50      | 50     | 5                | 1   | 80     | 80     | average_phi   | 0.98029   |
 
 
     Scenario Outline: Successfully creating an evaluation for a logistic regression:
@@ -56,4 +56,4 @@ Feature: Create Evaluations
 
         Examples:
         | data             | seed      | time_1  | time_2 | tlp | time_3 | time_4 | measure       | value  |
-        | data/iris.csv | BigML | 30      | 30     | 5                | 50     | 30     | average_phi   | 0.89054   |
+        | data/iris.csv | BigML | 50      | 50     | 5                | 800     | 80     | average_phi   | 0.89054   |

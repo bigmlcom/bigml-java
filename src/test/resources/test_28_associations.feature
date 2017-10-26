@@ -17,4 +17,3 @@ Feature: Testing Assocaitions REST api calls
         Examples:
         | data                | time_1  | time_2 | time_3 | time_4 | association_name |
         | data/iris.csv | 10      | 10     | 20     | 20 | my new association name |
-

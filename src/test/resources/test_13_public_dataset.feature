@@ -17,4 +17,4 @@ Feature: Create and read a public dataset
 
         Examples:
         | data                | seed      | time_1  | time_2 | time_3 |
-        | data/iris.csv | BigML |  10      | 10     | 10     |
+        | data/iris.csv | BigML |  20      | 20     | 20     |

@@ -37,8 +37,5 @@ Feature: Create Predictions from Ensembles
     Then the numerical prediction for "<objective>" is <prediction>
     Then delete test data
 
-
-  Examples:
-    | data             | seed      | time_1  | time_2 | time_3 | time_4 | number_of_models | tlp   | data_input    | objective | prediction  |
-    | data/grades.csv | BigML | 10 | 10 | 150 | 20 | 10 | 1 | {"Assignment": 81.22, "Tutorial": 91.95, "Midterm": 79.38, "TakeHome": 105.93} | 000005 | 88.205575 |
-    | data/grades.csv | BigML | 10 | 10 | 150 | 20 | 10 | 1 | {"Assignment": 97.33, "Tutorial": 106.74, "Midterm": 76.88, "TakeHome": 108.89} | 000005 | 84.29401 |
+    | data/grades.csv | BigML | 10 | 10 | 150 | 20 | 10 | 1 | {"Assignment": 81.22, "Tutorial": 91.95, "Midterm": 79.38, "TakeHome": 105.93} | 000005 | 84.556 |
+    | data/grades.csv | BigML | 10 | 10 | 150 | 20 | 10 | 1 | {"Assignment": 97.33, "Tutorial": 106.74, "Midterm": 76.88, "TakeHome": 108.89} | 000005 | 73.13558 |

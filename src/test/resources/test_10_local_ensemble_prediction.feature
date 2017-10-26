@@ -12,14 +12,13 @@ Feature: Create Predictions locally from Ensembles
     And I create an ensemble of <number_of_models> models and <tlp> tlp
     And I wait until the ensemble is ready less than <time_3> secs
     And I create a local ensemble
-    #When I create a local ensemble prediction with confidence for "<data_input>"
-    When the local ensemble prediction for "<data_input>" is "<prediction>"
-    #And the local prediction's confidence is "<confidence>"
+    When the local ensemble prediction for "<data_input>" is "<prediction>" with confidence <confidence>
+    #And the local probabilities are "<probabilities>"
     Then delete test data
 
     Examples:
       | data             | seed      |  time_1  | time_2 | time_3 | number_of_models | tlp   |  data_input    |prediction  | confidence |
-      | data/iris.csv | BigML |  10      | 10     | 50     | 5                | 1     | {"petal width": 0.5} | Iris-versicolor | 0.3687 |
+      | data/iris.csv | BigML |  10      | 10     | 50     | 5                | 1     | {"petal width": 0.5} | Iris-versicolor | 0.3687 | ["0.3403","0.4150","0.2447"]  |
 
 
   Scenario Outline: Successfully obtaining field importance from an Ensemble:
@@ -56,7 +55,6 @@ Feature: Create Predictions locally from Ensembles
     And I create a local ensemble
     #When I create a local ensemble prediction for "<data_input>" in JSON adding confidence
     When the local ensemble prediction for "<data_input>" is "<prediction>" with confidence <confidence>
-    #And the local prediction's confidence is "<confidence>"
     Then delete test data
 
     Examples:
@@ -104,7 +102,7 @@ Feature: Create Predictions locally from Ensembles
 
     Examples:
       | data            | seed      |  time_1  | time_2 | time_3 | number_of_models | tlp   |  data_input    |prediction  |
-      | data/grades.csv   | BigML     |  10      | 10     | 50     | 2                | 1     | {}             | 67.5    |
+      | data/grades.csv   | BigML     |  10      | 10     | 50     | 2                | 1     | {}             | 65.83    |
 
 
   Scenario Outline: Successfully creating a local prediction from an Ensemble with max models:

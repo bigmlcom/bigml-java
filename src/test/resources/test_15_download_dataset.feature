@@ -2,7 +2,7 @@ Feature: Create and read a public dataset
     In order to read a public dataset
     I need to create a public dataset
 
-    Scenario Outline: Successfully creating and reading a public dataset:
+    Scenario Outline: Successfully exporting a dataset:
         Given that I use production mode with seed="<seed>"
         Given I create a data source uploading a "<data>" file
         And I wait until the source is ready less than <time_1> secs

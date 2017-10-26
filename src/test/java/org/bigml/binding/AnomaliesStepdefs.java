@@ -71,6 +71,25 @@ public class AnomaliesStepdefs {
         commonSteps.the_resource_has_been_created_with_status(context.status);
     }
 
+
+    @Then("^I create an anomaly detector of (\\d+) anomalies from a dataset$")
+    public void i_create_an_anomaly_with_top_n_from_dataset(int topN)
+        throws AuthenticationException {
+
+        String datasetId = (String) context.dataset.get("resource");
+
+        JSONObject args = new JSONObject();
+        args.put("tags", Arrays.asList("unitTest"));
+        args.put("top_n", topN);
+
+        JSONObject resource = BigMLClient.getInstance().createAnomaly(datasetId,
+                args, 5, null);
+        context.status = (Integer) resource.get("code");
+        context.location = (String) resource.get("location");
+        context.anomaly = (JSONObject) resource.get("object");
+        commonSteps.the_resource_has_been_created_with_status(context.status);
+    }
+
     @Given("^I create a local anomaly detector$")
     public void I_create_a_local_anomaly_detector() throws Exception {
         localAnomaly = new LocalAnomaly(context.anomaly);

@@ -38,4 +38,4 @@ Feature:  Create a model from a dataset list
 
         Examples:
           | data                | seed      |  time_1  | time_2 | time_3 |  input_data |  prediction    |
-          | data/grades.csv    | BigML     |   10     | 10     | 10     |  {"Tutorial": 99.47, "Midterm": 53.12, "TakeHome": 87.96}    |    50  |
+          | data/grades.csv    | BigML     |   10     | 10     | 10     |  {"Tutorial": 99.47, "Midterm": 53.12, "TakeHome": 87.96}    |    63.33  |
