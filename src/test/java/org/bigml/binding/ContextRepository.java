@@ -55,6 +55,8 @@ public class ContextRepository {
     JSONObject topicDistribution = null;
     JSONObject batchTopicDistribution = null;
     JSONObject configuration = null;
+    JSONObject timeSeries = null;
+    JSONObject forecast = null;
 
     Map<String, Long> datasetErrorCounts;
     Map<String, Long> datasetMissingCounts;
@@ -430,5 +432,21 @@ public class ContextRepository {
 
     public void setConfiguration(JSONObject configuration) {
         this.configuration = configuration;
+    }
+
+    public JSONObject getTimeSeries() {
+        return timeSeries;
+    }
+
+    public void setTimeSeries(JSONObject timeSeries) {
+        this.timeSeries = timeSeries;
+    }
+
+    public JSONObject getForecast() {
+        return forecast;
+    }
+
+    public void setForecast(JSONObject forecast) {
+        this.forecast = forecast;
     }
 }

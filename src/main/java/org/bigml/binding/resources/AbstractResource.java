@@ -59,6 +59,8 @@ public abstract class AbstractResource {
     public final static String TOPICDISTRIBUTION_PATH = "topicdistribution";
     public final static String BATCH_TOPICDISTRIBUTION_PATH = "batchtopicdistribution";
     public final static String CONFIGURATION_PATH = "configuration";
+    public final static String TIMESERIES_PATH = "timeseries";
+    public final static String FORECAST_PATH = "forecast";
 
     // Base Resource regular expressions
     static String SOURCE_RE = "^" + SOURCE_PATH + "/[a-f,0-9]{24}$";
@@ -109,6 +111,8 @@ public abstract class AbstractResource {
             + "/[a-f,0-9]{24}$";
     static String CONFIGURATION_RE = "^" + CONFIGURATION_PATH
             + "/[a-f,0-9]{24}$";
+    static String TIMESERIES_RE = "^" + TIMESERIES_PATH + "/[a-f,0-9]{24}$";
+    static String FORECAST_RE = "^" + FORECAST_PATH + "/[a-f,0-9]{24}$";
 
     // HTTP Status Codes from https://bigml.com/api/status_codes
     public static int HTTP_OK = 200;
@@ -191,6 +195,8 @@ public abstract class AbstractResource {
     protected String TOPICDISTRIBUTION_URL;
     protected String BATCH_TOPICDISTRIBUTION_URL;
     protected String CONFIGURATION_URL;
+    protected String TIMESERIES_URL;
+    protected String FORECAST_URL;
 
     public final static String DOWNLOAD_DIR = "/download";
 
@@ -226,6 +232,8 @@ public abstract class AbstractResource {
             TOPICDISTRIBUTION_URL = BIGML_URL + TOPICDISTRIBUTION_PATH;
             BATCH_TOPICDISTRIBUTION_URL = BIGML_URL + BATCH_TOPICDISTRIBUTION_PATH;
             CONFIGURATION_URL = BIGML_URL + CONFIGURATION_PATH;
+            TIMESERIES_URL = BIGML_URL + TIMESERIES_PATH;
+            FORECAST_URL = BIGML_URL + FORECAST_PATH;
 
             this.cacheManager = cacheManager;
         } catch (AuthenticationException ae) {

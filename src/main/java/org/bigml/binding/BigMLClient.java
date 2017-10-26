@@ -88,6 +88,8 @@ public class BigMLClient {
     private TopicDistribution topicDistribution;
     private BatchTopicDistribution batchTopicDistribution;
     private Configuration configuration;
+    private TimeSeries timeSeries;
+    private Forecast forecast;
 
     private Properties props;
     private Boolean devMode = false;
@@ -508,6 +510,10 @@ public class BigMLClient {
                 this.devMode, cacheManager);
         configuration = new Configuration(this.bigmlUser, this.bigmlApiKey,
                 this.devMode, cacheManager);
+        timeSeries = new TimeSeries(this.bigmlUser, this.bigmlApiKey,
+                this.devMode, cacheManager);
+        forecast = new Forecast(this.bigmlUser, this.bigmlApiKey,
+                this.devMode, cacheManager);
     }
 
     public String getBigMLUrl() {
@@ -890,7 +896,7 @@ public class BigMLClient {
      *            a source JSONObject
      *
      */
-    public JSONObject delete(final JSONObject sourceJSON) {
+    public JSONObject deleteSource(final JSONObject sourceJSON) {
         return source.delete(sourceJSON);
     }
 
@@ -6082,6 +6088,42 @@ public class BigMLClient {
     }
 
     /**
+     * Creates a topic model from a list of `datasets`.
+     *
+     * POST /andromeda/topicmodel?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param datasetsIds
+     *            list of identifiers in the form dataset/id where id is a
+     *            string of 24 alpha-numeric chars for the dataset to attach the
+     *            topic model.
+     * @param args
+     *            set of parameters for the new topic model. Optional
+     * @param waitTime
+     *            time (milliseconds) to wait for next check of FINISHED status
+     *            for source before to start to create the topic model.
+     *            Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     *
+     */
+    public JSONObject createTopicModel(final List datasetsIds, JSONObject args,
+            Integer waitTime, Integer retries) {
+
+        // Setting the seed automatically if it was informed during the initialization
+        if( seed != null && !seed.equals("") ) {
+            if( args == null ) {
+                args = new JSONObject();
+            }
+            if( !args.containsKey("seed") ) {
+                args.put("seed", seed);
+            }
+        }
+
+        return topicModel.create(datasetsIds, args, waitTime, retries);
+    }
+
+    /**
      * Retrieves a topicmodel.
      *
      * A topic model is an evolving object that is processed until it reaches the
@@ -6810,5 +6852,386 @@ public class BigMLClient {
      */
     public JSONObject deleteConfiguration(final JSONObject configurationJSON) {
         return configuration.delete(configurationJSON);
+    }
+
+
+    // ################################################################
+    // #
+    // # TimeSeries
+    // # https://bigml.com/api/timeseries
+    // #
+    // ################################################################
+
+    /**
+     * Creates a new timeseries.
+     *
+     * POST /andromeda/timeseries?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param datasetId
+     *            a unique identifier in the form dataset/id where id is a
+     *            string of 24 alpha-numeric chars for the dataset to attach the
+     *            timeseries.
+     * @param args
+     *            set of parameters for the new timeseries. Optional
+     * @param waitTime
+     *            time to wait for next check of FINISHED status for dataset
+     *            before to start to create the timeseries. Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     *
+     */
+    public JSONObject createTimeSeries(final String datasetId, JSONObject args,
+            Integer waitTime, Integer retries) {
+
+        return timeSeries.create(datasetId, args, waitTime, retries);
+    }
+
+    /**
+     * Creates a timeseries from a list of `datasets`.
+     *
+     * POST /andromeda/timeseries?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param datasetsIds
+     *            list of identifiers in the form dataset/id where id is a
+     *            string of 24 alpha-numeric chars for the dataset to attach the
+     *            timeseries.
+     * @param args
+     *            set of parameters for the new timeseries. Optional
+     * @param waitTime
+     *            time (milliseconds) to wait for next check of FINISHED status
+     *            for source before to start to create the timeseries.
+     *            Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     *
+     */
+    public JSONObject createTimeSeries(final List datasetsIds, JSONObject args,
+            Integer waitTime, Integer retries) {
+
+        // Setting the seed automatically if it was informed during the initialization
+        if( seed != null && !seed.equals("") ) {
+            if( args == null ) {
+                args = new JSONObject();
+            }
+            if( !args.containsKey("seed") ) {
+                args.put("seed", seed);
+            }
+        }
+
+        return timeSeries.create(datasetsIds, args, waitTime, retries);
+    }
+
+    /**
+     * Retrieves a timeseries.
+     *
+     * A timeseries is an evolving object that is processed until it reaches the
+     * FINISHED or FAULTY state, the method will return a JSONObject that
+     * encloses the timeseries values and state info available at the time it is
+     * called.
+     *
+     * GET
+     * /andromeda/timeseries/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io
+     *
+     * @param timeSeriesId
+     *            a unique identifier in the form timeseries/id where id is a
+     *            string of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject getTimeSeries(final String timeSeriesId) {
+        return timeSeries.get(timeSeriesId);
+    }
+
+    /**
+     * Retrieves a timeseries.
+     *
+     * A timeseries is an evolving object that is processed until it reaches the
+     * FINISHED or FAULTY state, the method will return a JSONObject that
+     * encloses the timeseries values and state info available at the time it is
+     * called.
+     *
+     * GET
+     * /andromeda/timeseries/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io
+     *
+     * @param timeSeriesJSON
+     *            a timeseries JSONObject.
+     *
+     */
+    public JSONObject getTimeSeries(final JSONObject timeSeriesJSON) {
+        return timeSeries.get(timeSeriesJSON);
+    }
+
+    /**
+     * Check whether a timeseries' status is FINISHED.
+     *
+     * @param timeSeriesId
+     *            a unique identifier in the form timeseries/id where id is a
+     *            string of 24 alpha-numeric chars.
+     *
+     */
+    public boolean timeSeriesIsReady(final String timeSeriesId) {
+        return timeSeries.isReady(timeSeriesId);
+    }
+
+    /**
+     * Check whether a timeseries' status is FINISHED.
+     *
+     * @param timeSeriesJSON
+     *            a timeseries JSONObject.
+     *
+     */
+    public boolean timeSeriesIsReady(final JSONObject timeSeriesJSON) {
+        return timeSeries.isReady(timeSeriesJSON);
+    }
+
+    /**
+     * Lists all your timeseries.
+     *
+     * GET /andromeda/timeseries?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param queryString
+     *            query filtering the listing.
+     *
+     */
+    public JSONObject listTimeSeries(final String queryString) {
+        return timeSeries.list(queryString);
+    }
+
+    /**
+     * Updates a timeseries.
+     *
+     * PUT
+     * /andromeda/timeseries/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param timeSeriesId
+     *            a unique identifier in the form timeseries/id where id is a
+     *            string of 24 alpha-numeric chars.
+     * @param changes
+     *            set of parameters to update the timeseries. Optional
+     *
+     */
+    public JSONObject updateTimeSeries(final String timeSeriesId, final String changes) {
+        return timeSeries.update(timeSeriesId, changes);
+    }
+
+    /**
+     * Updates a timeseries.
+     *
+     * PUT
+     * /andromeda/timeseries/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param timeSeriesJSON
+     *            a timeseries JSONObject
+     * @param changes
+     *            set of parameters to update the timeseries. Optional
+     */
+    public JSONObject updateTimeSeries(final JSONObject timeSeriesJSON,
+            final JSONObject changes) {
+        return timeSeries.update(timeSeriesJSON, changes);
+    }
+
+    /**
+     * Deletes a timeseries.
+     *
+     * DELETE
+     * /andromeda/timeseries/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1
+     *
+     * @param timeSeriesId
+     *            a unique identifier in the form timeseries/id where id is a
+     *            string of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject deleteTimeSeries(final String timeSeriesId) {
+        return timeSeries.delete(timeSeriesId);
+    }
+
+    /**
+     * Deletes a timeseries.
+     *
+     * DELETE
+     * /andromeda/timeseries/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1
+     *
+     * @param timeSeriesJSON
+     *            a timeseries JSONObject.
+     *
+     */
+    public JSONObject deleteTimeSeries(final JSONObject timeSeriesJSON) {
+        return timeSeries.delete(timeSeriesJSON);
+    }
+
+
+    // ################################################################
+    // #
+    // # Forecasts
+    // # https://bigml.com/api/forecasts
+    // #
+    // ################################################################
+
+    /**
+     * Creates a new forecast.
+     *
+     * POST
+     * /andromeda/forecast?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param timeSeriesId
+     *            a unique identifier in the form timeseries/id where
+     *            id is a string of 24 alpha-numeric chars for the tiemseries
+     *            to attach the forecast.
+     * @param inputData
+     *            an object with field's id/value pairs representing the
+     *            instance you want to create a forecast for.
+     * @param args
+     *            set of parameters for the new forecast. Required
+     * @param waitTime
+     *            time to wait for next check of FINISHED status for timeseries
+     *            before to start to create the forecast. Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     *
+     */
+    public JSONObject createForecast(final String timeSeriesId,
+            JSONObject inputData, JSONObject args,
+            Integer waitTime, Integer retries) {
+        return forecast.create(timeSeriesId, inputData, args,
+                waitTime, retries);
+    }
+
+    /**
+     * Retrieves a forecast.
+     *
+     * GET /andromeda/forecast/id?username=$BIGML_USERNAME;api_key=
+     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
+     *
+     * @param forecastId
+     *            a unique identifier in the form forecast/id where id is a
+     *            string of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject getForecast(final String forecastId) {
+        return forecast.get(forecastId);
+    }
+
+    /**
+     * Retrieves a forecast.
+     *
+     * GET /andromeda/forecast/id?username=$BIGML_USERNAME;api_key=
+     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
+     *
+     * @param forecastJSON
+     *            a forecast JSONObject
+     *
+     */
+    public JSONObject getForecast(final JSONObject forecastJSON) {
+        return forecast.get(forecastJSON);
+    }
+
+    /**
+     * Checks whether a forecast's status is FINISHED.
+     *
+     * @param forecastId
+     *            a unique identifier in the form forecast/id where id is a
+     *            string of 24 alpha-numeric chars.
+     *
+     */
+    public boolean forecastIsReady(final String forecastId) {
+        return forecast.isReady(forecastId);
+    }
+
+    /**
+     * Checks whether a forecast's status is FINISHED.
+     *
+     * @param forecastJSON  a forecast JSONObject
+     *
+     */
+    public boolean forecastIsReady(final JSONObject forecastJSON) {
+        return forecast.isReady(forecastJSON);
+    }
+
+    /**
+     * Lists all your forecasts.
+     *
+     * GET
+     * /andromeda/forecast?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param queryString
+     *            query filtering the listing.
+     *
+     */
+    public JSONObject listForecasts(final String queryString) {
+        return forecast.list(queryString);
+    }
+
+    /**
+     * Updates a forecast.
+     *
+     * PUT /andromeda/forecast/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param forecastId
+     *            a unique identifier in the form forecast/id where id is a
+     *            string of 24 alpha-numeric chars.
+     * @param changes
+     *            set of parameters to update the forecast. Optional
+     *
+     */
+    public JSONObject updateForecast(final String forecastId,
+            final String changes) {
+        return forecast.update(forecastId, changes);
+    }
+
+    /**
+     * Updates a forecast.
+     *
+     * PUT /andromeda/forecast/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param forecastJSON
+     *            am forecast JSONObject
+     * @param changes
+     *            set of parameters to update the forecast. Optional
+     *
+     */
+    public JSONObject updateForecast(final JSONObject forecastJSON,
+            final JSONObject changes) {
+        return forecast.update(forecastJSON, changes);
+    }
+
+    /**
+     * Deletes a forecast.
+     *
+     * DELETE /andromeda/forecast/id?username=$BIGML_USERNAME;api_key=
+     * $BIGML_API_KEY; HTTP/1.1
+     *
+     * @param forecastId
+     *            a unique identifier in the form forecast/id where id is a
+     *            string of 24 alpha-numeric chars
+     *
+     */
+    public JSONObject deleteForecast(final String forecastId) {
+        return forecast.delete(forecastId);
+    }
+
+    /**
+     * Deletes a forecast.
+     *
+     * DELETE /andromeda/forecast/id?username=$BIGML_USERNAME;api_key=
+     * $BIGML_API_KEY; HTTP/1.1
+     *
+     * @param forecastJSON
+     *            a forecast JSONObject
+     *
+     */
+    public JSONObject deleteForecast(final JSONObject forecastJSON) {
+        return forecast.delete(forecastJSON);
     }
 }
