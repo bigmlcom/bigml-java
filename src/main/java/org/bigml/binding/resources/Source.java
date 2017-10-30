@@ -30,11 +30,10 @@ public class Source extends AbstractResource {
      *
      */
     public Source() {
-        this.bigmlApiKey = System.getProperty("BIGML_API_KEY");
-        bigmlAuth = "?username=" + this.bigmlUser + ";api_key="
-                + this.bigmlApiKey + ";";
-        this.devMode = false;
-        super.init(null);
+    		super.init(null, null, false, null);
+        this.resourceRe = SOURCE_RE;
+        this.resourceUrl = SOURCE_URL;
+        this.resourceName = "source";
     }
 
     /**
@@ -43,14 +42,10 @@ public class Source extends AbstractResource {
      */
     public Source(final String apiUser, final String apiKey,
             final boolean devMode) {
-        this.bigmlUser = apiUser != null ? apiUser : System
-                .getProperty("BIGML_USERNAME");
-        this.bigmlApiKey = apiKey != null ? apiKey : System
-                .getProperty("BIGML_API_KEY");
-        bigmlAuth = "?username=" + this.bigmlUser + ";api_key="
-                + this.bigmlApiKey + ";";
-        this.devMode = devMode;
-        super.init(null);
+    		super.init(apiUser, apiKey, devMode, null);
+        this.resourceRe = SOURCE_RE;
+        this.resourceUrl = SOURCE_URL;
+        this.resourceName = "source";
     }
 
     /**
@@ -59,25 +54,10 @@ public class Source extends AbstractResource {
      */
     public Source(final String apiUser, final String apiKey,
             final boolean devMode, final CacheManager cacheManager) {
-        this.bigmlUser = apiUser != null ? apiUser : System
-                .getProperty("BIGML_USERNAME");
-        this.bigmlApiKey = apiKey != null ? apiKey : System
-                .getProperty("BIGML_API_KEY");
-        bigmlAuth = "?username=" + this.bigmlUser + ";api_key="
-                + this.bigmlApiKey + ";";
-        this.devMode = devMode;
-        super.init(cacheManager);
-    }
-
-    /**
-     * Check if the current resource is an Source
-     *
-     * @param resource the resource to be checked
-     * @return true if it's a Source
-     */
-    @Override
-    public boolean isInstance(final JSONObject resource) {
-        return ((String) resource.get("resource")).matches(SOURCE_RE);
+    		super.init(apiUser, apiKey, devMode, cacheManager);
+        this.resourceRe = SOURCE_RE;
+        this.resourceUrl = SOURCE_URL;
+        this.resourceName = "source";
     }
 
     /**
@@ -408,171 +388,6 @@ public class Source extends AbstractResource {
             logger.error("Error creating source");
             return null;
         }
-    }
-
-    /**
-     * Retrieves a remote source.
-     *
-     * GET /andromeda/source/4f64be4003ce890b4500000b?username=$BIGML_USERNAME;
-     * api_key=$BIGML_API_KEY; HTTP/1.1 Host: bigml.io
-     *
-     * @param sourceId
-     *            a unique identifier in the form source/id where id is a string
-     *            of 24 alpha-numeric chars.
-     *
-     */
-    @Override
-    public JSONObject get(final String sourceId) {
-        if (sourceId == null || sourceId.length() == 0
-                || !sourceId.matches(SOURCE_RE)) {
-            logger.info("Wrong source id");
-            return null;
-        }
-
-        return getResource(BIGML_URL + sourceId);
-    }
-
-    /**
-     * Retrieves a remote source.
-     *
-     * GET /andromeda/source/4f64be4003ce890b4500000b?username=$BIGML_USERNAME;
-     * api_key=$BIGML_API_KEY; HTTP/1.1 Host: bigml.io
-     *
-     * @param source
-     *            a source JSONObject.
-     *
-     */
-    @Override
-    public JSONObject get(final JSONObject source) {
-        String resourceId = (String) source.get("resource");
-        return get(resourceId);
-    }
-
-    /**
-     * Checks whether a source's status is FINISHED.
-     *
-     * @param sourceId
-     *            a unique identifier in the form source/id where id is a string
-     *            of 24 alpha-numeric chars.
-     *
-     */
-    @Override
-    public boolean isReady(final String sourceId) {
-        return isResourceReady(get(sourceId));
-    }
-
-    /**
-     * Checks whether a source's status is FINISHED.
-     *
-     * @param source
-     *            a source JSONObject
-     *
-     */
-    @Override
-    public boolean isReady(final JSONObject source) {
-        String resourceId = (String) source.get("resource");
-        return isReady(resourceId);
-    }
-
-    /**
-     * Lists all your remote sources.
-     *
-     * GET /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * Host: bigml.io
-     *
-     * @param queryString
-     *            query filtering the listing.
-     *
-     */
-    @Override
-    public JSONObject list(final String queryString) {
-        return listResources(SOURCE_URL, queryString);
-    }
-
-    /**
-     * Updates a source.
-     *
-     * Updates remote `source` with `changes'.
-     *
-     * POST /andromeda/source/4f64191d03ce89860a000000?username=$BIGML_USERNAME;
-     * api_key=$BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type:
-     * application/json
-     *
-     * @param sourceId
-     *            a unique identifier in the form source/id where id is a string
-     *            of 24 alpha-numeric chars.
-     * @param changes
-     *            set of parameters to update the source. Optional
-     *
-     */
-    @Override
-    public JSONObject update(final String sourceId, final String changes) {
-        if (sourceId == null || sourceId.length() == 0
-                || !sourceId.matches(SOURCE_RE)) {
-            logger.info("Wrong source id");
-            return null;
-        }
-        return updateResource(BIGML_URL + sourceId, changes);
-    }
-
-    /**
-     * Updates a source.
-     *
-     * Updates remote `source` with `changes'.
-     *
-     * POST /andromeda/source/4f64191d03ce89860a000000?username=$BIGML_USERNAME;
-     * api_key=$BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type:
-     * application/json
-     *
-     * @param source
-     *            a source JSONObject
-     * @param changes
-     *            set of parameters to update the source. Optional
-     *
-     */
-    @Override
-    public JSONObject update(final JSONObject source, final JSONObject changes) {
-        String resourceId = (String) source.get("resource");
-        return update(resourceId, changes.toJSONString());
-    }
-
-    /**
-     * Deletes a remote source permanently.
-     *
-     * DELETE
-     * /andromeda/source/4f603fe203ce89bb2d000000?username=$BIGML_USERNAME
-     * ;api_key=$BIGML_API_KEY; HTTP/1.1
-     *
-     * @param sourceId
-     *            a unique identifier in the form source/id where id is a string
-     *            of 24 alpha-numeric chars.
-     *
-     */
-    @Override
-    public JSONObject delete(final String sourceId) {
-        if (sourceId == null || sourceId.length() == 0
-                || !sourceId.matches(SOURCE_RE)) {
-            logger.info("Wrong source id");
-            return null;
-        }
-        return deleteResource(BIGML_URL + sourceId);
-    }
-
-    /**
-     * Deletes a remote source permanently.
-     *
-     * DELETE
-     * /andromeda/source/4f603fe203ce89bb2d000000?username=$BIGML_USERNAME
-     * ;api_key=$BIGML_API_KEY; HTTP/1.1
-     *
-     * @param source
-     *            a source JSONObject
-     *
-     */
-    @Override
-    public JSONObject delete(final JSONObject source) {
-        String resourceId = (String) source.get("resource");
-        return delete(resourceId);
     }
 
 }

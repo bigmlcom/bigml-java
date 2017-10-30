@@ -1,13 +1,7 @@
 package org.bigml.binding.resources;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.net.HttpURLConnection;
-
 import org.bigml.binding.BigMLClient;
 import org.bigml.binding.utils.CacheManager;
-import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.slf4j.Logger;
@@ -31,11 +25,10 @@ public class BatchPrediction extends AbstractResource {
      *
      */
     public BatchPrediction() {
-        this.bigmlApiKey = System.getProperty("BIGML_API_KEY");
-        bigmlAuth = "?username=" + this.bigmlUser + ";api_key="
-                + this.bigmlApiKey + ";";
-        this.devMode = false;
-        super.init(null);
+    		super.init(null, null, false, null);
+        this.resourceRe = BATCH_PREDICTION_RE;
+        this.resourceUrl = BATCH_PREDICTION_URL;
+        this.resourceName = "batch prediction";
     }
 
     /**
@@ -44,14 +37,10 @@ public class BatchPrediction extends AbstractResource {
      */
     public BatchPrediction(final String apiUser, final String apiKey,
             final boolean devMode) {
-        this.bigmlUser = apiUser != null ? apiUser : System
-                .getProperty("BIGML_USERNAME");
-        this.bigmlApiKey = apiKey != null ? apiKey : System
-                .getProperty("BIGML_API_KEY");
-        bigmlAuth = "?username=" + this.bigmlUser + ";api_key="
-                + this.bigmlApiKey + ";";
-        this.devMode = devMode;
-        super.init(null);
+    		super.init(apiUser, apiKey, devMode, null);
+        this.resourceRe = BATCH_PREDICTION_RE;
+        this.resourceUrl = BATCH_PREDICTION_URL;
+        this.resourceName = "batch prediction";
     }
 
     /**
@@ -60,25 +49,10 @@ public class BatchPrediction extends AbstractResource {
      */
     public BatchPrediction(final String apiUser, final String apiKey,
             final boolean devMode, final CacheManager cacheManager) {
-        this.bigmlUser = apiUser != null ? apiUser : System
-                .getProperty("BIGML_USERNAME");
-        this.bigmlApiKey = apiKey != null ? apiKey : System
-                .getProperty("BIGML_API_KEY");
-        bigmlAuth = "?username=" + this.bigmlUser + ";api_key="
-                + this.bigmlApiKey + ";";
-        this.devMode = devMode;
-        super.init(cacheManager);
-    }
-
-    /**
-     * Check if the current resource is a BatchPrediction
-     *
-     * @param resource the resource to be checked
-     * @return true if it's an BatchPrediction
-     */
-    @Override
-    public boolean isInstance(JSONObject resource) {
-        return ((String) resource.get("resource")).matches(BATCH_PREDICTION_RE);
+    		super.init(apiUser, apiKey, devMode, cacheManager);
+        this.resourceRe = BATCH_PREDICTION_RE;
+        this.resourceUrl = BATCH_PREDICTION_URL;
+        this.resourceName = "batch prediction";
     }
 
     /**
@@ -221,44 +195,6 @@ public class BatchPrediction extends AbstractResource {
     }
 
     /**
-     * Retrieves a batch prediction.
-     *
-     * GET /andromeda/batchprediction/id?username=$BIGML_USERNAME;api_key=
-     * $BIGML_API_KEY; Host: bigml.io
-     *
-     * @param batchPredictionId
-     *            a unique identifier in the form batchPrediction/id where id is
-     *            a string of 24 alpha-numeric chars.
-     *
-     */
-    @Override
-    public JSONObject get(final String batchPredictionId) {
-        if (batchPredictionId == null || batchPredictionId.length() == 0
-                || !batchPredictionId.matches(BATCH_PREDICTION_RE)) {
-            logger.info("Wrong batch prediction id");
-            return null;
-        }
-
-        return getResource(BIGML_URL + batchPredictionId);
-    }
-
-    /**
-     * Retrieves a batch prediction.
-     *
-     * GET /andromeda/batchprediction/id?username=$BIGML_USERNAME;api_key=
-     * $BIGML_API_KEY; Host: bigml.io
-     *
-     * @param batchPrediction
-     *            a batch prediction JSONObject.
-     *
-     */
-    @Override
-    public JSONObject get(final JSONObject batchPrediction) {
-        String resourceId = (String) batchPrediction.get("resource");
-        return get(resourceId);
-    }
-
-    /**
      * Retrieves the batch predictions file.
      *
      * Downloads predictions, that are stored in a remote CSV file. If a path is
@@ -302,127 +238,6 @@ public class BatchPrediction extends AbstractResource {
             final String filename) {
         String resourceId = (String) batchPrediction.get("resource");
         return downloadBatchPrediction(resourceId, filename);
-    }
-
-    /**
-     * Check whether a batch prediction's status is FINISHED.
-     *
-     * @param batchPredictionId
-     *            a unique identifier in the form batchPrediction/id where id is
-     *            a string of 24 alpha-numeric chars.
-     *
-     */
-    @Override
-    public boolean isReady(final String batchPredictionId) {
-        return isResourceReady(get(batchPredictionId));
-    }
-
-    /**
-     * Check whether a batch prediction's status is FINISHED.
-     *
-     * @param batchPrediction
-     *            a batchPrediction JSONObject.
-     *
-     */
-    @Override
-    public boolean isReady(final JSONObject batchPrediction) {
-        String resourceId = (String) batchPrediction.get("resource");
-        return isReady(resourceId);
-    }
-
-    /**
-     * Lists all your batch predictions.
-     *
-     * GET /andromeda/batchprediction?username=$BIGML_USERNAME;api_key=
-     * $BIGML_API_KEY; Host: bigml.io
-     *
-     * @param queryString
-     *            query filtering the listing.
-     *
-     */
-    @Override
-    public JSONObject list(final String queryString) {
-        return listResources(BATCH_PREDICTION_URL, queryString);
-    }
-
-    /**
-     * Updates a batch prediction.
-     *
-     * PUT /andromeda/batchprediction/id?username=$BIGML_USERNAME;api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
-     *
-     * @param batchPredictionId
-     *            a unique identifier in the form batchprediction/id where id is
-     *            a string of 24 alpha-numeric chars.
-     * @param changes
-     *            set of parameters to update the evaluation. Optional
-     *
-     */
-    @Override
-    public JSONObject update(final String batchPredictionId,
-            final String changes) {
-        if (batchPredictionId == null || batchPredictionId.length() == 0
-                || !batchPredictionId.matches(BATCH_PREDICTION_RE)) {
-            logger.info("Wrong batch prediction id");
-            return null;
-        }
-        return updateResource(BIGML_URL + batchPredictionId, changes);
-    }
-
-    /**
-     * Updates a batch prediction.
-     *
-     * PUT /andromeda/batchprediction/id?username=$BIGML_USERNAME;api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
-     *
-     * @param batchPrediction
-     *            a batchPrediction JSONObject
-     * @param changes
-     *            set of parameters to update the batch prediction. Optional
-     *
-     */
-    @Override
-    public JSONObject update(final JSONObject batchPrediction,
-            final JSONObject changes) {
-        String resourceId = (String) batchPrediction.get("resource");
-        return update(resourceId, changes.toJSONString());
-    }
-
-    /**
-     * Deletes a batch prediction.
-     *
-     * DELETE /andromeda/batchprediction/id?username=$BIGML_USERNAME;api_key=
-     * $BIGML_API_KEY; HTTP/1.1
-     *
-     * @param batchPredictionId
-     *            a unique identifier in the form batchprediction/id where id is
-     *            a string of 24 alpha-numeric chars.
-     *
-     */
-    @Override
-    public JSONObject delete(final String batchPredictionId) {
-        if (batchPredictionId == null || batchPredictionId.length() == 0
-                || !batchPredictionId.matches(BATCH_PREDICTION_RE)) {
-            logger.info("Wrong batch prediction id");
-            return null;
-        }
-        return deleteResource(BIGML_URL + batchPredictionId);
-    }
-
-    /**
-     * Deletes a batch prediction.
-     *
-     * DELETE /andromeda/batchprediction/id?username=$BIGML_USERNAME;api_key=
-     * $BIGML_API_KEY; HTTP/1.1
-     *
-     * @param batchPrediction
-     *            a batchPrediction JSONObject.
-     *
-     */
-    @Override
-    public JSONObject delete(final JSONObject batchPrediction) {
-        String resourceId = (String) batchPrediction.get("resource");
-        return delete(resourceId);
     }
 
 }

@@ -3,7 +3,6 @@ package org.bigml.binding.resources;
 import org.bigml.binding.BigMLClient;
 import org.bigml.binding.utils.CacheManager;
 import org.bigml.binding.utils.Utils;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.slf4j.Logger;
@@ -34,12 +33,10 @@ public class Dataset extends AbstractResource {
      *
      */
     public Dataset() {
-        this.bigmlUser = System.getProperty("BIGML_USERNAME");
-        this.bigmlApiKey = System.getProperty("BIGML_API_KEY");
-        bigmlAuth = "?username=" + this.bigmlUser + ";api_key="
-                + this.bigmlApiKey + ";";
-        this.devMode = false;
-        super.init(null);
+    		super.init(null, null, false, null);
+        this.resourceRe = DATASET_RE;
+        this.resourceUrl = DATASET_URL;
+        this.resourceName = "dataset";
     }
 
     /**
@@ -48,14 +45,10 @@ public class Dataset extends AbstractResource {
      */
     public Dataset(final String apiUser, final String apiKey,
             final boolean devMode) {
-        this.bigmlUser = apiUser != null ? apiUser : System
-                .getProperty("BIGML_USERNAME");
-        this.bigmlApiKey = apiKey != null ? apiKey : System
-                .getProperty("BIGML_API_KEY");
-        bigmlAuth = "?username=" + this.bigmlUser + ";api_key="
-                + this.bigmlApiKey + ";";
-        this.devMode = devMode;
-        super.init(null);
+    		super.init(apiUser, apiKey, devMode, null);
+        this.resourceRe = DATASET_RE;
+        this.resourceUrl = DATASET_URL;
+        this.resourceName = "dataset";
     }
 
     /**
@@ -64,25 +57,10 @@ public class Dataset extends AbstractResource {
      */
     public Dataset(final String apiUser, final String apiKey,
             final boolean devMode, final CacheManager cacheManager) {
-        this.bigmlUser = apiUser != null ? apiUser : System
-                .getProperty("BIGML_USERNAME");
-        this.bigmlApiKey = apiKey != null ? apiKey : System
-                .getProperty("BIGML_API_KEY");
-        bigmlAuth = "?username=" + this.bigmlUser + ";api_key="
-                + this.bigmlApiKey + ";";
-        this.devMode = devMode;
-        super.init(cacheManager);
-    }
-
-    /**
-     * Check if the current resource is a Dataset
-     *
-     * @param resource the resource to be checked
-     * @return true if it's a Dataset
-     */
-    @Override
-    public boolean isInstance(JSONObject resource) {
-        return ((String) resource.get("resource")).matches(DATASET_RE);
+    		super.init(apiUser, apiKey, devMode, cacheManager);
+        this.resourceRe = DATASET_RE;
+        this.resourceUrl = DATASET_URL;
+        this.resourceName = "dataset";
     }
 
     /**
@@ -295,168 +273,6 @@ public class Dataset extends AbstractResource {
         }
     }
 
-    /**
-     * Retrieves a dataset.
-     *
-     * GET
-     * /andromeda/dataset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * HTTP/1.1 Host: bigml.io
-     *
-     * @param datasetId
-     *            a unique identifier in the form datset/id where id is a string
-     *            of 24 alpha-numeric chars.
-     *
-     */
-    @Override
-    public JSONObject get(final String datasetId) {
-        if (datasetId == null || datasetId.length() == 0
-                || !(datasetId.matches(DATASET_RE))) {
-            logger.info("Wrong dataset id");
-            return null;
-        }
-
-        return getResource(BIGML_URL + datasetId);
-    }
-
-    /**
-     * Retrieves a dataset.
-     *
-     * GET
-     * /andromeda/dataset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * HTTP/1.1 Host: bigml.io
-     *
-     * @param dataset
-     *            a dataset JSONObject
-     *
-     */
-    @Override
-    public JSONObject get(final JSONObject dataset) {
-        String resourceId = (String) dataset.get("resource");
-        return get(resourceId);
-    }
-
-    /**
-     * Checks whether a dataset's status is FINISHED.
-     *
-     * @param datasetId
-     *            a unique identifier in the form dataset/id where id is a
-     *            string of 24 alpha-numeric chars.
-     *
-     */
-    @Override
-    public boolean isReady(final String datasetId) {
-        return isResourceReady(get(datasetId));
-    }
-
-    /**
-     * Checks whether a dataset's status is FINISHED.
-     *
-     * @param dataset
-     *            a dataset JSONObject
-     *
-     */
-    @Override
-    public boolean isReady(final JSONObject dataset) {
-        String resourceId = (String) dataset.get("resource");
-        return isReady(resourceId);
-    }
-
-    /**
-     * Lists all your datasources.
-     *
-     * GET /andromeda/dataset?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * Host: bigml.io
-     *
-     * @param queryString
-     *            query filtering the listing.
-     *
-     */
-    @Override
-    public JSONObject list(final String queryString) {
-        return listResources(DATASET_URL, queryString);
-    }
-
-    /**
-     * Updates a dataset.
-     *
-     * PUT
-     * /andromeda/dataset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     *
-     * @param datasetId
-     *            a unique identifier in the form dataset/id where id is a
-     *            string of 24 alpha-numeric chars.
-     * @param changes
-     *            set of parameters to update the source. Optional
-     *
-     */
-    @Override
-    public JSONObject update(final String datasetId, final String changes) {
-        if (datasetId == null || datasetId.length() == 0
-                || !(datasetId.matches(DATASET_RE))) {
-            logger.info("Wrong dataset id");
-            return null;
-        }
-        return updateResource(BIGML_URL + datasetId, changes);
-    }
-
-    /**
-     * Updates a dataset.
-     *
-     * PUT
-     * /andromeda/dataset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     *
-     * @param dataset
-     *            a dataset JSONObject
-     * @param changes
-     *            set of parameters to update the source. Optional
-     *
-     */
-    @Override
-    public JSONObject update(final JSONObject dataset, final JSONObject changes) {
-        String resourceId = (String) dataset.get("resource");
-        return update(resourceId, changes.toJSONString());
-    }
-
-    /**
-     * Deletes a dataset.
-     *
-     * DELETE
-     * /andromeda/dataset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * HTTP/1.1
-     *
-     * @param datasetId
-     *            a unique identifier in the form dataset/id where id is a
-     *            string of 24 alpha-numeric chars.
-     *
-     */
-    @Override
-    public JSONObject delete(final String datasetId) {
-        if (datasetId == null || datasetId.length() == 0
-                || !(datasetId.matches(DATASET_RE))) {
-            logger.info("Wrong dataset id");
-            return null;
-        }
-        return deleteResource(BIGML_URL + datasetId);
-    }
-
-    /**
-     * Deletes a dataset.
-     *
-     * DELETE
-     * /andromeda/dataset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * HTTP/1.1
-     *
-     * @param dataset
-     *            a dataset JSONObject
-     *
-     */
-    @Override
-    public JSONObject delete(final JSONObject dataset) {
-        String resourceId = (String) dataset.get("resource");
-        return delete(resourceId);
-    }
 
     /**
      * Returns the ids of the fields that contain errors and their number.
@@ -511,6 +327,5 @@ public class Dataset extends AbstractResource {
         String url = BIGML_URL + datasetId + DOWNLOAD_DIR;
         return downloadAsync(url, filename);
     }
-
 
 }

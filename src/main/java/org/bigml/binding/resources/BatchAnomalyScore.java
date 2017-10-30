@@ -25,11 +25,10 @@ public class BatchAnomalyScore extends AbstractResource {
      *
      */
     public BatchAnomalyScore() {
-        this.bigmlApiKey = System.getProperty("BIGML_API_KEY");
-        bigmlAuth = "?username=" + this.bigmlUser + ";api_key="
-                + this.bigmlApiKey + ";";
-        this.devMode = false;
-        super.init(null);
+    		super.init(null, null, false, null);
+        this.resourceRe = BATCH_ANOMALYSCORE_RE;
+        this.resourceUrl = BATCHANOMALYSCORE_URL;
+        this.resourceName = "batchanomalyscore";
     }
 
     /**
@@ -38,14 +37,10 @@ public class BatchAnomalyScore extends AbstractResource {
      */
     public BatchAnomalyScore(final String apiUser, final String apiKey,
                              final boolean devMode) {
-        this.bigmlUser = apiUser != null ? apiUser : System
-                .getProperty("BIGML_USERNAME");
-        this.bigmlApiKey = apiKey != null ? apiKey : System
-                .getProperty("BIGML_API_KEY");
-        bigmlAuth = "?username=" + this.bigmlUser + ";api_key="
-                + this.bigmlApiKey + ";";
-        this.devMode = devMode;
-        super.init(null);
+    		super.init(apiUser, apiKey, devMode, null);
+        this.resourceRe = BATCH_ANOMALYSCORE_RE;
+        this.resourceUrl = BATCHANOMALYSCORE_URL;
+        this.resourceName = "batchanomalyscore";
     }
 
     /**
@@ -54,25 +49,10 @@ public class BatchAnomalyScore extends AbstractResource {
      */
     public BatchAnomalyScore(final String apiUser, final String apiKey,
                              final boolean devMode, final CacheManager cacheManager) {
-        this.bigmlUser = apiUser != null ? apiUser : System
-                .getProperty("BIGML_USERNAME");
-        this.bigmlApiKey = apiKey != null ? apiKey : System
-                .getProperty("BIGML_API_KEY");
-        bigmlAuth = "?username=" + this.bigmlUser + ";api_key="
-                + this.bigmlApiKey + ";";
-        this.devMode = devMode;
-        super.init(cacheManager);
-    }
-
-    /**
-     * Check if the current resource is a BatchAnomalyScore
-     *
-     * @param resource the resource to be checked
-     * @return true if it's a BatchAnomalyScore
-     */
-    @Override
-    public boolean isInstance(JSONObject resource) {
-        return ((String) resource.get("resource")).matches(BATCH_ANOMALYSCORE_RE);
+    		super.init(apiUser, apiKey, devMode, cacheManager);
+        this.resourceRe = BATCH_ANOMALYSCORE_RE;
+        this.resourceUrl = BATCHANOMALYSCORE_URL;
+        this.resourceName = "batchanomalyscore";
     }
 
     /**
@@ -150,33 +130,6 @@ public class BatchAnomalyScore extends AbstractResource {
     }
 
     /**
-     * Retrieves a batchanomalyscore.
-     *
-     * A batchanomalyscore is an evolving object that is processed until it reaches
-     * the FINISHED or FAULTY state, the method will return a JSONObject that
-     * encloses the batchanomalyscore values and state info available at the time it
-     * is called.
-     *
-     * GET /andromeda/batchanomalyscore/id?username=$BIGML_USERNAME;api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
-     *
-     * @param batchAnomalyScoreId
-     *            a unique identifier in the form batchanomalyscore/id where id is a
-     *            string of 24 alpha-numeric chars.
-     *
-     */
-    @Override
-    public JSONObject get(final String batchAnomalyScoreId) {
-        if (batchAnomalyScoreId == null || batchAnomalyScoreId.length() == 0
-                || !batchAnomalyScoreId.matches(BATCH_ANOMALYSCORE_RE)) {
-            logger.info("Wrong batchanomalyscore id");
-            return null;
-        }
-
-        return getResource(BIGML_URL + batchAnomalyScoreId);
-    }
-
-    /**
      * Retrieves the batch anomaly score file.
      *
      * Downloads scores, that are stored in a remote CSV file. If a path is
@@ -220,147 +173,6 @@ public class BatchAnomalyScore extends AbstractResource {
             final String filename) {
         String resourceId = (String) batchAnomalyScoreJSON.get("resource");
         return downloadBatchAnomalyScore(resourceId, filename);
-    }
-
-    /**
-     * Retrieves a batchanomalyscore.
-     *
-     * A batchanomalyscore is an evolving object that is processed until it reaches
-     * the FINISHED or FAULTY state, the method will return a JSONObject that
-     * encloses the batchanomalyscore values and state info available at the time it
-     * is called.
-     *
-     * GET /andromeda/batchanomalyscore/id?username=$BIGML_USERNAME;api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
-     *
-     * @param batchAnomalyScore
-     *            a batchanomalyscore JSONObject.
-     *
-     */
-    @Override
-    public JSONObject get(final JSONObject batchAnomalyScore) {
-        String batchAnomalyScoreId = (String) batchAnomalyScore.get("resource");
-        return get(batchAnomalyScoreId);
-    }
-
-    /**
-     * Check whether a batchanomalyscore's status is FINISHED.
-     *
-     * @param batchAnomalyScoreId
-     *            a unique identifier in the form batchanomalyscore/id where id is a
-     *            string of 24 alpha-numeric chars.
-     *
-     */
-    @Override
-    public boolean isReady(final String batchAnomalyScoreId) {
-        return isResourceReady(get(batchAnomalyScoreId));
-    }
-
-    /**
-     * Check whether a batchanomalyscore's status is FINISHED.
-     *
-     * @param batchAnomalyScore
-     *            a batchanomalyscore JSONObject.
-     *
-     */
-    @Override
-    public boolean isReady(final JSONObject batchAnomalyScore) {
-        String resourceId = (String) batchAnomalyScore.get("resource");
-        return isReady(resourceId);
-    }
-
-    /**
-     * Lists all your batchanomalyscore.
-     *
-     * GET /andromeda/batchanomalyscore?username=$BIGML_USERNAME;api_key=
-     * $BIGML_API_KEY; Host: bigml.io
-     *
-     * @param queryString
-     *            query filtering the listing.
-     *
-     */
-    @Override
-    public JSONObject list(final String queryString) {
-        return listResources(BATCHANOMALYSCORE_URL, queryString);
-    }
-
-    /**
-     * Updates a batchanomalyscore.
-     *
-     * PUT /andromeda/batchanomalyscore/id?username=$BIGML_USERNAME;api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
-     *
-     * @param batchAnomalyScoreId
-     *            a unique identifier in the form batchanomalyscore/id where id is a
-     *            string of 24 alpha-numeric chars.
-     * @param changes
-     *            set of parameters to update the batchanomalyscore. Optional
-     *
-     */
-    @Override
-    public JSONObject update(final String batchAnomalyScoreId, final String changes) {
-        if (batchAnomalyScoreId == null || batchAnomalyScoreId.length() == 0
-                || !batchAnomalyScoreId.matches(BATCH_ANOMALYSCORE_RE)) {
-            logger.info("Wrong batchanomalyscore id");
-            return null;
-        }
-        return updateResource(BIGML_URL + batchAnomalyScoreId, changes);
-    }
-
-    /**
-     * Updates a batchanomalyscore.
-     *
-     * PUT /andromeda/batchanomalyscore/id?username=$BIGML_USERNAME;api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
-     *
-     * @param batchAnomalyScore
-     *            an batchanomalyscore JSONObject
-     * @param changes
-     *            set of parameters to update the batchanomalyscore. Optional
-     *
-     */
-    @Override
-    public JSONObject update(final JSONObject batchAnomalyScore,
-            final JSONObject changes) {
-        String resourceId = (String) batchAnomalyScore.get("resource");
-        return update(resourceId, changes.toJSONString());
-    }
-
-    /**
-     * Deletes a batchanomalyscore.
-     *
-     * DELETE /andromeda/batchanomalyscore/id?username=$BIGML_USERNAME;api_key=
-     * $BIGML_API_KEY; HTTP/1.1
-     *
-     * @param batchAnomalyScoreId
-     *            a unique identifier in the form batchanomalyscore/id where id is a
-     *            string of 24 alpha-numeric chars.
-     *
-     */
-    @Override
-    public JSONObject delete(final String batchAnomalyScoreId) {
-        if (batchAnomalyScoreId == null || batchAnomalyScoreId.length() == 0
-                || !batchAnomalyScoreId.matches(BATCH_ANOMALYSCORE_RE)) {
-            logger.info("Wrong batchanomalyscore id");
-            return null;
-        }
-        return deleteResource(BIGML_URL + batchAnomalyScoreId);
-    }
-
-    /**
-     * Deletes a batchanomalyscore.
-     *
-     * DELETE /andromeda/batchanomalyscore/id?username=$BIGML_USERNAME;api_key=
-     * $BIGML_API_KEY; HTTP/1.1
-     *
-     * @param batchAnomalyScore
-     *            an batchanomalyscore JSONObject.
-     *
-     */
-    @Override
-    public JSONObject delete(final JSONObject batchAnomalyScore) {
-        String resourceId = (String) batchAnomalyScore.get("resource");
-        return delete(resourceId);
     }
 
 }

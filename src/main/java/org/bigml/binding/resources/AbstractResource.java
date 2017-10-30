@@ -14,9 +14,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.net.HttpURLConnection;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Entry point to create, retrieve, list, update, and delete sources, datasets,
@@ -165,6 +163,10 @@ public abstract class AbstractResource {
 
     protected boolean devMode;
 
+    protected String resourceRe;
+    protected String resourceUrl;
+    protected String resourceName;
+
     // Base URL
     protected String BIGML_URL;
 
@@ -202,9 +204,60 @@ public abstract class AbstractResource {
 
     public CacheManager cacheManager;
 
-    protected void init(CacheManager cacheManager) {
+
+    protected void init(String apiUser, String apiKey,
+    		boolean devMode, CacheManager cacheManager) {
+
         try {
+        		this.bigmlUser = apiUser != null ? apiUser : System
+                    .getProperty("BIGML_USERNAME");
+            this.bigmlApiKey = apiKey != null ? apiKey : System
+                    .getProperty("BIGML_API_KEY");
+            bigmlAuth = "?username=" + this.bigmlUser + ";api_key="
+                    + this.bigmlApiKey + ";";
+            this.devMode = devMode;
+
             BIGML_URL = BigMLClient.getInstance(devMode).getBigMLUrl();
+            SOURCE_URL = BIGML_URL + SOURCE_PATH;
+            DATASET_URL = BIGML_URL + DATASET_PATH;
+            MODEL_URL = BIGML_URL + MODEL_PATH;
+            PREDICTION_URL = BIGML_URL + PREDICTION_PATH;
+            EVALUATION_URL = BIGML_URL + EVALUATION_PATH;
+            ENSEMBLE_URL = BIGML_URL + ENSEMBLE_PATH;
+            BATCH_PREDICTION_URL = BIGML_URL + BATCH_PREDICTION_PATH;
+            CLUSTER_URL = BIGML_URL + CLUSTER_PATH;
+            CENTROID_URL = BIGML_URL + CENTROID_PATH;
+            BATCH_CENTROID_URL = BIGML_URL + BATCH_CENTROID_PATH;
+            ANOMALY_URL = BIGML_URL + ANOMALY_PATH;
+            ANOMALYSCORE_URL = BIGML_URL + ANOMALYSCORE_PATH;
+            BATCHANOMALYSCORE_URL = BIGML_URL + BATCHANOMALYSCORE_PATH;
+            PROJECT_URL = BIGML_URL + PROJECT_PATH;
+            SAMPLE_URL = BIGML_URL + SAMPLE_PATH;
+            CORRELATION_URL = BIGML_URL + CORRELATION_PATH;
+            STATISTICALTEST_URL = BIGML_URL + STATISTICALTEST_PATH;
+            LOGISTICREGRESSION_URL = BIGML_URL + LOGISTICREGRESSION_PATH;
+            SCRIPT_URL = BIGML_URL + SCRIPT_PATH;
+            EXECUTION_URL = BIGML_URL + EXECUTION_PATH;
+            LIBRARY_URL = BIGML_URL + LIBRARY_PATH;
+            ASSOCIATION_URL = BIGML_URL + ASSOCIATION_PATH;
+            ASSOCIATIONSET_URL = BIGML_URL + ASSOCIATIONSET_PATH;
+            TOPICMODEL_URL = BIGML_URL + TOPICMODEL_PATH;
+            TOPICDISTRIBUTION_URL = BIGML_URL + TOPICDISTRIBUTION_PATH;
+            BATCH_TOPICDISTRIBUTION_URL = BIGML_URL + BATCH_TOPICDISTRIBUTION_PATH;
+            CONFIGURATION_URL = BIGML_URL + CONFIGURATION_PATH;
+            TIMESERIES_URL = BIGML_URL + TIMESERIES_PATH;
+            FORECAST_URL = BIGML_URL + FORECAST_PATH;
+
+            this.cacheManager = cacheManager;
+        } catch (AuthenticationException ae) {
+
+        }
+    }
+
+    protected void init(CacheManager cacheManager) {
+
+        try {
+        		BIGML_URL = BigMLClient.getInstance(devMode).getBigMLUrl();
             SOURCE_URL = BIGML_URL + SOURCE_PATH;
             DATASET_URL = BIGML_URL + DATASET_PATH;
             MODEL_URL = BIGML_URL + MODEL_PATH;
@@ -247,11 +300,13 @@ public abstract class AbstractResource {
      * @param resource the resource to be checked
      * @return true if it's an instance
      */
-    public abstract boolean isInstance(JSONObject resource);
+    public boolean isInstance(JSONObject resource) {
+        return ((String) resource.get("resource")).matches(this.resourceRe);
+    }
 
-        /**
-         * Create a new resource.
-         */
+    /**
+     * Create a new resource.
+     */
     public JSONObject createResource(final String urlString, final String json) {
         int code = HTTP_INTERNAL_SERVER_ERROR;
         String resourceId = null;
@@ -635,66 +690,199 @@ public abstract class AbstractResource {
         }
     }
 
-    // ################################################################
-    // #
-    // # Abstract methods
-    // #
-    // ################################################################
 
     /**
-     * Retrieve a resource.
+     * Retrieves a resource.
+     *
+     * GET /andromeda/xxxxx/id?username=$BIGML_USERNAME;api_key=
+     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
+     *
+     * @param resourceId
+     *            a unique identifier in the form xxxxx/id where id is a
+     *            string of 24 alpha-numeric chars.
      *
      */
-    abstract JSONObject get(final String resourceId);
+    public JSONObject get(final String resourceId) {
+        if (resourceId == null || resourceId.length() == 0
+                || !resourceId.matches(this.resourceRe)) {
+            logger.info("Wrong " + this.resourceName + " id");
+            return null;
+        }
+
+        return getResource(BIGML_URL + resourceId);
+    }
 
     /**
-     * Retrieve a resource.
+     * Retrieves a resource.
+     *
+     * GET /andromeda/xxxxx/id?username=$BIGML_USERNAME;api_key=
+     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
+     *
+     * @param resource
+     *            a resource JSONObject
      *
      */
-    abstract JSONObject get(final JSONObject resource);
+    public JSONObject get(final JSONObject resource) {
+        String resourceId = (String) resource.get("resource");
+        return get(resourceId);
+    }
 
     /**
-     * Check whether a resource' status is FINISHED.
+     * Retrieves a resource.
+     *
+     * GET
+     * /andromeda/xxxxx/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param  resourceId
+     *            a unique identifier in the form  xxxxx/id where id is a
+     *            string of 24 alpha-numeric chars.
+     * @param queryString
+     *            query for filtering.
      *
      */
-    abstract boolean isReady(final String resourceId);
+    public JSONObject get(final String resourceId, final String queryString) {
+        if (resourceId == null || resourceId.length() == 0
+                || !resourceId.matches(this.resourceRe)) {
+        		logger.info("Wrong " + this.resourceName + " id");
+            return null;
+        }
+
+        return getResource(BIGML_URL + resourceId, queryString);
+    }
 
     /**
-     * Check whether a resource' status is FINISHED.
+     * Retrieves a resource.
+     *
+     * GET
+     * /andromeda/xxxxx/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param resource
+     *            a resource JSONObject
+     * @param queryString
+     *            query for filtering
      *
      */
-    abstract boolean isReady(final JSONObject resource);
+    public JSONObject get(final JSONObject resource, final String queryString) {
+        String resourceId = (String) resource.get("resource");
+        return get(resourceId, queryString);
+    }
 
     /**
-     * List all your resource.
+     * Checks whether an resource's status is FINISHED.
+     *
+     * @param resourceId
+     *            a unique identifier in the form xxxxx/id where id is a string
+     *            of 24 alpha-numeric chars.
      *
      */
-    abstract public JSONObject list(final String queryString);
+    public boolean isReady(final String resourceId) {
+        return isResourceReady(get(resourceId));
+    }
 
     /**
-     * Update a resource.
+     * Checks whether an resource's status is FINISHED.
+     *
+     * @param resource
+     *            a resource JSONObject
      *
      */
-    abstract public JSONObject update(final String resourceId, final String json);
+    public boolean isReady(final JSONObject resource) {
+        return isResourceReady(resource)
+                || isReady((String) resource.get("resource"));
+    }
 
     /**
-     * Update a resource.
+     * Lists all your resources.
+     *
+     * GET /andromeda/xxxxx?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param queryString
+     *            query filtering the listing.
      *
      */
-    abstract public JSONObject update(final JSONObject resource,
-            final JSONObject json);
+    public JSONObject list(final String queryString) {
+        return listResources(this.resourceUrl, queryString);
+    }
 
     /**
-     * Delete a resource.
+     * Updates a resource.
+     *
+     * PUT /andromeda/xxxxx/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param resourceId
+     *            a unique identifier in the form xxxxx/id where id is a string
+     *            of 24 alpha-numeric chars.
+     * @param changes
+     *            set of parameters to update the resource. Optional
      *
      */
-    abstract public JSONObject delete(final String resourceId);
+    public JSONObject update(final String resourceId, final String changes) {
+        if (resourceId == null || resourceId.length() == 0
+                || !(resourceId.matches(this.resourceRe))) {
+            logger.info("Wrong " + this.resourceName + " id");
+            return null;
+        }
+        return updateResource(BIGML_URL + resourceId, changes);
+    }
 
     /**
-     * Delete a resource.
+     * Updates a resource.
+     *
+     * PUT /andromeda/xxxxx/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param resource
+     *            a resource JSONObject
+     * @param changes
+     *            set of parameters to update the resource. Optional
      *
      */
-    abstract public JSONObject delete(final JSONObject resource);
+    public JSONObject update(final JSONObject resource, final JSONObject changes) {
+        String resourceId = (String) resource.get("resource");
+        return update(resourceId, changes.toJSONString());
+    }
+
+    /**
+     * Deletes a resource.
+     *
+     * DELETE
+     * /andromeda/xxxxx/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1
+     *
+     * @param resourceId
+     *            a unique identifier in the form xxxxx/id where id is a string
+     *            of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject delete(final String resourceId) {
+        if (resourceId == null || resourceId.length() == 0
+                || !(resourceId.matches(this.resourceRe))) {
+            logger.info("Wrong " + this.resourceName + " id");
+            return null;
+        }
+
+        return deleteResource(BIGML_URL + resourceId);
+    }
+
+    /**
+     * Deletes a resource.
+     *
+     * DELETE
+     * /andromeda/xxxxx/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1
+     *
+     * @param resource  a resource JSONObject
+     */
+    public JSONObject delete(final JSONObject resource) {
+        String resourceId = (String) resource.get("resource");
+        return delete(resourceId);
+    }
+
+
 
     // ################################################################
     // #
@@ -702,71 +890,6 @@ public abstract class AbstractResource {
     // #
     // ################################################################
 
-    /**
-     * Builds args dictionary for the create call from a `dataset` or a list of
-     * `datasets`
-     */
-    @Deprecated
-    protected JSONObject createFromDatasets(final String[] datasets,
-            String args, Integer waitTime, Integer retries, String key) {
-
-        return createFromDatasets(datasets, (JSONObject) JSONValue.parse(args),
-                waitTime, retries, key);
-    }
-
-    /**
-     * Builds args dictionary for the create call from a `dataset` or a list of
-     * `datasets`
-     */
-    protected JSONObject createFromDatasets(final String[] datasets,
-            JSONObject args, Integer waitTime, Integer retries, String key) {
-
-        JSONObject createArgs = new JSONObject();
-        if (args != null) {
-            createArgs = args;
-        }
-
-        List<String> datasetsIds = new ArrayList<String>();
-
-        for (String datasetId : datasets) {
-            // Checking valid datasetId
-            if (datasetId == null || datasetId.length() == 0
-                    || !(datasetId.matches(DATASET_RE))) {
-                logger.info("Wrong dataset id");
-                return null;
-            }
-
-            // Checking status
-            try {
-                waitTime = waitTime != null ? waitTime : 3000;
-                retries = retries != null ? retries : 10;
-                if (waitTime > 0) {
-                    int count = 0;
-                    while (count < retries
-                            && !BigMLClient.getInstance(this.devMode)
-                                    .datasetIsReady(datasetId)) {
-                        Thread.sleep(waitTime);
-                        count++;
-                    }
-                }
-                datasetsIds.add(datasetId);
-            } catch (Throwable e) {
-                logger.error("Error creating object");
-                return null;
-            }
-
-        }
-
-        if (datasetsIds.size() == 1) {
-            key = (key == null || key.equals("") ? "dataset" : key);
-            createArgs.put(key, datasetsIds.get(0));
-        } else {
-            key = (key == null || key.equals("") ? "datasets" : key);
-            createArgs.put(key, datasetsIds);
-        }
-
-        return createArgs;
-    }
 
     /**
      * Retrieves a remote file.
@@ -818,7 +941,6 @@ public abstract class AbstractResource {
         result.put("error", error);
         result.put("csv", csv);
         return result;
-
     }
 
     /**

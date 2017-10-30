@@ -5,7 +5,6 @@ import java.util.Iterator;
 import org.bigml.binding.BigMLClient;
 import org.bigml.binding.utils.CacheManager;
 import org.bigml.binding.utils.Utils;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.slf4j.Logger;
@@ -31,12 +30,10 @@ public class Prediction extends AbstractResource {
      *
      */
     public Prediction() {
-        this.bigmlUser = System.getProperty("BIGML_USERNAME");
-        this.bigmlApiKey = System.getProperty("BIGML_API_KEY");
-        bigmlAuth = "?username=" + this.bigmlUser + ";api_key="
-                + this.bigmlApiKey + ";";
-        this.devMode = false;
-        super.init(null);
+    		super.init(null, null, false, null);
+        this.resourceRe = PREDICTION_RE;
+        this.resourceUrl = PREDICTION_URL;
+        this.resourceName = "prediction";
     }
 
     /**
@@ -45,14 +42,10 @@ public class Prediction extends AbstractResource {
      */
     public Prediction(final String apiUser, final String apiKey,
             final boolean devMode) {
-        this.bigmlUser = apiUser != null ? apiUser : System
-                .getProperty("BIGML_USERNAME");
-        this.bigmlApiKey = apiKey != null ? apiKey : System
-                .getProperty("BIGML_API_KEY");
-        bigmlAuth = "?username=" + this.bigmlUser + ";api_key="
-                + this.bigmlApiKey + ";";
-        this.devMode = devMode;
-        super.init(null);
+    		super.init(apiUser, apiKey, devMode, null);
+        this.resourceRe = PREDICTION_RE;
+        this.resourceUrl = PREDICTION_URL;
+        this.resourceName = "prediction";
     }
 
     /**
@@ -61,25 +54,10 @@ public class Prediction extends AbstractResource {
      */
     public Prediction(final String apiUser, final String apiKey,
             final boolean devMode, final CacheManager cacheManager) {
-        this.bigmlUser = apiUser != null ? apiUser : System
-                .getProperty("BIGML_USERNAME");
-        this.bigmlApiKey = apiKey != null ? apiKey : System
-                .getProperty("BIGML_API_KEY");
-        bigmlAuth = "?username=" + this.bigmlUser + ";api_key="
-                + this.bigmlApiKey + ";";
-        this.devMode = devMode;
-        super.init(cacheManager);
-    }
-
-    /**
-     * Check if the current resource is a Prediction
-     *
-     * @param resource the resource to be checked
-     * @return true if it's a Prediction
-     */
-    @Override
-    public boolean isInstance(JSONObject resource) {
-        return ((String) resource.get("resource")).matches(PREDICTION_RE);
+    		super.init(apiUser, apiKey, devMode, cacheManager);
+        this.resourceRe = PREDICTION_RE;
+        this.resourceUrl = PREDICTION_URL;
+        this.resourceName = "prediction";
     }
 
     /**
@@ -261,165 +239,6 @@ public class Prediction extends AbstractResource {
             return null;
         }
 
-    }
-
-    /**
-     * Retrieves a prediction.
-     *
-     * GET /andromeda/prediction/id?username=$BIGML_USERNAME;api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
-     *
-     * @param predictionId
-     *            a unique identifier in the form prediction/id where id is a
-     *            string of 24 alpha-numeric chars.
-     *
-     */
-    @Override
-    public JSONObject get(final String predictionId) {
-        if (predictionId == null || predictionId.length() == 0
-                || !predictionId.matches(PREDICTION_RE)) {
-            logger.info("Wrong prediction id");
-            return null;
-        }
-
-        return getResource(BIGML_URL + predictionId);
-    }
-
-    /**
-     * Retrieves a prediction.
-     *
-     * GET /andromeda/prediction/id?username=$BIGML_USERNAME;api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
-     *
-     * @param prediction
-     *            an prediction JSONObject
-     *
-     */
-    @Override
-    public JSONObject get(final JSONObject prediction) {
-        String resourceId = (String) prediction.get("resource");
-        return get(resourceId);
-    }
-
-    /**
-     * Checks whether a prediction's status is FINISHED.
-     *
-     * @param predictionId
-     *            a unique identifier in the form prediction/id where id is a
-     *            string of 24 alpha-numeric chars.
-     *
-     */
-    @Override
-    public boolean isReady(final String predictionId) {
-        return isResourceReady(get(predictionId));
-    }
-
-    /**
-     * Checks whether a prediction's status is FINISHED.
-     *
-     * @param prediction
-     *            a prediction JSONObject
-     *
-     */
-    @Override
-    public boolean isReady(final JSONObject prediction) {
-        String resourceId = (String) prediction.get("resource");
-        return isReady(resourceId);
-    }
-
-    /**
-     * Lists all your predictions.
-     *
-     * GET
-     * /andromeda/prediction?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * Host: bigml.io
-     *
-     * @param queryString
-     *            query filtering the listing.
-     *
-     */
-    @Override
-    public JSONObject list(final String queryString) {
-        return listResources(PREDICTION_URL, queryString);
-    }
-
-    /**
-     * Updates a prediction.
-     *
-     * PUT /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     *
-     * @param predictionId
-     *            a unique identifier in the form prediction/id where id is a
-     *            string of 24 alpha-numeric chars.
-     * @param changes
-     *            set of parameters to update the source. Optional
-     *
-     */
-    @Override
-    public JSONObject update(final String predictionId, final String changes) {
-        if (predictionId == null || predictionId.length() == 0
-                || !predictionId.matches(PREDICTION_RE)) {
-            logger.info("Wrong prediction id");
-            return null;
-        }
-        return updateResource(BIGML_URL + predictionId, changes);
-    }
-
-    /**
-     * Updates a prediction.
-     *
-     * PUT /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     *
-     * @param prediction
-     *            a prediction JSONObject
-     * @param changes
-     *            set of parameters to update the source. Optional
-     *
-     */
-    @Override
-    public JSONObject update(final JSONObject prediction,
-            final JSONObject changes) {
-        String resourceId = (String) prediction.get("resource");
-        return update(resourceId, changes.toJSONString());
-    }
-
-    /**
-     * Deletes a prediction.
-     *
-     * DELETE /andromeda/prediction/id?username=$BIGML_USERNAME;api_key=
-     * $BIGML_API_KEY; HTTP/1.1
-     *
-     * @param predictionId
-     *            a unique identifier in the form prediction/id where id is a
-     *            string of 24 alpha-numeric chars
-     *
-     */
-    @Override
-    public JSONObject delete(final String predictionId) {
-        if (predictionId == null || predictionId.length() == 0
-                || !predictionId.matches(PREDICTION_RE)) {
-            logger.info("Wrong prediction id");
-            return null;
-        }
-        return deleteResource(BIGML_URL + predictionId);
-    }
-
-    /**
-     * Deletes a prediction.
-     *
-     * DELETE /andromeda/prediction/id?username=$BIGML_USERNAME;api_key=
-     * $BIGML_API_KEY; HTTP/1.1
-     *
-     * @param prediction
-     *            a prediction JSONObject
-     *
-     */
-    @Override
-    public JSONObject delete(final JSONObject prediction) {
-        String resourceId = (String) prediction.get("resource");
-        return delete(resourceId);
     }
 
 }

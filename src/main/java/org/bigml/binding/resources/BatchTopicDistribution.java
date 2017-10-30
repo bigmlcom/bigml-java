@@ -25,11 +25,10 @@ public class BatchTopicDistribution extends AbstractResource {
      *
      */
     public BatchTopicDistribution() {
-        this.bigmlApiKey = System.getProperty("BIGML_API_KEY");
-        bigmlAuth = "?username=" + this.bigmlUser + ";api_key="
-                + this.bigmlApiKey + ";";
-        this.devMode = false;
-        super.init(null);
+    		super.init(null, null, false, null);
+        this.resourceRe = BATCH_TOPICDISTRIBUTION_RE;
+        this.resourceUrl = BATCH_TOPICDISTRIBUTION_URL;
+        this.resourceName = "batch topic distribution";
     }
 
     /**
@@ -38,14 +37,10 @@ public class BatchTopicDistribution extends AbstractResource {
      */
     public BatchTopicDistribution(final String apiUser, final String apiKey,
                              final boolean devMode) {
-        this.bigmlUser = apiUser != null ? apiUser : System
-                .getProperty("BIGML_USERNAME");
-        this.bigmlApiKey = apiKey != null ? apiKey : System
-                .getProperty("BIGML_API_KEY");
-        bigmlAuth = "?username=" + this.bigmlUser + ";api_key="
-                + this.bigmlApiKey + ";";
-        this.devMode = devMode;
-        super.init(null);
+    		super.init(apiUser, apiKey, devMode, null);
+        this.resourceRe = BATCH_TOPICDISTRIBUTION_RE;
+        this.resourceUrl = BATCH_TOPICDISTRIBUTION_URL;
+        this.resourceName = "batch topic distribution";
     }
 
     /**
@@ -54,25 +49,10 @@ public class BatchTopicDistribution extends AbstractResource {
      */
     public BatchTopicDistribution(final String apiUser, final String apiKey,
                              final boolean devMode, final CacheManager cacheManager) {
-        this.bigmlUser = apiUser != null ? apiUser : System
-                .getProperty("BIGML_USERNAME");
-        this.bigmlApiKey = apiKey != null ? apiKey : System
-                .getProperty("BIGML_API_KEY");
-        bigmlAuth = "?username=" + this.bigmlUser + ";api_key="
-                + this.bigmlApiKey + ";";
-        this.devMode = devMode;
-        super.init(cacheManager);
-    }
-
-    /**
-     * Check if the current resource is a BatchTopicDistribution
-     *
-     * @param resource the resource to be checked
-     * @return true if it's a BatchTopicDistribution
-     */
-    @Override
-    public boolean isInstance(JSONObject resource) {
-        return ((String) resource.get("resource")).matches(BATCH_TOPICDISTRIBUTION_RE);
+    		super.init(apiUser, apiKey, devMode, cacheManager);
+        this.resourceRe = BATCH_TOPICDISTRIBUTION_RE;
+        this.resourceUrl = BATCH_TOPICDISTRIBUTION_URL;
+        this.resourceName = "batch topic distribution";
     }
 
     /**
@@ -150,33 +130,6 @@ public class BatchTopicDistribution extends AbstractResource {
     }
 
     /**
-     * Retrieves a batch topic distribution.
-     *
-     * A batch topic distribution is an evolving object that is processed until it reaches
-     * the FINISHED or FAULTY state, the method will return a JSONObject that
-     * encloses the batch topic distribution values and state info available at the time it
-     * is called.
-     *
-     * GET /andromeda/batchtopicdistribution/id?username=$BIGML_USERNAME;api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
-     *
-     * @param batchTopicDistributionId
-     *            a unique identifier in the form batchtopicdistribution/id where id is a
-     *            string of 24 alpha-numeric chars.
-     *
-     */
-    @Override
-    public JSONObject get(final String batchTopicDistributionId) {
-        if (batchTopicDistributionId == null || batchTopicDistributionId.length() == 0
-                || !batchTopicDistributionId.matches(BATCH_TOPICDISTRIBUTION_RE)) {
-            logger.info("Wrong batch topic distribution id");
-            return null;
-        }
-
-        return getResource(BIGML_URL + batchTopicDistributionId);
-    }
-
-    /**
      * Retrieves the batch topic distribution file.
      *
      * Downloads topic distributions, that are stored in a remote CSV file. If a path is
@@ -220,147 +173,6 @@ public class BatchTopicDistribution extends AbstractResource {
             final String filename) {
         String resourceId = (String) batchTopicDistributionJSON.get("resource");
         return downloadBatchTopicDistribution(resourceId, filename);
-    }
-
-    /**
-     * Retrieves a batch topic distribution.
-     *
-     * A batch topic distribution is an evolving object that is processed until it reaches
-     * the FINISHED or FAULTY state, the method will return a JSONObject that
-     * encloses the batch topic distribution values and state info available at the time it
-     * is called.
-     *
-     * GET /andromeda/batchtopicdistribution/id?username=$BIGML_USERNAME;api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
-     *
-     * @param batchTopicDistribution
-     *            a batch topic distribution JSONObject.
-     *
-     */
-    @Override
-    public JSONObject get(final JSONObject batchTopicDistribution) {
-        String batchTopicDistributionId = (String) batchTopicDistribution.get("resource");
-        return get(batchTopicDistributionId);
-    }
-
-    /**
-     * Check whether a batch topic distribution's status is FINISHED.
-     *
-     * @param batchTopicDistributionId
-     *            a unique identifier in the form batchtopicdistribution/id where id is a
-     *            string of 24 alpha-numeric chars.
-     *
-     */
-    @Override
-    public boolean isReady(final String batchTopicDistributionId) {
-        return isResourceReady(get(batchTopicDistributionId));
-    }
-
-    /**
-     * Check whether a batch topic distribution's status is FINISHED.
-     *
-     * @param batchTopicDistribution
-     *            a batch topic distribution JSONObject.
-     *
-     */
-    @Override
-    public boolean isReady(final JSONObject batchTopicDistribution) {
-        String resourceId = (String) batchTopicDistribution.get("resource");
-        return isReady(resourceId);
-    }
-
-    /**
-     * Lists all your batch topic distribution.
-     *
-     * GET /andromeda/batchtopicdistribution?username=$BIGML_USERNAME;api_key=
-     * $BIGML_API_KEY; Host: bigml.io
-     *
-     * @param queryString
-     *            query filtering the listing.
-     *
-     */
-    @Override
-    public JSONObject list(final String queryString) {
-        return listResources(BATCH_TOPICDISTRIBUTION_URL, queryString);
-    }
-
-    /**
-     * Updates a batch topic distribution.
-     *
-     * PUT /andromeda/batchtopicdistribution/id?username=$BIGML_USERNAME;api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
-     *
-     * @param batchTopicDistributionId
-     *            a unique identifier in the form batchtopicdistribution/id where id is a
-     *            string of 24 alpha-numeric chars.
-     * @param changes
-     *            set of parameters to update the batch topic distribution. Optional
-     *
-     */
-    @Override
-    public JSONObject update(final String batchTopicDistributionId, final String changes) {
-        if (batchTopicDistributionId == null || batchTopicDistributionId.length() == 0
-                || !batchTopicDistributionId.matches(BATCH_TOPICDISTRIBUTION_RE)) {
-            logger.info("Wrong batch topic distribution id");
-            return null;
-        }
-        return updateResource(BIGML_URL + batchTopicDistributionId, changes);
-    }
-
-    /**
-     * Updates a batch topic distribution.
-     *
-     * PUT /andromeda/batchtopicdistribution/id?username=$BIGML_USERNAME;api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
-     *
-     * @param batchTopicDistribution
-     *            a batch topic distribution JSONObject
-     * @param changes
-     *            set of parameters to update the batch topic distribution. Optional
-     *
-     */
-    @Override
-    public JSONObject update(final JSONObject batchTopicDistribution,
-            final JSONObject changes) {
-        String resourceId = (String) batchTopicDistribution.get("resource");
-        return update(resourceId, changes.toJSONString());
-    }
-
-    /**
-     * Deletes a batch topic distribution.
-     *
-     * DELETE /andromeda/batchtopicdistribution/id?username=$BIGML_USERNAME;api_key=
-     * $BIGML_API_KEY; HTTP/1.1
-     *
-     * @param batchTopicDistributionId
-     *            a unique identifier in the form batchtopicdistribution/id where id is a
-     *            string of 24 alpha-numeric chars.
-     *
-     */
-    @Override
-    public JSONObject delete(final String batchTopicDistributionId) {
-        if (batchTopicDistributionId == null || batchTopicDistributionId.length() == 0
-                || !batchTopicDistributionId.matches(BATCH_TOPICDISTRIBUTION_RE)) {
-            logger.info("Wrong batch topic distribution id");
-            return null;
-        }
-        return deleteResource(BIGML_URL + batchTopicDistributionId);
-    }
-
-    /**
-     * Deletes a batch topic distribution.
-     *
-     * DELETE /andromeda/batchtopicdistribution/id?username=$BIGML_USERNAME;api_key=
-     * $BIGML_API_KEY; HTTP/1.1
-     *
-     * @param batchTopicDistribution
-     *            a batch topic distribution JSONObject.
-     *
-     */
-    @Override
-    public JSONObject delete(final JSONObject batchTopicDistribution) {
-        String resourceId = (String) batchTopicDistribution.get("resource");
-        return delete(resourceId);
     }
 
 }

@@ -25,11 +25,10 @@ public class Evaluation extends AbstractResource {
      *
      */
     public Evaluation() {
-        this.bigmlApiKey = System.getProperty("BIGML_API_KEY");
-        bigmlAuth = "?username=" + this.bigmlUser + ";api_key="
-                + this.bigmlApiKey + ";";
-        this.devMode = false;
-        super.init(null);
+    		super.init(null, null, false, null);
+        this.resourceRe = EVALUATION_RE;
+        this.resourceUrl = EVALUATION_URL;
+        this.resourceName = "evaluation";
     }
 
     /**
@@ -38,14 +37,10 @@ public class Evaluation extends AbstractResource {
      */
     public Evaluation(final String apiUser, final String apiKey,
             final boolean devMode) {
-        this.bigmlUser = apiUser != null ? apiUser : System
-                .getProperty("BIGML_USERNAME");
-        this.bigmlApiKey = apiKey != null ? apiKey : System
-                .getProperty("BIGML_API_KEY");
-        bigmlAuth = "?username=" + this.bigmlUser + ";api_key="
-                + this.bigmlApiKey + ";";
-        this.devMode = devMode;
-        super.init(null);
+    		super.init(apiUser, apiKey, devMode, null);
+        this.resourceRe = EVALUATION_RE;
+        this.resourceUrl = EVALUATION_URL;
+        this.resourceName = "evaluation";
     }
 
     /**
@@ -54,24 +49,10 @@ public class Evaluation extends AbstractResource {
      */
     public Evaluation(final String apiUser, final String apiKey,
             final boolean devMode, final CacheManager cacheManager) {
-        this.bigmlUser = apiUser != null ? apiUser : System
-                .getProperty("BIGML_USERNAME");
-        this.bigmlApiKey = apiKey != null ? apiKey : System
-                .getProperty("BIGML_API_KEY");
-        bigmlAuth = "?username=" + this.bigmlUser + ";api_key="
-                + this.bigmlApiKey + ";";
-        this.devMode = devMode;
-        super.init(cacheManager);
-    }
-
-    /**
-     * Check if the current resource is an Evaluation
-     *
-     * @param resource the resource to be checked
-     * @return true if it's an Evaluation
-     */
-    public boolean isInstance(JSONObject resource) {
-        return ((String) resource.get("resource")).matches(EVALUATION_RE);
+    		super.init(apiUser, apiKey, devMode, cacheManager);
+        this.resourceRe = EVALUATION_RE;
+        this.resourceUrl = EVALUATION_URL;
+        this.resourceName = "evaluation";
     }
 
     /**
@@ -209,175 +190,6 @@ public class Evaluation extends AbstractResource {
             logger.error("Error creating evaluation");
             return null;
         }
-    }
-
-    /**
-     * Retrieves an evaluation.
-     *
-     * An evaluation is an evolving object that is processed until it reaches
-     * the FINISHED or FAULTY state, the method will return a JSONObject that
-     * encloses the evaluation values and state info available at the time it is
-     * called.
-     *
-     * GET /andromeda/evaluation/id?username=$BIGML_USERNAME;api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
-     *
-     * @param evaluationId
-     *            a unique identifier in the form evaluation/id where id is a
-     *            string of 24 alpha-numeric chars.
-     *
-     */
-    @Override
-    public JSONObject get(final String evaluationId) {
-        if (evaluationId == null || evaluationId.length() == 0
-                || !evaluationId.matches(EVALUATION_RE)) {
-            logger.info("Wrong evaluation id");
-            return null;
-        }
-
-        return getResource(BIGML_URL + evaluationId);
-    }
-
-    /**
-     * Retrieves an evaluation.
-     *
-     * An evaluation is an evolving object that is processed until it reaches
-     * the FINISHED or FAULTY state, the method will return a JSONObject that
-     * encloses the evaluation values and state info available at the time it is
-     * called.
-     *
-     * GET /andromeda/evaluation/id?username=$BIGML_USERNAME;api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
-     *
-     * @param evaluation
-     *            an evaluation JSONObject.
-     *
-     */
-    @Override
-    public JSONObject get(final JSONObject evaluation) {
-        String evaluationId = (String) evaluation.get("resource");
-        return get(evaluationId);
-    }
-
-    /**
-     * Check whether an evaluation's status is FINISHED.
-     *
-     * @param evaluationId
-     *            a unique identifier in the form evaluation/id where id is a
-     *            string of 24 alpha-numeric chars.
-     *
-     */
-    @Override
-    public boolean isReady(final String evaluationId) {
-        return isResourceReady(get(evaluationId));
-    }
-
-    /**
-     * Check whether an evaluation's status is FINISHED.
-     *
-     * @param evaluation
-     *            an evaluation JSONObject.
-     *
-     */
-    @Override
-    public boolean isReady(final JSONObject evaluation) {
-        String resourceId = (String) evaluation.get("resource");
-        return isReady(resourceId);
-    }
-
-    /**
-     * Lists all your evaluations.
-     *
-     * GET
-     * /andromeda/evaluation?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * Host: bigml.io
-     *
-     * @param queryString
-     *            query filtering the listing.
-     *
-     */
-    @Override
-    public JSONObject list(final String queryString) {
-        return listResources(EVALUATION_URL, queryString);
-    }
-
-    /**
-     * Updates an evaluation.
-     *
-     * PUT /andromeda/evaluation/id?username=$BIGML_USERNAME;api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
-     *
-     * @param evaluationId
-     *            a unique identifier in the form evaluation/id where id is a
-     *            string of 24 alpha-numeric chars.
-     * @param changes
-     *            set of parameters to update the evaluation. Optional
-     *
-     */
-    @Override
-    public JSONObject update(final String evaluationId, final String changes) {
-        if (evaluationId == null || evaluationId.length() == 0
-                || !evaluationId.matches(EVALUATION_RE)) {
-            logger.info("Wrong evaluation id");
-            return null;
-        }
-        return updateResource(BIGML_URL + evaluationId, changes);
-    }
-
-    /**
-     * Updates an evaluation.
-     *
-     * PUT /andromeda/evaluation/id?username=$BIGML_USERNAME;api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
-     *
-     * @param evaluation
-     *            an evaluation JSONObject
-     * @param changes
-     *            set of parameters to update the evaluation. Optional
-     *
-     */
-    @Override
-    public JSONObject update(final JSONObject evaluation,
-            final JSONObject changes) {
-        String resourceId = (String) evaluation.get("resource");
-        return update(resourceId, changes.toJSONString());
-    }
-
-    /**
-     * Deletes an evaluation.
-     *
-     * DELETE /andromeda/evaluation/id?username=$BIGML_USERNAME;api_key=
-     * $BIGML_API_KEY; HTTP/1.1
-     *
-     * @param evaluationId
-     *            a unique identifier in the form evaluation/id where id is a
-     *            string of 24 alpha-numeric chars.
-     *
-     */
-    @Override
-    public JSONObject delete(final String evaluationId) {
-        if (evaluationId == null || evaluationId.length() == 0
-                || !evaluationId.matches(EVALUATION_RE)) {
-            logger.info("Wrong evaluation id");
-            return null;
-        }
-        return deleteResource(BIGML_URL + evaluationId);
-    }
-
-    /**
-     * Deletes an evaluation.
-     *
-     * DELETE /andromeda/evaluation/id?username=$BIGML_USERNAME;api_key=
-     * $BIGML_API_KEY; HTTP/1.1
-     *
-     * @param evaluation
-     *            an evaluation JSONObject.
-     *
-     */
-    @Override
-    public JSONObject delete(final JSONObject evaluation) {
-        String resourceId = (String) evaluation.get("resource");
-        return delete(resourceId);
     }
 
 }

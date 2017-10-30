@@ -7,8 +7,6 @@ import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 
 
 /**
@@ -31,12 +29,10 @@ public class Library extends AbstractResource {
      *
      */
     public Library() {
-        this.bigmlUser = System.getProperty("BIGML_USERNAME");
-        this.bigmlApiKey = System.getProperty("BIGML_API_KEY");
-        bigmlAuth = "?username=" + this.bigmlUser + ";api_key="
-                + this.bigmlApiKey + ";";
-        this.devMode = false;
-        super.init(null);
+    		super.init(null, null, false, null);
+        this.resourceRe = LIBRARY_RE;
+        this.resourceUrl = LIBRARY_URL;
+        this.resourceName = "library";
     }
 
     /**
@@ -45,14 +41,10 @@ public class Library extends AbstractResource {
      */
     public Library(final String apiUser, final String apiKey,
                    final boolean devMode) {
-        this.bigmlUser = apiUser != null ? apiUser : System
-                .getProperty("BIGML_USERNAME");
-        this.bigmlApiKey = apiKey != null ? apiKey : System
-                .getProperty("BIGML_API_KEY");
-        bigmlAuth = "?username=" + this.bigmlUser + ";api_key="
-                + this.bigmlApiKey + ";";
-        this.devMode = devMode;
-        super.init(null);
+    		super.init(apiUser, apiKey, devMode, null);
+        this.resourceRe = LIBRARY_RE;
+        this.resourceUrl = LIBRARY_URL;
+        this.resourceName = "library";
     }
 
     /**
@@ -61,25 +53,10 @@ public class Library extends AbstractResource {
      */
     public Library(final String apiUser, final String apiKey,
                    final boolean devMode, final CacheManager cacheManager) {
-        this.bigmlUser = apiUser != null ? apiUser : System
-                .getProperty("BIGML_USERNAME");
-        this.bigmlApiKey = apiKey != null ? apiKey : System
-                .getProperty("BIGML_API_KEY");
-        bigmlAuth = "?username=" + this.bigmlUser + ";api_key="
-                + this.bigmlApiKey + ";";
-        this.devMode = devMode;
-        super.init(cacheManager);
-    }
-
-    /**
-     * Check if the current resource is a Library
-     *
-     * @param resource the resource to be checked
-     * @return true if it's a Library
-     */
-    @Override
-    public boolean isInstance(JSONObject resource) {
-        return ((String) resource.get("resource")).matches(LIBRARY_RE);
+    		super.init(apiUser, apiKey, devMode, cacheManager);
+        this.resourceRe = LIBRARY_RE;
+        this.resourceUrl = LIBRARY_URL;
+        this.resourceName = "library";
     }
 
     /**
@@ -151,208 +128,4 @@ public class Library extends AbstractResource {
         }
     }
 
-    /**
-     * Retrieves a whizzml library.
-     *
-     * GET
-     * /andromeda/library/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * Host: bigml.io
-     *
-     * @param libraryId
-     *            a unique identifier in the form library/id where id is a
-     *            string of 24 alpha-numeric chars.
-     *
-     */
-    @Override
-    public JSONObject get(final String libraryId) {
-        if (libraryId == null || libraryId.length() == 0
-                || !libraryId.matches(LIBRARY_RE)) {
-            logger.info("Wrong library id");
-            return null;
-        }
-
-        return getResource(BIGML_URL + libraryId);
-    }
-
-    /**
-     * Retrieves a whizzml library.
-     *
-     * GET
-     * /andromeda/library/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * Host: bigml.io
-     *
-     * @param library
-     *            a library JSONObject
-     *
-     */
-    @Override
-    public JSONObject get(final JSONObject library) {
-        String resourceId = (String) library.get("resource");
-        return get(resourceId);
-    }
-
-    /**
-     * Retrieves a whizzml library.
-     *
-     * GET
-     * /andromeda/library/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * Host: bigml.io
-     *
-     * @param libraryId
-     *            a unique identifier in the form library/id where id is a
-     *            string of 24 alpha-numeric chars.
-     * @param queryString
-     *            query for filtering.
-     *
-     */
-    public JSONObject get(final String libraryId, final String queryString) {
-        if (libraryId == null || libraryId.length() == 0
-                || !libraryId.matches(LIBRARY_RE)) {
-            logger.info("Wrong library id");
-            return null;
-        }
-
-        return getResource(BIGML_URL + libraryId, queryString);
-    }
-
-    /**
-     * Retrieves a whizzml library.
-     *
-     * GET
-     * /andromeda/library/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * Host: bigml.io
-     *
-     * @param library
-     *            a library JSONObject
-     * @param queryString
-     *            query for filtering
-     *
-     */
-    public JSONObject get(final JSONObject library, final String queryString) {
-        String resourceId = (String) library.get("resource");
-        return get(resourceId, queryString);
-    }
-
-    /**
-     * Checks whether a whizzml library's status is FINISHED.
-     *
-     * @param libraryId
-     *            a unique identifier in the form library/id where id is a
-     *            string of 24 alpha-numeric chars.
-     *
-     */
-    @Override
-    public boolean isReady(final String libraryId) {
-        return isResourceReady(get(libraryId));
-    }
-
-    /**
-     * Checks whether a whizzml library status is FINISHED.
-     *
-     * @param library
-     *            a library JSONObject
-     *
-     */
-    @Override
-    public boolean isReady(final JSONObject library) {
-        return isResourceReady(library)
-                || isReady((String) library.get("resource"));
-    }
-
-    /**
-     * Lists all your whizzml libraries.
-     *
-     * GET /andromeda/library?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * Host: bigml.io
-     *
-     * @param queryString
-     *            query filtering the listing.
-     *
-     */
-    @Override
-    public JSONObject list(final String queryString) {
-        return listResources(LIBRARY_URL, queryString);
-    }
-
-    /**
-     * Updates a whizzml library.
-     *
-     * PUT
-     * /andromeda/library/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     *
-     * @param libraryId
-     *            a unique identifier in the form library/id where id is a
-     *            string of 24 alpha-numeric chars.
-     * @param changes
-     *            set of parameters to update the library. Optional
-     *
-     */
-    @Override
-    public JSONObject update(final String libraryId, final String changes) {
-        if (libraryId == null || libraryId.length() == 0
-                || !(libraryId.matches(LIBRARY_RE))) {
-            logger.info("Wrong library id");
-            return null;
-        }
-        return updateResource(BIGML_URL + libraryId, changes);
-    }
-
-    /**
-     * Updates a whizzml library.
-     *
-     * PUT
-     * /andromeda/library/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     *
-     * @param library
-     *            a library JSONObject
-     * @param changes
-     *            set of parameters to update the library. Optional
-     *
-     */
-    @Override
-    public JSONObject update(final JSONObject library, final JSONObject changes) {
-        String resourceId = (String) library.get("resource");
-        return update(resourceId, changes.toJSONString());
-    }
-
-    /**
-     * Deletes a whizzml library.
-     *
-     * DELETE
-     * /andromeda/library/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * HTTP/1.1
-     *
-     * @param libraryId
-     *            a unique identifier in the form library/id where id is a
-     *            string of 24 alpha-numeric chars.
-     *
-     */
-    @Override
-    public JSONObject delete(final String libraryId) {
-        if (libraryId == null || libraryId.length() == 0
-                || !(libraryId.matches(LIBRARY_RE))) {
-            logger.info("Wrong library id");
-            return null;
-        }
-        return deleteResource(BIGML_URL + libraryId);
-    }
-
-    /**
-     * Deletes a library.
-     *
-     * DELETE
-     * /andromeda/library/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * HTTP/1.1
-     *
-     * @param library
-     *            a library JSONObject
-     *
-     */
-    @Override
-    public JSONObject delete(final JSONObject library) {
-        String resourceId = (String) library.get("resource");
-        return delete(resourceId);
-    }
 }
