@@ -90,6 +90,7 @@ public class BigMLClient {
     private Configuration configuration;
     private TimeSeries timeSeries;
     private Forecast forecast;
+    private Deepnet deepnet;
 
     private Properties props;
     private Boolean devMode = false;
@@ -513,6 +514,8 @@ public class BigMLClient {
         timeSeries = new TimeSeries(this.bigmlUser, this.bigmlApiKey,
                 this.devMode, cacheManager);
         forecast = new Forecast(this.bigmlUser, this.bigmlApiKey,
+                this.devMode, cacheManager);
+        deepnet = new Deepnet(this.bigmlUser, this.bigmlApiKey,
                 this.devMode, cacheManager);
     }
 
@@ -7234,4 +7237,207 @@ public class BigMLClient {
     public JSONObject deleteForecast(final JSONObject forecastJSON) {
         return forecast.delete(forecastJSON);
     }
+
+
+    // ################################################################
+    // #
+    // # Deepnets
+    // # https://bigml.com/api/deepnets
+    // #
+    // ################################################################
+
+    /**
+     * Creates a new deepnet.
+     *
+     * POST /andromeda/deepnet?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param datasetId
+     *            a unique identifier in the form dataset/id where id is a
+     *            string of 24 alpha-numeric chars for the dataset to attach the
+     *            deepnet.
+     * @param args
+     *            set of parameters for the new deepnet. Optional
+     * @param waitTime
+     *            time to wait for next check of FINISHED status for dataset
+     *            before to start to create the deepnet. Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     *
+     */
+    @Deprecated
+    public JSONObject createDeepnet(final String datasetId, String args,
+            Integer waitTime, Integer retries) {
+        return deepnet.create(datasetId, args, waitTime, retries);
+    }
+
+    /**
+     * Creates a new deepnet.
+     *
+     * POST /andromeda/deepnet?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param datasetId
+     *            a unique identifier in the form dataset/id where id is a
+     *            string of 24 alpha-numeric chars for the dataset to attach the
+     *            deepnet.
+     * @param args
+     *            set of parameters for the new deepnet. Optional
+     * @param waitTime
+     *            time to wait for next check of FINISHED status for dataset
+     *            before to start to create the deepnet. Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     *
+     */
+    public JSONObject createDeepnet(final String datasetId, JSONObject args,
+            Integer waitTime, Integer retries) {
+
+        return deepnet.create(datasetId, args, waitTime, retries);
+    }
+
+    /**
+     * Retrieves a deepnet.
+     *
+     * A deepnet is an evolving object that is processed until it reaches the
+     * FINISHED or FAULTY state, the method will return a JSONObject that
+     * encloses the deepnet values and state info available at the time it is
+     * called.
+     *
+     * GET
+     * /andromeda/deepnet/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io
+     *
+     * @param deepnetId
+     *            a unique identifier in the form deepnet/id where id is a
+     *            string of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject getDeepnet(final String deepnetId) {
+        return deepnet.get(deepnetId);
+    }
+
+    /**
+     * Retrieves a deepnet.
+     *
+     * A deepnet is an evolving object that is processed until it reaches the
+     * FINISHED or FAULTY state, the method will return a JSONObject that
+     * encloses the deepnet values and state info available at the time it is
+     * called.
+     *
+     * GET
+     * /andromeda/deepnet/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io
+     *
+     * @param deepnetJSON
+     *            a deepnet JSONObject.
+     *
+     */
+    public JSONObject getDeepnet(final JSONObject deepnetJSON) {
+        return deepnet.get(deepnetJSON);
+    }
+
+    /**
+     * Check whether a deepnet's status is FINISHED.
+     *
+     * @param deepnetId
+     *            a unique identifier in the form deepnet/id where id is a
+     *            string of 24 alpha-numeric chars.
+     *
+     */
+    public boolean deepnetIsReady(final String deepnetId) {
+        return deepnet.isReady(deepnetId);
+    }
+
+    /**
+     * Check whether a deepnet's status is FINISHED.
+     *
+     * @param deepnetJSON
+     *            a deepnet JSONObject.
+     *
+     */
+    public boolean deepnetIsReady(final JSONObject deepnetJSON) {
+        return deepnet.isReady(deepnetJSON);
+    }
+
+    /**
+     * Lists all your deepnet.
+     *
+     * GET /andromeda/deepnet?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param queryString
+     *            query filtering the listing.
+     *
+     */
+    public JSONObject listDeepnets(final String queryString) {
+        return deepnet.list(queryString);
+    }
+
+    /**
+     * Updates a deepnet.
+     *
+     * PUT
+     * /andromeda/deepnet/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param deepnetId
+     *            a unique identifier in the form deepnet/id where id is a
+     *            string of 24 alpha-numeric chars.
+     * @param changes
+     *            set of parameters to update the deepnet. Optional
+     *
+     */
+    public JSONObject updateDeepnet(final String deepnetId, final String changes) {
+        return deepnet.update(deepnetId, changes);
+    }
+
+    /**
+     * Updates a deepnet.
+     *
+     * PUT
+     * /andromeda/deepnet/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param deepnetJSON
+     *            a deepnet JSONObject
+     * @param changes
+     *            set of parameters to update the deepnet. Optional
+     */
+    public JSONObject updateDeepnet(final JSONObject deepnetJSON,
+            final JSONObject changes) {
+        return deepnet.update(deepnetJSON, changes);
+    }
+
+    /**
+     * Deletes a deepnet.
+     *
+     * DELETE
+     * /andromeda/deepnet/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1
+     *
+     * @param deepnetId
+     *            a unique identifier in the form deepnet/id where id is a
+     *            string of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject deleteDeepnet(final String deepnetId) {
+        return deepnet.delete(deepnetId);
+    }
+
+    /**
+     * Deletes a deepnet.
+     *
+     * DELETE
+     * /andromeda/deepnet/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1
+     *
+     * @param deepnetJSON
+     *            a deepnet JSONObject.
+     *
+     */
+    public JSONObject deleteDeepnet(final JSONObject deepnetJSON) {
+        return deepnet.delete(deepnetJSON);
+    }
+
 }

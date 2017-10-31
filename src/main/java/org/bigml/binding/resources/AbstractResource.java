@@ -59,6 +59,7 @@ public abstract class AbstractResource {
     public final static String CONFIGURATION_PATH = "configuration";
     public final static String TIMESERIES_PATH = "timeseries";
     public final static String FORECAST_PATH = "forecast";
+    public final static String DEEPNET_PATH = "deepnet";
 
     // Base Resource regular expressions
     static String SOURCE_RE = "^" + SOURCE_PATH + "/[a-f,0-9]{24}$";
@@ -111,6 +112,7 @@ public abstract class AbstractResource {
             + "/[a-f,0-9]{24}$";
     static String TIMESERIES_RE = "^" + TIMESERIES_PATH + "/[a-f,0-9]{24}$";
     static String FORECAST_RE = "^" + FORECAST_PATH + "/[a-f,0-9]{24}$";
+    static String DEEPNET_RE = "^" + DEEPNET_PATH + "/[a-f,0-9]{24}$";
 
     // HTTP Status Codes from https://bigml.com/api/status_codes
     public static int HTTP_OK = 200;
@@ -199,6 +201,7 @@ public abstract class AbstractResource {
     protected String CONFIGURATION_URL;
     protected String TIMESERIES_URL;
     protected String FORECAST_URL;
+    protected String DEEPNET_URL;
 
     public final static String DOWNLOAD_DIR = "/download";
 
@@ -247,46 +250,7 @@ public abstract class AbstractResource {
             CONFIGURATION_URL = BIGML_URL + CONFIGURATION_PATH;
             TIMESERIES_URL = BIGML_URL + TIMESERIES_PATH;
             FORECAST_URL = BIGML_URL + FORECAST_PATH;
-
-            this.cacheManager = cacheManager;
-        } catch (AuthenticationException ae) {
-
-        }
-    }
-
-    protected void init(CacheManager cacheManager) {
-
-        try {
-        		BIGML_URL = BigMLClient.getInstance(devMode).getBigMLUrl();
-            SOURCE_URL = BIGML_URL + SOURCE_PATH;
-            DATASET_URL = BIGML_URL + DATASET_PATH;
-            MODEL_URL = BIGML_URL + MODEL_PATH;
-            PREDICTION_URL = BIGML_URL + PREDICTION_PATH;
-            EVALUATION_URL = BIGML_URL + EVALUATION_PATH;
-            ENSEMBLE_URL = BIGML_URL + ENSEMBLE_PATH;
-            BATCH_PREDICTION_URL = BIGML_URL + BATCH_PREDICTION_PATH;
-            CLUSTER_URL = BIGML_URL + CLUSTER_PATH;
-            CENTROID_URL = BIGML_URL + CENTROID_PATH;
-            BATCH_CENTROID_URL = BIGML_URL + BATCH_CENTROID_PATH;
-            ANOMALY_URL = BIGML_URL + ANOMALY_PATH;
-            ANOMALYSCORE_URL = BIGML_URL + ANOMALYSCORE_PATH;
-            BATCHANOMALYSCORE_URL = BIGML_URL + BATCHANOMALYSCORE_PATH;
-            PROJECT_URL = BIGML_URL + PROJECT_PATH;
-            SAMPLE_URL = BIGML_URL + SAMPLE_PATH;
-            CORRELATION_URL = BIGML_URL + CORRELATION_PATH;
-            STATISTICALTEST_URL = BIGML_URL + STATISTICALTEST_PATH;
-            LOGISTICREGRESSION_URL = BIGML_URL + LOGISTICREGRESSION_PATH;
-            SCRIPT_URL = BIGML_URL + SCRIPT_PATH;
-            EXECUTION_URL = BIGML_URL + EXECUTION_PATH;
-            LIBRARY_URL = BIGML_URL + LIBRARY_PATH;
-            ASSOCIATION_URL = BIGML_URL + ASSOCIATION_PATH;
-            ASSOCIATIONSET_URL = BIGML_URL + ASSOCIATIONSET_PATH;
-            TOPICMODEL_URL = BIGML_URL + TOPICMODEL_PATH;
-            TOPICDISTRIBUTION_URL = BIGML_URL + TOPICDISTRIBUTION_PATH;
-            BATCH_TOPICDISTRIBUTION_URL = BIGML_URL + BATCH_TOPICDISTRIBUTION_PATH;
-            CONFIGURATION_URL = BIGML_URL + CONFIGURATION_PATH;
-            TIMESERIES_URL = BIGML_URL + TIMESERIES_PATH;
-            FORECAST_URL = BIGML_URL + FORECAST_PATH;
+            DEEPNET_URL = BIGML_URL + DEEPNET_PATH;
 
             this.cacheManager = cacheManager;
         } catch (AuthenticationException ae) {

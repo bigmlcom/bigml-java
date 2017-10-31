@@ -57,6 +57,7 @@ public class ContextRepository {
     JSONObject configuration = null;
     JSONObject timeSeries = null;
     JSONObject forecast = null;
+    JSONObject deepnet = null;
 
     Map<String, Long> datasetErrorCounts;
     Map<String, Long> datasetMissingCounts;
@@ -448,5 +449,13 @@ public class ContextRepository {
 
     public void setForecast(JSONObject forecast) {
         this.forecast = forecast;
+    }
+
+    public JSONObject getDeepnet() {
+        return deepnet;
+    }
+
+    public void setDeepnet(JSONObject deepnet) {
+        this.deepnet = deepnet;
     }
 }

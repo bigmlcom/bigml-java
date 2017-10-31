@@ -334,6 +334,15 @@ public class CommonStepdefs {
 
         BigMLClient.getInstance().getCacheManager().cleanCache();
 
+        // Deepnets
+        JSONArray deepnets = (JSONArray) BigMLClient.getInstance()
+                .listDeepnets(";tags__in=unitTest").get("objects");
+        for (int i = 0; i < deepnets.size(); i++) {
+            JSONObject deepnet = (JSONObject) deepnets.get(i);
+            BigMLClient.getInstance().deleteDeepnet(
+                    (String) deepnet.get("resource"));
+        }
+
         // Forecasts
         JSONArray forecasts = (JSONArray) BigMLClient.getInstance()
                 .listForecasts(";tags__in=unitTest").get("objects");
