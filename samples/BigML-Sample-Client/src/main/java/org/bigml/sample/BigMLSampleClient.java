@@ -261,7 +261,6 @@ public class BigMLSampleClient {
         // Input data object: We can build the input data object using
         // BigML's field IDs (e.g. "000001") as keys or, like here, the
         // field name
-        boolean byName = true;
         JSONObject inputData = new JSONObject();
         inputData.put("sepal length", 5);
         inputData.put("sepal width", 2.5);
@@ -271,7 +270,6 @@ public class BigMLSampleClient {
         JSONObject remotePrediction = api.createPrediction(
                 (String) model.get("resource"), // model ID
                 inputData,                      // data to predict for
-                byName,                         // do we use names in input?
                 emptyArgs,                      // model creation args
                 null,                           // wait for dataset
                 null);                          // retries
@@ -384,7 +382,6 @@ public class BigMLSampleClient {
         // Input data object: We can build the input data object using
         // BigML's field IDs (e.g. "000001") as keys or, like here, the
         // field name
-        boolean byName = true;
         JSONObject inputData = new JSONObject();
         inputData.put("sepal length", 5);
         inputData.put("sepal width", 2.5);
@@ -402,7 +399,6 @@ public class BigMLSampleClient {
             // Using the `predict` method to predict
             localPrediction = localModel.predict(
                     inputData,                     // data to predict for
-                    byName,                        // do we use field names?
                     MissingStrategy.PROPORTIONAL); // strategy for missings
 
             System.out.println("Local prediction result: "

@@ -69,9 +69,6 @@ public class AssociationSet extends AbstractResource {
      * @param inputData
      *            an object with field's id/value pairs representing the
      *            instance you want to create an association set for.
-     * @param byName
-     *            if we use the name of the fields instead of the internal code
-     *            as the key to locate the fields in the inputData map.
      * @param args
      *            set of parameters for the new association set. Optional
      * @param waitTime

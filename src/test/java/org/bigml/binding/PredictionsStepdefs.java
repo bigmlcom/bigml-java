@@ -29,37 +29,34 @@ public class PredictionsStepdefs {
     @Autowired
     private ContextRepository context;
 
-    @When("^I create a proportional missing strategy prediction by name=(true|false) for \"(.*)\"$")
-    public void I_create_a_proportional_missing_strategy_prediction(String by_name, String inputData)
+    @When("^I create a proportional missing strategy prediction for \"(.*)\"$")
+    public void I_create_a_proportional_missing_strategy_prediction(String inputData)
             throws AuthenticationException {
         String modelId = (String) context.model.get("resource");
-        Boolean byName = new Boolean(by_name);
 
         JSONObject args = new JSONObject();
         args.put("tags", Arrays.asList("unitTest"));
         args.put("missing_strategy", 1);
 
         JSONObject resource = BigMLClient.getInstance().createPrediction(
-                modelId, (JSONObject) JSONValue.parse(inputData), byName,
-                args, 5, null);
+            modelId, (JSONObject) JSONValue.parse(inputData), args, 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.prediction = (JSONObject) resource.get("object");
         commonSteps.the_resource_has_been_created_with_status(context.status);
     }
 
-    @When("^I create a prediction by name=(true|false) for \"(.*)\"$")
-    public void I_create_a_prediction(String by_name, String inputData)
+    @When("^I create a prediction for \"(.*)\"$")
+    public void I_create_a_prediction(String inputData)
             throws AuthenticationException {
         String modelId = (String) context.model.get("resource");
-        Boolean byName = new Boolean(by_name);
 
         JSONObject args = new JSONObject();
         args.put("tags", Arrays.asList("unitTest"));
 
         JSONObject resource = BigMLClient.getInstance().createPrediction(
-                modelId, (JSONObject) JSONValue.parse(inputData), byName,
-                args, 5, null);
+            modelId, (JSONObject) JSONValue.parse(inputData), args, 5, null);
+
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.prediction = (JSONObject) resource.get("object");
@@ -105,26 +102,7 @@ public class PredictionsStepdefs {
         args.put("tags", Arrays.asList("unitTest"));
 
         JSONObject resource = BigMLClient.getInstance().createPrediction(
-                ensembleId, (JSONObject) JSONValue.parse(inputData), true,
-                args, 5, null);
-        context.status = (Integer) resource.get("code");
-        context.location = (String) resource.get("location");
-        context.prediction = (JSONObject) resource.get("object");
-        commonSteps.the_resource_has_been_created_with_status(context.status);
-    }
-
-    @When("^I create a prediction with ensemble by name=(true|false) for \"(.*)\"$")
-    public void I_create_a_prediction_with_ensemble_for(String by_name,
-            String inputData) throws AuthenticationException {
-        String ensembleId = (String) context.ensemble.get("resource");
-        Boolean byName = new Boolean(by_name);
-
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
-
-        JSONObject resource = BigMLClient.getInstance().createPrediction(
-                ensembleId, (JSONObject) JSONValue.parse(inputData), byName,
-                args, 5, null);
+            ensembleId, (JSONObject) JSONValue.parse(inputData), args, 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.prediction = (JSONObject) resource.get("object");

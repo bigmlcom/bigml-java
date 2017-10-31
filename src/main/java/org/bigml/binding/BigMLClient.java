@@ -2099,10 +2099,72 @@ public class BigMLClient {
      *            number of times to try the operation. Optional
      *
      */
+    @Deprecated
     public JSONObject createPrediction(final String modelId,
             JSONObject inputData, Boolean byName, JSONObject args,
             Integer waitTime, Integer retries) {
         return prediction.create(modelId, inputData, byName, args,
+                waitTime, retries);
+    }
+
+    /**
+     * Creates a new prediction.
+     *
+     * POST
+     * /andromeda/prediction?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param modelId
+     *            a unique identifier in the form model/id, ensemble/id or
+     *            logisticregression/id where id is a string of 24 alpha-numeric
+     *            chars for the nodel, nsemble or logisticregression to attach
+     *            the prediction.
+     * @param inputData
+     *            an object with field's id/value pairs representing the
+     *            instance you want to create a prediction for.
+     * @param args
+     *            set of parameters for the new prediction. Required
+     * @param waitTime
+     *            time to wait for next check of FINISHED status for model
+     *            before to start to create the prediction. Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     *
+     */
+    public JSONObject createPrediction(final String modelId,
+            JSONObject inputData, String args, Integer waitTime,
+            Integer retries) {
+        return prediction.create(modelId, inputData, false, args, waitTime, retries);
+    }
+
+    /**
+     * Creates a new prediction.
+     *
+     * POST
+     * /andromeda/prediction?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param modelId
+     *            a unique identifier in the form model/id, ensemble/id or
+     *            logisticregression/id where id is a string of 24 alpha-numeric
+     *            chars for the nodel, nsemble or logisticregression to attach
+     *            the prediction.
+     * @param inputData
+     *            an object with field's id/value pairs representing the
+     *            instance you want to create a prediction for.
+     * @param args
+     *            set of parameters for the new prediction. Required
+     * @param waitTime
+     *            time to wait for next check of FINISHED status for model
+     *            before to start to create the prediction. Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     *
+     */
+    public JSONObject createPrediction(final String modelId,
+            JSONObject inputData, JSONObject args,
+            Integer waitTime, Integer retries) {
+        return prediction.create(modelId, inputData, false, args,
                 waitTime, retries);
     }
 
@@ -2269,6 +2331,7 @@ public class BigMLClient {
      *            number of times to try the operation. Optional
      *
      */
+    @Deprecated
     public JSONObject createAnomalyScore(final String anomalyId,
             JSONObject inputData, Boolean byName, JSONObject args,
             Integer waitTime, Integer retries) {
@@ -2299,11 +2362,71 @@ public class BigMLClient {
      *            number of times to try the operation. Optional
      *
      */
+    @Deprecated
     public JSONObject createAnomalyScore(final JSONObject anomaly,
             JSONObject inputData, Boolean byName, JSONObject args,
             Integer waitTime, Integer retries) {
         String anomalyId = (String) anomaly.get("resource");
         return  createAnomalyScore(anomalyId, inputData, byName, args,
+                waitTime, retries);
+    }
+
+    /**
+     * Creates a new anomaly score.
+     *
+     * POST
+     * /andromeda/anomalyscore?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param anomalyId
+     *            a unique identifier in the form anomaly/id where
+     *            id is a string of 24 alpha-numeric chars for the anomaly
+     *            to attach the anomaly score.
+     * @param inputData
+     *            an object with field's id/value pairs representing the
+     *            instance you want to create an anomaly score for.
+     * @param args
+     *            set of parameters for the new anomaly score. Required
+     * @param waitTime
+     *            time to wait for next check of FINISHED status for anomaly
+     *            before to start to create the anomaly score. Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     *
+     */
+    public JSONObject createAnomalyScore(final String anomalyId,
+            JSONObject inputData, JSONObject args, Integer waitTime,
+            Integer retries) {
+        return anomalyScore.create(anomalyId, inputData, false, args,
+                waitTime, retries);
+    }
+
+    /**
+     * Creates a new anomaly score.
+     *
+     * POST
+     * /andromeda/anomalyscore?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param anomaly
+     *            a anomaly JSONObject
+     * @param inputData
+     *            an object with field's id/value pairs representing the
+     *            instance you want to create an anomaly score for.
+     * @param args
+     *            set of parameters for the new anomaly score. Required
+     * @param waitTime
+     *            time to wait for next check of FINISHED status for anomaly
+     *            before to start to create the anomaly score. Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     *
+     */
+    public JSONObject createAnomalyScore(final JSONObject anomaly,
+            JSONObject inputData, JSONObject args,
+            Integer waitTime, Integer retries) {
+        String anomalyId = (String) anomaly.get("resource");
+        return  createAnomalyScore(anomalyId, inputData, false, args,
                 waitTime, retries);
     }
 

@@ -363,8 +363,8 @@ public class AnomaliesStepdefs {
 
     }
 
-    @When("^I create an anomaly score for \"(.*)\" by name=(true|false)$")
-    public void I_create_an_anomaly_score(String data, String byName)
+    @When("^I create an anomaly score for \"(.*)\"$")
+    public void I_create_an_anomaly_score(String data)
             throws Throwable {
         if( data == null || data.trim().length() == 0 ) {
             data = "{}";
@@ -376,8 +376,8 @@ public class AnomaliesStepdefs {
         JSONObject argsJSON = new JSONObject();
         argsJSON.put("tags", Arrays.asList("unitTest"));
 
-        JSONObject resource = BigMLClient.getInstance().createAnomalyScore(anomaly, dataObj, new Boolean(byName), argsJSON,
-                5, null);
+        JSONObject resource = BigMLClient.getInstance().createAnomalyScore(
+            anomaly, dataObj, argsJSON, 5, null);
 
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");

@@ -14,13 +14,13 @@ Feature: Create Predictions from public Model
         And I make the model public
         And I wait until the model is ready less than <time_3> secs
         And I check the model status using the model's public url
-        When I create a prediction by name=<by_name> for "<data_input>"
+        When I create a prediction for "<data_input>"
         Then the prediction for "<objective>" is "<prediction>"
         Then delete test data
 
         Examples:
-        | data                | seed      | time_1  | time_2 | time_3 | by_name | data_input    | objective | prediction  |
-        | data/iris.csv | BigML |  10      | 10     | 10     | true     | {"petal width": 0.5} | 000004    | Iris-setosa |
+        | data                | seed      | time_1  | time_2 | time_3 | data_input    | objective | prediction  |
+        | data/iris.csv | BigML |  10      | 10     | 10     | {"petal width": 0.5} | 000004    | Iris-setosa |
 
 
 
@@ -39,10 +39,10 @@ Feature: Create Predictions from public Model
         And I check the model status using the model's shared url
         And I check the model status using the model's shared key
         And I create a local model
-        When I create a prediction by name=<by_name> for "<data_input>"
+        When I create a prediction for "<data_input>"
         Then the prediction for "<objective>" is "<prediction>"
         Then delete test data
 
         Examples:
-        | data                | seed      | time_1  | time_2 | time_3 | by_name | data_input    | objective | prediction  |
-        | data/iris.csv | BigML |  10      | 10     | 10     | true     | {"petal width": 0.5} | 000004    | Iris-setosa |
+        | data                | seed      | time_1  | time_2 | time_3 | data_input    | objective | prediction  |
+        | data/iris.csv | BigML |  10      | 10     | 10     | {"petal width": 0.5} | 000004    | Iris-setosa |

@@ -12,14 +12,14 @@ I need to create a model first
       And I wait until the dataset is ready less than <time_2> secs
       And I create a model
       And I wait until the model is ready less than <time_3> secs
-      When I create a prediction by name=<by_name> for "<data_input>"
+      When I create a prediction for "<data_input>"
       Then the prediction for "<objective>" is "<prediction>"
       Then delete test data
 
       Examples:
-      | data                |  seed  |  time_1  | time_2 | time_3 | by_name | data_input    | objective | prediction  |
-      | data/iris.csv | BigML | 10      | 10     | 10     | true | {"petal width": 0.5} | 000004    | Iris-setosa |
-      | data/iris_sp_chars.csv | BigML |  10      | 10     |  10     | true | {"pétal&width\u0000": 0.5} | 000004    | Iris-setosa |
+      | data                |  seed  |  time_1  | time_2 | time_3 | data_input    | objective | prediction  |
+      | data/iris.csv | BigML | 10      | 10     | 10     | {"petal width": 0.5} | 000004    | Iris-setosa |
+      | data/iris_sp_chars.csv | BigML |  10      | 10     |  10     | {"pétal&width\u0000": 0.5} | 000004    | Iris-setosa |
 
 
   Scenario Outline: Successfully creating a prediction from a source in a remote location:
@@ -31,13 +31,13 @@ I need to create a model first
       And I wait until the dataset is ready less than <time_2> secs
       And I create a model
       And I wait until the model is ready less than <time_3> secs
-      When I create a prediction by name=<by_name> for "<data_input>"
+      When I create a prediction for "<data_input>"
       Then the prediction for "<objective>" is "<prediction>"
       Then delete test data
 
       Examples:
-      | url                |  seed  |  time_1  | time_2 | time_3 | by_name |  data_input    | objective | prediction  |
-      | s3://bigml-public/csv/iris.csv | BigML |  10      | 10     | 10     | true |  {"petal width": 0.5} | 000004    | Iris-setosa |
+      | url                |  seed  |  time_1  | time_2 | time_3 |  data_input    | objective | prediction  |
+      | s3://bigml-public/csv/iris.csv | BigML |  10      | 10     | 10     |  {"petal width": 0.5} | 000004    | Iris-setosa |
 
 
 
@@ -51,13 +51,13 @@ I need to create a model first
 #    And I wait until the dataset is ready less than <time_3> secs
 #    And I create a model
 #    And I wait until the model is ready less than <time_4> secs
-#    When I create a prediction by name=<by_name> for "<data_input>"
+#    When I create a prediction for "<data_input>"
 #    Then the prediction for "<objective>" is "<prediction>"
 #    Then delete test data
 
 #  Examples:
-#  | data                |  seed  |  time_1  | time_2 | time_3 | time_4 | by_name |  data_input    | objective | prediction  |
-#  | data/iris.csv | BigML |  10      | 10     | 10     | 10     | true |  {"petal width": 0.5} | 000004    | Iris-setosa |
+#  | data                |  seed  |  time_1  | time_2 | time_3 | time_4 |  data_input    | objective | prediction  |
+#  | data/iris.csv | BigML |  10      | 10     | 10     | 10     |  {"petal width": 0.5} | 000004    | Iris-setosa |
 
 
   Scenario Outline: Successfully creating a prediction from inline data source:
@@ -69,13 +69,13 @@ I need to create a model first
       And I wait until the dataset is ready less than <time_2> secs
       And I create a model
       And I wait until the model is ready less than <time_3> secs
-      When I create a prediction by name=<by_name> for "<data_input>"
+      When I create a prediction for "<data_input>"
       Then the prediction for "<objective>" is "<prediction>"
       Then delete test data
 
       Examples:
-      | data                |  seed  |  time_1  | time_2 | time_3 | by_name |  data_input    | objective | prediction  |
-      | data/iris.csv       | BigML  |  10      | 10     | 10     | true |  {"petal width": 0.5} | 000004    | Iris-setosa |
+      | data                |  seed  |  time_1  | time_2 | time_3 |  data_input    | objective | prediction  |
+      | data/iris.csv       | BigML  |  10      | 10     | 10     |  {"petal width": 0.5} | 000004    | Iris-setosa |
 
 
   Scenario Outline: Successfully creating a centroid and the associated dataset:
@@ -110,14 +110,14 @@ I need to create a model first
       And I wait until the dataset is ready less than <time_2> secs
       And I create an anomaly detector from a dataset
       And I wait until the anomaly detector is ready less than <time_3> secs
-      When I create an anomaly score for "<data_input>" by name=<by_name>
+      When I create an anomaly score for "<data_input>"
       Then the anomaly score is "<score>"
       Then delete test data
 
       Examples:
-      | data                    | time_1  | time_2 | time_3   |  by_name  | data_input                  | score   |
-      | data/tiny_kdd.csv       | 10      | 10     | 100      |   true    |{"src_bytes": 350}           | 0.92846 |
-      | data/iris_sp_chars.csv  | 10      | 10     | 100      |   true    | {"pétal&width\u0000": 300}  | 0.89313 |
+      | data                    | time_1  | time_2 | time_3   | data_input                  | score   |
+      | data/tiny_kdd.csv       | 10      | 10     | 100      | {"src_bytes": 350}           | 0.92846 |
+      | data/iris_sp_chars.csv  | 10      | 10     | 100      | {"pétal&width\u0000": 300}  | 0.89313 |
 
 
   Scenario Outline: Successfully creating a topic model:
