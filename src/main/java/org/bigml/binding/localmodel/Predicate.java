@@ -3,7 +3,6 @@ package org.bigml.binding.localmodel;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.bigml.binding.Constants;
@@ -13,14 +12,9 @@ import org.json.simple.JSONObject;
 
 /**
  * A predicate to be evaluated in a tree's node.
- * 
+ *
  */
 public class Predicate {
-
-    public static Pattern FULL_TERM_PATTERN_RE = Pattern.compile("^.+\\b.+$", Pattern.UNICODE_CASE);
-    public static String TM_TOKENS = "tokens_only";
-    public static String TM_FULL_TERM = "full_terms_only";
-    public static String TM_ALL = "all";
 
     private String opType;
     private String operator;
@@ -290,12 +284,12 @@ public class Predicate {
         if( term != null &&  term.length() > 0 ) {
             String tokenMode = (String) Utils.getJSONObject((JSONObject) fields.get(field),
                     "term_analysis.token_mode");
-            if( Predicate.TM_FULL_TERM.equals(tokenMode) ) {
+            if( Utils.TM_FULL_TERM.equals(tokenMode) ) {
                 return true;
             }
 
-            if( Predicate.TM_ALL.equals(tokenMode) ) {
-                return Predicate.FULL_TERM_PATTERN_RE.matcher(term).find();
+            if( Utils.TM_ALL.equals(tokenMode) ) {
+                return Utils.FULL_TERM_PATTERN_RE.matcher(term).find();
             }
         }
 
@@ -334,7 +328,7 @@ public class Predicate {
             JSONObject options = (JSONObject) Utils.getJSONObject((JSONObject) fields.get(field),
                     "term_analysis");
 
-            return applyOperator(termMatches(inputData.get(field).toString(), terms, options));
+            return applyOperator(Utils.termMatches(inputData.get(field).toString(), terms, options));
         }
 
         return applyOperator(inputData.get(field));
@@ -398,76 +392,4 @@ public class Predicate {
         return false;
     }
 
-
-    private int termMatches(String text, List<String> formsList, JSONObject options) {
-
-        // Checking Full Terms Only
-        String tokenMode = (String) Utils.getJSONObject(options, "token_mode", TM_TOKENS);
-        Boolean caseSensitive = (Boolean) Utils.getJSONObject(options, "case_sensitive", Boolean.TRUE);
-
-        String firstTerm = formsList.get(0);
-
-        if (tokenMode.equals(TM_FULL_TERM)) {
-            return fullTermMatch(text, firstTerm, caseSensitive);
-        }
-
-        // In token_mode='all' we will match full terms using equals and
-        // tokens using contains
-        if ( TM_ALL.equals(tokenMode) && formsList.size() == 1 ) {
-            if( FULL_TERM_PATTERN_RE.matcher(firstTerm).find() ) {
-                return fullTermMatch(text, firstTerm, caseSensitive);
-            }
-        }
-
-        return termMatchesTokens(text, formsList, caseSensitive);
-    }
-
-    /**
-     * Counts the match for full terms according to the case_sensitive option
-     *
-     * @param text
-     * @param fullTerm
-     * @param caseSensitive
-     * @return
-     */
-    private int fullTermMatch(String text, String fullTerm, boolean caseSensitive) {
-        return (caseSensitive ? (text.equals(fullTerm) ? 1 : 0) : (text.equalsIgnoreCase(fullTerm) ? 1 : 0));
-    }
-
-    /**
-     * Counts the number of occurences of the words in forms_list in the text
-     *
-     * @param text
-     * @param formsList
-     * @param caseSensitive
-     * @return
-     */
-    private int termMatchesTokens(String text, List<String> formsList, boolean caseSensitive) {
-        String expression = String.format("(\\b|_)%s(\\b|_)", join(formsList, "(\\b|_)|(\\b|_)"));
-        Pattern pattern = Pattern.compile(expression, (caseSensitive ? Pattern.UNICODE_CASE :
-                (Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE)));
-        Matcher matcher = pattern.matcher(text);
-        return (matcher.find() ? matcher.groupCount() : 0);
-    }
-
-
-    /**
-     * Joins all the string items in the list using the conjunction text
-     *
-     * @param list
-     * @param conjunction
-     * @return
-     */
-    private String join(List<String> list, String conjunction) {
-        StringBuilder sb = new StringBuilder();
-        boolean first = true;
-        for (String item : list) {
-            if(first)
-                first = false;
-            else
-                sb.append(conjunction);
-            sb.append(item);
-        }
-        return sb.toString();
-    }
 }

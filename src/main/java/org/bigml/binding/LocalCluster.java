@@ -225,11 +225,11 @@ public class LocalCluster extends ModelFields {
                             fieldId + ".token_mode", "all");
 
                     List<String> terms = new ArrayList<String>();
-                    if( !Predicate.TM_FULL_TERM.equals(tokenMode) ) {
+                    if( !Utils.TM_FULL_TERM.equals(tokenMode) ) {
                         terms = parseTerms(inputDataField.toString(), caseSensitive);
                     }
 
-                    if( !Predicate.TM_TOKENS.equals(tokenMode) ) {
+                    if( !Utils.TM_TOKENS.equals(tokenMode) ) {
                         terms.add((caseSensitive ? inputDataField.toString() :
                                 ((String) inputDataField).toLowerCase()));
                     }
