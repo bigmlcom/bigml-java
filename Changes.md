@@ -1,5 +1,19 @@
 # Changes in the BigML.io Java bindings
 
+## 1.7.0 version
+
+### Improvements
+
+* Deepnet Resource
+* TimeSeries/Forecast Resource
+* Support for name or column for field ID in predictions and anomaly scores
+* Local Association object
+
+### Bugs
+
+* Fixed test suite
+
+
 ## 1.6.2 version
 
 ### Improvements
