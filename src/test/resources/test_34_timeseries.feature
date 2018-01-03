@@ -15,4 +15,4 @@ Feature: Create TimeSeries
 
         Examples:
         | data             | time_1  | time_2 | time_3 | time_4 | time_series_name | input_data | forecast_points   |
-        | data/grades.csv | 100      | 100     | 200     | 500 | my new time series name | {"000005": {"horizon": 5}}   | {"000005":[{"model":"A,N,N","lower_bound":[30.11219,30.11219,30.11219,30.11219,30.11219],"time_range":{"interval":1,"start":80,"interval_unit":"index","end":84},"upper_bound":[106.89267,106.89267,106.89267,106.89267,106.89267],"point_forecast":[68.50243,68.50243,68.50243,68.50243,68.50243]}]}    |
+        | data/grades.csv | 100      | 100     | 200     | 500 | my new time series name | {"000005": {"horizon": 5}}   | {"000005":[{"model":"M,M,N","lower_bound":[31.6734,32.9738,34.0285,34.3258,34.5127],"time_range":{"interval":1,"start":80,"interval_unit":"millis","descending":false,"end":84},"upper_bound":[114.057,112.761,114.422,114.02,116.168],"point_forecast":[73.96192,74.04106,74.12029,74.1996,74.27899]}]}    |
