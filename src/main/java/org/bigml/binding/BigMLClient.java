@@ -239,6 +239,12 @@ public class BigMLClient {
 
         this.bigmlUser = System.getProperty("BIGML_USERNAME");
         this.bigmlApiKey = System.getProperty("BIGML_API_KEY");
+
+        if (this.bigmlUser == null)
+          this.bigmlUser = System.getenv("BIGML_USERNAME");
+        if (this.bigmlApiKey == null)
+          this.bigmlApiKey = System.getenv("BIGML_API_KEY");
+
         if (this.bigmlUser == null || this.bigmlUser.equals("")
                 || this.bigmlApiKey == null || this.bigmlApiKey.equals("")) {
             this.bigmlUser = props.getProperty("BIGML_USERNAME");
