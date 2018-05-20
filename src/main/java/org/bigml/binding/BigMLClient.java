@@ -199,34 +199,20 @@ public class BigMLClient {
         instance = null;
     }
 
+    private String setting(final String setting) {
+      String value = System.getProperty(setting);
+      if (value == null)
+        value = System.getenv(setting);
+      return value;
+    }
+
     /**
      * Initialization object.
      */
     private void init(final boolean devMode) throws AuthenticationException {
         this.devMode = devMode;
         initConfiguration();
-
-        this.bigmlUser = System.getProperty("BIGML_USERNAME");
-        this.bigmlApiKey = System.getProperty("BIGML_API_KEY");
-        if (this.bigmlUser == null || this.bigmlUser.equals("")
-                || this.bigmlApiKey == null || this.bigmlApiKey.equals("")) {
-            this.bigmlUser = props.getProperty("BIGML_USERNAME");
-            this.bigmlApiKey = props.getProperty("BIGML_API_KEY");
-            if (this.bigmlUser == null || this.bigmlUser.equals("")
-                    || this.bigmlApiKey == null || this.bigmlApiKey.equals("")) {
-                AuthenticationException ex = new AuthenticationException(
-                        "Missing authentication information.");
-                logger.info(instance.toString(), ex);
-                throw ex;
-            }
-        }
-
-        // The seed to be used to create deterministic samples and models
-        this.seed = System.getProperty("BIGML_SEED");
-        if( this.seed == null || this.seed.equals("") ) {
-            this.seed = props.getProperty("BIGML_SEED");
-        }
-
+        initBigmlSettings(null, null, null);
         initResources();
     }
 
@@ -236,34 +222,7 @@ public class BigMLClient {
     private void init(final String seed, final boolean devMode) throws AuthenticationException {
         this.devMode = devMode;
         initConfiguration();
-
-        this.bigmlUser = System.getProperty("BIGML_USERNAME");
-        this.bigmlApiKey = System.getProperty("BIGML_API_KEY");
-
-        if (this.bigmlUser == null)
-          this.bigmlUser = System.getenv("BIGML_USERNAME");
-        if (this.bigmlApiKey == null)
-          this.bigmlApiKey = System.getenv("BIGML_API_KEY");
-
-        if (this.bigmlUser == null || this.bigmlUser.equals("")
-                || this.bigmlApiKey == null || this.bigmlApiKey.equals("")) {
-            this.bigmlUser = props.getProperty("BIGML_USERNAME");
-            this.bigmlApiKey = props.getProperty("BIGML_API_KEY");
-            if (this.bigmlUser == null || this.bigmlUser.equals("")
-                    || this.bigmlApiKey == null || this.bigmlApiKey.equals("")) {
-                AuthenticationException ex = new AuthenticationException(
-                        "Missing authentication information.");
-                logger.info(instance.toString(), ex);
-                throw ex;
-            }
-        }
-
-        // The seed to be used to create deterministic samples and models
-        this.seed = seed != null ? seed : System.getProperty("BIGML_SEED");
-        if( this.seed == null || this.seed.equals("") ) {
-            this.seed = props.getProperty("BIGML_SEED");
-        }
-
+        initBigmlSettings(null, null, null);
         initResources();
     }
 
@@ -274,30 +233,7 @@ public class BigMLClient {
             final boolean devMode) throws AuthenticationException {
         this.devMode = devMode;
         initConfiguration();
-
-        this.bigmlUser = apiUser != null ? apiUser : System
-                .getProperty("BIGML_USERNAME");
-        this.bigmlApiKey = apiKey != null ? apiKey : System
-                .getProperty("BIGML_API_KEY");
-        if (this.bigmlUser == null || this.bigmlUser.equals("")
-                || this.bigmlApiKey == null || this.bigmlApiKey.equals("")) {
-            this.bigmlUser = props.getProperty("BIGML_USERNAME");
-            this.bigmlApiKey = props.getProperty("BIGML_API_KEY");
-            if (this.bigmlUser == null || this.bigmlUser.equals("")
-                    || this.bigmlApiKey == null || this.bigmlApiKey.equals("")) {
-                AuthenticationException ex = new AuthenticationException(
-                        "Missing authentication information.");
-                logger.info(instance.toString(), ex);
-                throw ex;
-            }
-        }
-
-        // The seed to be used to create deterministic samples and models
-        this.seed = System.getProperty("BIGML_SEED");
-        if( this.seed == null || this.seed.equals("") ) {
-            this.seed = props.getProperty("BIGML_SEED");
-        }
-
+        initBigmlSettings(apiUser, apiKey, null);
         initResources();
     }
 
@@ -308,30 +244,7 @@ public class BigMLClient {
             final boolean devMode) throws AuthenticationException {
         this.devMode = devMode;
         initConfiguration();
-
-        this.bigmlUser = apiUser != null ? apiUser : System
-                .getProperty("BIGML_USERNAME");
-        this.bigmlApiKey = apiKey != null ? apiKey : System
-                .getProperty("BIGML_API_KEY");
-        if (this.bigmlUser == null || this.bigmlUser.equals("")
-                || this.bigmlApiKey == null || this.bigmlApiKey.equals("")) {
-            this.bigmlUser = props.getProperty("BIGML_USERNAME");
-            this.bigmlApiKey = props.getProperty("BIGML_API_KEY");
-            if (this.bigmlUser == null || this.bigmlUser.equals("")
-                    || this.bigmlApiKey == null || this.bigmlApiKey.equals("")) {
-                AuthenticationException ex = new AuthenticationException(
-                        "Missing authentication information.");
-                logger.info(instance.toString(), ex);
-                throw ex;
-            }
-        }
-
-        // The seed to be used to create deterministic samples and models
-        this.seed = seed != null ? seed : System.getProperty("BIGML_SEED");
-        if( this.seed == null || this.seed.equals("") ) {
-            this.seed = props.getProperty("BIGML_SEED");
-        }
-
+        initBigmlSettings(apiUser, apiKey, seed);
         initResources();
     }
 
@@ -344,30 +257,7 @@ public class BigMLClient {
         this.devMode = devMode;
         this.storage = storage;
         initConfiguration();
-
-        this.bigmlUser = apiUser != null ? apiUser : System
-                .getProperty("BIGML_USERNAME");
-        this.bigmlApiKey = apiKey != null ? apiKey : System
-                .getProperty("BIGML_API_KEY");
-        if (this.bigmlUser == null || this.bigmlUser.equals("")
-                || this.bigmlApiKey == null || this.bigmlApiKey.equals("")) {
-            this.bigmlUser = props.getProperty("BIGML_USERNAME");
-            this.bigmlApiKey = props.getProperty("BIGML_API_KEY");
-            if (this.bigmlUser == null || this.bigmlUser.equals("")
-                    || this.bigmlApiKey == null || this.bigmlApiKey.equals("")) {
-                AuthenticationException ex = new AuthenticationException(
-                        "Missing authentication information.");
-                logger.info(instance.toString(), ex);
-                throw ex;
-            }
-        }
-
-        // The seed to be used to create deterministic samples and models
-        this.seed = System.getProperty("BIGML_SEED");
-        if( this.seed == null || this.seed.equals("") ) {
-            this.seed = props.getProperty("BIGML_SEED");
-        }
-
+        initBigmlSettings(apiUser, apiKey, seed);
         initResources();
     }
 
@@ -380,30 +270,7 @@ public class BigMLClient {
         this.devMode = devMode;
         this.storage = storage;
         initConfiguration();
-
-        this.bigmlUser = apiUser != null ? apiUser : System
-                .getProperty("BIGML_USERNAME");
-        this.bigmlApiKey = apiKey != null ? apiKey : System
-                .getProperty("BIGML_API_KEY");
-        if (this.bigmlUser == null || this.bigmlUser.equals("")
-                || this.bigmlApiKey == null || this.bigmlApiKey.equals("")) {
-            this.bigmlUser = props.getProperty("BIGML_USERNAME");
-            this.bigmlApiKey = props.getProperty("BIGML_API_KEY");
-            if (this.bigmlUser == null || this.bigmlUser.equals("")
-                    || this.bigmlApiKey == null || this.bigmlApiKey.equals("")) {
-                AuthenticationException ex = new AuthenticationException(
-                        "Missing authentication information.");
-                logger.info(instance.toString(), ex);
-                throw ex;
-            }
-        }
-
-        // The seed to be used to create deterministic samples and models
-        this.seed = seed != null ? seed : System.getProperty("BIGML_SEED");
-        if( this.seed == null || this.seed.equals("") ) {
-            this.seed = props.getProperty("BIGML_SEED");
-        }
-
+        initBigmlSettings(apiUser, apiKey, seed);
         initResources();
     }
 
@@ -418,11 +285,17 @@ public class BigMLClient {
         this.devMode = devMode;
         this.storage = storage;
         initConfiguration();
+        initBigmlSettings(apiUser, apiKey, seed);
+        initResources();
+    }
 
-        this.bigmlUser = apiUser != null ? apiUser : System
-                .getProperty("BIGML_USERNAME");
-        this.bigmlApiKey = apiKey != null ? apiKey : System
-                .getProperty("BIGML_API_KEY");
+    private void initBigmlSettings(final String apiUser,
+                                   final String apiKey,
+                                   final String seed) 
+      throws AuthenticationException {
+
+        this.bigmlUser = apiUser != null ? apiUser : this.setting("BIGML_USERNAME");
+        this.bigmlApiKey = apiKey != null ? apiKey : this.setting("BIGML_API_KEY");
         if (this.bigmlUser == null || this.bigmlUser.equals("")
                 || this.bigmlApiKey == null || this.bigmlApiKey.equals("")) {
             this.bigmlUser = props.getProperty("BIGML_USERNAME");
@@ -437,12 +310,10 @@ public class BigMLClient {
         }
 
         // The seed to be used to create deterministic samples and models
-        this.seed = seed != null ? seed : System.getProperty("BIGML_SEED");
+        this.seed = seed != null ? seed : this.setting("BIGML_SEED");
         if( this.seed == null || this.seed.equals("") ) {
             this.seed = props.getProperty("BIGML_SEED");
         }
-
-        initResources();
     }
 
     private void initConfiguration() {
