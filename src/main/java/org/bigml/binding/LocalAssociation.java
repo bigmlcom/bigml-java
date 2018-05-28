@@ -381,8 +381,8 @@ public class LocalAssociation extends ModelFields implements Serializable {
 			}
 		} else {
 			if (itemList.get(0) instanceof String) {
-				for (AssociationItem item : items(null, itemList, null, null)) {
-					items.add(item.getIndex());
+				for (Object item : items(null, itemList, null, null)) {
+					items.add(((AssociationItem)item).getIndex());
 				}
 			}
 		}
