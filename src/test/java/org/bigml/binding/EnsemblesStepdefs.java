@@ -41,9 +41,8 @@ public class EnsemblesStepdefs {
         commonSteps.the_resource_has_been_created_with_status(context.status);
     }
 
-    @Given("^I create an ensemble of (\\d+) models and (\\d+) tlp$")
-    public void I_create_an_ensemble_of_models_and_tlp(int numberOfModels,
-            int tlp) throws Throwable {
+    @Given("^I create an ensemble of (\\d+) models$")
+    public void I_create_an_ensemble_of_models(int numberOfModels) throws Throwable {
 
         JSONObject ensembleSample = new JSONObject();
         ensembleSample.put("rate", 0.70);
@@ -51,7 +50,6 @@ public class EnsemblesStepdefs {
 
         JSONObject args = new JSONObject();
         args.put("number_of_models", numberOfModels);
-        args.put("tlp", tlp);
         args.put("ensemble_sample", ensembleSample);
 
         args.put("tags", Arrays.asList("unitTest"));

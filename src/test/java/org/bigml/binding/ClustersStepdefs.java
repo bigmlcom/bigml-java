@@ -45,8 +45,11 @@ public class ClustersStepdefs {
 
         JSONObject args = (JSONObject) JSONValue.parse(options);
 
-        args.put("tags", Arrays.asList("unitTest"));
         args.put("k", 8);
+        args.put("seed", "BigML");
+        args.put("cluster_seed", "BigML");
+        args.put("tags", Arrays.asList("unitTest"));
+
 
         JSONObject resource = BigMLClient.getInstance().createCluster(
                 datasetId, args, 5, null);
@@ -61,8 +64,10 @@ public class ClustersStepdefs {
         String datasetId = (String) context.dataset.get("resource");
 
         JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
         args.put("k", 8);
+        args.put("seed", "BigML");
+        args.put("cluster_seed", "BigML");
+        args.put("tags", Arrays.asList("unitTest"));
 
         JSONObject resource = BigMLClient.getInstance().createCluster(
                 datasetId, args, 5, null);

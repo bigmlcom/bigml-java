@@ -139,7 +139,7 @@ public class EvaluationsStepdefs {
 
         double measureLong = (Double) Utils.getJSONObject(context.evaluation,
                 "result.model." + measure);
-        assertTrue(measureLong == value);
+        assertEquals(measureLong, value, 0.00001);
     }
 
 }

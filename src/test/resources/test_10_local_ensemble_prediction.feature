@@ -9,7 +9,7 @@ Feature: Create Predictions locally from Ensembles
     And I add the unitTest tag to the data source waiting less than <time_1> secs
     And I create a dataset
     And I wait until the dataset is ready less than <time_2> secs
-    And I create an ensemble of <number_of_models> models and <tlp> tlp
+    And I create an ensemble of <number_of_models> models
     And I wait until the ensemble is ready less than <time_3> secs
     And I create a local ensemble
     When the local ensemble prediction for "<data_input>" is "<prediction>" with confidence <confidence>
@@ -17,8 +17,8 @@ Feature: Create Predictions locally from Ensembles
     Then delete test data
 
     Examples:
-      | data             | seed      |  time_1  | time_2 | time_3 | number_of_models | tlp   |  data_input    |prediction  | confidence |
-      | data/iris.csv | BigML |  10      | 10     | 50     | 5                | 1     | {"petal width": 0.5} | Iris-versicolor | 0.3687 | ["0.3403","0.4150","0.2447"]  |
+      | data             | seed      |  time_1  | time_2 | time_3 | number_of_models |  data_input    |prediction  | confidence |
+      | data/iris.csv | BigML |  10      | 10     | 50     | 5               | {"petal width": 0.5} | Iris-versicolor | 0.3687 | ["0.3403","0.4150","0.2447"]  |
 
 
   Scenario Outline: Successfully obtaining field importance from an Ensemble:
@@ -50,7 +50,7 @@ Feature: Create Predictions locally from Ensembles
     And I add the unitTest tag to the data source waiting less than <time_1> secs
     And I create a dataset
     And I wait until the dataset is ready less than <time_2> secs
-    And I create an ensemble of <number_of_models> models and <tlp> tlp
+    And I create an ensemble of <number_of_models> models
     And I wait until the ensemble is ready less than <time_3> secs
     And I create a local ensemble
     #When I create a local ensemble prediction for "<data_input>" in JSON adding confidence
@@ -58,8 +58,8 @@ Feature: Create Predictions locally from Ensembles
     Then delete test data
 
     Examples:
-      | data            | seed    |  time_1  | time_2 | time_3 | number_of_models | tlp   |  data_input           |prediction       | confidence  |
-      | data/iris.csv   | BigML   |  10      | 10     | 50     | 5                | 1     | {"petal width": 0.5}  | Iris-versicolor |  0.3687     |
+      | data            | seed    |  time_1  | time_2 | time_3 | number_of_models |  data_input           |prediction       | confidence  |
+      | data/iris.csv   | BigML   |  10      | 10     | 50     | 5                | {"petal width": 0.5}  | Iris-versicolor |  0.3687     |
 
 
   # THIS SCENARIO IS NOT NECESSARY IN THE JAVA BINDING BECAUSE WE ONLY CAN CREATE LOCALENSEMBLES
@@ -94,15 +94,15 @@ Feature: Create Predictions locally from Ensembles
     And I add the unitTest tag to the data source waiting less than <time_1> secs
     And I create a dataset
     And I wait until the dataset is ready less than <time_2> secs
-    And I create an ensemble of <number_of_models> models and <tlp> tlp
+    And I create an ensemble of <number_of_models> models
     And I wait until the ensemble is ready less than <time_3> secs
     And I create a local ensemble
     When the local ensemble prediction using median with confidence for "<data_input>" is "<prediction>"
     Then delete test data
 
     Examples:
-      | data            | seed      |  time_1  | time_2 | time_3 | number_of_models | tlp   |  data_input    |prediction  |
-      | data/grades.csv   | BigML     |  10      | 10     | 50     | 2                | 1     | {}             | 65.83    |
+      | data            | seed      |  time_1  | time_2 | time_3 | number_of_models |  data_input    |prediction  |
+      | data/grades.csv   | BigML     |  10      | 10     | 50     | 2              | {}             | 65.83    |
 
 
   Scenario Outline: Successfully creating a local prediction from an Ensemble with max models:
@@ -112,11 +112,11 @@ Feature: Create Predictions locally from Ensembles
     And I add the unitTest tag to the data source waiting less than <time_1> secs
     And I create a dataset
     And I wait until the dataset is ready less than <time_2> secs
-    And I create an ensemble of <number_of_models> models and <tlp> tlp
+    And I create an ensemble of <number_of_models> models
     And I wait until the ensemble is ready less than <time_3> secs
     And I create a local ensemble with max models <max_models>
     When the local ensemble prediction for "<data_input>" is "<prediction>"
 
     Examples:
-      | data            | seed    |  time_1  | time_2 | time_3 | time_4 | number_of_models | tlp   | max_models |  data_input    |prediction  |
-      | data/iris.csv   | BigML   |  10      | 10     | 50     | 20     | 5                | 1     | 2          | {"petal width": 0.5} | Iris-versicolor |
+      | data            | seed    |  time_1  | time_2 | time_3 | time_4 | number_of_models | max_models |  data_input    |prediction  |
+      | data/iris.csv   | BigML   |  10      | 10     | 50     | 20     | 5                | 2          | {"petal width": 0.5} | Iris-versicolor |

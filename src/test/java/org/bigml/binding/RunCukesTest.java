@@ -8,9 +8,10 @@ import cucumber.junit.Cucumber;
 // @Cucumber.Options(format = {"pretty", "html:target/cucumber-html-report"})
 //@Cucumber.Options(format = { "pretty", "html:target/cucumber-html-report" }, features = {
 //        "src/test/resources/delete_all_dev_data.feature" })
-@Cucumber.Options(format = { "pretty", "html:target/cucumber-html-report" }, features = {
+@Cucumber.Options(format = { "pretty", "html:target/cucumber-html-report" },
+  glue = {"org.bigml.binding"},
+  features = {
         "src/test/resources/test_01_prediction.feature",
-        "src/test/resources/test_02_dev_prediction.feature",
         "src/test/resources/test_03_local_prediction.feature",
         "src/test/resources/test_04_multivote_prediction.feature",
         "src/test/resources/test_05_compare_predictions.feature",

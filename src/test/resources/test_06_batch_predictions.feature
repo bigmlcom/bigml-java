@@ -29,7 +29,7 @@ Feature: Create Batch Predictions
         And I add the unitTest tag to the data source waiting less than <time_1> secs
         And I create a dataset
         And I wait until the dataset is ready less than <time_2> secs
-        And I create an ensemble of <number_of_models> models and <tlp> tlp
+        And I create an ensemble of <number_of_models> models
         And I wait until the ensemble is ready less than <time_3> secs
         When I create a batch prediction for the dataset with the ensemble
         And I wait until the batch prediction is ready less than <time_4> secs
@@ -38,8 +38,8 @@ Feature: Create Batch Predictions
         Then delete test data
 
         Examples:
-          | data             | seed      | time_1  | time_2 | number_of_models | tlp | time_3 | time_4 | local_file | predictions_file |
-          | data/iris.csv | BigML |   30      | 30     | 5                | 1   | 80     | 50     | data/downloaded_batch_predictions_e.csv | data/batch_predictions_e.csv |
+          | data             | seed      | time_1  | time_2 | number_of_models | time_3 | time_4 | local_file | predictions_file |
+          | data/iris.csv | BigML |   30      | 30     | 5                | 80     | 50     | data/downloaded_batch_predictions_e.csv | data/batch_predictions_e.csv |
 
 
 	Scenario Outline: Successfully creating a batch centroid from a cluster:

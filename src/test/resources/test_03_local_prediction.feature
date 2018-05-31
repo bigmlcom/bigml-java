@@ -20,7 +20,7 @@ Feature: Create Predictions
 
       Examples:
       | model                | data_input             | prediction  |
-      | data/iris_model.json | {"petal length": 3}    | [{"count":42,"prediction":"Iris-versicolor","probability":0.5060240963855421,"confidence":0.4006020980792863},{"count":41,"prediction":"Iris-virginica","probability":0.4939759036144578,"confidence":0.3890868795664999}] |
+      | data/iris_model.json | {"petal length": 3}    | [{"probability":0.5060240963855421,"confidence":0.4006020980792863,"prediction":"Iris-versicolor","count":42},{"probability":0.4939759036144578,"confidence":0.3890868795664999,"prediction":"Iris-virginica","count":41}] |
 
 
 
