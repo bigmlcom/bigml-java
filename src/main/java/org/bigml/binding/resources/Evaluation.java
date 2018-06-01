@@ -114,8 +114,9 @@ public class Evaluation extends AbstractResource {
             JSONObject args, Integer waitTime, Integer retries) {
 
         if (model == null || model.length() == 0 ||
-            !(model.matches(MODEL_RE) || model.matches(ENSEMBLE_RE) || model.matches(LOGISTICREGRESSION_RE))) {
-            logger.info("Wrong model, ensemble or logisticregression id");
+            !(model.matches(MODEL_RE) || model.matches(ENSEMBLE_RE) || 
+            	  model.matches(LOGISTICREGRESSION_RE)  || model.matches(FUSION_RE))) {
+            logger.info("Wrong model, ensemble, logisticregression or fusion id");
             return null;
         }
 
@@ -154,6 +155,14 @@ public class Evaluation extends AbstractResource {
                         count++;
                     }
                 }
+                
+                if (model.matches(FUSION_RE)) {
+                    while (count < retries
+                            && !BigMLClient.getInstance().fusionIsReady(model)) {
+                        Thread.sleep(waitTime);
+                        count++;
+                    }
+                }
 
                 count = 0;
                 while (count < retries
@@ -176,6 +185,9 @@ public class Evaluation extends AbstractResource {
             }
             if (model.matches(LOGISTICREGRESSION_RE)) {
                 requestObject.put("logisticregression", model);
+            }
+            if (model.matches(FUSION_RE)) {
+                requestObject.put("fusion", model);
             }
             requestObject.put("dataset", datasetId);
 

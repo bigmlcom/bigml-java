@@ -86,8 +86,25 @@ public class EvaluationsStepdefs {
         context.evaluation = (JSONObject) resource.get("object");
         commonSteps.the_resource_has_been_created_with_status(context.status);
     }
+    
+    @When("^I create an evaluation for the fusion with the dataset$")
+    public void I_create_an_evaluation_for_the_fusion_with_the_dataset()
+            throws Throwable {
 
+        String fusionId = (String) context.fusion.get("resource");
+        String datasetId = (String) context.dataset.get("resource");
 
+        JSONObject args = new JSONObject();
+        args.put("tags", Arrays.asList("unitTest"));
+
+        JSONObject resource = BigMLClient.getInstance().createEvaluation(
+        		fusionId, datasetId, args, 5, 3);
+        context.status = (Integer) resource.get("code");
+        context.location = (String) resource.get("location");
+        context.evaluation = (JSONObject) resource.get("object");
+        commonSteps.the_resource_has_been_created_with_status(context.status);
+    }
+    
     @Given("^I wait until the evaluation status code is either (\\d) or (\\d) less than (\\d+)")
     public void I_wait_until_evaluation_status_code_is(int code1, int code2,
             int secs) throws AuthenticationException {
