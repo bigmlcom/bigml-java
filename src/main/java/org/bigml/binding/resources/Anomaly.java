@@ -24,7 +24,7 @@ public class Anomaly extends AbstractModelResource {
      *
      */
     public Anomaly() {
-        super.init(null, null, false, null);
+        super.init(null, null, null);
         this.resourceRe = ANOMALY_RE;
         this.resourceUrl = ANOMALY_URL;
         this.resourceName = "anomaly";
@@ -34,9 +34,8 @@ public class Anomaly extends AbstractModelResource {
      * Constructor
      *
      */
-    public Anomaly(final String apiUser, final String apiKey,
-                   final boolean devMode) {
-    		super.init(apiUser, apiKey, devMode, null);
+    public Anomaly(final String apiUser, final String apiKey) {
+    	super.init(apiUser, apiKey, null);
         this.resourceRe = ANOMALY_RE;
         this.resourceUrl = ANOMALY_URL;
         this.resourceName = "anomaly";
@@ -46,9 +45,8 @@ public class Anomaly extends AbstractModelResource {
      * Constructor
      *
      */
-    public Anomaly(final String apiUser, final String apiKey,
-                   final boolean devMode, final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, devMode, cacheManager);
+    public Anomaly(final String apiUser, final String apiKey, final CacheManager cacheManager) {
+    	super.init(apiUser, apiKey, cacheManager);
         this.resourceRe = ANOMALY_RE;
         this.resourceUrl = ANOMALY_URL;
         this.resourceName = "anomaly";

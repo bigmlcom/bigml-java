@@ -7,7 +7,7 @@ import cucumber.junit.Cucumber;
 @RunWith(Cucumber.class)
 // @Cucumber.Options(format = {"pretty", "html:target/cucumber-html-report"})
 //@Cucumber.Options(format = { "pretty", "html:target/cucumber-html-report" }, features = {
-//        "src/test/resources/delete_all_dev_data.feature" })
+//        "src/test/resources/delete_all_test_data.feature" })
 @Cucumber.Options(format = { "pretty", "html:target/cucumber-html-report" },
   glue = {"org.bigml.binding"},
   features = {
@@ -43,6 +43,6 @@ import cucumber.junit.Cucumber;
         "src/test/resources/test_34_timeseries.feature",
         "src/test/resources/test_36_compare_predictions.feature",
         "src/test/resources/test_configurations.feature",
-        "src/test/resources/delete_all_dev_data.feature" })
+        "src/test/resources/delete_all_test_data.feature" })
 public class RunCukesTest {
 }

@@ -23,7 +23,7 @@ public class Cluster extends AbstractModelResource {
      *
      */
     public Cluster() {
-    		super.init(null, null, false, null);
+    	super.init(null, null, null);
         this.resourceRe = CLUSTER_RE;
         this.resourceUrl = CLUSTER_URL;
         this.resourceName = "cluster";
@@ -33,9 +33,8 @@ public class Cluster extends AbstractModelResource {
      * Constructor
      *
      */
-    public Cluster(final String apiUser, final String apiKey,
-            final boolean devMode) {
-    		super.init(apiUser, apiKey, devMode, null);
+    public Cluster(final String apiUser, final String apiKey) {
+    	super.init(apiUser, apiKey, null);
         this.resourceRe = CLUSTER_RE;
         this.resourceUrl = CLUSTER_URL;
         this.resourceName = "cluster";
@@ -45,9 +44,8 @@ public class Cluster extends AbstractModelResource {
      * Constructor
      *
      */
-    public Cluster(final String apiUser, final String apiKey,
-            final boolean devMode, final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, devMode, cacheManager);
+    public Cluster(final String apiUser, final String apiKey, final CacheManager cacheManager) {
+    	super.init(apiUser, apiKey, cacheManager);
         this.resourceRe = CLUSTER_RE;
         this.resourceUrl = CLUSTER_URL;
         this.resourceName = "cluster";

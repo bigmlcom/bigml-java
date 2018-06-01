@@ -28,7 +28,7 @@ public class BatchCentroid extends AbstractResource {
      *
      */
     public BatchCentroid() {
-    		super.init(null, null, false, null);
+    	super.init(null, null, null);
         this.resourceRe = BATCH_CENTROID_RE;
         this.resourceUrl = BATCH_CENTROID_URL;
         this.resourceName = "batchcentroid";
@@ -38,9 +38,8 @@ public class BatchCentroid extends AbstractResource {
      * Constructor
      *
      */
-    public BatchCentroid(final String apiUser, final String apiKey,
-            final boolean devMode) {
-    		super.init(apiUser, apiKey, devMode, null);
+    public BatchCentroid(final String apiUser, final String apiKey) {
+    	super.init(apiUser, apiKey, null);
         this.resourceRe = BATCH_CENTROID_RE;
         this.resourceUrl = BATCH_CENTROID_URL;
         this.resourceName = "batchcentroid";
@@ -50,9 +49,8 @@ public class BatchCentroid extends AbstractResource {
      * Constructor
      *
      */
-    public BatchCentroid(final String apiUser, final String apiKey,
-            final boolean devMode, final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, devMode, cacheManager);
+    public BatchCentroid(final String apiUser, final String apiKey, final CacheManager cacheManager) {
+    	super.init(apiUser, apiKey, cacheManager);
         this.resourceRe = BATCH_CENTROID_RE;
         this.resourceUrl = BATCH_CENTROID_URL;
         this.resourceName = "batchcentroid";
@@ -129,8 +127,7 @@ public class BatchCentroid extends AbstractResource {
             if (waitTime > 0) {
                 int count = 0;
                 while (count < retries
-                        && !BigMLClient.getInstance(this.devMode)
-                                .clusterIsReady(clusterId)) {
+                        && !BigMLClient.getInstance().clusterIsReady(clusterId)) {
                     Thread.sleep(waitTime);
                     count++;
                 }
@@ -139,8 +136,7 @@ public class BatchCentroid extends AbstractResource {
             if (waitTime > 0) {
                 int count = 0;
                 while (count < retries
-                        && !BigMLClient.getInstance(this.devMode)
-                                .datasetIsReady(datasetId)) {
+                        && !BigMLClient.getInstance().datasetIsReady(datasetId)) {
                     Thread.sleep(waitTime);
                     count++;
                 }

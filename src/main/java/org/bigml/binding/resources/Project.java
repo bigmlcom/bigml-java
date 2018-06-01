@@ -25,7 +25,7 @@ public class Project extends AbstractResource {
      *
      */
     public Project() {
-    		super.init(null, null, false, null);
+    	super.init(null, null, null);
         this.resourceRe = PROJECT_RE;
         this.resourceUrl = PROJECT_URL;
         this.resourceName = "project";
@@ -35,9 +35,8 @@ public class Project extends AbstractResource {
      * Constructor
      *
      */
-    public Project(final String apiUser, final String apiKey,
-                   final boolean devMode) {
-    		super.init(apiUser, apiKey, devMode, null);
+    public Project(final String apiUser, final String apiKey) {
+    	super.init(apiUser, apiKey, null);
         this.resourceRe = PROJECT_RE;
         this.resourceUrl = PROJECT_URL;
         this.resourceName = "project";
@@ -47,9 +46,8 @@ public class Project extends AbstractResource {
      * Constructor
      *
      */
-    public Project(final String apiUser, final String apiKey,
-                   final boolean devMode, final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, devMode, cacheManager);
+    public Project(final String apiUser, final String apiKey, final CacheManager cacheManager) {
+    	super.init(apiUser, apiKey, cacheManager);
         this.resourceRe = PROJECT_RE;
         this.resourceUrl = PROJECT_URL;
         this.resourceName = "project";

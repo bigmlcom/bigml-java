@@ -30,7 +30,7 @@ public class Source extends AbstractResource {
      *
      */
     public Source() {
-    		super.init(null, null, false, null);
+    	super.init(null, null, null);
         this.resourceRe = SOURCE_RE;
         this.resourceUrl = SOURCE_URL;
         this.resourceName = "source";
@@ -40,9 +40,8 @@ public class Source extends AbstractResource {
      * Constructor
      *
      */
-    public Source(final String apiUser, final String apiKey,
-            final boolean devMode) {
-    		super.init(apiUser, apiKey, devMode, null);
+    public Source(final String apiUser, final String apiKey) {
+    	super.init(apiUser, apiKey, null);
         this.resourceRe = SOURCE_RE;
         this.resourceUrl = SOURCE_URL;
         this.resourceName = "source";
@@ -52,9 +51,8 @@ public class Source extends AbstractResource {
      * Constructor
      *
      */
-    public Source(final String apiUser, final String apiKey,
-            final boolean devMode, final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, devMode, cacheManager);
+    public Source(final String apiUser, final String apiKey, final CacheManager cacheManager) {
+    	super.init(apiUser, apiKey, cacheManager);
         this.resourceRe = SOURCE_RE;
         this.resourceUrl = SOURCE_URL;
         this.resourceName = "source";

@@ -25,7 +25,7 @@ public class Centroid extends AbstractResource {
      *
      */
     public Centroid() {
-    		super.init(null, null, false, null);
+    	super.init(null, null, null);
         this.resourceRe = CENTROID_RE;
         this.resourceUrl = CENTROID_URL;
         this.resourceName = "centroid";
@@ -35,9 +35,8 @@ public class Centroid extends AbstractResource {
      * Constructor
      *
      */
-    public Centroid(final String apiUser, final String apiKey,
-            final boolean devMode) {
-    		super.init(apiUser, apiKey, devMode, null);
+    public Centroid(final String apiUser, final String apiKey) {
+    	super.init(apiUser, apiKey, null);
         this.resourceRe = CENTROID_RE;
         this.resourceUrl = CENTROID_URL;
         this.resourceName = "centroid";
@@ -47,9 +46,8 @@ public class Centroid extends AbstractResource {
      * Constructor
      *
      */
-    public Centroid(final String apiUser, final String apiKey,
-            final boolean devMode, final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, devMode, cacheManager);
+    public Centroid(final String apiUser, final String apiKey, final CacheManager cacheManager) {
+    	super.init(apiUser, apiKey, cacheManager);
         this.resourceRe = CENTROID_RE;
         this.resourceUrl = CENTROID_URL;
         this.resourceName = "centroid";
@@ -112,8 +110,7 @@ public class Centroid extends AbstractResource {
             if (waitTime > 0) {
                 int count = 0;
                 while (count < retries
-                        && !BigMLClient.getInstance(this.devMode)
-                                .clusterIsReady(clusterId)) {
+                        && !BigMLClient.getInstance().clusterIsReady(clusterId)) {
                     Thread.sleep(waitTime);
                     count++;
                 }

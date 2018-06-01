@@ -22,7 +22,7 @@ public class LogisticRegression extends AbstractModelResource {
      *
      */
     public LogisticRegression() {
-    		super.init(null, null, false, null);
+    	super.init(null, null, null);
         this.resourceRe = LOGISTICREGRESSION_RE;
         this.resourceUrl = LOGISTICREGRESSION_URL;
         this.resourceName = "logisticregression";
@@ -32,9 +32,8 @@ public class LogisticRegression extends AbstractModelResource {
      * Constructor
      *
      */
-    public LogisticRegression(final String apiUser, final String apiKey,
-            final boolean devMode) {
-    		super.init(apiUser, apiKey, devMode, null);
+    public LogisticRegression(final String apiUser, final String apiKey) {
+    	super.init(apiUser, apiKey, null);
         this.resourceRe = LOGISTICREGRESSION_RE;
         this.resourceUrl = LOGISTICREGRESSION_URL;
         this.resourceName = "logisticregression";
@@ -44,9 +43,8 @@ public class LogisticRegression extends AbstractModelResource {
      * Constructor
      *
      */
-    public LogisticRegression(final String apiUser, final String apiKey,
-            final boolean devMode, final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, devMode, cacheManager);
+    public LogisticRegression(final String apiUser, final String apiKey, final CacheManager cacheManager) {
+    	super.init(apiUser, apiKey, cacheManager);
         this.resourceRe = LOGISTICREGRESSION_RE;
         this.resourceUrl = LOGISTICREGRESSION_URL;
         this.resourceName = "logisticregression";

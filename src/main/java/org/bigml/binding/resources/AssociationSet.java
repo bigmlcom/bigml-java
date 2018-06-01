@@ -25,7 +25,7 @@ public class AssociationSet extends AbstractResource {
      *
      */
     public AssociationSet() {
-    		super.init(null, null, false, null);
+    	super.init(null, null, null);
         this.resourceRe = ASSOCIATIONSET_RE;
         this.resourceUrl = ASSOCIATIONSET_URL;
         this.resourceName = "association set";
@@ -35,9 +35,8 @@ public class AssociationSet extends AbstractResource {
      * Constructor
      *
      */
-    public AssociationSet(final String apiUser, final String apiKey,
-            final boolean devMode) {
-    		super.init(apiUser, apiKey, devMode, null);
+    public AssociationSet(final String apiUser, final String apiKey) {
+    	super.init(apiUser, apiKey, null);
         this.resourceRe = ASSOCIATIONSET_RE;
         this.resourceUrl = ASSOCIATIONSET_URL;
         this.resourceName = "association set";
@@ -48,9 +47,8 @@ public class AssociationSet extends AbstractResource {
      * Constructor
      *
      */
-    public AssociationSet(final String apiUser, final String apiKey,
-            final boolean devMode, final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, devMode, cacheManager);
+    public AssociationSet(final String apiUser, final String apiKey, final CacheManager cacheManager) {
+    	super.init(apiUser, apiKey, cacheManager);
         this.resourceRe = ASSOCIATIONSET_RE;
         this.resourceUrl = ASSOCIATIONSET_URL;
         this.resourceName = "association set";
@@ -94,8 +92,7 @@ public class AssociationSet extends AbstractResource {
             if (waitTime > 0) {
                 int count = 0;
                 while (count < retries
-                        && !BigMLClient.getInstance(this.devMode)
-                                .associationIsReady(associationId)) {
+                        && !BigMLClient.getInstance().associationIsReady(associationId)) {
                     Thread.sleep(waitTime);
                     count++;
                 }

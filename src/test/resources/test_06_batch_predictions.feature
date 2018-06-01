@@ -3,7 +3,7 @@ Feature: Create Batch Predictions
     I need to create a model and a dataset first
 
   Scenario Outline: Successfully creating a batch prediction:
-        Given that I use development mode with seed="<seed>"
+        Given that I use production mode with seed="<seed>"
         Given I create a data source uploading a "<data>" file
         And I wait until the source is ready less than <time_1> secs
         And I add the unitTest tag to the data source waiting less than <time_1> secs
@@ -23,7 +23,7 @@ Feature: Create Batch Predictions
           | data/iris.csv | BigML |   30      | 30     | 50     | 50     | data/downloaded_batch_predictions.csv | data/batch_predictions.csv |
 
   Scenario Outline: Successfully creating a batch prediction for an ensemble:
-        Given that I use development mode with seed="<seed>"
+        Given that I use production mode with seed="<seed>"
         Given I create a data source uploading a "<data>" file
         And I wait until the source is ready less than <time_1> secs
         And I add the unitTest tag to the data source waiting less than <time_1> secs
@@ -43,7 +43,7 @@ Feature: Create Batch Predictions
 
 
 	Scenario Outline: Successfully creating a batch centroid from a cluster:
-        Given that I use development mode with seed="<seed>"
+        Given that I use production mode with seed="<seed>"
         Given I create a data source uploading a "<data>" file
         And I wait until the source is ready less than <time_1> secs
         And I add the unitTest tag to the data source waiting less than <time_1> secs
@@ -63,7 +63,7 @@ Feature: Create Batch Predictions
 
 
     Scenario Outline: Successfully creating a source from a batch prediction:
-        Given that I use development mode with seed="<seed>"
+        Given that I use production mode with seed="<seed>"
         Given I create a data source uploading a "<data>" file
         And I wait until the source is ready less than <time_1> secs
         And I add the unitTest tag to the data source waiting less than <time_1> secs
@@ -102,10 +102,8 @@ Feature: Create Batch Predictions
           | data/tiny_kdd.csv | 30      | 30     | 50     | 50     | data/downloaded_batch_predictions_a.csv | data/batch_predictions_a.csv |
 
 
-
-
     Scenario Outline: Successfully creating a batch prediction for a logistic regression:
-        Given that I use development mode with seed="<seed>"
+        Given that I use production mode with seed="<seed>"
         Given I create a data source uploading a "<data>" file
         And I wait until the source is ready less than <time_1> secs
         And I add the unitTest tag to the data source waiting less than <time_1> secs

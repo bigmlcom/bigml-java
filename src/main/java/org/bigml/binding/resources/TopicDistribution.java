@@ -25,7 +25,7 @@ public class TopicDistribution extends AbstractResource {
      *
      */
     public TopicDistribution() {
-    		super.init(null, null, false, null);
+    	super.init(null, null, null);
         this.resourceRe = TOPICDISTRIBUTION_RE;
         this.resourceUrl = TOPICDISTRIBUTION_URL;
         this.resourceName = "topic distribution";
@@ -35,9 +35,8 @@ public class TopicDistribution extends AbstractResource {
      * Constructor
      *
      */
-    public TopicDistribution(final String apiUser, final String apiKey,
-            final boolean devMode) {
-    		super.init(apiUser, apiKey, devMode, null);
+    public TopicDistribution(final String apiUser, final String apiKey) {
+    	super.init(apiUser, apiKey, null);
         this.resourceRe = TOPICDISTRIBUTION_RE;
         this.resourceUrl = TOPICDISTRIBUTION_URL;
         this.resourceName = "topic distribution";
@@ -48,9 +47,8 @@ public class TopicDistribution extends AbstractResource {
      * Constructor
      *
      */
-    public TopicDistribution(final String apiUser, final String apiKey,
-            final boolean devMode, final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, devMode, cacheManager);
+    public TopicDistribution(final String apiUser, final String apiKey, final CacheManager cacheManager) {
+    	super.init(apiUser, apiKey, cacheManager);
         this.resourceRe = TOPICDISTRIBUTION_RE;
         this.resourceUrl = TOPICDISTRIBUTION_URL;
         this.resourceName = "topic distribution";
@@ -94,8 +92,7 @@ public class TopicDistribution extends AbstractResource {
             if (waitTime > 0) {
                 int count = 0;
                 while (count < retries
-                        && !BigMLClient.getInstance(this.devMode)
-                                .topicModelIsReady(topicModelId)) {
+                        && !BigMLClient.getInstance().topicModelIsReady(topicModelId)) {
                     Thread.sleep(waitTime);
                     count++;
                 }

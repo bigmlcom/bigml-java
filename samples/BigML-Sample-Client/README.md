@@ -49,16 +49,26 @@ BigML API credentials
 ---------------------
 
 You'll need to set your own API credentials in
-`src/main/resources/binding.properties`. The instance of the `BigMLClient`
-will use these credentials to authenticate your calls to the API. The file
-should contain the constants below, that define the domain that
-the calls will point to, and the user authentication information
+`src/main/resources/binding.properties` or in the environment
+variables ``BIGML_USERNAME`` and ``BIGML_API_KEY`` respectively. 
+The instance of the `BigMLClient` will use these credentials to authenticate 
+your calls to the API. 
+
+The binding.properties file should contain the constants below, that define the 
+domain that the calls will point to, and the user authentication information
 
 ``` bash
     BIGML_URL=https://bigml.io/andromeda/
-    BIGML_DEV_URL=https://bigml.io/dev/andromeda/
     BIGML_USERNAME=
     BIGML_API_KEY=
+```
+
+If you use environemnt variables you can add the following lines to your 
+``.bashrc`` or ``.bash_profile`` to set those variables automatically when you 
+log in:
+
+``` export BIGML_USERNAME=myusername
+    export BIGML_API_KEY=ae579e7e53fb9abd646a6ff8aa99d4afe83ac291
 ```
 
 You can find your API Key at https://bigml.com/account/apikey

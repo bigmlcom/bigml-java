@@ -4,7 +4,7 @@ Feature: Rename duplicated names
     Then I need to create a local model
 
     Scenario Outline: Successfully changing duplicated field names:
-        Given that I use development mode with seed="<seed>"
+        Given that I use production mode with seed="<seed>"
         Given I create a data source uploading a "<data>" file
         And I wait until the source is ready less than <time_1> secs
         And I add the unitTest tag to the data source waiting less than <time_1> secs

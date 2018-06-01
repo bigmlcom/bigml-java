@@ -25,7 +25,7 @@ public class BatchPrediction extends AbstractResource {
      *
      */
     public BatchPrediction() {
-    		super.init(null, null, false, null);
+    	super.init(null, null, null);
         this.resourceRe = BATCH_PREDICTION_RE;
         this.resourceUrl = BATCH_PREDICTION_URL;
         this.resourceName = "batch prediction";
@@ -35,9 +35,8 @@ public class BatchPrediction extends AbstractResource {
      * Constructor
      *
      */
-    public BatchPrediction(final String apiUser, final String apiKey,
-            final boolean devMode) {
-    		super.init(apiUser, apiKey, devMode, null);
+    public BatchPrediction(final String apiUser, final String apiKey) {
+    	super.init(apiUser, apiKey, null);
         this.resourceRe = BATCH_PREDICTION_RE;
         this.resourceUrl = BATCH_PREDICTION_URL;
         this.resourceName = "batch prediction";
@@ -47,9 +46,8 @@ public class BatchPrediction extends AbstractResource {
      * Constructor
      *
      */
-    public BatchPrediction(final String apiUser, final String apiKey,
-            final boolean devMode, final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, devMode, cacheManager);
+    public BatchPrediction(final String apiUser, final String apiKey, final CacheManager cacheManager) {
+    	super.init(apiUser, apiKey, cacheManager);
         this.resourceRe = BATCH_PREDICTION_RE;
         this.resourceUrl = BATCH_PREDICTION_URL;
         this.resourceName = "batch prediction";
@@ -136,8 +134,7 @@ public class BatchPrediction extends AbstractResource {
 
                 if (model.matches(MODEL_RE)) {
                     while (count < retries
-                            && !BigMLClient.getInstance(this.devMode)
-                                    .modelIsReady(model)) {
+                            && !BigMLClient.getInstance().modelIsReady(model)) {
                         Thread.sleep(waitTime);
                         count++;
                     }
@@ -145,8 +142,7 @@ public class BatchPrediction extends AbstractResource {
 
                 if (model.matches(ENSEMBLE_RE)) {
                     while (count < retries
-                            && !BigMLClient.getInstance(this.devMode)
-                                    .ensembleIsReady(model)) {
+                            && !BigMLClient.getInstance().ensembleIsReady(model)) {
                         Thread.sleep(waitTime);
                         count++;
                     }
@@ -154,8 +150,7 @@ public class BatchPrediction extends AbstractResource {
 
                 if (model.matches(LOGISTICREGRESSION_RE)) {
                     while (count < retries
-                            && !BigMLClient.getInstance(this.devMode)
-                                    .logisticRegressionIsReady(model)) {
+                            && !BigMLClient.getInstance().logisticRegressionIsReady(model)) {
                         Thread.sleep(waitTime);
                         count++;
                     }
@@ -163,8 +158,7 @@ public class BatchPrediction extends AbstractResource {
 
                 count = 0;
                 while (count < retries
-                        && !BigMLClient.getInstance(this.devMode)
-                                .datasetIsReady(datasetId)) {
+                        && !BigMLClient.getInstance().datasetIsReady(datasetId)) {
                     Thread.sleep(waitTime);
                     count++;
                 }

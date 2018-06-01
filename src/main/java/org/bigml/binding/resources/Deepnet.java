@@ -23,7 +23,7 @@ public class Deepnet extends AbstractModelResource {
      *
      */
     public Deepnet() {
-        super.init(null, null, false, null);
+        super.init(null, null, null);
         this.resourceRe = DEEPNET_RE;
         this.resourceUrl = DEEPNET_URL;
         this.resourceName = "deepnet";
@@ -33,9 +33,8 @@ public class Deepnet extends AbstractModelResource {
      * Constructor
      *
      */
-    public Deepnet(final String apiUser, final String apiKey,
-            final boolean devMode) {
-        super.init(apiUser, apiKey, devMode, null);
+    public Deepnet(final String apiUser, final String apiKey) {
+        super.init(apiUser, apiKey, null);
         this.resourceRe = DEEPNET_RE;
         this.resourceUrl = DEEPNET_URL;
         this.resourceName = "deepnet";
@@ -46,9 +45,8 @@ public class Deepnet extends AbstractModelResource {
      * Constructor
      *
      */
-    public Deepnet(final String apiUser, final String apiKey,
-            final boolean devMode, final CacheManager cacheManager) {
-        super.init(apiUser, apiKey, devMode, cacheManager);
+    public Deepnet(final String apiUser, final String apiKey, final CacheManager cacheManager) {
+        super.init(apiUser, apiKey, cacheManager);
         this.resourceRe = DEEPNET_RE;
         this.resourceUrl = DEEPNET_URL;
         this.resourceName = "deepnet";

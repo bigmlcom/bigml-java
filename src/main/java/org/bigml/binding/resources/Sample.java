@@ -30,7 +30,7 @@ public class Sample extends AbstractResource {
      *
      */
     public Sample() {
-    		super.init(null, null, false, null);
+    	super.init(null, null, null);
         this.resourceRe = SAMPLE_RE;
         this.resourceUrl = SAMPLE_URL;
         this.resourceName = "sample";
@@ -40,9 +40,8 @@ public class Sample extends AbstractResource {
      * Constructor
      *
      */
-    public Sample(final String apiUser, final String apiKey,
-                  final boolean devMode) {
-    		super.init(apiUser, apiKey, devMode, null);
+    public Sample(final String apiUser, final String apiKey) {
+    	super.init(apiUser, apiKey, null);
         this.resourceRe = SAMPLE_RE;
         this.resourceUrl = SAMPLE_URL;
         this.resourceName = "sample";
@@ -52,9 +51,8 @@ public class Sample extends AbstractResource {
      * Constructor
      *
      */
-    public Sample(final String apiUser, final String apiKey,
-                  final boolean devMode, final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, devMode, cacheManager);
+    public Sample(final String apiUser, final String apiKey, final CacheManager cacheManager) {
+    	super.init(apiUser, apiKey, cacheManager);
         this.resourceRe = SAMPLE_RE;
         this.resourceUrl = SAMPLE_URL;
         this.resourceName = "sample";
@@ -101,8 +99,7 @@ public class Sample extends AbstractResource {
                 if (waitTime > 0) {
                     int count = 0;
                     while (count < retries
-                            && !BigMLClient.getInstance(this.devMode)
-                            .datasetIsReady(datasetId)) {
+                            && !BigMLClient.getInstance().datasetIsReady(datasetId)) {
                         Thread.sleep(waitTime);
                         count++;
                     }

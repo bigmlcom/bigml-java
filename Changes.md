@@ -1,5 +1,12 @@
 # Changes in the BigML.io Java bindings
 
+## 1.8.0 version
+
+### Improvements
+
+* DevMode removed
+
+
 ## 1.7.0 version
 
 ### Improvements

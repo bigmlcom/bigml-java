@@ -61,7 +61,8 @@ transmitted over HTTPS.
 
 This module will look for your username and API key in the
 ``src/main/resources/binding.properties`` file. Alternatively, you can respectively set
-the JVM parameters ``BIGML_USERNAME`` and ``BIGML_API_KEY``  with ``-D``.
+the JVM parameters ``BIGML_USERNAME`` and ``BIGML_API_KEY``  with ``-D`` or 
+use envronment variables.
 
 With that set up, connecting to BigML is a breeze.
 First, import ``BigMLClient``:
@@ -84,41 +85,23 @@ the BigMLClient class as follows:
     BigMLClient api = BigMLClient.getInstance("myusername",
         "ae579e7e53fb9abd646a6ff8aa99d4afe83ac291", false);
 
-Note that the 3rd parameter ``devMode`` determines where your resources will
-be created, either production or development.
-You can initialize the library to work in the Sandbox environment by passing
-``true`` for this parameter:
-
-.. code-block:: java
-
-    BigMLClient api = BigMLClient.getInstance(true);
-
-or:
-
-.. code-block:: java
-
-    BigMLClient api = BigMLClient.getInstance("myusername",
-        "ae579e7e53fb9abd646a6ff8aa99d4afe83ac291", true);
-
 WARNING: ``getInstance`` also takes 2-String parameters, and they are NOT
 your username and API key, but ``seed`` and ``storage``.
 
-For `Virtual Private Cloud <https://bigml.com/pricing/vpc>`_ setups, you can change the remote server URL
-to the VPC particular one by either setting the ``BIGML_URL`` or
-``BIGML_DEV_URL`` in ``binding.properties`` or in the JVM environment.
+For `Virtual Private Cloud <https://bigml.com/pricing/vpc>`_ setups, you can 
+change the remote server URL to the VPC particular one by either setting the 
+``BIGML_URL`` in ``binding.properties`` or in the JVM environment.
 By default, they have the following values:
 
 .. code-block:: java
 
     BIGML_URL=https://bigml.io/andromeda/
-    BIGML_DEV_URL=https://bigml.io/dev/andromeda/
 
 If you are in Australia or New Zealand, you can change them to:
 
 .. code-block:: java
 
     BIGML_URL=https://au.bigml.io/andromeda/
-    BIGML_DEV_URL=https://au.bigml.io/dev/andromeda/
 
 The corresponding SSL REST calls will be directed to your private domain
 henceforth.
@@ -718,7 +701,6 @@ cluster ``object`` object:
         "dataset_status":true,
         "dataset_type":0,
         "description":"",
-        "dev":true,
         "excluded_fields":[],
         "field_scales":{},
         "fields_meta":{
@@ -829,7 +811,6 @@ anomaly ``object`` object:
         "dataset_status":true,
         "dataset_type":0,
         "description":"",
-        "dev":true,
         "excluded_fields":[],
         "fields_meta":{
             "count":5,

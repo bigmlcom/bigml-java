@@ -24,7 +24,7 @@ public class Correlation extends AbstractModelResource {
      *
      */
     public Correlation() {
-    		super.init(null, null, false, null);
+    	super.init(null, null, null);
         this.resourceRe = CORRELATION_RE;
         this.resourceUrl = CORRELATION_URL;
         this.resourceName = "correlation";
@@ -34,9 +34,8 @@ public class Correlation extends AbstractModelResource {
      * Constructor
      *
      */
-    public Correlation(final String apiUser, final String apiKey,
-                   final boolean devMode) {
-    		super.init(apiUser, apiKey, devMode, null);
+    public Correlation(final String apiUser, final String apiKey) {
+    	super.init(apiUser, apiKey, null);
         this.resourceRe = CORRELATION_RE;
         this.resourceUrl = CORRELATION_URL;
         this.resourceName = "correlation";
@@ -46,9 +45,8 @@ public class Correlation extends AbstractModelResource {
      * Constructor
      *
      */
-    public Correlation(final String apiUser, final String apiKey,
-                   final boolean devMode, final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, devMode, cacheManager);
+    public Correlation(final String apiUser, final String apiKey, final CacheManager cacheManager) {
+    	super.init(apiUser, apiKey, cacheManager);
         this.resourceRe = CORRELATION_RE;
         this.resourceUrl = CORRELATION_URL;
         this.resourceName = "correlation";

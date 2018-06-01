@@ -25,7 +25,7 @@ public class BatchTopicDistribution extends AbstractResource {
      *
      */
     public BatchTopicDistribution() {
-    		super.init(null, null, false, null);
+    	super.init(null, null, null);
         this.resourceRe = BATCH_TOPICDISTRIBUTION_RE;
         this.resourceUrl = BATCH_TOPICDISTRIBUTION_URL;
         this.resourceName = "batch topic distribution";
@@ -35,9 +35,8 @@ public class BatchTopicDistribution extends AbstractResource {
      * Constructor
      *
      */
-    public BatchTopicDistribution(final String apiUser, final String apiKey,
-                             final boolean devMode) {
-    		super.init(apiUser, apiKey, devMode, null);
+    public BatchTopicDistribution(final String apiUser, final String apiKey) {
+    	super.init(apiUser, apiKey, null);
         this.resourceRe = BATCH_TOPICDISTRIBUTION_RE;
         this.resourceUrl = BATCH_TOPICDISTRIBUTION_URL;
         this.resourceName = "batch topic distribution";
@@ -47,9 +46,8 @@ public class BatchTopicDistribution extends AbstractResource {
      * Constructor
      *
      */
-    public BatchTopicDistribution(final String apiUser, final String apiKey,
-                             final boolean devMode, final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, devMode, cacheManager);
+    public BatchTopicDistribution(final String apiUser, final String apiKey, final CacheManager cacheManager) {
+    	super.init(apiUser, apiKey, cacheManager);
         this.resourceRe = BATCH_TOPICDISTRIBUTION_RE;
         this.resourceUrl = BATCH_TOPICDISTRIBUTION_URL;
         this.resourceName = "batch topic distribution";
@@ -97,8 +95,7 @@ public class BatchTopicDistribution extends AbstractResource {
             if (waitTime > 0) {
                 int count = 0;
                 while (count < retries
-                        && !BigMLClient.getInstance(this.devMode)
-                                .topicModelIsReady(topicModelId)) {
+                        && !BigMLClient.getInstance().topicModelIsReady(topicModelId)) {
                     Thread.sleep(waitTime);
                     count++;
                 }
@@ -107,8 +104,7 @@ public class BatchTopicDistribution extends AbstractResource {
             if (waitTime > 0) {
                 int count = 0;
                 while (count < retries
-                        && !BigMLClient.getInstance(this.devMode)
-                                .datasetIsReady(datasetId)) {
+                        && !BigMLClient.getInstance().datasetIsReady(datasetId)) {
                     Thread.sleep(waitTime);
                     count++;
                 }

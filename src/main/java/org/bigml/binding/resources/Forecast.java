@@ -25,7 +25,7 @@ public class Forecast extends AbstractResource {
      *
      */
     public Forecast() {
-    		super.init(null, null, false, null);
+    	super.init(null, null, null);
         this.resourceRe = FORECAST_RE;
         this.resourceUrl = FORECAST_URL;
         this.resourceName = "forecast";
@@ -35,9 +35,8 @@ public class Forecast extends AbstractResource {
      * Constructor
      *
      */
-    public Forecast(final String apiUser, final String apiKey,
-            final boolean devMode) {
-    		super.init(apiUser, apiKey, devMode, null);
+    public Forecast(final String apiUser, final String apiKey) {
+    	super.init(apiUser, apiKey, null);
         this.resourceRe = FORECAST_RE;
         this.resourceUrl = FORECAST_URL;
         this.resourceName = "forecast";
@@ -48,9 +47,8 @@ public class Forecast extends AbstractResource {
      * Constructor
      *
      */
-    public Forecast(final String apiUser, final String apiKey,
-            final boolean devMode, final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, devMode, cacheManager);
+    public Forecast(final String apiUser, final String apiKey, final CacheManager cacheManager) {
+    	super.init(apiUser, apiKey, cacheManager);
         this.resourceRe = FORECAST_RE;
         this.resourceUrl = FORECAST_URL;
         this.resourceName = "forecast";
@@ -94,8 +92,7 @@ public class Forecast extends AbstractResource {
             if (waitTime > 0) {
                 int count = 0;
                 while (count < retries
-                        && !BigMLClient.getInstance(this.devMode)
-                                .timeSeriesIsReady(timeSeriesId)) {
+                        && !BigMLClient.getInstance().timeSeriesIsReady(timeSeriesId)) {
                     Thread.sleep(waitTime);
                     count++;
                 }

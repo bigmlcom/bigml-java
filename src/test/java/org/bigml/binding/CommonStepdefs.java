@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import cucumber.annotation.en.Given;
 import cucumber.annotation.en.Then;
 
-import java.io.IOException;
 
 public class CommonStepdefs {
 
@@ -26,16 +25,15 @@ public class CommonStepdefs {
     @Given("^that I use production mode with seed=\"([^\"]*)\"$")
     public void that_I_use_production_mode_with_seed(String seed) throws Throwable {
         BigMLClient.resetInstance();
-        BigMLClient.getInstance(seed, false);
-        assertTrue("", BigMLClient.getInstance(false) != null);
+        BigMLClient.getInstance(null, null, seed, null);
+        assertTrue("", BigMLClient.getInstance() != null);
     }
 
     @Given("^that I use production mode with domain=\"(.*)\" and seed=\"([^\"]*)\"$")
     public void that_I_use_production_mode_with_domain(String bigmlDomain, String seed) throws Throwable {
         BigMLClient.resetInstance();
         BigMLClient.getInstance(bigmlDomain, System.getProperty("BIGML_USERNAME"),
-                System.getProperty("BIGML_API_KEY"),
-                seed, false, null);
+                System.getProperty("BIGML_API_KEY"), seed, null);
         assertTrue("", BigMLClient.getInstance() != null);
     }
 
@@ -43,51 +41,16 @@ public class CommonStepdefs {
     public void that_I_use_production_mode_with_domain(String bigmlDomain) throws Throwable {
         BigMLClient.resetInstance();
         BigMLClient.getInstance(bigmlDomain, System.getProperty("BIGML_USERNAME"),
-                System.getProperty("BIGML_API_KEY"),
-                null, false, null);
+                System.getProperty("BIGML_API_KEY"), null, null);
         assertTrue("", BigMLClient.getInstance() != null);
     }
 
     @Given("^that I use production mode$")
     public void that_I_use_production_mode() throws Throwable {
         BigMLClient.resetInstance();
-        BigMLClient.getInstance(false);
-        assertTrue("", BigMLClient.getInstance(false) != null);
-    }
-
-    @Given("^that I use development mode with seed=\"([^\"]*)\"$")
-    public void that_I_use_development_mode_with_seed(String seed) throws Throwable {
-        BigMLClient.resetInstance();
-        BigMLClient.getInstance(seed, true);
-        assertTrue("", BigMLClient.getInstance(true) != null);
-    }
-
-    @Given("^that I use development mode with domain=\"(.*)\" and seed=\"([^\"]*)\"$")
-    public void that_I_use_development_mode_with_domain_and_seed(String bigmlDomain, String seed) throws Throwable {
-        BigMLClient.resetInstance();
-        BigMLClient.getInstance(bigmlDomain, System.getProperty("BIGML_USERNAME"),
-                System.getProperty("BIGML_API_KEY"),
-                seed, true, null);
+        BigMLClient.getInstance();
         assertTrue("", BigMLClient.getInstance() != null);
     }
-
-
-    @Given("^that I use development mode with domain=\"([^\"]*)\"$")
-    public void that_I_use_development_mode_with_domain(String bigmlDomain) throws Throwable {
-        BigMLClient.resetInstance();
-        BigMLClient.getInstance(bigmlDomain, System.getProperty("BIGML_USERNAME"),
-                System.getProperty("BIGML_API_KEY"),
-                null, true, null);
-        assertTrue("", BigMLClient.getInstance() != null);
-    }
-
-    @Given("^that I use development mode$")
-    public void that_I_use_development_mode() throws Throwable {
-        BigMLClient.resetInstance();
-        BigMLClient.getInstance(true);
-        assertTrue("", BigMLClient.getInstance(true) != null);
-    }
-
 
     @Then("^test listing$")
     public void test_listing() throws AuthenticationException {

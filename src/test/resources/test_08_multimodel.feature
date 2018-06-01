@@ -3,7 +3,7 @@ Feature:  Create a model from a dataset list
     I need to create some datasets first
 
     Scenario Outline: Successfully creating a model from a dataset list:
-        Given that I use development mode with seed="<seed>"
+        Given that I use production mode with seed="<seed>"
         Given I create a data source uploading a "<data>" file
         And I wait until the source is ready less than <time_1> secs
         And I add the unitTest tag to the data source waiting less than <time_1> secs
@@ -24,7 +24,7 @@ Feature:  Create a model from a dataset list
 
 
     Scenario Outline: Successfully creating a model from a dataset list and predicting with it using median:
-        Given that I use development mode with seed="<seed>"
+        Given that I use production mode with seed="<seed>"
         Given I create a data source uploading a "<data>" file
         And I wait until the source is ready less than <time_1> secs
         And I add the unitTest tag to the data source waiting less than <time_1> secs

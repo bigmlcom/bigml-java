@@ -5,7 +5,6 @@ import org.bigml.binding.utils.CacheManager;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.misc.Cache;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,7 +15,7 @@ import java.util.Properties;
 
 /**
  * Entry point to create, retrieve, list, update, and delete sources, datasets,
- * models, predictions, evaluations and ensembles.
+ * models, predictions, evaluations, ensembles, etc.
  *
  * Full API documentation on the API can be found from BigML at:
  * https://bigml.com/developers
@@ -28,10 +27,6 @@ import java.util.Properties;
  * If left unspecified, `username` and `api_key` will default to the values of
  * the `BIGML_USERNAME` and `BIGML_API_KEY` environment variables respectively.
  *
- * If `dev_mode` is set to `True`, the API will be used in development mode
- * where the size of your datasets are limited but you are not charged any
- * credits.
- *
  * If storage is set to a directory name, the resources obtained in CRU
  * operations will be stored in the given directory.
  */
@@ -40,8 +35,7 @@ public class BigMLClient {
     // (current)
     // BigML version
     final public static String BIGML_URL = "https://bigml.io/";
-    final public static String BIGML_DEV_URL = "https://bigml.io/dev/";
-
+    
     final public static Locale DEFAUL_LOCALE = Locale.ENGLISH;
 
     /**
@@ -93,7 +87,6 @@ public class BigMLClient {
     private Deepnet deepnet;
 
     private Properties props;
-    private Boolean devMode = false;
     private String storage;
 
     private CacheManager cacheManager;
@@ -104,7 +97,7 @@ public class BigMLClient {
     public static BigMLClient getInstance() throws AuthenticationException {
         if (instance == null) {
             instance = new BigMLClient();
-            instance.init(false);
+            instance.init();
         }
         return instance;
     }
@@ -113,7 +106,7 @@ public class BigMLClient {
             throws AuthenticationException {
         if (instance == null) {
             instance = new BigMLClient();
-            instance.init(null, null, false, storage);
+            instance.init(null, null, null, storage);
         }
         return instance;
     }
@@ -122,75 +115,102 @@ public class BigMLClient {
             throws AuthenticationException {
         if (instance == null) {
             instance = new BigMLClient();
-            instance.init(null, null, seed, false, storage);
+            instance.init(null, null, seed, storage);
         }
         return instance;
     }
-
+   
+    @Deprecated
     public static BigMLClient getInstance(final boolean devMode)
             throws AuthenticationException {
         if (instance == null) {
             instance = new BigMLClient();
-            instance.init(devMode);
+            instance.init();
         }
         return instance;
     }
-
+    
+    @Deprecated
     public static BigMLClient getInstance(final String seed, final boolean devMode)
             throws AuthenticationException {
         if (instance == null) {
             instance = new BigMLClient();
-            instance.init(seed, devMode);
+            instance.init(seed);
         }
         return instance;
     }
-
+    
+    @Deprecated
     public static BigMLClient getInstance(final String apiUser,
             final String apiKey, final boolean devMode)
             throws AuthenticationException {
         if (instance == null) {
             instance = new BigMLClient();
-            instance.init(apiUser, apiKey, devMode);
+            instance.init(apiUser, apiKey);
         }
         return instance;
     }
-
+    
+    @Deprecated
     public static BigMLClient getInstance(final String apiUser,
             final String apiKey, final String seed, final boolean devMode)
             throws AuthenticationException {
         if (instance == null) {
             instance = new BigMLClient();
-            instance.init(apiUser, apiKey, seed, devMode);
+            instance.init(apiUser, apiKey, seed, null);
         }
         return instance;
     }
-
+    
+    @Deprecated
     public static BigMLClient getInstance(final String apiUser,
             final String apiKey, final boolean devMode, final String storage)
             throws AuthenticationException {
         if (instance == null) {
             instance = new BigMLClient();
-            instance.init(apiUser, apiKey, devMode, storage);
+            instance.init(apiUser, apiKey, null, storage);
         }
         return instance;
     }
-
+    
+    @Deprecated
     public static BigMLClient getInstance(final String apiUser,
             final String apiKey, final String seed, final boolean devMode, final String storage)
             throws AuthenticationException {
         if (instance == null) {
             instance = new BigMLClient();
-            instance.init(apiUser, apiKey, seed, devMode, storage);
+            instance.init(apiUser, apiKey, seed, storage);
         }
         return instance;
     }
-
+    
+    public static BigMLClient getInstance(final String apiUser,
+            final String apiKey, final String seed, final String storage)
+            throws AuthenticationException {
+        if (instance == null) {
+            instance = new BigMLClient();
+            instance.init(apiUser, apiKey, seed, storage);
+        }
+        return instance;
+    }
+    
+    @Deprecated
     public static BigMLClient getInstance(final String bigmlDomain, final String apiUser,
             final String apiKey, final String seed, final boolean devMode, final String storage)
             throws AuthenticationException {
         if (instance == null) {
             instance = new BigMLClient();
-            instance.init(bigmlDomain, apiUser, apiKey, seed, devMode, storage);
+            instance.init(bigmlDomain, apiUser, apiKey, seed, storage);
+        }
+        return instance;
+    }
+    
+    public static BigMLClient getInstance(final String bigmlDomain, final String apiUser,
+            final String apiKey, final String seed, final String storage)
+            throws AuthenticationException {
+        if (instance == null) {
+            instance = new BigMLClient();
+            instance.init(bigmlDomain, apiUser, apiKey, seed, storage);
         }
         return instance;
     }
@@ -205,12 +225,11 @@ public class BigMLClient {
         value = System.getenv(setting);
       return value;
     }
-
+    
     /**
      * Initialization object.
      */
-    private void init(final boolean devMode) throws AuthenticationException {
-        this.devMode = devMode;
+    private void init() throws AuthenticationException {
         initConfiguration();
         initBigmlSettings(null, null, null);
         initResources();
@@ -219,55 +238,28 @@ public class BigMLClient {
     /**
      * Initialization object.
      */
-    private void init(final String seed, final boolean devMode) throws AuthenticationException {
-        this.devMode = devMode;
+    private void init(final String seed) throws AuthenticationException {
         initConfiguration();
-        initBigmlSettings(null, null, null);
+        initBigmlSettings(null, null, seed);
         initResources();
     }
+    
 
     /**
      * Initialization object.
      */
-    private void init(final String apiUser, final String apiKey,
-            final boolean devMode) throws AuthenticationException {
-        this.devMode = devMode;
+    private void init(final String apiUser, final String apiKey) throws AuthenticationException {
         initConfiguration();
         initBigmlSettings(apiUser, apiKey, null);
         initResources();
     }
 
+    
     /**
      * Initialization object.
      */
-    private void init(final String apiUser, final String apiKey, String seed,
-            final boolean devMode) throws AuthenticationException {
-        this.devMode = devMode;
-        initConfiguration();
-        initBigmlSettings(apiUser, apiKey, seed);
-        initResources();
-    }
-
-    /**
-     * Initialization object.
-     */
-    private void init(final String apiUser, final String apiKey,
-            final boolean devMode, final String storage)
+    private void init(final String apiUser, final String apiKey, String seed, final String storage)
             throws AuthenticationException {
-        this.devMode = devMode;
-        this.storage = storage;
-        initConfiguration();
-        initBigmlSettings(apiUser, apiKey, seed);
-        initResources();
-    }
-
-    /**
-     * Initialization object.
-     */
-    private void init(final String apiUser, final String apiKey, String seed,
-            final boolean devMode, final String storage)
-            throws AuthenticationException {
-        this.devMode = devMode;
         this.storage = storage;
         initConfiguration();
         initBigmlSettings(apiUser, apiKey, seed);
@@ -278,11 +270,9 @@ public class BigMLClient {
      * Initialization object.
      */
     private void init(final String bigmlDomain, final String apiUser,
-                      final String apiKey, String seed,
-            final boolean devMode, final String storage)
+                      final String apiKey, String seed, final String storage)
             throws AuthenticationException {
         this.bigmlDomain = bigmlDomain;
-        this.devMode = devMode;
         this.storage = storage;
         initConfiguration();
         initBigmlSettings(apiUser, apiKey, seed);
@@ -325,16 +315,14 @@ public class BigMLClient {
             fis.close();
 
             if( bigmlDomain != null && bigmlDomain.length() > 0 ) {
-                bigmlUrl = this.devMode ? (bigmlDomain + (bigmlDomain.endsWith("/") ? "" : "/") +
-                        "dev/") : (bigmlDomain + (bigmlDomain.endsWith("/") ? "" : "/"));
+                bigmlUrl = (bigmlDomain + (bigmlDomain.endsWith("/") ? "" : "/"));
             } else {
-                bigmlUrl = this.devMode ? props.getProperty("BIGML_DEV_URL",
-                        BIGML_DEV_URL) : props.getProperty("BIGML_URL", BIGML_URL);
+                bigmlUrl = props.getProperty("BIGML_URL", BIGML_URL);
             }
 
         } catch (Throwable e) {
             // logger.error("Error loading configuration", e);
-            bigmlUrl = this.devMode ? BIGML_DEV_URL : BIGML_URL;
+            bigmlUrl = BIGML_URL;
         }
     }
 
@@ -342,58 +330,36 @@ public class BigMLClient {
         // Lets create the storage folder in it was informed
         this.cacheManager = new CacheManager(storage);
 
-        source = new Source(this.bigmlUser, this.bigmlApiKey, this.devMode, cacheManager);
-        dataset = new Dataset(this.bigmlUser, this.bigmlApiKey, this.devMode, cacheManager);
-        model = new Model(this.bigmlUser, this.bigmlApiKey, this.devMode, cacheManager);
-        prediction = new Prediction(this.bigmlUser, this.bigmlApiKey,
-                this.devMode, cacheManager);
-        evaluation = new Evaluation(this.bigmlUser, this.bigmlApiKey,
-                this.devMode, cacheManager);
-        ensemble = new Ensemble(this.bigmlUser, this.bigmlApiKey, this.devMode, cacheManager);
-        anomaly = new Anomaly(this.bigmlUser, this.bigmlApiKey, this.devMode, cacheManager);
-        anomalyScore = new AnomalyScore(this.bigmlUser, this.bigmlApiKey, this.devMode, cacheManager);
-        batchAnomalyScore = new BatchAnomalyScore(this.bigmlUser, this.bigmlApiKey,
-                this.devMode, cacheManager);
-        batchPrediction = new BatchPrediction(this.bigmlUser, this.bigmlApiKey,
-                this.devMode, cacheManager);
-        cluster = new Cluster(this.bigmlUser, this.bigmlApiKey, this.devMode, cacheManager);
-        centroid = new Centroid(this.bigmlUser, this.bigmlApiKey, this.devMode, cacheManager);
-        batchCentroid = new BatchCentroid(this.bigmlUser, this.bigmlApiKey,
-                this.devMode, cacheManager);
-        project = new Project(this.bigmlUser, this.bigmlApiKey,
-                this.devMode, cacheManager);
-        sample = new Sample(this.bigmlUser, this.bigmlApiKey,
-                this.devMode, cacheManager);
-        correlation = new Correlation(this.bigmlUser, this.bigmlApiKey,
-                this.devMode, cacheManager);
-        statisticalTest = new StatisticalTest(this.bigmlUser, this.bigmlApiKey,
-                this.devMode, cacheManager);
-        logisticRegression = new LogisticRegression(this.bigmlUser, this.bigmlApiKey,
-                this.devMode, cacheManager);
-        script = new Script(this.bigmlUser, this.bigmlApiKey,
-                this.devMode, cacheManager);
-        execution = new Execution(this.bigmlUser, this.bigmlApiKey,
-                this.devMode, cacheManager);
-        library = new Library(this.bigmlUser, this.bigmlApiKey,
-                this.devMode, cacheManager);
-        association = new Association(this.bigmlUser, this.bigmlApiKey,
-                this.devMode, cacheManager);
-        associationSet = new AssociationSet(this.bigmlUser, this.bigmlApiKey,
-                this.devMode, cacheManager);
-        topicModel = new TopicModel(this.bigmlUser, this.bigmlApiKey,
-                this.devMode, cacheManager);
-        topicDistribution = new TopicDistribution(this.bigmlUser, this.bigmlApiKey,
-                this.devMode, cacheManager);
-        batchTopicDistribution = new BatchTopicDistribution(this.bigmlUser, this.bigmlApiKey,
-                this.devMode, cacheManager);
-        configuration = new Configuration(this.bigmlUser, this.bigmlApiKey,
-                this.devMode, cacheManager);
-        timeSeries = new TimeSeries(this.bigmlUser, this.bigmlApiKey,
-                this.devMode, cacheManager);
-        forecast = new Forecast(this.bigmlUser, this.bigmlApiKey,
-                this.devMode, cacheManager);
-        deepnet = new Deepnet(this.bigmlUser, this.bigmlApiKey,
-                this.devMode, cacheManager);
+        source = new Source(this.bigmlUser, this.bigmlApiKey, cacheManager);
+        dataset = new Dataset(this.bigmlUser, this.bigmlApiKey, cacheManager);
+        model = new Model(this.bigmlUser, this.bigmlApiKey, cacheManager);
+        prediction = new Prediction(this.bigmlUser, this.bigmlApiKey, cacheManager);
+        evaluation = new Evaluation(this.bigmlUser, this.bigmlApiKey, cacheManager);
+        ensemble = new Ensemble(this.bigmlUser, this.bigmlApiKey, cacheManager);
+        anomaly = new Anomaly(this.bigmlUser, this.bigmlApiKey, cacheManager);
+        anomalyScore = new AnomalyScore(this.bigmlUser, this.bigmlApiKey, cacheManager);
+        batchAnomalyScore = new BatchAnomalyScore(this.bigmlUser, this.bigmlApiKey, cacheManager);
+        batchPrediction = new BatchPrediction(this.bigmlUser, this.bigmlApiKey, cacheManager);
+        cluster = new Cluster(this.bigmlUser, this.bigmlApiKey, cacheManager);
+        centroid = new Centroid(this.bigmlUser, this.bigmlApiKey, cacheManager);
+        batchCentroid = new BatchCentroid(this.bigmlUser, this.bigmlApiKey, cacheManager);
+        project = new Project(this.bigmlUser, this.bigmlApiKey, cacheManager);
+        sample = new Sample(this.bigmlUser, this.bigmlApiKey, cacheManager);
+        correlation = new Correlation(this.bigmlUser, this.bigmlApiKey, cacheManager);
+        statisticalTest = new StatisticalTest(this.bigmlUser, this.bigmlApiKey, cacheManager);
+        logisticRegression = new LogisticRegression(this.bigmlUser, this.bigmlApiKey, cacheManager);
+        script = new Script(this.bigmlUser, this.bigmlApiKey, cacheManager);
+        execution = new Execution(this.bigmlUser, this.bigmlApiKey, cacheManager);
+        library = new Library(this.bigmlUser, this.bigmlApiKey, cacheManager);
+        association = new Association(this.bigmlUser, this.bigmlApiKey, cacheManager);
+        associationSet = new AssociationSet(this.bigmlUser, this.bigmlApiKey, cacheManager);
+        topicModel = new TopicModel(this.bigmlUser, this.bigmlApiKey, cacheManager);
+        topicDistribution = new TopicDistribution(this.bigmlUser, this.bigmlApiKey, cacheManager);
+        batchTopicDistribution = new BatchTopicDistribution(this.bigmlUser, this.bigmlApiKey, cacheManager);
+        configuration = new Configuration(this.bigmlUser, this.bigmlApiKey, cacheManager);
+        timeSeries = new TimeSeries(this.bigmlUser, this.bigmlApiKey, cacheManager);
+        forecast = new Forecast(this.bigmlUser, this.bigmlApiKey, cacheManager);
+        deepnet = new Deepnet(this.bigmlUser, this.bigmlApiKey, cacheManager);
     }
 
     public String getBigMLUrl() {

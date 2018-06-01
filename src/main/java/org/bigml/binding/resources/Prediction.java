@@ -30,7 +30,7 @@ public class Prediction extends AbstractResource {
      *
      */
     public Prediction() {
-    		super.init(null, null, false, null);
+    	super.init(null, null, null);
         this.resourceRe = PREDICTION_RE;
         this.resourceUrl = PREDICTION_URL;
         this.resourceName = "prediction";
@@ -40,9 +40,8 @@ public class Prediction extends AbstractResource {
      * Constructor
      *
      */
-    public Prediction(final String apiUser, final String apiKey,
-            final boolean devMode) {
-    		super.init(apiUser, apiKey, devMode, null);
+    public Prediction(final String apiUser, final String apiKey) {
+    	super.init(apiUser, apiKey, null);
         this.resourceRe = PREDICTION_RE;
         this.resourceUrl = PREDICTION_URL;
         this.resourceName = "prediction";
@@ -52,9 +51,8 @@ public class Prediction extends AbstractResource {
      * Constructor
      *
      */
-    public Prediction(final String apiUser, final String apiKey,
-            final boolean devMode, final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, devMode, cacheManager);
+    public Prediction(final String apiUser, final String apiKey, final CacheManager cacheManager) {
+    	super.init(apiUser, apiKey, cacheManager);
         this.resourceRe = PREDICTION_RE;
         this.resourceUrl = PREDICTION_URL;
         this.resourceName = "prediction";
@@ -135,16 +133,14 @@ public class Prediction extends AbstractResource {
             retries = retries != null ? retries : 10;
 
             if (model.matches(ENSEMBLE_RE)) {
-                JSONObject ensembleObj = BigMLClient.getInstance(this.devMode).getEnsemble(
-                        model);
+                JSONObject ensembleObj = BigMLClient.getInstance().getEnsemble(model);
 
                 if (ensembleObj != null) {
                     modelJSON = ensembleObj;
                     if (waitTime > 0) {
                         int count = 0;
                         while (count < retries
-                                && !BigMLClient.getInstance(this.devMode)
-                                        .ensembleIsReady(ensembleObj)) {
+                                && !BigMLClient.getInstance().ensembleIsReady(ensembleObj)) {
                             Thread.sleep(waitTime);
                             count++;
                         }
@@ -153,15 +149,13 @@ public class Prediction extends AbstractResource {
             }
 
             if (model.matches(MODEL_RE)) {
-                JSONObject modelObj = BigMLClient.getInstance(this.devMode).getModel(
-                            model);
+                JSONObject modelObj = BigMLClient.getInstance().getModel(model);
                 if (modelObj != null) {
                     modelJSON = modelObj;
                     if (waitTime > 0) {
                         int count = 0;
                         while (count < retries
-                                && !BigMLClient.getInstance(this.devMode)
-                                        .modelIsReady(modelObj)) {
+                                && !BigMLClient.getInstance().modelIsReady(modelObj)) {
                             Thread.sleep(waitTime);
                             count++;
                         }
@@ -171,15 +165,13 @@ public class Prediction extends AbstractResource {
 
             if (model.matches(LOGISTICREGRESSION_RE)) {
                 JSONObject logisticRegressionObj =
-                    BigMLClient.getInstance(this.devMode).getLogisticRegression(
-                            model);
+                    BigMLClient.getInstance().getLogisticRegression(model);
                 if (logisticRegressionObj != null) {
                     modelJSON = logisticRegressionObj;
                     if (waitTime > 0) {
                         int count = 0;
                         while (count < retries
-                                && !BigMLClient.getInstance(this.devMode)
-                                        .logisticRegressionIsReady(logisticRegressionObj)) {
+                                && !BigMLClient.getInstance().logisticRegressionIsReady(logisticRegressionObj)) {
                             Thread.sleep(waitTime);
                             count++;
                         }

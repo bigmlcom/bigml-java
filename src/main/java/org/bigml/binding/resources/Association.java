@@ -23,7 +23,7 @@ public class Association extends AbstractModelResource {
      *
      */
     public Association() {
-        super.init(null, null, false, null);
+        super.init(null, null, null);
         this.resourceRe = ASSOCIATION_RE;
         this.resourceUrl = ASSOCIATION_URL;
         this.resourceName = "association";
@@ -33,9 +33,8 @@ public class Association extends AbstractModelResource {
      * Constructor
      *
      */
-    public Association(final String apiUser, final String apiKey,
-            final boolean devMode) {
-        super.init(apiUser, apiKey, devMode, null);
+    public Association(final String apiUser, final String apiKey) {
+        super.init(apiUser, apiKey, null);
         this.resourceRe = ASSOCIATION_RE;
         this.resourceUrl = ASSOCIATION_URL;
         this.resourceName = "association";
@@ -46,9 +45,8 @@ public class Association extends AbstractModelResource {
      * Constructor
      *
      */
-    public Association(final String apiUser, final String apiKey,
-            final boolean devMode, final CacheManager cacheManager) {
-        super.init(apiUser, apiKey, devMode, cacheManager);
+    public Association(final String apiUser, final String apiKey, final CacheManager cacheManager) {
+        super.init(apiUser, apiKey, cacheManager);
         this.resourceRe = ASSOCIATION_RE;
         this.resourceUrl = ASSOCIATION_URL;
         this.resourceName = "association";

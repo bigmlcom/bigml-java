@@ -24,7 +24,7 @@ public class StatisticalTest extends AbstractModelResource {
      *
      */
     public StatisticalTest() {
-    		super.init(null, null, false, null);
+    	super.init(null, null, null);
         this.resourceRe = STATISTICALTEST_RE;
         this.resourceUrl = STATISTICALTEST_URL;
         this.resourceName = "statisticaltest";
@@ -34,9 +34,8 @@ public class StatisticalTest extends AbstractModelResource {
      * Constructor
      *
      */
-    public StatisticalTest(final String apiUser, final String apiKey,
-                   final boolean devMode) {
-    		super.init(apiUser, apiKey, devMode, null);
+    public StatisticalTest(final String apiUser, final String apiKey) {
+    	super.init(apiUser, apiKey, null);
         this.resourceRe = STATISTICALTEST_RE;
         this.resourceUrl = STATISTICALTEST_URL;
         this.resourceName = "statisticaltest";
@@ -46,9 +45,8 @@ public class StatisticalTest extends AbstractModelResource {
      * Constructor
      *
      */
-    public StatisticalTest(final String apiUser, final String apiKey,
-                   final boolean devMode, final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, devMode, cacheManager);
+    public StatisticalTest(final String apiUser, final String apiKey, final CacheManager cacheManager) {
+    	super.init(apiUser, apiKey, cacheManager);
         this.resourceRe = STATISTICALTEST_RE;
         this.resourceUrl = STATISTICALTEST_URL;
         this.resourceName = "statisticaltest";

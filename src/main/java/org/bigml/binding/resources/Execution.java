@@ -29,7 +29,7 @@ public class Execution extends AbstractResource {
      *
      */
     public Execution() {
-    		super.init(null, null, false, null);
+    	super.init(null, null, null);
         this.resourceRe = EXECUTION_RE;
         this.resourceUrl = EXECUTION_URL;
         this.resourceName = "execution";
@@ -39,9 +39,8 @@ public class Execution extends AbstractResource {
      * Constructor
      *
      */
-    public Execution(final String apiUser, final String apiKey,
-                   final boolean devMode) {
-    		super.init(apiUser, apiKey, devMode, null);
+    public Execution(final String apiUser, final String apiKey) {
+    	super.init(apiUser, apiKey, null);
         this.resourceRe = EXECUTION_RE;
         this.resourceUrl = EXECUTION_URL;
         this.resourceName = "execution";
@@ -51,9 +50,8 @@ public class Execution extends AbstractResource {
      * Constructor
      *
      */
-    public Execution(final String apiUser, final String apiKey,
-                   final boolean devMode, final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, devMode, cacheManager);
+    public Execution(final String apiUser, final String apiKey, final CacheManager cacheManager) {
+    	super.init(apiUser, apiKey, cacheManager);
         this.resourceRe = EXECUTION_RE;
         this.resourceUrl = EXECUTION_URL;
         this.resourceName = "execution";
@@ -91,8 +89,7 @@ public class Execution extends AbstractResource {
                 if (waitTime > 0) {
                     int count = 0;
                     while (count < retries
-                            && !BigMLClient.getInstance(this.devMode)
-                            .scriptIsReady(script)) {
+                            && !BigMLClient.getInstance().scriptIsReady(script)) {
                         Thread.sleep(waitTime);
                         count++;
                     }
@@ -159,8 +156,7 @@ public class Execution extends AbstractResource {
                     if (waitTime > 0) {
                         int count = 0;
                         while (count < retries
-                                && !BigMLClient.getInstance(this.devMode)
-                                        .scriptIsReady(scriptId)) {
+                                && !BigMLClient.getInstance().scriptIsReady(scriptId)) {
                             Thread.sleep(waitTime);
                             count++;
                         }

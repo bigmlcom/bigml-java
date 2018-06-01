@@ -3,7 +3,7 @@ Feature: Create Predictions from Multi Models
     I need to create a multi model first
 
     Scenario Outline: Successfully creating a prediction from a multi model:
-        Given that I use development mode with seed="<seed>"
+        Given that I use production mode with seed="<seed>"
         Given I create a data source uploading a "<data>" file
         And I wait until the source is ready less than <time_1> secs
         And I add the unitTest tag to the data source waiting less than <time_1> secs
@@ -26,7 +26,7 @@ Feature: Create Predictions from Multi Models
 
 
     Scenario Outline: Successfully creating a local batch prediction from a multi model:
-        Given that I use development mode with seed="<seed>"
+        Given that I use production mode with seed="<seed>"
         Given I create a data source uploading a "<data>" file
         And I wait until the source is ready less than <time_1> secs
         And I add the unitTest tag to the data source waiting less than <time_1> secs

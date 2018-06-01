@@ -188,8 +188,7 @@ public abstract class AbstractModelResource extends AbstractResource {
                 if (waitTime > 0) {
                     int count = 0;
                     while (count < retries
-                            && !BigMLClient.getInstance(this.devMode)
-                                    .datasetIsReady(datasetId)) {
+                            && !BigMLClient.getInstance().datasetIsReady(datasetId)) {
                         Thread.sleep(waitTime);
                         count++;
                     }

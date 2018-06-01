@@ -25,7 +25,7 @@ public class Configuration extends AbstractResource {
      *
      */
     public Configuration() {
-    		super.init(null, null, false, null);
+    	super.init(null, null, null);
         this.resourceRe = CONFIGURATION_RE;
         this.resourceUrl = CONFIGURATION_URL;
         this.resourceName = "configuration";
@@ -35,9 +35,8 @@ public class Configuration extends AbstractResource {
      * Constructor
      *
      */
-    public Configuration(final String apiUser, final String apiKey,
-                   final boolean devMode) {
-    		super.init(apiUser, apiKey, devMode, null);
+    public Configuration(final String apiUser, final String apiKey) {
+    	super.init(apiUser, apiKey, null);
         this.resourceRe = CONFIGURATION_RE;
         this.resourceUrl = CONFIGURATION_URL;
         this.resourceName = "configuration";
@@ -47,9 +46,8 @@ public class Configuration extends AbstractResource {
      * Constructor
      *
      */
-    public Configuration(final String apiUser, final String apiKey,
-                   final boolean devMode, final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, devMode, cacheManager);
+    public Configuration(final String apiUser, final String apiKey, final CacheManager cacheManager) {
+    	super.init(apiUser, apiKey, cacheManager);
         this.resourceRe = CONFIGURATION_RE;
         this.resourceUrl = CONFIGURATION_URL;
         this.resourceName = "configuration";

@@ -33,7 +33,7 @@ public class Dataset extends AbstractResource {
      *
      */
     public Dataset() {
-    		super.init(null, null, false, null);
+    	super.init(null, null, null);
         this.resourceRe = DATASET_RE;
         this.resourceUrl = DATASET_URL;
         this.resourceName = "dataset";
@@ -43,9 +43,8 @@ public class Dataset extends AbstractResource {
      * Constructor
      *
      */
-    public Dataset(final String apiUser, final String apiKey,
-            final boolean devMode) {
-    		super.init(apiUser, apiKey, devMode, null);
+    public Dataset(final String apiUser, final String apiKey) {
+    	super.init(apiUser, apiKey, null);
         this.resourceRe = DATASET_RE;
         this.resourceUrl = DATASET_URL;
         this.resourceName = "dataset";
@@ -55,9 +54,8 @@ public class Dataset extends AbstractResource {
      * Constructor
      *
      */
-    public Dataset(final String apiUser, final String apiKey,
-            final boolean devMode, final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, devMode, cacheManager);
+    public Dataset(final String apiUser, final String apiKey, final CacheManager cacheManager) {
+    	super.init(apiUser, apiKey, cacheManager);
         this.resourceRe = DATASET_RE;
         this.resourceUrl = DATASET_URL;
         this.resourceName = "dataset";
@@ -137,8 +135,7 @@ public class Dataset extends AbstractResource {
                 if (waitTime > 0) {
                     int count = 0;
                     while (count < retries
-                            && !BigMLClient.getInstance(this.devMode)
-                                    .sourceIsReady(resourceId)) {
+                            && !BigMLClient.getInstance().sourceIsReady(resourceId)) {
                         Thread.sleep(waitTime);
                         count++;
                     }
@@ -156,8 +153,7 @@ public class Dataset extends AbstractResource {
                 if (waitTime > 0) {
                     int count = 0;
                     while (count < retries
-                            && !BigMLClient.getInstance(this.devMode)
-                            .datasetIsReady(resourceId)) {
+                            && !BigMLClient.getInstance().datasetIsReady(resourceId)) {
                         Thread.sleep(waitTime);
                         count++;
                     }
@@ -174,8 +170,7 @@ public class Dataset extends AbstractResource {
                 if (waitTime > 0) {
                     int count = 0;
                     while (count < retries
-                            && !BigMLClient.getInstance(this.devMode)
-                            .clusterIsReady(resourceId)) {
+                            && !BigMLClient.getInstance().clusterIsReady(resourceId)) {
                         Thread.sleep(waitTime);
                         count++;
                     }
@@ -187,7 +182,7 @@ public class Dataset extends AbstractResource {
 
                 if( !requestObject.containsKey("centroid") ) {
                     try {
-                        JSONObject cluster = BigMLClient.getInstance(this.devMode).getCluster(resourceId);
+                        JSONObject cluster = BigMLClient.getInstance().getCluster(resourceId);
                         JSONObject clusterDSIds = (JSONObject) Utils.
                                 getJSONObject(cluster, "object.cluster_datasets_ids", null);
                         Object centroidId = clusterDSIds.keySet().toArray()[0];
@@ -251,8 +246,7 @@ public class Dataset extends AbstractResource {
                 if (waitTime > 0) {
                     int count = 0;
                     while (count < retries
-                            && !BigMLClient.getInstance(this.devMode)
-                            .datasetIsReady(resourceId)) {
+                            && !BigMLClient.getInstance().datasetIsReady(resourceId)) {
                         Thread.sleep(waitTime);
                         count++;
                     }

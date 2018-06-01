@@ -25,7 +25,7 @@ public class Evaluation extends AbstractResource {
      *
      */
     public Evaluation() {
-    		super.init(null, null, false, null);
+    	super.init(null, null, null);
         this.resourceRe = EVALUATION_RE;
         this.resourceUrl = EVALUATION_URL;
         this.resourceName = "evaluation";
@@ -35,9 +35,8 @@ public class Evaluation extends AbstractResource {
      * Constructor
      *
      */
-    public Evaluation(final String apiUser, final String apiKey,
-            final boolean devMode) {
-    		super.init(apiUser, apiKey, devMode, null);
+    public Evaluation(final String apiUser, final String apiKey) {
+    	super.init(apiUser, apiKey, null);
         this.resourceRe = EVALUATION_RE;
         this.resourceUrl = EVALUATION_URL;
         this.resourceName = "evaluation";
@@ -47,9 +46,8 @@ public class Evaluation extends AbstractResource {
      * Constructor
      *
      */
-    public Evaluation(final String apiUser, final String apiKey,
-            final boolean devMode, final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, devMode, cacheManager);
+    public Evaluation(final String apiUser, final String apiKey, final CacheManager cacheManager) {
+    	super.init(apiUser, apiKey, cacheManager);
         this.resourceRe = EVALUATION_RE;
         this.resourceUrl = EVALUATION_URL;
         this.resourceName = "evaluation";
@@ -135,8 +133,7 @@ public class Evaluation extends AbstractResource {
 
                 if (model.matches(MODEL_RE)) {
                     while (count < retries
-                            && !BigMLClient.getInstance(this.devMode)
-                                    .modelIsReady(model)) {
+                            && !BigMLClient.getInstance().modelIsReady(model)) {
                         Thread.sleep(waitTime);
                         count++;
                     }
@@ -144,8 +141,7 @@ public class Evaluation extends AbstractResource {
 
                 if (model.matches(ENSEMBLE_RE)) {
                     while (count < retries
-                            && !BigMLClient.getInstance(this.devMode)
-                                    .ensembleIsReady(model)) {
+                            && !BigMLClient.getInstance().ensembleIsReady(model)) {
                         Thread.sleep(waitTime);
                         count++;
                     }
@@ -153,8 +149,7 @@ public class Evaluation extends AbstractResource {
 
                 if (model.matches(LOGISTICREGRESSION_RE)) {
                     while (count < retries
-                            && !BigMLClient.getInstance(this.devMode)
-                                    .logisticRegressionIsReady(model)) {
+                            && !BigMLClient.getInstance().logisticRegressionIsReady(model)) {
                         Thread.sleep(waitTime);
                         count++;
                     }
@@ -162,8 +157,7 @@ public class Evaluation extends AbstractResource {
 
                 count = 0;
                 while (count < retries
-                        && !BigMLClient.getInstance(this.devMode)
-                                .datasetIsReady(datasetId)) {
+                        && !BigMLClient.getInstance().datasetIsReady(datasetId)) {
                     Thread.sleep(waitTime);
                     count++;
                 }

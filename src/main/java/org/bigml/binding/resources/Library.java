@@ -29,7 +29,7 @@ public class Library extends AbstractResource {
      *
      */
     public Library() {
-    		super.init(null, null, false, null);
+    	super.init(null, null, null);
         this.resourceRe = LIBRARY_RE;
         this.resourceUrl = LIBRARY_URL;
         this.resourceName = "library";
@@ -39,9 +39,8 @@ public class Library extends AbstractResource {
      * Constructor
      *
      */
-    public Library(final String apiUser, final String apiKey,
-                   final boolean devMode) {
-    		super.init(apiUser, apiKey, devMode, null);
+    public Library(final String apiUser, final String apiKey) {
+    	super.init(apiUser, apiKey, null);
         this.resourceRe = LIBRARY_RE;
         this.resourceUrl = LIBRARY_URL;
         this.resourceName = "library";
@@ -51,9 +50,8 @@ public class Library extends AbstractResource {
      * Constructor
      *
      */
-    public Library(final String apiUser, final String apiKey,
-                   final boolean devMode, final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, devMode, cacheManager);
+    public Library(final String apiUser, final String apiKey, final CacheManager cacheManager) {
+    	super.init(apiUser, apiKey, cacheManager);
         this.resourceRe = LIBRARY_RE;
         this.resourceUrl = LIBRARY_URL;
         this.resourceName = "library";
@@ -99,8 +97,7 @@ public class Library extends AbstractResource {
                 if (waitTime > 0) {
                     int count = 0;
                     while (count < retries
-                            && !BigMLClient.getInstance(this.devMode)
-                            .libraryIsReady(source)) {
+                            && !BigMLClient.getInstance().libraryIsReady(source)) {
                         Thread.sleep(waitTime);
                         count++;
                     }

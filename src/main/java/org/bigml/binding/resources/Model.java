@@ -27,7 +27,7 @@ public class Model extends AbstractModelResource {
      *
      */
     public Model() {
-    		super.init(null, null, false, null);
+    	super.init(null, null, null);
         this.resourceRe = MODEL_RE;
         this.resourceUrl = MODEL_URL;
         this.resourceName = "model";
@@ -37,9 +37,8 @@ public class Model extends AbstractModelResource {
      * Constructor
      *
      */
-    public Model(final String apiUser, final String apiKey,
-            final boolean devMode) {
-    		super.init(apiUser, apiKey, devMode, null);
+    public Model(final String apiUser, final String apiKey) {
+    	super.init(apiUser, apiKey, null);
         this.resourceRe = MODEL_RE;
         this.resourceUrl = MODEL_URL;
         this.resourceName = "model";
@@ -49,9 +48,8 @@ public class Model extends AbstractModelResource {
      * Constructor
      *
      */
-    public Model(final String apiUser, final String apiKey,
-            final boolean devMode, final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, devMode, cacheManager);
+    public Model(final String apiUser, final String apiKey, final CacheManager cacheManager) {
+    	super.init(apiUser, apiKey, cacheManager);
         this.resourceRe = MODEL_RE;
         this.resourceUrl = MODEL_URL;
         this.resourceName = "model";
@@ -125,8 +123,7 @@ public class Model extends AbstractModelResource {
                 if (waitTime > 0) {
                     int count = 0;
                     while (count < retries
-                            && !BigMLClient.getInstance(this.devMode)
-                            .clusterIsReady(resourceId)) {
+                            && !BigMLClient.getInstance().clusterIsReady(resourceId)) {
                         Thread.sleep(waitTime);
                         count++;
                     }
@@ -138,7 +135,7 @@ public class Model extends AbstractModelResource {
 
                 if( !requestObject.containsKey("centroid") ) {
                     try {
-                        JSONObject cluster = BigMLClient.getInstance(this.devMode).getCluster(resourceId);
+                        JSONObject cluster = BigMLClient.getInstance().getCluster(resourceId);
                         JSONObject clusterModelsIds = (JSONObject) Utils.
                                 getJSONObject(cluster, "object.cluster_models", null);
                         Object centroidId = clusterModelsIds.keySet().toArray()[0];

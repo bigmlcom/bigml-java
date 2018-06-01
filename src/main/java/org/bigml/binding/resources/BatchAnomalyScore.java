@@ -25,7 +25,7 @@ public class BatchAnomalyScore extends AbstractResource {
      *
      */
     public BatchAnomalyScore() {
-    		super.init(null, null, false, null);
+    	super.init(null, null, null);
         this.resourceRe = BATCH_ANOMALYSCORE_RE;
         this.resourceUrl = BATCHANOMALYSCORE_URL;
         this.resourceName = "batchanomalyscore";
@@ -35,9 +35,8 @@ public class BatchAnomalyScore extends AbstractResource {
      * Constructor
      *
      */
-    public BatchAnomalyScore(final String apiUser, final String apiKey,
-                             final boolean devMode) {
-    		super.init(apiUser, apiKey, devMode, null);
+    public BatchAnomalyScore(final String apiUser, final String apiKey) {
+    	super.init(apiUser, apiKey, null);
         this.resourceRe = BATCH_ANOMALYSCORE_RE;
         this.resourceUrl = BATCHANOMALYSCORE_URL;
         this.resourceName = "batchanomalyscore";
@@ -47,9 +46,8 @@ public class BatchAnomalyScore extends AbstractResource {
      * Constructor
      *
      */
-    public BatchAnomalyScore(final String apiUser, final String apiKey,
-                             final boolean devMode, final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, devMode, cacheManager);
+    public BatchAnomalyScore(final String apiUser, final String apiKey, final CacheManager cacheManager) {
+    	super.init(apiUser, apiKey, cacheManager);
         this.resourceRe = BATCH_ANOMALYSCORE_RE;
         this.resourceUrl = BATCHANOMALYSCORE_URL;
         this.resourceName = "batchanomalyscore";
@@ -97,8 +95,7 @@ public class BatchAnomalyScore extends AbstractResource {
             if (waitTime > 0) {
                 int count = 0;
                 while (count < retries
-                        && !BigMLClient.getInstance(this.devMode)
-                                .anomalyIsReady(anomalyId)) {
+                        && !BigMLClient.getInstance().anomalyIsReady(anomalyId)) {
                     Thread.sleep(waitTime);
                     count++;
                 }
@@ -107,8 +104,7 @@ public class BatchAnomalyScore extends AbstractResource {
             if (waitTime > 0) {
                 int count = 0;
                 while (count < retries
-                        && !BigMLClient.getInstance(this.devMode)
-                                .datasetIsReady(datasetId)) {
+                        && !BigMLClient.getInstance().datasetIsReady(datasetId)) {
                     Thread.sleep(waitTime);
                     count++;
                 }

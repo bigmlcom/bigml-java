@@ -22,7 +22,7 @@ public class Ensemble extends AbstractModelResource {
      *
      */
     public Ensemble() {
-    		super.init(null, null, false, null);
+    	super.init(null, null, null);
         this.resourceRe = ENSEMBLE_RE;
         this.resourceUrl = ENSEMBLE_URL;
         this.resourceName = "ensemble";
@@ -32,9 +32,8 @@ public class Ensemble extends AbstractModelResource {
      * Constructor
      *
      */
-    public Ensemble(final String apiUser, final String apiKey,
-            final boolean devMode) {
-    		super.init(apiUser, apiKey, devMode, null);
+    public Ensemble(final String apiUser, final String apiKey) {
+    	super.init(apiUser, apiKey, null);
         this.resourceRe = ENSEMBLE_RE;
         this.resourceUrl = ENSEMBLE_URL;
         this.resourceName = "ensemble";
@@ -44,9 +43,8 @@ public class Ensemble extends AbstractModelResource {
      * Constructor
      *
      */
-    public Ensemble(final String apiUser, final String apiKey,
-            final boolean devMode, final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, devMode, cacheManager);
+    public Ensemble(final String apiUser, final String apiKey, final CacheManager cacheManager) {
+    	super.init(apiUser, apiKey, cacheManager);
         this.resourceRe = ENSEMBLE_RE;
         this.resourceUrl = ENSEMBLE_URL;
         this.resourceName = "ensemble";

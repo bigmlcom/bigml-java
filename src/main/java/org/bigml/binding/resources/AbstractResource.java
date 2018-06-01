@@ -163,8 +163,6 @@ public abstract class AbstractResource {
     protected String bigmlDomain;
     protected String bigmlAuth;
 
-    protected boolean devMode;
-
     protected String resourceRe;
     protected String resourceUrl;
     protected String resourceName;
@@ -208,19 +206,17 @@ public abstract class AbstractResource {
     public CacheManager cacheManager;
 
 
-    protected void init(String apiUser, String apiKey,
-    		boolean devMode, CacheManager cacheManager) {
+    protected void init(String apiUser, String apiKey, CacheManager cacheManager) {
 
         try {
-        		this.bigmlUser = apiUser != null ? apiUser : System
+        	this.bigmlUser = apiUser != null ? apiUser : System
                     .getProperty("BIGML_USERNAME");
             this.bigmlApiKey = apiKey != null ? apiKey : System
                     .getProperty("BIGML_API_KEY");
             bigmlAuth = "?username=" + this.bigmlUser + ";api_key="
                     + this.bigmlApiKey + ";";
-            this.devMode = devMode;
-
-            BIGML_URL = BigMLClient.getInstance(devMode).getBigMLUrl();
+            
+            BIGML_URL = BigMLClient.getInstance().getBigMLUrl();
             SOURCE_URL = BIGML_URL + SOURCE_PATH;
             DATASET_URL = BIGML_URL + DATASET_PATH;
             MODEL_URL = BIGML_URL + MODEL_PATH;

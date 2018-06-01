@@ -29,7 +29,7 @@ public class Script extends AbstractResource {
      *
      */
     public Script() {
-    		super.init(null, null, false, null);
+    	super.init(null, null, null);
         this.resourceRe = SCRIPT_RE;
         this.resourceUrl = SCRIPT_URL;
         this.resourceName = "script";
@@ -39,9 +39,8 @@ public class Script extends AbstractResource {
      * Constructor
      *
      */
-    public Script(final String apiUser, final String apiKey,
-                   final boolean devMode) {
-    		super.init(apiUser, apiKey, devMode, null);
+    public Script(final String apiUser, final String apiKey) {
+    	super.init(apiUser, apiKey, null);
         this.resourceRe = SCRIPT_RE;
         this.resourceUrl = SCRIPT_URL;
         this.resourceName = "script";
@@ -51,9 +50,8 @@ public class Script extends AbstractResource {
      * Constructor
      *
      */
-    public Script(final String apiUser, final String apiKey,
-                   final boolean devMode, final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, devMode, cacheManager);
+    public Script(final String apiUser, final String apiKey, final CacheManager cacheManager) {
+    	super.init(apiUser, apiKey, cacheManager);
         this.resourceRe = SCRIPT_RE;
         this.resourceUrl = SCRIPT_URL;
         this.resourceName = "script";
@@ -99,8 +97,7 @@ public class Script extends AbstractResource {
                 if (waitTime > 0) {
                     int count = 0;
                     while (count < retries
-                            && !BigMLClient.getInstance(this.devMode)
-                            .scriptIsReady(source)) {
+                            && !BigMLClient.getInstance().scriptIsReady(source)) {
                         Thread.sleep(waitTime);
                         count++;
                     }

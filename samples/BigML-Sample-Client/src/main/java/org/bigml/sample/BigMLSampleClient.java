@@ -27,8 +27,6 @@ import org.json.simple.JSONObject;
 
 public class BigMLSampleClient {
 
-    // Set BigML's DEV mode to true if you want to work in development mode
-    private static final boolean DEV_MODE = false;
     // Set it to false if you don't want console messages
     private static final boolean DEBUG = true;
     // Used in debugging messages to point to the created resources in the Web Dashboard
@@ -52,7 +50,6 @@ public class BigMLSampleClient {
         // access BigML's API:
         //   - API domain (default: bigml.io)
         //   - credentials (BIGML_USERNAME and BIGML_API_KEY)
-        //   - environment (development mode or production mode)
         // Its methods are wrappers to the REST API calls
 
         BigMLClient api = null;
@@ -62,7 +59,7 @@ public class BigMLSampleClient {
             // BIGML_API_KEY that should previously be set the
             // binding.properties file
 
-            api = BigMLClient.getInstance(DEV_MODE);
+            api = BigMLClient.getInstance();
         } catch (AuthenticationException e) {
             e.printStackTrace();
             return;
@@ -107,13 +104,7 @@ public class BigMLSampleClient {
         // * Seventh example: Creating a simple WhizzML script and executing it
         runWhizzML(api);
 
-
         System.out.println("BigML sample finished.");
-        if (DEV_MODE) {
-            System.out
-                    .println("*** Remember that the resources created in this "
-                            + "sample are placed in your DEV mode environment at BigML.com ***");
-        }
     }
 
     public static void predictionWorkflow(final BigMLClient api) {
