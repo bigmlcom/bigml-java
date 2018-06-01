@@ -297,6 +297,15 @@ public class CommonStepdefs {
 
         BigMLClient.getInstance().getCacheManager().cleanCache();
         
+        // Fusions
+        JSONArray fusions = (JSONArray) BigMLClient.getInstance()
+                .listFusions(";tags__in=unitTest").get("objects");
+        for (int i = 0; i < fusions.size(); i++) {
+            JSONObject fusion = (JSONObject) fusions.get(i);
+            BigMLClient.getInstance().deleteFusion(
+                    (String) fusion.get("resource"));
+        }
+        
         // OptiMLs
         JSONArray optimls = (JSONArray) BigMLClient.getInstance()
                 .listOptiMLs(";tags__in=unitTest").get("objects");

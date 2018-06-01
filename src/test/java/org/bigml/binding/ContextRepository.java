@@ -59,6 +59,7 @@ public class ContextRepository {
     JSONObject forecast = null;
     JSONObject deepnet = null;
     JSONObject optiML = null;
+    JSONObject fusion = null;
 
     Map<String, Long> datasetErrorCounts;
     Map<String, Long> datasetMissingCounts;
@@ -466,5 +467,13 @@ public class ContextRepository {
 
     public void setOptiML(JSONObject optiML) {
         this.optiML = optiML;
+    }
+    
+    public JSONObject getFusion() {
+        return fusion;
+    }
+
+    public void setFusion(JSONObject fusion) {
+        this.fusion = fusion;
     }
 }

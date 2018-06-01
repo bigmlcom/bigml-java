@@ -86,6 +86,7 @@ public class BigMLClient {
     private Forecast forecast;
     private Deepnet deepnet;
     private OptiML optiml;
+    private Fusion fusion;
 
     private Properties props;
     private String storage;
@@ -362,6 +363,7 @@ public class BigMLClient {
         forecast = new Forecast(this.bigmlUser, this.bigmlApiKey, cacheManager);
         deepnet = new Deepnet(this.bigmlUser, this.bigmlApiKey, cacheManager);
         optiml = new OptiML(this.bigmlUser, this.bigmlApiKey, cacheManager);
+        fusion = new Fusion(this.bigmlUser, this.bigmlApiKey, cacheManager);
     }
 
     public String getBigMLUrl() {
@@ -7588,4 +7590,173 @@ public class BigMLClient {
         return optiml.delete(optimlJSON);
     }
     
+    
+ // ################################################################
+    // #
+    // # Fusion
+    // # https://bigml.com/api/fusions
+    // #
+    // ################################################################
+
+    /**
+     * Creates a fusion from a list of models.
+     *
+     * POST /andromeda/fusion?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param modelsIds
+     *            list of identifiers in the form xxx/id, where xxx is
+     *            one of the model types availables and id is a string
+     *            of 24 alpha-numeric chars for the model to include in
+     *            the fusion resource.
+     * @param args
+     *            set of parameters for the new fusion. Optional
+     * @param waitTime
+     *            time (milliseconds) to wait for next check of FINISHED 
+     *            status for every submodel before to start to create 
+     *            the fusion. Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     *
+     */
+    public JSONObject createFusion(final List<String> modelsIds,
+        JSONObject args, Integer waitTime, Integer retries) {
+
+        return fusion.create(modelsIds, args, waitTime, retries);
+    }
+
+    /**
+     * Retrieves a fusion.
+     *
+     * GET
+     * /andromeda/fusion/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param fusionId
+     *            a unique identifier in the form fusion/id where id is a
+     *            string of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject getFusion(final String fusionId) {
+        return fusion.get(fusionId);
+    }
+
+    /**
+     * Retrieves a fusion.
+     *
+     * GET
+     * /andromeda/fusion/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param fusionJSON
+     *            a fusion JSONObject
+     *
+     */
+    public JSONObject getFusion(final JSONObject fusionJSON) {
+        return fusion.get(fusionJSON);
+    }
+
+    /**
+     * Checks whether a fusion's status is FINISHED.
+     *
+     * @param fusionId
+     *            a unique identifier in the form fusion/id where id is a
+     *            string of 24 alpha-numeric chars.
+     *
+     */
+    public boolean fusionIsReady(final String fusionId) {
+        return fusion.isReady(fusionId);
+    }
+
+    /**
+     * Checks whether a fusion's status is FINISHED.
+     *
+     * @param fusionJSON
+     *            a fusion JSONObject
+     *
+     */
+    public boolean fusionIsReady(final JSONObject fusionJSON) {
+        return fusion.isReady(fusionJSON);
+    }
+
+    /**
+     * Lists all your fusion.
+     *
+     * GET /andromeda/fusion?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param queryString
+     *            query filtering the listing.
+     *
+     */
+    public JSONObject listFusions(final String queryString) {
+        return fusion.list(queryString);
+    }
+
+    /**
+     * Updates a fusion.
+     *
+     * PUT
+     * /andromeda/fusion/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param fusionId
+     *            a unique identifier in the form fusion/id where id is a
+     *            string of 24 alpha-numeric chars.
+     * @param changes
+     *            set of parameters to update the fusion. Optional
+     *
+     */
+    public JSONObject updateFusion(final String fusionId, final String changes) {
+        return fusion.update(fusionId, changes);
+    }
+
+    /**
+     * Updates a fusion.
+     *
+     * PUT
+     * /andromeda/fusion/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param fusionJSON
+     *            a fusion JSONObject
+     * @param changes
+     *            set of parameters to update the fusion. Optional
+     *
+     */
+    public JSONObject updateFusion(final JSONObject fusionJSON,
+            final JSONObject changes) {
+        return fusion.update(fusionJSON, changes);
+    }
+
+    /**
+     * Deletes a fusion.
+     *
+     * DELETE
+     * /andromeda/fusion/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1
+     *
+     * @param fusionId
+     *            a unique identifier in the form fusion/id where id is a
+     *            string of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject deleteFusion(final String fusionId) {
+        return fusion.delete(fusionId);
+    }
+
+    /**
+     * Deletes a fusion.
+     *
+     * DELETE
+     * /andromeda/fusion/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1
+     *
+     * @param fusionJSON
+     *            a fusion JSONObject
+     *
+     */
+    public JSONObject deleteFusion(final JSONObject fusionJSON) {
+        return fusion.delete(fusionJSON);
+    }
 }
