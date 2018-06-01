@@ -17,8 +17,8 @@ import java.net.HttpURLConnection;
 import java.util.HashMap;
 
 /**
- * Entry point to create, retrieve, list, update, and delete sources, datasets,
- * models and predictions.
+ * Entry point to create, retrieve, list, update, and delete sources, 
+ * datasets, models, predictions, etc.
  *
  * Full API documentation on the API can be found from BigML at:
  * https://bigml.com/developers
@@ -60,6 +60,7 @@ public abstract class AbstractResource {
     public final static String TIMESERIES_PATH = "timeseries";
     public final static String FORECAST_PATH = "forecast";
     public final static String DEEPNET_PATH = "deepnet";
+    public final static String OPTIML_PATH = "optiml";
 
     // Base Resource regular expressions
     static String SOURCE_RE = "^" + SOURCE_PATH + "/[a-f,0-9]{24}$";
@@ -67,10 +68,14 @@ public abstract class AbstractResource {
             + "/[a-f,0-9]{24}$|^shared/" + DATASET_PATH
             + "/[a-zA-Z0-9]{26,27}$";
     static String MODEL_RE = "^(public/|)" + MODEL_PATH
-            + "/[a-f,0-9]{24}$|^shared/" + MODEL_PATH + "/[a-zA-Z0-9]{26,27}$";
-    static String PREDICTION_RE = "^" + PREDICTION_PATH + "/[a-f,0-9]{24}$";
-    static String EVALUATION_RE = "^" + EVALUATION_PATH + "/[a-f,0-9]{24}$";
-    static String ENSEMBLE_RE = "^" + ENSEMBLE_PATH + "/[a-f,0-9]{24}$";
+            + "/[a-f,0-9]{24}$|^shared/" + MODEL_PATH 
+            + "/[a-zA-Z0-9]{26,27}$";
+    static String PREDICTION_RE = "^" + PREDICTION_PATH 
+    		+ "/[a-f,0-9]{24}$";
+    static String EVALUATION_RE = "^" + EVALUATION_PATH 
+    		+ "/[a-f,0-9]{24}$";
+    static String ENSEMBLE_RE = "^" + ENSEMBLE_PATH 
+    		+ "/[a-f,0-9]{24}$";
     static String BATCH_PREDICTION_RE = "^" + BATCH_PREDICTION_PATH
             + "/[a-f,0-9]{24}$";
     static String CLUSTER_RE = "^(public/|)" + CLUSTER_PATH
@@ -106,13 +111,15 @@ public abstract class AbstractResource {
             + "/[a-f,0-9]{24}$";
     static String TOPICDISTRIBUTION_RE = "^" + TOPICDISTRIBUTION_PATH
             + "/[a-f,0-9]{24}$";
-    static String BATCH_TOPICDISTRIBUTION_RE = "^" + BATCH_TOPICDISTRIBUTION_PATH
+    static String BATCH_TOPICDISTRIBUTION_RE = "^" 
+            + BATCH_TOPICDISTRIBUTION_PATH
             + "/[a-f,0-9]{24}$";
     static String CONFIGURATION_RE = "^" + CONFIGURATION_PATH
             + "/[a-f,0-9]{24}$";
     static String TIMESERIES_RE = "^" + TIMESERIES_PATH + "/[a-f,0-9]{24}$";
     static String FORECAST_RE = "^" + FORECAST_PATH + "/[a-f,0-9]{24}$";
     static String DEEPNET_RE = "^" + DEEPNET_PATH + "/[a-f,0-9]{24}$";
+    static String OPTIML_RE = "^" + OPTIML_PATH + "/[a-f,0-9]{24}$";
 
     // HTTP Status Codes from https://bigml.com/api/status_codes
     public static int HTTP_OK = 200;
@@ -200,6 +207,7 @@ public abstract class AbstractResource {
     protected String TIMESERIES_URL;
     protected String FORECAST_URL;
     protected String DEEPNET_URL;
+    protected String OPTIML_URL;
 
     public final static String DOWNLOAD_DIR = "/download";
 
@@ -247,6 +255,7 @@ public abstract class AbstractResource {
             TIMESERIES_URL = BIGML_URL + TIMESERIES_PATH;
             FORECAST_URL = BIGML_URL + FORECAST_PATH;
             DEEPNET_URL = BIGML_URL + DEEPNET_PATH;
+            OPTIML_URL = BIGML_URL + OPTIML_PATH;
 
             this.cacheManager = cacheManager;
         } catch (AuthenticationException ae) {

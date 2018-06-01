@@ -296,7 +296,16 @@ public class CommonStepdefs {
     public void delete_all_test_data() throws Exception {
 
         BigMLClient.getInstance().getCacheManager().cleanCache();
-
+        
+        // OptiMLs
+        JSONArray optimls = (JSONArray) BigMLClient.getInstance()
+                .listOptiMLs(";tags__in=unitTest").get("objects");
+        for (int i = 0; i < optimls.size(); i++) {
+            JSONObject optiml = (JSONObject) optimls.get(i);
+            BigMLClient.getInstance().deleteOptiML(
+                    (String) optiml.get("resource"));
+        }
+        
         // Deepnets
         JSONArray deepnets = (JSONArray) BigMLClient.getInstance()
                 .listDeepnets(";tags__in=unitTest").get("objects");

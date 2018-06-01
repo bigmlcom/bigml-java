@@ -5,6 +5,7 @@
 ### Improvements
 
 * DevMode removed
+* OptiML Resource
 
 
 ## 1.7.0 version

@@ -85,6 +85,7 @@ public class BigMLClient {
     private TimeSeries timeSeries;
     private Forecast forecast;
     private Deepnet deepnet;
+    private OptiML optiml;
 
     private Properties props;
     private String storage;
@@ -360,6 +361,7 @@ public class BigMLClient {
         timeSeries = new TimeSeries(this.bigmlUser, this.bigmlApiKey, cacheManager);
         forecast = new Forecast(this.bigmlUser, this.bigmlApiKey, cacheManager);
         deepnet = new Deepnet(this.bigmlUser, this.bigmlApiKey, cacheManager);
+        optiml = new OptiML(this.bigmlUser, this.bigmlApiKey, cacheManager);
     }
 
     public String getBigMLUrl() {
@@ -7406,4 +7408,184 @@ public class BigMLClient {
         return deepnet.delete(deepnetJSON);
     }
 
+    
+    // ################################################################
+    // #
+    // # OptiMLs
+    // # https://bigml.com/api/optimls
+    // #
+    // ################################################################
+
+    /**
+     * Creates a new optiml.
+     *
+     * POST /andromeda/optiml?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param datasetId
+     *            a unique identifier in the form dataset/id where id is
+     *            a string of 24 alpha-numeric chars for the dataset to 
+     *            attach the optiML.
+     * @param args
+     *            set of parameters for the new optiml. Optional
+     * @param waitTime
+     *            time to wait for next check of FINISHED status for 
+     *            dataset before to start to create the optiml. Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     *
+     */
+    public JSONObject createOptiML(final String datasetId, JSONObject args,
+            Integer waitTime, Integer retries) {
+
+        return optiml.create(datasetId, args, waitTime, retries);
+    }
+    
+
+    /**
+     * Retrieves an optiML.
+     *
+     * An optiML is an evolving object that is processed until it reaches 
+     * the FINISHED or FAULTY state, the method will return a JSONObject 
+     * that encloses the optiML values and state info available at the 
+     * time it is called.
+     *
+     * GET
+     * /andromeda/optiml/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io
+     *
+     * @param optimlId
+     *            a unique identifier in the form optiml/id where id is
+     *            a string of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject getOptiML(final String optimlId) {
+        return optiml.get(optimlId);
+    }
+
+    /**
+     * Retrieves an optiML.
+     *
+     * An optiML is an evolving object that is processed until it reaches 
+     * the FINISHED or FAULTY state, the method will return a JSONObject 
+     * that encloses the optiml values and state info available at the 
+     * time it is called.
+     *
+     * GET
+     * /andromeda/optiml/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io
+     *
+     * @param optimlJSON
+     *            an optiML JSONObject.
+     *
+     */
+    public JSONObject getOptiML(final JSONObject optimlJSON) {
+        return optiml.get(optimlJSON);
+    }
+
+    
+    /**
+     * Check whether an optiML's status is FINISHED.
+     *
+     * @param optimlId
+     *            a unique identifier in the form optiml/id where id is
+     *            a string of 24 alpha-numeric chars.
+     *
+     */
+    public boolean optiMLIsReady(final String optimlId) {
+        return optiml.isReady(optimlId);
+    }
+
+    /**
+     * Check whether an optiML's status is FINISHED.
+     *
+     * @param optimlJSON
+     *            an optiml JSONObject.
+     *
+     */
+    public boolean optimlIsReady(final JSONObject optimlJSON) {
+        return optiml.isReady(optimlJSON);
+    }    
+    
+    /**
+     * Lists all your optiMLs.
+     *
+     * GET /andromeda/optiml?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param queryString
+     *            query filtering the listing.
+     *
+     */
+    public JSONObject listOptiMLs(final String queryString) {
+        return optiml.list(queryString);
+    }
+    
+    /**
+     * Updates an optiml.
+     *
+     * PUT
+     * /andromeda/optiml/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param optimlId
+     *            a unique identifier in the form optiml/id where id is 
+     *            a string of 24 alpha-numeric chars.
+     * @param changes
+     *            set of parameters to update the optiml. Optional
+     *
+     */
+    public JSONObject updateOptiML(final String optimlId, 
+    			final String changes) {
+        return optiml.update(optimlId, changes);
+    }
+
+    /**
+     * Updates an optiML.
+     *
+     * PUT
+     * /andromeda/optiml/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param optimlJSON
+     *            an optiml JSONObject
+     * @param changes
+     *            set of parameters to update the optiml. Optional
+     */
+    public JSONObject updateOptiML(final JSONObject optimlJSON,
+            final JSONObject changes) {
+        return optiml.update(optimlJSON, changes);
+    }    
+    
+    /**
+     * Deletes an optiML.
+     *
+     * DELETE
+     * /andromeda/optiml/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1
+     *
+     * @param optimlId
+     *            a unique identifier in the form optiml/id where id is
+     *            a string of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject deleteOptiML(final String optimlId) {
+        return optiml.delete(optimlId);
+    }
+
+    /**
+     * Deletes an optiML.
+     *
+     * DELETE
+     * /andromeda/optiml/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1
+     *
+     * @param optimlJSON
+     *            an optiml JSONObject.
+     *
+     */
+    public JSONObject deleteOptiML(final JSONObject optimlJSON) {
+        return optiml.delete(optimlJSON);
+    }
+    
 }

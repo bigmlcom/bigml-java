@@ -42,6 +42,7 @@ import cucumber.junit.Cucumber;
         "src/test/resources/test_33_compare_predictions.feature",
         "src/test/resources/test_34_timeseries.feature",
         "src/test/resources/test_36_compare_predictions.feature",
+        "src/test/resources/test_39_optiml_fusion.feature",
         "src/test/resources/test_configurations.feature",
         "src/test/resources/delete_all_test_data.feature" })
 public class RunCukesTest {
