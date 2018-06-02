@@ -1,6 +1,5 @@
 package org.bigml.binding.resources;
 
-import org.bigml.binding.BigMLClient;
 import org.bigml.binding.utils.CacheManager;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
@@ -29,10 +28,8 @@ public class Execution extends AbstractResource {
      *
      */
     public Execution() {
-    	super.init(null, null, null);
-        this.resourceRe = EXECUTION_RE;
-        this.resourceUrl = EXECUTION_URL;
-        this.resourceName = "execution";
+    		super.init(null, null, null, 
+    			EXECUTION_RE, EXECUTION_PATH);
     }
 
     /**
@@ -40,21 +37,18 @@ public class Execution extends AbstractResource {
      *
      */
     public Execution(final String apiUser, final String apiKey) {
-    	super.init(apiUser, apiKey, null);
-        this.resourceRe = EXECUTION_RE;
-        this.resourceUrl = EXECUTION_URL;
-        this.resourceName = "execution";
+    		super.init(apiUser, apiKey, null, 
+    			EXECUTION_RE, EXECUTION_PATH);
     }
 
     /**
      * Constructor
      *
      */
-    public Execution(final String apiUser, final String apiKey, final CacheManager cacheManager) {
-    	super.init(apiUser, apiKey, cacheManager);
-        this.resourceRe = EXECUTION_RE;
-        this.resourceUrl = EXECUTION_URL;
-        this.resourceName = "execution";
+    public Execution(final String apiUser, final String apiKey, 
+    			final CacheManager cacheManager) {
+    		super.init(apiUser, apiKey, cacheManager, 
+    			EXECUTION_RE, EXECUTION_PATH);
     }
 
     /**
@@ -84,19 +78,11 @@ public class Execution extends AbstractResource {
                 requestObject = args;
             }
             if (script != null && script.matches(SCRIPT_RE)) {
-                waitTime = waitTime != null ? waitTime : 3000;
-                retries = retries != null ? retries : 10;
-                if (waitTime > 0) {
-                    int count = 0;
-                    while (count < retries
-                            && !BigMLClient.getInstance().scriptIsReady(script)) {
-                        Thread.sleep(waitTime);
-                        count++;
-                    }
-                }
+            		waitForResource(script, "scriptIsReady", waitTime, retries);
 
                 requestObject.put("script", script);
-                return createResource(EXECUTION_URL, requestObject.toJSONString());
+                return createResource(resourceUrl, 
+                		requestObject.toJSONString());
             } else {
                 logger.info("A script id or a list of them is needed to create a whizzml execution");
                 return null;
@@ -151,16 +137,7 @@ public class Execution extends AbstractResource {
 
                 // Checking status
                 try {
-                    waitTime = waitTime != null ? waitTime : 3000;
-                    retries = retries != null ? retries : 10;
-                    if (waitTime > 0) {
-                        int count = 0;
-                        while (count < retries
-                                && !BigMLClient.getInstance().scriptIsReady(scriptId)) {
-                            Thread.sleep(waitTime);
-                            count++;
-                        }
-                    }
+                		waitForResource(scriptId, "scriptIsReady", waitTime, retries);
                     scriptsIds.add(scriptId);
                 } catch (Throwable e) {
                     logger.error("Error creating object");
@@ -169,7 +146,8 @@ public class Execution extends AbstractResource {
             }
 
             requestObject.put("scripts", scriptsIds);
-            return createResource(EXECUTION_URL, requestObject.toJSONString());
+            return createResource(resourceUrl, 
+            		requestObject.toJSONString());
         } catch (Throwable e) {
             logger.error("Error creating execution");
             return null;

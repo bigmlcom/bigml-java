@@ -33,10 +33,8 @@ public class Dataset extends AbstractResource {
      *
      */
     public Dataset() {
-    	super.init(null, null, null);
-        this.resourceRe = DATASET_RE;
-        this.resourceUrl = DATASET_URL;
-        this.resourceName = "dataset";
+    		super.init(null, null, null, 
+    			DATASET_RE, DATASET_PATH);
     }
 
     /**
@@ -44,21 +42,18 @@ public class Dataset extends AbstractResource {
      *
      */
     public Dataset(final String apiUser, final String apiKey) {
-    	super.init(apiUser, apiKey, null);
-        this.resourceRe = DATASET_RE;
-        this.resourceUrl = DATASET_URL;
-        this.resourceName = "dataset";
+    		super.init(apiUser, apiKey, null, 
+    			DATASET_RE, DATASET_PATH);
     }
 
     /**
      * Constructor
      *
      */
-    public Dataset(final String apiUser, final String apiKey, final CacheManager cacheManager) {
-    	super.init(apiUser, apiKey, cacheManager);
-        this.resourceRe = DATASET_RE;
-        this.resourceUrl = DATASET_URL;
-        this.resourceName = "dataset";
+    public Dataset(final String apiUser, final String apiKey, 
+    			final CacheManager cacheManager) {
+    		super.init(apiUser, apiKey, cacheManager, 
+    			DATASET_RE, DATASET_PATH);
     }
 
     /**
@@ -130,17 +125,8 @@ public class Dataset extends AbstractResource {
 
             // If the original resource is a Source
             if( resourceId.matches(SOURCE_RE) ) {
-                waitTime = waitTime != null ? waitTime : 3000;
-                retries = retries != null ? retries : 10;
-                if (waitTime > 0) {
-                    int count = 0;
-                    while (count < retries
-                            && !BigMLClient.getInstance().sourceIsReady(resourceId)) {
-                        Thread.sleep(waitTime);
-                        count++;
-                    }
-                }
-
+            		waitForResource(resourceId, "sourceIsReady", waitTime, retries);
+            	
                 if (args != null) {
                     requestObject = args;
                 }
@@ -148,34 +134,16 @@ public class Dataset extends AbstractResource {
 
             } else if( resourceId.matches(DATASET_RE) ) {
                 // If the original resource is a Dataset
-                waitTime = waitTime != null ? waitTime : 3000;
-                retries = retries != null ? retries : 10;
-                if (waitTime > 0) {
-                    int count = 0;
-                    while (count < retries
-                            && !BigMLClient.getInstance().datasetIsReady(resourceId)) {
-                        Thread.sleep(waitTime);
-                        count++;
-                    }
-                }
-
+            		waitForResource(resourceId, "datasetIsReady", waitTime, retries);
+            	
                 if (args != null) {
                     requestObject = args;
                 }
                 requestObject.put("origin_dataset", resourceId);
             } else if( resourceId.matches(CLUSTER_RE) ) {
                 // If the original resource is a Cluster
-                waitTime = waitTime != null ? waitTime : 3000;
-                retries = retries != null ? retries : 10;
-                if (waitTime > 0) {
-                    int count = 0;
-                    while (count < retries
-                            && !BigMLClient.getInstance().clusterIsReady(resourceId)) {
-                        Thread.sleep(waitTime);
-                        count++;
-                    }
-                }
-
+            		waitForResource(resourceId, "clusterIsReady", waitTime, retries);
+            	
                 if (args != null) {
                     requestObject = args;
                 }
@@ -199,7 +167,8 @@ public class Dataset extends AbstractResource {
                 requestObject.put("cluster", resourceId);
             }
 
-            return createResource(DATASET_URL, requestObject.toJSONString());
+            return createResource(resourceUrl, 
+            		requestObject.toJSONString());
         } catch (Throwable e) {
             logger.error("Failed to generate the dataset.", e);
             return null;
@@ -238,19 +207,9 @@ public class Dataset extends AbstractResource {
         try {
             JSONObject requestObject = new JSONObject();
 
-            waitTime = waitTime != null ? waitTime : 3000;
-            retries = retries != null ? retries : 10;
-
             List originDatasetsIds = new ArrayList<String>();
             for (String resourceId : datasetsIds) {
-                if (waitTime > 0) {
-                    int count = 0;
-                    while (count < retries
-                            && !BigMLClient.getInstance().datasetIsReady(resourceId)) {
-                        Thread.sleep(waitTime);
-                        count++;
-                    }
-                }
+            		waitForResource(resourceId, "datasetIsReady", waitTime, retries);
                 originDatasetsIds.add(resourceId);
             }
 
@@ -260,7 +219,8 @@ public class Dataset extends AbstractResource {
 
             requestObject.put("origin_datasets", originDatasetsIds);
 
-            return createResource(DATASET_URL, requestObject.toJSONString());
+            return createResource(resourceUrl, 
+            		requestObject.toJSONString());
         } catch (Throwable e) {
             logger.error("Failed to generate the dataset.", e);
             return null;

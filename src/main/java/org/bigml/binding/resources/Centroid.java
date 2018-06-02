@@ -1,6 +1,5 @@
 package org.bigml.binding.resources;
 
-import org.bigml.binding.BigMLClient;
 import org.bigml.binding.utils.CacheManager;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -25,10 +24,8 @@ public class Centroid extends AbstractResource {
      *
      */
     public Centroid() {
-    	super.init(null, null, null);
-        this.resourceRe = CENTROID_RE;
-        this.resourceUrl = CENTROID_URL;
-        this.resourceName = "centroid";
+    		super.init(null, null, null, 
+    			CENTROID_RE, CENTROID_PATH);
     }
 
     /**
@@ -36,21 +33,18 @@ public class Centroid extends AbstractResource {
      *
      */
     public Centroid(final String apiUser, final String apiKey) {
-    	super.init(apiUser, apiKey, null);
-        this.resourceRe = CENTROID_RE;
-        this.resourceUrl = CENTROID_URL;
-        this.resourceName = "centroid";
+    		super.init(apiUser, apiKey, null, 
+        		CENTROID_RE, CENTROID_PATH);
     }
 
     /**
      * Constructor
      *
      */
-    public Centroid(final String apiUser, final String apiKey, final CacheManager cacheManager) {
-    	super.init(apiUser, apiKey, cacheManager);
-        this.resourceRe = CENTROID_RE;
-        this.resourceUrl = CENTROID_URL;
-        this.resourceName = "centroid";
+    public Centroid(final String apiUser, final String apiKey, 
+    			final CacheManager cacheManager) {
+    		super.init(apiUser, apiKey, cacheManager, 
+    			CENTROID_RE, CENTROID_PATH);
     }
 
     /**
@@ -105,17 +99,8 @@ public class Centroid extends AbstractResource {
         }
 
         try {
-            waitTime = waitTime != null ? waitTime : 3000;
-            retries = retries != null ? retries : 10;
-            if (waitTime > 0) {
-                int count = 0;
-                while (count < retries
-                        && !BigMLClient.getInstance().clusterIsReady(clusterId)) {
-                    Thread.sleep(waitTime);
-                    count++;
-                }
-            }
-
+        		waitForResource(clusterId, "clusterIsReady", waitTime, retries);
+        	
             JSONObject requestObject = new JSONObject();
             if (args != null) {
                 requestObject = args;
@@ -123,7 +108,8 @@ public class Centroid extends AbstractResource {
             requestObject.put("cluster", clusterId);
             requestObject.put("input_data", inputDataJSON);
 
-            return createResource(CENTROID_URL, requestObject.toJSONString());
+            return createResource(resourceUrl, 
+            		requestObject.toJSONString());
         } catch (Throwable e) {
             logger.error("Error creating centroid");
             return null;

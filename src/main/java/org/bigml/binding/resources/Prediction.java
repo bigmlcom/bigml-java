@@ -2,7 +2,6 @@ package org.bigml.binding.resources;
 
 import java.util.Iterator;
 
-import org.bigml.binding.BigMLClient;
 import org.bigml.binding.utils.CacheManager;
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONObject;
@@ -30,10 +29,8 @@ public class Prediction extends AbstractResource {
      *
      */
     public Prediction() {
-    	super.init(null, null, null);
-        this.resourceRe = PREDICTION_RE;
-        this.resourceUrl = PREDICTION_URL;
-        this.resourceName = "prediction";
+    		super.init(null, null, null, 
+    			PREDICTION_RE, PREDICTION_PATH);
     }
 
     /**
@@ -41,21 +38,18 @@ public class Prediction extends AbstractResource {
      *
      */
     public Prediction(final String apiUser, final String apiKey) {
-    	super.init(apiUser, apiKey, null);
-        this.resourceRe = PREDICTION_RE;
-        this.resourceUrl = PREDICTION_URL;
-        this.resourceName = "prediction";
+    		super.init(apiUser, apiKey, null, 
+    			PREDICTION_RE, PREDICTION_PATH);
     }
 
     /**
      * Constructor
      *
      */
-    public Prediction(final String apiUser, final String apiKey, final CacheManager cacheManager) {
-    	super.init(apiUser, apiKey, cacheManager);
-        this.resourceRe = PREDICTION_RE;
-        this.resourceUrl = PREDICTION_URL;
-        this.resourceName = "prediction";
+    public Prediction(final String apiUser, final String apiKey, 
+    			final CacheManager cacheManager) {
+    		super.init(apiUser, apiKey, cacheManager, 
+    			PREDICTION_RE, PREDICTION_PATH);
     }
 
     /**
@@ -133,51 +127,20 @@ public class Prediction extends AbstractResource {
             retries = retries != null ? retries : 10;
 
             if (model.matches(ENSEMBLE_RE)) {
-                JSONObject ensembleObj = BigMLClient.getInstance().getEnsemble(model);
-
-                if (ensembleObj != null) {
-                    modelJSON = ensembleObj;
-                    if (waitTime > 0) {
-                        int count = 0;
-                        while (count < retries
-                                && !BigMLClient.getInstance().ensembleIsReady(ensembleObj)) {
-                            Thread.sleep(waitTime);
-                            count++;
-                        }
-                    }
-                }
+            		waitForResource(model, "ensembleIsReady", waitTime, retries);
             }
 
             if (model.matches(MODEL_RE)) {
-                JSONObject modelObj = BigMLClient.getInstance().getModel(model);
-                if (modelObj != null) {
-                    modelJSON = modelObj;
-                    if (waitTime > 0) {
-                        int count = 0;
-                        while (count < retries
-                                && !BigMLClient.getInstance().modelIsReady(modelObj)) {
-                            Thread.sleep(waitTime);
-                            count++;
-                        }
-                    }
-                }
+            		waitForResource(model, "modelIsReady", waitTime, retries);
             }
 
             if (model.matches(LOGISTICREGRESSION_RE)) {
-                JSONObject logisticRegressionObj =
-                    BigMLClient.getInstance().getLogisticRegression(model);
-                if (logisticRegressionObj != null) {
-                    modelJSON = logisticRegressionObj;
-                    if (waitTime > 0) {
-                        int count = 0;
-                        while (count < retries
-                                && !BigMLClient.getInstance().logisticRegressionIsReady(logisticRegressionObj)) {
-                            Thread.sleep(waitTime);
-                            count++;
-                        }
-                    }
-                }
+            		waitForResource(model, "logisticRegressionIsReady", waitTime, retries);
             }
+            
+            if (model.matches(FUSION_RE)) {
+	        		waitForResource(model, "fusionIsReady", waitTime, retries);
+	        }
 
             // Input data
             JSONObject inputDataJSON = null;
@@ -224,7 +187,8 @@ public class Prediction extends AbstractResource {
 
             requestObject.put("input_data", inputDataJSON);
 
-            return createResource(PREDICTION_URL, requestObject.toJSONString());
+            return createResource(resourceUrl, 
+            		requestObject.toJSONString());
 
         } catch (Throwable e) {
             logger.error("Error creating prediction", e);

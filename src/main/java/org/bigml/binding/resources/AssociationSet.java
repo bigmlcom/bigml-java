@@ -1,6 +1,5 @@
 package org.bigml.binding.resources;
 
-import org.bigml.binding.BigMLClient;
 import org.bigml.binding.utils.CacheManager;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
@@ -25,10 +24,8 @@ public class AssociationSet extends AbstractResource {
      *
      */
     public AssociationSet() {
-    	super.init(null, null, null);
-        this.resourceRe = ASSOCIATIONSET_RE;
-        this.resourceUrl = ASSOCIATIONSET_URL;
-        this.resourceName = "association set";
+    		super.init(null, null, null, 
+    			ASSOCIATIONSET_RE, ASSOCIATIONSET_PATH);
     }
 
     /**
@@ -36,10 +33,8 @@ public class AssociationSet extends AbstractResource {
      *
      */
     public AssociationSet(final String apiUser, final String apiKey) {
-    	super.init(apiUser, apiKey, null);
-        this.resourceRe = ASSOCIATIONSET_RE;
-        this.resourceUrl = ASSOCIATIONSET_URL;
-        this.resourceName = "association set";
+    		super.init(apiUser, apiKey, null, 
+    			ASSOCIATIONSET_RE, ASSOCIATIONSET_PATH);
     }
 
 
@@ -47,11 +42,10 @@ public class AssociationSet extends AbstractResource {
      * Constructor
      *
      */
-    public AssociationSet(final String apiUser, final String apiKey, final CacheManager cacheManager) {
-    	super.init(apiUser, apiKey, cacheManager);
-        this.resourceRe = ASSOCIATIONSET_RE;
-        this.resourceUrl = ASSOCIATIONSET_URL;
-        this.resourceName = "association set";
+    public AssociationSet(final String apiUser, final String apiKey, 
+    			final CacheManager cacheManager) {
+    		super.init(apiUser, apiKey, cacheManager, 
+        		ASSOCIATIONSET_RE, ASSOCIATIONSET_PATH);
     }
 
     /**
@@ -87,16 +81,8 @@ public class AssociationSet extends AbstractResource {
         }
 
         try {
-            waitTime = waitTime != null ? waitTime : 3000;
-            retries = retries != null ? retries : 10;
-            if (waitTime > 0) {
-                int count = 0;
-                while (count < retries
-                        && !BigMLClient.getInstance().associationIsReady(associationId)) {
-                    Thread.sleep(waitTime);
-                    count++;
-                }
-            }
+        		waitForResource(associationId, "associationIsReady",  
+        				waitTime, retries);
 
             JSONObject requestObject = new JSONObject();
             if (args != null) {
@@ -106,8 +92,8 @@ public class AssociationSet extends AbstractResource {
             requestObject.put("association", associationId);
             requestObject.put("input_data", inputData);
 
-            return createResource(ASSOCIATIONSET_URL,
-                                  requestObject.toJSONString());
+            return createResource(resourceUrl,
+            		requestObject.toJSONString());
         } catch (Throwable e) {
             logger.error("Error creating an association set");
             return null;

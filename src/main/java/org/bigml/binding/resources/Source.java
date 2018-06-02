@@ -30,10 +30,8 @@ public class Source extends AbstractResource {
      *
      */
     public Source() {
-    	super.init(null, null, null);
-        this.resourceRe = SOURCE_RE;
-        this.resourceUrl = SOURCE_URL;
-        this.resourceName = "source";
+    		super.init(null, null, null, 
+    			SOURCE_RE, SOURCE_PATH);
     }
 
     /**
@@ -41,21 +39,18 @@ public class Source extends AbstractResource {
      *
      */
     public Source(final String apiUser, final String apiKey) {
-    	super.init(apiUser, apiKey, null);
-        this.resourceRe = SOURCE_RE;
-        this.resourceUrl = SOURCE_URL;
-        this.resourceName = "source";
+    		super.init(apiUser, apiKey, null, 
+    			SOURCE_RE, SOURCE_PATH);
     }
 
     /**
      * Constructor
      *
      */
-    public Source(final String apiUser, final String apiKey, final CacheManager cacheManager) {
-    	super.init(apiUser, apiKey, cacheManager);
-        this.resourceRe = SOURCE_RE;
-        this.resourceUrl = SOURCE_URL;
-        this.resourceName = "source";
+    public Source(final String apiUser, final String apiKey, 
+    			final CacheManager cacheManager) {
+    		super.init(apiUser, apiKey, cacheManager, 
+    			SOURCE_RE, SOURCE_PATH);
     }
 
     /**
@@ -133,7 +128,8 @@ public class Source extends AbstractResource {
         error.put("status", status);
 
         try {
-            MultipartUtility multipartUtility = new MultipartUtility(SOURCE_URL + bigmlAuth, "UTF-8");
+            MultipartUtility multipartUtility = new MultipartUtility(
+            		resourceUrl + bigmlAuth, "UTF-8");
 
             multipartUtility.addFilePart("bin", new File(fileName));
 
@@ -333,7 +329,8 @@ public class Source extends AbstractResource {
             }
             requestObject.put("remote", url);
 
-            return createResource(SOURCE_URL, requestObject.toJSONString());
+            return createResource(resourceUrl, 
+            		requestObject.toJSONString());
         } catch (Throwable e) {
             logger.error("Error creating source");
             return null;
@@ -381,7 +378,8 @@ public class Source extends AbstractResource {
                 requestObject = sourceParser;
             }
             requestObject.put("data", data);
-            return createResource(SOURCE_URL, requestObject.toJSONString());
+            return createResource(resourceUrl, 
+            		requestObject.toJSONString());
         } catch (Throwable e) {
             logger.error("Error creating source");
             return null;

@@ -1,6 +1,5 @@
 package org.bigml.binding.resources;
 
-import org.bigml.binding.BigMLClient;
 import org.bigml.binding.utils.CacheManager;
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONObject;
@@ -30,10 +29,8 @@ public class Sample extends AbstractResource {
      *
      */
     public Sample() {
-    	super.init(null, null, null);
-        this.resourceRe = SAMPLE_RE;
-        this.resourceUrl = SAMPLE_URL;
-        this.resourceName = "sample";
+    		super.init(null, null, null, 
+    			SAMPLE_RE, SAMPLE_PATH);
     }
 
     /**
@@ -41,21 +38,18 @@ public class Sample extends AbstractResource {
      *
      */
     public Sample(final String apiUser, final String apiKey) {
-    	super.init(apiUser, apiKey, null);
-        this.resourceRe = SAMPLE_RE;
-        this.resourceUrl = SAMPLE_URL;
-        this.resourceName = "sample";
+    	super.init(apiUser, apiKey, null, 
+    			SAMPLE_RE, SAMPLE_PATH);
     }
 
     /**
      * Constructor
      *
      */
-    public Sample(final String apiUser, final String apiKey, final CacheManager cacheManager) {
-    	super.init(apiUser, apiKey, cacheManager);
-        this.resourceRe = SAMPLE_RE;
-        this.resourceUrl = SAMPLE_URL;
-        this.resourceName = "sample";
+    public Sample(final String apiUser, final String apiKey, 
+    			final CacheManager cacheManager) {
+    		super.init(apiUser, apiKey, cacheManager, 
+    			SAMPLE_RE, SAMPLE_PATH);
     }
 
     /**
@@ -93,18 +87,8 @@ public class Sample extends AbstractResource {
 
             // If the original resource is a Source
             if( datasetId.matches(DATASET_RE) ) {
-                // If the original resource is a Dataset
-                waitTime = waitTime != null ? waitTime : 3000;
-                retries = retries != null ? retries : 10;
-                if (waitTime > 0) {
-                    int count = 0;
-                    while (count < retries
-                            && !BigMLClient.getInstance().datasetIsReady(datasetId)) {
-                        Thread.sleep(waitTime);
-                        count++;
-                    }
-                }
-
+            		waitForResource(datasetId, "datasetIsReady", waitTime, retries);
+            	
                 if (args != null) {
                     requestObject = args;
                 }
@@ -114,7 +98,8 @@ public class Sample extends AbstractResource {
                         "to create a sample. %s found.", datasetId));
             }
 
-            return createResource(SAMPLE_URL, requestObject.toJSONString());
+            return createResource(resourceUrl, 
+            		requestObject.toJSONString());
         } catch (Throwable e) {
             logger.error("Failed to generate the sample.", e);
             return null;

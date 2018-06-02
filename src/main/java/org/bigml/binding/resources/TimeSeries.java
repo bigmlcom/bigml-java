@@ -22,10 +22,8 @@ public class TimeSeries extends AbstractModelResource {
      *
      */
     public TimeSeries() {
-    	super.init(null, null, null);
-        this.resourceRe = TIMESERIES_RE;
-        this.resourceUrl = TIMESERIES_URL;
-        this.resourceName = "timeseries";
+    		super.init(null, null, null, 
+    			TIMESERIES_RE, TIMESERIES_PATH);
     }
 
     /**
@@ -33,10 +31,8 @@ public class TimeSeries extends AbstractModelResource {
      *
      */
     public TimeSeries(final String apiUser, final String apiKey) {
-    	super.init(apiUser, apiKey, null);
-        this.resourceRe = TIMESERIES_RE;
-        this.resourceUrl = TIMESERIES_URL;
-        this.resourceName = "timeseries";
+    		super.init(apiUser, apiKey, null, 
+    			TIMESERIES_RE, TIMESERIES_PATH);
     }
 
 
@@ -44,11 +40,10 @@ public class TimeSeries extends AbstractModelResource {
      * Constructor
      *
      */
-    public TimeSeries(final String apiUser, final String apiKey, final CacheManager cacheManager) {
-    	super.init(apiUser, apiKey, cacheManager);
-        this.resourceRe = TIMESERIES_RE;
-        this.resourceUrl = TIMESERIES_URL;
-        this.resourceName = "timeseries";
+    public TimeSeries(final String apiUser, final String apiKey, 
+    			final CacheManager cacheManager) {
+    		super.init(apiUser, apiKey, cacheManager, 
+    			TIMESERIES_RE, TIMESERIES_PATH);
     }
 
 }

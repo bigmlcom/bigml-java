@@ -1,6 +1,5 @@
 package org.bigml.binding.resources;
 
-import org.bigml.binding.BigMLClient;
 import org.bigml.binding.utils.CacheManager;
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONObject;
@@ -29,10 +28,8 @@ public class Library extends AbstractResource {
      *
      */
     public Library() {
-    	super.init(null, null, null);
-        this.resourceRe = LIBRARY_RE;
-        this.resourceUrl = LIBRARY_URL;
-        this.resourceName = "library";
+    		super.init(null, null, null, 
+    			LIBRARY_RE, LIBRARY_PATH);
     }
 
     /**
@@ -40,21 +37,18 @@ public class Library extends AbstractResource {
      *
      */
     public Library(final String apiUser, final String apiKey) {
-    	super.init(apiUser, apiKey, null);
-        this.resourceRe = LIBRARY_RE;
-        this.resourceUrl = LIBRARY_URL;
-        this.resourceName = "library";
+    		super.init(apiUser, apiKey, null, 
+    			LIBRARY_RE, LIBRARY_PATH);
     }
 
     /**
      * Constructor
      *
      */
-    public Library(final String apiUser, final String apiKey, final CacheManager cacheManager) {
-    	super.init(apiUser, apiKey, cacheManager);
-        this.resourceRe = LIBRARY_RE;
-        this.resourceUrl = LIBRARY_URL;
-        this.resourceName = "library";
+    public Library(final String apiUser, final String apiKey, 
+    			final CacheManager cacheManager) {
+    		super.init(apiUser, apiKey, cacheManager, 
+    			LIBRARY_RE, LIBRARY_PATH);
     }
 
     /**
@@ -92,19 +86,10 @@ public class Library extends AbstractResource {
             }
 
             if (source.matches(LIBRARY_RE)) {
-                waitTime = waitTime != null ? waitTime : 3000;
-                retries = retries != null ? retries : 10;
-                if (waitTime > 0) {
-                    int count = 0;
-                    while (count < retries
-                            && !BigMLClient.getInstance().libraryIsReady(source)) {
-                        Thread.sleep(waitTime);
-                        count++;
-                    }
-                }
-
+            		waitForResource(source, "libraryIsReady", waitTime, retries);
+            	
                 requestObject.put("origin", source);
-                return createResource(LIBRARY_URL, requestObject.toJSONString());
+                return createResource(resourceUrl, requestObject.toJSONString());
             }
 
             try {
@@ -117,7 +102,7 @@ public class Library extends AbstractResource {
             }
 
             requestObject.put("source_code", source);
-            return createResource(LIBRARY_URL, requestObject.toJSONString());
+            return createResource(resourceUrl, requestObject.toJSONString());
 
         } catch (Throwable e) {
             logger.error("Error creating library");

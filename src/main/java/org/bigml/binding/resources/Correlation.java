@@ -5,7 +5,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class is used by the BigML class as a mixin that provides the Correlation' REST calls.
+ * This class is used by the BigML class as a mixin that provides the 
+ * Correlation' REST calls.
  *
  * It should not be instantiated independently.
  *
@@ -24,10 +25,8 @@ public class Correlation extends AbstractModelResource {
      *
      */
     public Correlation() {
-    	super.init(null, null, null);
-        this.resourceRe = CORRELATION_RE;
-        this.resourceUrl = CORRELATION_URL;
-        this.resourceName = "correlation";
+    		super.init(null, null, null, 
+    			CORRELATION_RE, CORRELATION_PATH);
     }
 
     /**
@@ -35,21 +34,18 @@ public class Correlation extends AbstractModelResource {
      *
      */
     public Correlation(final String apiUser, final String apiKey) {
-    	super.init(apiUser, apiKey, null);
-        this.resourceRe = CORRELATION_RE;
-        this.resourceUrl = CORRELATION_URL;
-        this.resourceName = "correlation";
+    		super.init(apiUser, apiKey, null, 
+    			CORRELATION_RE, CORRELATION_PATH);
     }
 
     /**
      * Constructor
      *
      */
-    public Correlation(final String apiUser, final String apiKey, final CacheManager cacheManager) {
-    	super.init(apiUser, apiKey, cacheManager);
-        this.resourceRe = CORRELATION_RE;
-        this.resourceUrl = CORRELATION_URL;
-        this.resourceName = "correlation";
+    public Correlation(final String apiUser, final String apiKey, 
+    			final CacheManager cacheManager) {
+    		super.init(apiUser, apiKey, cacheManager, 
+    			CORRELATION_RE, CORRELATION_PATH);
     }
 
 }

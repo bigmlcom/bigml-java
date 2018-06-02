@@ -27,10 +27,8 @@ public class Model extends AbstractModelResource {
      *
      */
     public Model() {
-    	super.init(null, null, null);
-        this.resourceRe = MODEL_RE;
-        this.resourceUrl = MODEL_URL;
-        this.resourceName = "model";
+    		super.init(null, null, null, 
+    			MODEL_RE, MODEL_PATH);
     }
 
     /**
@@ -38,21 +36,18 @@ public class Model extends AbstractModelResource {
      *
      */
     public Model(final String apiUser, final String apiKey) {
-    	super.init(apiUser, apiKey, null);
-        this.resourceRe = MODEL_RE;
-        this.resourceUrl = MODEL_URL;
-        this.resourceName = "model";
+    		super.init(apiUser, apiKey, null, 
+    			MODEL_RE, MODEL_PATH);
     }
 
     /**
      * Constructor
      *
      */
-    public Model(final String apiUser, final String apiKey, final CacheManager cacheManager) {
-    	super.init(apiUser, apiKey, cacheManager);
-        this.resourceRe = MODEL_RE;
-        this.resourceUrl = MODEL_URL;
-        this.resourceName = "model";
+    public Model(final String apiUser, final String apiKey, 
+    			final CacheManager cacheManager) {
+    		super.init(apiUser, apiKey, cacheManager, 
+    			MODEL_RE, MODEL_PATH);
     }
 
     /**
@@ -112,23 +107,15 @@ public class Model extends AbstractModelResource {
                 String[] datasetsIds = { resourceId };
                 JSONObject requestObject = createFromDatasets(datasetsIds, args,
                     waitTime, retries, null);
-                return createResource(MODEL_URL, requestObject.toJSONString());
+                return createResource(resourceUrl, 
+                		requestObject.toJSONString());
 
             } else if( resourceId.matches(CLUSTER_RE) ) {
                 JSONObject requestObject = new JSONObject();
 
                 // If the original resource is a Cluster
-                waitTime = waitTime != null ? waitTime : 3000;
-                retries = retries != null ? retries : 10;
-                if (waitTime > 0) {
-                    int count = 0;
-                    while (count < retries
-                            && !BigMLClient.getInstance().clusterIsReady(resourceId)) {
-                        Thread.sleep(waitTime);
-                        count++;
-                    }
-                }
-
+                waitForResource(resourceId, "clusterIsReady", waitTime, retries);
+               
                 if (args != null) {
                     requestObject = args;
                 }
@@ -150,7 +137,8 @@ public class Model extends AbstractModelResource {
                 }
 
                 requestObject.put("cluster", resourceId);
-                return createResource(MODEL_URL, requestObject.toJSONString());
+                return createResource(resourceUrl, 
+                		requestObject.toJSONString());
             }
         } catch (Throwable e) {
             logger.error("Failed to generate the model.", e);

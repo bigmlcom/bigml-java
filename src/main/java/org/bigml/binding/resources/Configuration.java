@@ -25,10 +25,8 @@ public class Configuration extends AbstractResource {
      *
      */
     public Configuration() {
-    	super.init(null, null, null);
-        this.resourceRe = CONFIGURATION_RE;
-        this.resourceUrl = CONFIGURATION_URL;
-        this.resourceName = "configuration";
+    		super.init(null, null, null, 
+    			CONFIGURATION_RE, CONFIGURATION_PATH);
     }
 
     /**
@@ -36,21 +34,18 @@ public class Configuration extends AbstractResource {
      *
      */
     public Configuration(final String apiUser, final String apiKey) {
-    	super.init(apiUser, apiKey, null);
-        this.resourceRe = CONFIGURATION_RE;
-        this.resourceUrl = CONFIGURATION_URL;
-        this.resourceName = "configuration";
+    		super.init(apiUser, apiKey, null, 
+    			CONFIGURATION_RE, CONFIGURATION_PATH);
     }
 
     /**
      * Constructor
      *
      */
-    public Configuration(final String apiUser, final String apiKey, final CacheManager cacheManager) {
-    	super.init(apiUser, apiKey, cacheManager);
-        this.resourceRe = CONFIGURATION_RE;
-        this.resourceUrl = CONFIGURATION_URL;
-        this.resourceName = "configuration";
+    public Configuration(final String apiUser, final String apiKey, 
+    			final CacheManager cacheManager) {
+    		super.init(apiUser, apiKey, cacheManager, 
+    			CONFIGURATION_RE, CONFIGURATION_PATH);
     }
 
     /**
@@ -71,7 +66,8 @@ public class Configuration extends AbstractResource {
         try {
             JSONObject requestObject = new JSONObject();
             requestObject.putAll(args);
-            return createResource(CONFIGURATION_URL, requestObject.toJSONString());
+            return createResource(resourceUrl, 
+            		requestObject.toJSONString());
         } catch (Throwable e) {
             logger.error("Failed to generate the configuration.", e);
             return null;

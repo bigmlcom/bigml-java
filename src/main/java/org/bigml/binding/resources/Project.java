@@ -25,10 +25,8 @@ public class Project extends AbstractResource {
      *
      */
     public Project() {
-    	super.init(null, null, null);
-        this.resourceRe = PROJECT_RE;
-        this.resourceUrl = PROJECT_URL;
-        this.resourceName = "project";
+    		super.init(null, null, null, 
+    			PROJECT_RE, PROJECT_PATH);
     }
 
     /**
@@ -36,21 +34,18 @@ public class Project extends AbstractResource {
      *
      */
     public Project(final String apiUser, final String apiKey) {
-    	super.init(apiUser, apiKey, null);
-        this.resourceRe = PROJECT_RE;
-        this.resourceUrl = PROJECT_URL;
-        this.resourceName = "project";
+    		super.init(apiUser, apiKey, null, 
+    			PROJECT_RE, PROJECT_PATH);
     }
 
     /**
      * Constructor
      *
      */
-    public Project(final String apiUser, final String apiKey, final CacheManager cacheManager) {
-    	super.init(apiUser, apiKey, cacheManager);
-        this.resourceRe = PROJECT_RE;
-        this.resourceUrl = PROJECT_URL;
-        this.resourceName = "project";
+    public Project(final String apiUser, final String apiKey, 
+    			final CacheManager cacheManager) {
+    		super.init(apiUser, apiKey, cacheManager, 
+    			PROJECT_RE, PROJECT_PATH);
     }
 
     /**
@@ -71,7 +66,8 @@ public class Project extends AbstractResource {
         try {
             JSONObject requestObject = new JSONObject();
             requestObject.putAll(args);
-            return createResource(PROJECT_URL, requestObject.toJSONString());
+            return createResource(resourceUrl, 
+            		requestObject.toJSONString());
         } catch (Throwable e) {
             logger.error("Failed to generate the project.", e);
             return null;

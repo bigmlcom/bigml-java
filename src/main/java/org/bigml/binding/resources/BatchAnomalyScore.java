@@ -1,6 +1,5 @@
 package org.bigml.binding.resources;
 
-import org.bigml.binding.BigMLClient;
 import org.bigml.binding.utils.CacheManager;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
@@ -25,10 +24,8 @@ public class BatchAnomalyScore extends AbstractResource {
      *
      */
     public BatchAnomalyScore() {
-    	super.init(null, null, null);
-        this.resourceRe = BATCH_ANOMALYSCORE_RE;
-        this.resourceUrl = BATCHANOMALYSCORE_URL;
-        this.resourceName = "batchanomalyscore";
+    		super.init(null, null, null, 
+    			BATCH_ANOMALYSCORE_RE, BATCHANOMALYSCORE_PATH);
     }
 
     /**
@@ -36,21 +33,18 @@ public class BatchAnomalyScore extends AbstractResource {
      *
      */
     public BatchAnomalyScore(final String apiUser, final String apiKey) {
-    	super.init(apiUser, apiKey, null);
-        this.resourceRe = BATCH_ANOMALYSCORE_RE;
-        this.resourceUrl = BATCHANOMALYSCORE_URL;
-        this.resourceName = "batchanomalyscore";
+    		super.init(apiUser, apiKey, null, 
+    			BATCH_ANOMALYSCORE_RE, BATCHANOMALYSCORE_PATH);
     }
 
     /**
      * Constructor
      *
      */
-    public BatchAnomalyScore(final String apiUser, final String apiKey, final CacheManager cacheManager) {
-    	super.init(apiUser, apiKey, cacheManager);
-        this.resourceRe = BATCH_ANOMALYSCORE_RE;
-        this.resourceUrl = BATCHANOMALYSCORE_URL;
-        this.resourceName = "batchanomalyscore";
+    public BatchAnomalyScore(final String apiUser, final String apiKey, 
+    			final CacheManager cacheManager) {
+    		super.init(apiUser, apiKey, cacheManager, 
+    			BATCH_ANOMALYSCORE_RE, BATCHANOMALYSCORE_PATH);
     }
 
     /**
@@ -90,26 +84,9 @@ public class BatchAnomalyScore extends AbstractResource {
         }
 
         try {
-            waitTime = waitTime != null ? waitTime : 3000;
-            retries = retries != null ? retries : 10;
-            if (waitTime > 0) {
-                int count = 0;
-                while (count < retries
-                        && !BigMLClient.getInstance().anomalyIsReady(anomalyId)) {
-                    Thread.sleep(waitTime);
-                    count++;
-                }
-            }
-
-            if (waitTime > 0) {
-                int count = 0;
-                while (count < retries
-                        && !BigMLClient.getInstance().datasetIsReady(datasetId)) {
-                    Thread.sleep(waitTime);
-                    count++;
-                }
-            }
-
+        		waitForResource(anomalyId, "anomalyIsReady", waitTime, retries);
+        		waitForResource(datasetId, "datasetIsReady", waitTime, retries);
+            
             JSONObject requestObject = new JSONObject();
             if (args != null) {
                 requestObject = args;
@@ -117,8 +94,8 @@ public class BatchAnomalyScore extends AbstractResource {
             requestObject.put("anomaly", anomalyId);
             requestObject.put("dataset", datasetId);
 
-            return createResource(BATCHANOMALYSCORE_URL,
-                    requestObject.toJSONString());
+            return createResource(resourceUrl,
+            		requestObject.toJSONString());
         } catch (Throwable e) {
             logger.error("Error creating batchanomalyscore");
             return null;

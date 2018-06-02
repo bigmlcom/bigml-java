@@ -22,10 +22,8 @@ public class TopicModel extends AbstractModelResource {
      *
      */
     public TopicModel() {
-    	super.init(null, null, null);
-        this.resourceRe = TOPICMODEL_RE;
-        this.resourceUrl = TOPICMODEL_URL;
-        this.resourceName = "topic model";
+    		super.init(null, null, null, 
+    			TOPICMODEL_RE, TOPICMODEL_PATH);
     }
 
     /**
@@ -33,10 +31,8 @@ public class TopicModel extends AbstractModelResource {
      *
      */
     public TopicModel(final String apiUser, final String apiKey) {
-    	super.init(apiUser, apiKey, null);
-        this.resourceRe = TOPICMODEL_RE;
-        this.resourceUrl = TOPICMODEL_URL;
-        this.resourceName = "topic model";
+    		super.init(apiUser, apiKey, null, 
+    			TOPICMODEL_RE, TOPICMODEL_PATH);
     }
 
 
@@ -44,11 +40,10 @@ public class TopicModel extends AbstractModelResource {
      * Constructor
      *
      */
-    public TopicModel(final String apiUser, final String apiKey, final CacheManager cacheManager) {
-    	super.init(apiUser, apiKey, cacheManager);
-        this.resourceRe = TOPICMODEL_RE;
-        this.resourceUrl = TOPICMODEL_URL;
-        this.resourceName = "topic model";
+    public TopicModel(final String apiUser, final String apiKey, 
+    			final CacheManager cacheManager) {
+    		super.init(apiUser, apiKey, cacheManager, 
+    			TOPICMODEL_RE, TOPICMODEL_PATH);
     }
 
 }

@@ -179,48 +179,17 @@ public abstract class AbstractResource {
     // Base URL
     protected String BIGML_URL;
 
-    protected String SOURCE_URL;
-    protected String DATASET_URL;
-    protected String MODEL_URL;
-    protected String PREDICTION_URL;
-    protected String EVALUATION_URL;
-    protected String ENSEMBLE_URL;
-    protected String BATCH_PREDICTION_URL;
-    protected String CLUSTER_URL;
-    protected String CENTROID_URL;
-    protected String BATCH_CENTROID_URL;
-    protected String ANOMALY_URL;
-    protected String ANOMALYSCORE_URL;
-    protected String BATCHANOMALYSCORE_URL;
-    protected String PROJECT_URL;
-    protected String SAMPLE_URL;
-    protected String CORRELATION_URL;
-    protected String STATISTICALTEST_URL;
-    protected String LOGISTICREGRESSION_URL;
-    protected String SCRIPT_URL;
-    protected String EXECUTION_URL;
-    protected String LIBRARY_URL;
-    protected String ASSOCIATION_URL;
-    protected String ASSOCIATIONSET_URL;
-    protected String TOPICMODEL_URL;
-    protected String TOPICDISTRIBUTION_URL;
-    protected String BATCH_TOPICDISTRIBUTION_URL;
-    protected String CONFIGURATION_URL;
-    protected String TIMESERIES_URL;
-    protected String FORECAST_URL;
-    protected String DEEPNET_URL;
-    protected String OPTIML_URL;
-    protected String FUSION_URL;
-
     public final static String DOWNLOAD_DIR = "/download";
 
     public CacheManager cacheManager;
 
 
-    protected void init(String apiUser, String apiKey, CacheManager cacheManager) {
+    protected void init(String apiUser, String apiKey, 
+    		CacheManager cacheManager, String resourceRe, 
+    		String resourcePath) {
 
         try {
-        	this.bigmlUser = apiUser != null ? apiUser : System
+        		this.bigmlUser = apiUser != null ? apiUser : System
                     .getProperty("BIGML_USERNAME");
             this.bigmlApiKey = apiKey != null ? apiKey : System
                     .getProperty("BIGML_API_KEY");
@@ -228,40 +197,11 @@ public abstract class AbstractResource {
                     + this.bigmlApiKey + ";";
             
             BIGML_URL = BigMLClient.getInstance().getBigMLUrl();
-            SOURCE_URL = BIGML_URL + SOURCE_PATH;
-            DATASET_URL = BIGML_URL + DATASET_PATH;
-            MODEL_URL = BIGML_URL + MODEL_PATH;
-            PREDICTION_URL = BIGML_URL + PREDICTION_PATH;
-            EVALUATION_URL = BIGML_URL + EVALUATION_PATH;
-            ENSEMBLE_URL = BIGML_URL + ENSEMBLE_PATH;
-            BATCH_PREDICTION_URL = BIGML_URL + BATCH_PREDICTION_PATH;
-            CLUSTER_URL = BIGML_URL + CLUSTER_PATH;
-            CENTROID_URL = BIGML_URL + CENTROID_PATH;
-            BATCH_CENTROID_URL = BIGML_URL + BATCH_CENTROID_PATH;
-            ANOMALY_URL = BIGML_URL + ANOMALY_PATH;
-            ANOMALYSCORE_URL = BIGML_URL + ANOMALYSCORE_PATH;
-            BATCHANOMALYSCORE_URL = BIGML_URL + BATCHANOMALYSCORE_PATH;
-            PROJECT_URL = BIGML_URL + PROJECT_PATH;
-            SAMPLE_URL = BIGML_URL + SAMPLE_PATH;
-            CORRELATION_URL = BIGML_URL + CORRELATION_PATH;
-            STATISTICALTEST_URL = BIGML_URL + STATISTICALTEST_PATH;
-            LOGISTICREGRESSION_URL = BIGML_URL + LOGISTICREGRESSION_PATH;
-            SCRIPT_URL = BIGML_URL + SCRIPT_PATH;
-            EXECUTION_URL = BIGML_URL + EXECUTION_PATH;
-            LIBRARY_URL = BIGML_URL + LIBRARY_PATH;
-            ASSOCIATION_URL = BIGML_URL + ASSOCIATION_PATH;
-            ASSOCIATIONSET_URL = BIGML_URL + ASSOCIATIONSET_PATH;
-            TOPICMODEL_URL = BIGML_URL + TOPICMODEL_PATH;
-            TOPICDISTRIBUTION_URL = BIGML_URL + TOPICDISTRIBUTION_PATH;
-            BATCH_TOPICDISTRIBUTION_URL = BIGML_URL + BATCH_TOPICDISTRIBUTION_PATH;
-            CONFIGURATION_URL = BIGML_URL + CONFIGURATION_PATH;
-            TIMESERIES_URL = BIGML_URL + TIMESERIES_PATH;
-            FORECAST_URL = BIGML_URL + FORECAST_PATH;
-            DEEPNET_URL = BIGML_URL + DEEPNET_PATH;
-            OPTIML_URL = BIGML_URL + OPTIML_PATH;
-            FUSION_URL = BIGML_URL + FUSION_PATH;
-
+            
             this.cacheManager = cacheManager;
+            this.resourceRe = resourceRe;
+            this.resourceUrl = BIGML_URL + resourcePath;
+            this.resourceName = resourcePath;
         } catch (AuthenticationException ae) {
 
         }
@@ -1026,6 +966,32 @@ public abstract class AbstractResource {
         result.put("error", error);
         result.put("csv", csv);
         return result;
-
+    }
+    
+    /**
+     * Waits for the resource to be finished
+     * 
+     */
+    protected void waitForResource(String resourceId, String isReadyMethod, 
+    			Integer waitTime, Integer retries) {
+    		waitTime = waitTime != null ? waitTime : 3000;
+        retries = retries != null ? retries : 10;
+        java.lang.reflect.Method method;
+        try {
+        		method = BigMLClient.getInstance().getClass().getMethod(
+        				isReadyMethod, String.class);
+        		
+	        if (waitTime > 0) {
+	            int count = 0;
+	            Boolean isReady = (Boolean) 
+	            		method.invoke(BigMLClient.getInstance(), resourceId);
+	            while (count < retries && !isReady) {
+	                Thread.sleep(waitTime);
+	                count++;
+	            }
+	        }
+        } catch (Throwable e) {
+        		e.printStackTrace();
+        }
     }
 }

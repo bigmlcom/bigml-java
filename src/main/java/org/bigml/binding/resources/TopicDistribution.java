@@ -1,6 +1,5 @@
 package org.bigml.binding.resources;
 
-import org.bigml.binding.BigMLClient;
 import org.bigml.binding.utils.CacheManager;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
@@ -25,10 +24,8 @@ public class TopicDistribution extends AbstractResource {
      *
      */
     public TopicDistribution() {
-    	super.init(null, null, null);
-        this.resourceRe = TOPICDISTRIBUTION_RE;
-        this.resourceUrl = TOPICDISTRIBUTION_URL;
-        this.resourceName = "topic distribution";
+    		super.init(null, null, null, 
+    			TOPICDISTRIBUTION_RE, TOPICDISTRIBUTION_PATH);
     }
 
     /**
@@ -36,10 +33,8 @@ public class TopicDistribution extends AbstractResource {
      *
      */
     public TopicDistribution(final String apiUser, final String apiKey) {
-    	super.init(apiUser, apiKey, null);
-        this.resourceRe = TOPICDISTRIBUTION_RE;
-        this.resourceUrl = TOPICDISTRIBUTION_URL;
-        this.resourceName = "topic distribution";
+    		super.init(apiUser, apiKey, null, 
+    			TOPICDISTRIBUTION_RE, TOPICDISTRIBUTION_PATH);
     }
 
 
@@ -47,11 +42,10 @@ public class TopicDistribution extends AbstractResource {
      * Constructor
      *
      */
-    public TopicDistribution(final String apiUser, final String apiKey, final CacheManager cacheManager) {
-    	super.init(apiUser, apiKey, cacheManager);
-        this.resourceRe = TOPICDISTRIBUTION_RE;
-        this.resourceUrl = TOPICDISTRIBUTION_URL;
-        this.resourceName = "topic distribution";
+    public TopicDistribution(final String apiUser, final String apiKey, 
+    			final CacheManager cacheManager) {
+    		super.init(apiUser, apiKey, cacheManager, 
+    			TOPICDISTRIBUTION_RE, TOPICDISTRIBUTION_PATH);
     }
 
     /**
@@ -87,17 +81,8 @@ public class TopicDistribution extends AbstractResource {
         }
 
         try {
-            waitTime = waitTime != null ? waitTime : 3000;
-            retries = retries != null ? retries : 10;
-            if (waitTime > 0) {
-                int count = 0;
-                while (count < retries
-                        && !BigMLClient.getInstance().topicModelIsReady(topicModelId)) {
-                    Thread.sleep(waitTime);
-                    count++;
-                }
-            }
-
+        		waitForResource(topicModelId, "topicModelIsReady", waitTime, retries);
+        	
             // Input data
             JSONObject inputDataJSON = null;
             if (inputData == null) {
@@ -112,10 +97,10 @@ public class TopicDistribution extends AbstractResource {
             }
 
             requestObject.put("topicmodel", topicModelId);
-            requestObject.put("input_data", inputData);
+            requestObject.put("input_data", inputDataJSON);
 
-            return createResource(TOPICDISTRIBUTION_URL,
-                                  requestObject.toJSONString());
+            return createResource(resourceUrl,
+            		requestObject.toJSONString());
         } catch (Throwable e) {
             logger.error("Error creating topic distribution");
             return null;

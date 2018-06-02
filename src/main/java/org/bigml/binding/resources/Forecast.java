@@ -1,6 +1,5 @@
 package org.bigml.binding.resources;
 
-import org.bigml.binding.BigMLClient;
 import org.bigml.binding.utils.CacheManager;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
@@ -25,10 +24,8 @@ public class Forecast extends AbstractResource {
      *
      */
     public Forecast() {
-    	super.init(null, null, null);
-        this.resourceRe = FORECAST_RE;
-        this.resourceUrl = FORECAST_URL;
-        this.resourceName = "forecast";
+    		super.init(null, null, null, 
+    			FORECAST_RE, FORECAST_PATH);
     }
 
     /**
@@ -36,10 +33,8 @@ public class Forecast extends AbstractResource {
      *
      */
     public Forecast(final String apiUser, final String apiKey) {
-    	super.init(apiUser, apiKey, null);
-        this.resourceRe = FORECAST_RE;
-        this.resourceUrl = FORECAST_URL;
-        this.resourceName = "forecast";
+    		super.init(apiUser, apiKey, null, 
+    			FORECAST_RE, FORECAST_PATH);
     }
 
 
@@ -47,11 +42,10 @@ public class Forecast extends AbstractResource {
      * Constructor
      *
      */
-    public Forecast(final String apiUser, final String apiKey, final CacheManager cacheManager) {
-    	super.init(apiUser, apiKey, cacheManager);
-        this.resourceRe = FORECAST_RE;
-        this.resourceUrl = FORECAST_URL;
-        this.resourceName = "forecast";
+    public Forecast(final String apiUser, final String apiKey, 
+    			final CacheManager cacheManager) {
+    		super.init(apiUser, apiKey, cacheManager, 
+    			FORECAST_RE, FORECAST_PATH);
     }
 
     /**
@@ -87,17 +81,8 @@ public class Forecast extends AbstractResource {
         }
 
         try {
-            waitTime = waitTime != null ? waitTime : 3000;
-            retries = retries != null ? retries : 10;
-            if (waitTime > 0) {
-                int count = 0;
-                while (count < retries
-                        && !BigMLClient.getInstance().timeSeriesIsReady(timeSeriesId)) {
-                    Thread.sleep(waitTime);
-                    count++;
-                }
-            }
-
+        		waitForResource(timeSeriesId, "timeSeriesIsReady", waitTime, retries);
+        		
             // Input data
             JSONObject inputDataJSON = null;
             if (inputData == null) {
@@ -114,8 +99,8 @@ public class Forecast extends AbstractResource {
             requestObject.put("timeseries", timeSeriesId);
             requestObject.put("input_data", inputData);
 
-            return createResource(FORECAST_URL,
-                                  requestObject.toJSONString());
+            return createResource(resourceUrl,
+            		requestObject.toJSONString());
         } catch (Throwable e) {
             logger.error("Error creating timeseries");
             return null;

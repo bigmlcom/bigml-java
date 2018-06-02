@@ -23,10 +23,8 @@ public class OptiML extends AbstractModelResource {
      *
      */
     public OptiML() {
-        super.init(null, null, null);
-        this.resourceRe = OPTIML_RE;
-        this.resourceUrl = OPTIML_URL;
-        this.resourceName = "optiml";
+        super.init(null, null, null, 
+        		OPTIML_RE, OPTIML_PATH);
     }
 
     /**
@@ -34,10 +32,8 @@ public class OptiML extends AbstractModelResource {
      *
      */
     public OptiML(final String apiUser, final String apiKey) {
-        super.init(apiUser, apiKey, null);
-        this.resourceRe = OPTIML_RE;
-        this.resourceUrl = OPTIML_URL;
-        this.resourceName = "optiml";
+        super.init(apiUser, apiKey, null, 
+        		OPTIML_RE, OPTIML_PATH);
     }
 
 
@@ -45,11 +41,10 @@ public class OptiML extends AbstractModelResource {
      * Constructor
      *
      */
-    public OptiML(final String apiUser, final String apiKey, final CacheManager cacheManager) {
-        super.init(apiUser, apiKey, cacheManager);
-        this.resourceRe = OPTIML_RE;
-        this.resourceUrl = OPTIML_URL;
-        this.resourceName = "optiml";
+    public OptiML(final String apiUser, final String apiKey, 
+    			final CacheManager cacheManager) {
+        super.init(apiUser, apiKey, cacheManager, 
+        		OPTIML_RE, OPTIML_PATH);
     }
 
 }
