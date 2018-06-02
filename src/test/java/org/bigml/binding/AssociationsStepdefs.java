@@ -7,7 +7,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.*;
 
 import org.json.simple.JSONObject;
-
+import org.json.simple.JSONValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -145,8 +145,8 @@ public class AssociationsStepdefs {
 
 
     @When("^I get the rules for \"(.*)\" and the first rule is \"(.*)\"$")
-    public void I_get_the_rules_for_and_the_first_rule_is(List itemList, String ruleJson)
-        throws Throwable {
+    public void I_get_the_rules_for_and_the_first_rule_is(
+    		List itemList, String ruleJson) throws Throwable {
         List<AssociationRule> rules = localAssociation.rules(
             null, null, null, itemList, null);
 
@@ -155,7 +155,9 @@ public class AssociationsStepdefs {
         }
 
         AssociationRule rule = rules.get(0);
-        assertEquals(rule.getRule().toJSONString(), ruleJson);
+        
+        JSONObject expected = (JSONObject) JSONValue.parse(ruleJson);
+        assertEquals(expected, rule.getRule());
     }
 
 }

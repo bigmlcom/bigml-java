@@ -3,14 +3,11 @@ package org.bigml.binding;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.InputStreamReader;
-import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
 import java.util.List;
 
 import org.bigml.binding.localmodel.Prediction;
 import org.bigml.binding.utils.Utils;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.slf4j.Logger;
@@ -126,7 +123,10 @@ public class LocalModelsStepdefs {
             JSONObject inputObj = (JSONObject) JSONValue.parse(args);
             List<Prediction> predictions = predictiveModel.predict(inputObj, true, "all");
             String predictionsStr = JSONValue.toJSONString(predictions);
-            assertEquals(pred, predictionsStr);
+            
+            JSONArray expected = (JSONArray) JSONValue.parse(pred);
+            JSONArray was = (JSONArray) JSONValue.parse(predictionsStr);
+            assertEquals(expected, was);
         } catch (InputDataParseException parseException) {
             assertTrue("", false);
         }
