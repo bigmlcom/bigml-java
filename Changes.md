@@ -6,6 +6,11 @@
 
 * DevMode removed
 * OptiML Resource
+* Fusion Resource
+
+### Bugs
+
+* Fixed test suite
 
 
 ## 1.7.0 version
