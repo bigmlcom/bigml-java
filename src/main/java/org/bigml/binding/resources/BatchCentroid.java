@@ -1,6 +1,5 @@
 package org.bigml.binding.resources;
 
-import org.bigml.binding.BigMLClient;
 import org.bigml.binding.utils.CacheManager;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -28,10 +27,8 @@ public class BatchCentroid extends AbstractResource {
      *
      */
     public BatchCentroid() {
-    	super.init(null, null, null);
-        this.resourceRe = BATCH_CENTROID_RE;
-        this.resourceUrl = BATCH_CENTROID_URL;
-        this.resourceName = "batchcentroid";
+    		super.init(null, null, null, 
+    			BATCH_CENTROID_RE, BATCH_CENTROID_PATH);
     }
 
     /**
@@ -39,21 +36,18 @@ public class BatchCentroid extends AbstractResource {
      *
      */
     public BatchCentroid(final String apiUser, final String apiKey) {
-    	super.init(apiUser, apiKey, null);
-        this.resourceRe = BATCH_CENTROID_RE;
-        this.resourceUrl = BATCH_CENTROID_URL;
-        this.resourceName = "batchcentroid";
+    		super.init(apiUser, apiKey, null, 
+			BATCH_CENTROID_RE, BATCH_CENTROID_PATH);
     }
 
     /**
      * Constructor
      *
      */
-    public BatchCentroid(final String apiUser, final String apiKey, final CacheManager cacheManager) {
-    	super.init(apiUser, apiKey, cacheManager);
-        this.resourceRe = BATCH_CENTROID_RE;
-        this.resourceUrl = BATCH_CENTROID_URL;
-        this.resourceName = "batchcentroid";
+    public BatchCentroid(final String apiUser, final String apiKey, 
+    			final CacheManager cacheManager) {
+    		super.init(apiUser, apiKey, cacheManager, 
+			BATCH_CENTROID_RE, BATCH_CENTROID_PATH);
     }
 
     /**
@@ -122,26 +116,9 @@ public class BatchCentroid extends AbstractResource {
         }
 
         try {
-            waitTime = waitTime != null ? waitTime : 3000;
-            retries = retries != null ? retries : 10;
-            if (waitTime > 0) {
-                int count = 0;
-                while (count < retries
-                        && !BigMLClient.getInstance().clusterIsReady(clusterId)) {
-                    Thread.sleep(waitTime);
-                    count++;
-                }
-            }
-
-            if (waitTime > 0) {
-                int count = 0;
-                while (count < retries
-                        && !BigMLClient.getInstance().datasetIsReady(datasetId)) {
-                    Thread.sleep(waitTime);
-                    count++;
-                }
-            }
-
+        		waitForResource(clusterId, "clusterIsReady", waitTime, retries);
+        		waitForResource(datasetId, "datasetIsReady", waitTime, retries);
+        	
             JSONObject requestObject = new JSONObject();
             if (args != null) {
                 requestObject = args;
@@ -149,8 +126,8 @@ public class BatchCentroid extends AbstractResource {
             requestObject.put("cluster", clusterId);
             requestObject.put("dataset", datasetId);
 
-            return createResource(BATCH_CENTROID_URL,
-                    requestObject.toJSONString());
+            return createResource(resourceUrl,
+            		requestObject.toJSONString());
         } catch (Throwable e) {
             logger.error("Error creating batchcentroid");
             return null;

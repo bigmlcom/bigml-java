@@ -1,6 +1,5 @@
 package org.bigml.binding.resources;
 
-import org.bigml.binding.BigMLClient;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.slf4j.Logger;
@@ -183,16 +182,8 @@ public abstract class AbstractModelResource extends AbstractResource {
 
             // Checking status
             try {
-                waitTime = waitTime != null ? waitTime : 3000;
-                retries = retries != null ? retries : 10;
-                if (waitTime > 0) {
-                    int count = 0;
-                    while (count < retries
-                            && !BigMLClient.getInstance().datasetIsReady(datasetId)) {
-                        Thread.sleep(waitTime);
-                        count++;
-                    }
-                }
+                waitForResource(datasetId, "datasetIsReady", 
+                		waitTime, retries);
                 datasetsIds.add(datasetId);
             } catch (Throwable e) {
                 logger.error("Error creating object");

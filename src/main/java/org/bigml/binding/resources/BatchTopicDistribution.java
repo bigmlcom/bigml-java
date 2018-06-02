@@ -1,6 +1,5 @@
 package org.bigml.binding.resources;
 
-import org.bigml.binding.BigMLClient;
 import org.bigml.binding.utils.CacheManager;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
@@ -25,10 +24,8 @@ public class BatchTopicDistribution extends AbstractResource {
      *
      */
     public BatchTopicDistribution() {
-    	super.init(null, null, null);
-        this.resourceRe = BATCH_TOPICDISTRIBUTION_RE;
-        this.resourceUrl = BATCH_TOPICDISTRIBUTION_URL;
-        this.resourceName = "batch topic distribution";
+    		super.init(null, null, null, 
+    			BATCH_TOPICDISTRIBUTION_RE, BATCH_TOPICDISTRIBUTION_PATH);
     }
 
     /**
@@ -36,21 +33,18 @@ public class BatchTopicDistribution extends AbstractResource {
      *
      */
     public BatchTopicDistribution(final String apiUser, final String apiKey) {
-    	super.init(apiUser, apiKey, null);
-        this.resourceRe = BATCH_TOPICDISTRIBUTION_RE;
-        this.resourceUrl = BATCH_TOPICDISTRIBUTION_URL;
-        this.resourceName = "batch topic distribution";
+    		super.init(apiUser, apiKey, null, 
+    			BATCH_TOPICDISTRIBUTION_RE, BATCH_TOPICDISTRIBUTION_PATH);
     }
 
     /**
      * Constructor
      *
      */
-    public BatchTopicDistribution(final String apiUser, final String apiKey, final CacheManager cacheManager) {
-    	super.init(apiUser, apiKey, cacheManager);
-        this.resourceRe = BATCH_TOPICDISTRIBUTION_RE;
-        this.resourceUrl = BATCH_TOPICDISTRIBUTION_URL;
-        this.resourceName = "batch topic distribution";
+    public BatchTopicDistribution(final String apiUser, final String apiKey, 
+    			final CacheManager cacheManager) {
+    		super.init(apiUser, apiKey, cacheManager, 
+    			BATCH_TOPICDISTRIBUTION_RE, BATCH_TOPICDISTRIBUTION_PATH);
     }
 
     /**
@@ -90,26 +84,9 @@ public class BatchTopicDistribution extends AbstractResource {
         }
 
         try {
-            waitTime = waitTime != null ? waitTime : 3000;
-            retries = retries != null ? retries : 10;
-            if (waitTime > 0) {
-                int count = 0;
-                while (count < retries
-                        && !BigMLClient.getInstance().topicModelIsReady(topicModelId)) {
-                    Thread.sleep(waitTime);
-                    count++;
-                }
-            }
-
-            if (waitTime > 0) {
-                int count = 0;
-                while (count < retries
-                        && !BigMLClient.getInstance().datasetIsReady(datasetId)) {
-                    Thread.sleep(waitTime);
-                    count++;
-                }
-            }
-
+        		waitForResource(topicModelId, "topicModelIsReady", waitTime, retries);
+        		waitForResource(datasetId, "datasetIsReady", waitTime, retries);
+        	
             JSONObject requestObject = new JSONObject();
             if (args != null) {
                 requestObject = args;
@@ -117,8 +94,8 @@ public class BatchTopicDistribution extends AbstractResource {
             requestObject.put("topicmodel", topicModelId);
             requestObject.put("dataset", datasetId);
 
-            return createResource(BATCH_TOPICDISTRIBUTION_URL,
-                    requestObject.toJSONString());
+            return createResource(resourceUrl,
+            		requestObject.toJSONString());
         } catch (Throwable e) {
             logger.error("Error creating batch topic distribution");
             return null;

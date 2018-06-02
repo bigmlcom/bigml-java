@@ -28,10 +28,8 @@ public class AnomalyScore extends AbstractResource {
      *
      */
     public AnomalyScore() {
-    	super.init(null, null, null);
-        this.resourceRe = ANOMALYSCORE_RE;
-        this.resourceUrl = ANOMALYSCORE_URL;
-        this.resourceName = "anomaly score";
+    		super.init(null, null, null, 
+    			ANOMALYSCORE_RE, ANOMALYSCORE_PATH);
     }
 
     /**
@@ -39,21 +37,18 @@ public class AnomalyScore extends AbstractResource {
      *
      */
     public AnomalyScore(final String apiUser, final String apiKey) {
-    	super.init(apiUser, apiKey, null);
-        this.resourceRe = ANOMALYSCORE_RE;
-        this.resourceUrl = ANOMALYSCORE_URL;
-        this.resourceName = "anomaly score";
+    		super.init(apiUser, apiKey, null, 
+    			ANOMALYSCORE_RE, ANOMALYSCORE_PATH);
     }
 
     /**
      * Constructor
      *
      */
-    public AnomalyScore(final String apiUser, final String apiKey, final CacheManager cacheManager) {
-    	super.init(apiUser, apiKey, cacheManager);
-        this.resourceRe = ANOMALYSCORE_RE;
-        this.resourceUrl = ANOMALYSCORE_URL;
-        this.resourceName = "anomaly score";
+    public AnomalyScore(final String apiUser, final String apiKey, 
+    			final CacheManager cacheManager) {
+    		super.init(apiUser, apiKey, cacheManager, 
+    			ANOMALYSCORE_RE, ANOMALYSCORE_PATH);
     }
 
     /**
@@ -121,23 +116,11 @@ public class AnomalyScore extends AbstractResource {
             JSONObject inputData, Boolean byName, JSONObject args,
             Integer waitTime, Integer retries) {
         JSONObject anomaly = null;
-
-        waitTime = waitTime != null ? waitTime : 3000;
-        retries = retries != null ? retries : 10;
-
+        
         try {
             anomaly = BigMLClient.getInstance().getAnomaly(anomalyId);
-            if (waitTime > 0) {
-                int count = 0;
-                while (count < retries
-                        && !BigMLClient.getInstance().anomalyIsReady(anomaly)) {
-                    Thread.sleep(waitTime);
-                    count++;
-                }
-            }
-        } catch (Throwable e) {
-        }
-
+            waitForResource(anomalyId, "anomalyIsReady",  waitTime, retries);
+        } catch (Throwable e) {}
 
         try {
 
@@ -172,7 +155,8 @@ public class AnomalyScore extends AbstractResource {
             requestObject.put("anomaly", anomalyId);
             requestObject.put("input_data", inputDataJSON);
 
-            return createResource(ANOMALYSCORE_URL, requestObject.toJSONString());
+            return createResource(resourceUrl,  
+            		requestObject.toJSONString());
         } catch (Throwable e) {
             logger.error("Error creating anomaly score", e);
             return null;

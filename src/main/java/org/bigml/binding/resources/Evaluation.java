@@ -1,6 +1,5 @@
 package org.bigml.binding.resources;
 
-import org.bigml.binding.BigMLClient;
 import org.bigml.binding.utils.CacheManager;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -25,10 +24,8 @@ public class Evaluation extends AbstractResource {
      *
      */
     public Evaluation() {
-    	super.init(null, null, null);
-        this.resourceRe = EVALUATION_RE;
-        this.resourceUrl = EVALUATION_URL;
-        this.resourceName = "evaluation";
+    		super.init(null, null, null, 
+    			EVALUATION_RE, EVALUATION_PATH);
     }
 
     /**
@@ -36,21 +33,18 @@ public class Evaluation extends AbstractResource {
      *
      */
     public Evaluation(final String apiUser, final String apiKey) {
-    	super.init(apiUser, apiKey, null);
-        this.resourceRe = EVALUATION_RE;
-        this.resourceUrl = EVALUATION_URL;
-        this.resourceName = "evaluation";
+    		super.init(apiUser, apiKey, null, 
+    			EVALUATION_RE, EVALUATION_PATH);
     }
 
     /**
      * Constructor
      *
      */
-    public Evaluation(final String apiUser, final String apiKey, final CacheManager cacheManager) {
-    	super.init(apiUser, apiKey, cacheManager);
-        this.resourceRe = EVALUATION_RE;
-        this.resourceUrl = EVALUATION_URL;
-        this.resourceName = "evaluation";
+    public Evaluation(final String apiUser, final String apiKey, 
+    			final CacheManager cacheManager) {
+    		super.init(apiUser, apiKey, cacheManager, 
+    			EVALUATION_RE, EVALUATION_PATH);
     }
 
     /**
@@ -127,50 +121,23 @@ public class Evaluation extends AbstractResource {
         }
 
         try {
-            waitTime = waitTime != null ? waitTime : 3000;
-            retries = retries != null ? retries : 10;
-            if (waitTime > 0) {
-                int count = 0;
-
-                if (model.matches(MODEL_RE)) {
-                    while (count < retries
-                            && !BigMLClient.getInstance().modelIsReady(model)) {
-                        Thread.sleep(waitTime);
-                        count++;
-                    }
-                }
-
-                if (model.matches(ENSEMBLE_RE)) {
-                    while (count < retries
-                            && !BigMLClient.getInstance().ensembleIsReady(model)) {
-                        Thread.sleep(waitTime);
-                        count++;
-                    }
-                }
-
-                if (model.matches(LOGISTICREGRESSION_RE)) {
-                    while (count < retries
-                            && !BigMLClient.getInstance().logisticRegressionIsReady(model)) {
-                        Thread.sleep(waitTime);
-                        count++;
-                    }
-                }
-                
-                if (model.matches(FUSION_RE)) {
-                    while (count < retries
-                            && !BigMLClient.getInstance().fusionIsReady(model)) {
-                        Thread.sleep(waitTime);
-                        count++;
-                    }
-                }
-
-                count = 0;
-                while (count < retries
-                        && !BigMLClient.getInstance().datasetIsReady(datasetId)) {
-                    Thread.sleep(waitTime);
-                    count++;
-                }
+        		if (model.matches(MODEL_RE)) {
+        			waitForResource(model, "modelIsReady", waitTime, retries);
             }
+
+            if (model.matches(ENSEMBLE_RE)) {
+            		waitForResource(model, "ensembleIsReady", waitTime, retries);
+            }
+
+            if (model.matches(LOGISTICREGRESSION_RE)) {
+            		waitForResource(model, "logisticRegressionIsReady", waitTime, retries);
+            }
+            
+            if (model.matches(FUSION_RE)) {
+            		waitForResource(model, "fusionIsReady", waitTime, retries);
+            }
+        	
+            waitForResource(datasetId, "datasetIsReady", waitTime, retries);
 
             JSONObject requestObject = new JSONObject();
             if (args != null) {
@@ -191,7 +158,8 @@ public class Evaluation extends AbstractResource {
             }
             requestObject.put("dataset", datasetId);
 
-            return createResource(EVALUATION_URL, requestObject.toJSONString());
+            return createResource(resourceUrl, 
+            		requestObject.toJSONString());
         } catch (Throwable e) {
             logger.error("Error creating evaluation");
             return null;
