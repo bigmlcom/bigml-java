@@ -3,7 +3,6 @@ Feature: Testing projects REST api calls
     I need to create a project
 
     Scenario Outline: Successfully creating a project:
-        Given that I use production mode with seed="<seed>"
         Given I create a project with name <name>
         And I wait until the project is ready less than <time_1> secs
         And I check the project name <name>
@@ -13,5 +12,5 @@ Feature: Testing projects REST api calls
         Then delete test data
 
         Examples:
-        | seed  | time_1  | name                |   params                            |   new_name             |
-        | BigML |   50    | "my project"    |   {"name": "my new project"}    | "my new project"   |
+        | time_1  | name                |   params                            |   new_name             |
+        |   50    | "my project"    |   {"name": "my new project"}    | "my new project"   |

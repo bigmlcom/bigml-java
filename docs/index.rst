@@ -85,9 +85,6 @@ the BigMLClient class as follows:
     BigMLClient api = BigMLClient.getInstance("myusername",
         "ae579e7e53fb9abd646a6ff8aa99d4afe83ac291", false);
 
-WARNING: ``getInstance`` also takes 2-String parameters, and they are NOT
-your username and API key, but ``seed`` and ``storage``.
-
 For `Virtual Private Cloud <https://bigml.com/pricing/vpc>`_ setups, you can 
 change the remote server URL to the VPC particular one by either setting the 
 ``BIGML_URL`` in ``binding.properties`` or in the JVM environment.

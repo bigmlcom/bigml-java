@@ -4,7 +4,6 @@ In order to create a prediction
 I need to create a model first
 
   Scenario Outline: Successfully creating a prediction:
-      Given that I use production mode with seed="<seed>"
       Given I create a data source uploading a "<data>" file
       And I wait until the source is ready less than <time_1> secs
       And I add the unitTest tag to the data source waiting less than <time_1> secs
@@ -17,13 +16,12 @@ I need to create a model first
       Then delete test data
 
       Examples:
-      | data                |  seed  |  time_1  | time_2 | time_3 | data_input    | objective | prediction  |
-      | data/iris.csv | BigML | 10      | 10     | 10     | {"petal width": 0.5} | 000004    | Iris-setosa |
-      | data/iris_sp_chars.csv | BigML |  10      | 10     |  10     | {"pétal&width\u0000": 0.5} | 000004    | Iris-setosa |
+      | data                |  time_1  | time_2 | time_3 | data_input    | objective | prediction  |
+      | data/iris.csv | 10      | 10     | 10     | {"petal width": 0.5} | 000004    | Iris-setosa |
+      | data/iris_sp_chars.csv |  10      | 10     |  10     | {"pétal&width\u0000": 0.5} | 000004    | Iris-setosa |
 
 
   Scenario Outline: Successfully creating a prediction from a source in a remote location:
-      Given that I use production mode with seed="<seed>"
       Given I create a data source using the url "<url>"
       And I wait until the source is ready less than <time_1> secs
       And I add the unitTest tag to the data source waiting less than <time_1> secs
@@ -36,13 +34,11 @@ I need to create a model first
       Then delete test data
 
       Examples:
-      | url                |  seed  |  time_1  | time_2 | time_3 |  data_input    | objective | prediction  |
-      | s3://bigml-public/csv/iris.csv | BigML |  10      | 10     | 10     |  {"petal width": 0.5} | 000004    | Iris-setosa |
-
+      | url                |  time_1  | time_2 | time_3 |  data_input    | objective | prediction  |
+      | s3://bigml-public/csv/iris.csv |  10      | 10     | 10     |  {"petal width": 0.5} | 000004    | Iris-setosa |
 
 
 #  Scenario Outline: Successfully creating a prediction from a asynchronous uploaded file:
-#    Given that I use production mode with seed="<seed>"
 #    Given I create a data source uploading a "<data>" file in asynchronous mode
 #    And I wait until the source has been created less than <time_1> secs
 #    And I wait until the source is ready less than <time_2> secs
@@ -56,12 +52,11 @@ I need to create a model first
 #    Then delete test data
 
 #  Examples:
-#  | data                |  seed  |  time_1  | time_2 | time_3 | time_4 |  data_input    | objective | prediction  |
-#  | data/iris.csv | BigML |  10      | 10     | 10     | 10     |  {"petal width": 0.5} | 000004    | Iris-setosa |
+#  | data                |  time_1  | time_2 | time_3 | time_4 |  data_input    | objective | prediction  |
+#  | data/iris.csv |  10      | 10     | 10     | 10     |  {"petal width": 0.5} | 000004    | Iris-setosa |
 
 
   Scenario Outline: Successfully creating a prediction from inline data source:
-      Given that I use production mode with seed="<seed>"
       Given I create a data source from inline data slurped from "<data>"
       And I wait until the source is ready less than <time_1> secs
       And I add the unitTest tag to the data source waiting less than <time_1> secs
@@ -74,12 +69,11 @@ I need to create a model first
       Then delete test data
 
       Examples:
-      | data                |  seed  |  time_1  | time_2 | time_3 |  data_input    | objective | prediction  |
-      | data/iris.csv       | BigML  |  10      | 10     | 10     |  {"petal width": 0.5} | 000004    | Iris-setosa |
+      | data                |  time_1  | time_2 | time_3 |  data_input    | objective | prediction  |
+      | data/iris.csv       |  10      | 10     | 10     |  {"petal width": 0.5} | 000004    | Iris-setosa |
 
 
   Scenario Outline: Successfully creating a centroid and the associated dataset:
-      Given that I use production mode with seed="<seed>"
       Given I create a data source uploading a "<data>" file
       And I wait until the source is ready less than <time_1> secs
       And I add the unitTest tag to the data source waiting less than <time_1> secs
@@ -90,16 +84,14 @@ I need to create a model first
       When I create a centroid for "<data_input>"
       And I check the centroid is ok
       Then the centroid is "<centroid>"
-
       And I create a dataset from the cluster and the centroid
       And I wait until the dataset is ready less than <time_2> secs
       And I check that the dataset is created for the cluster and the centroid
-
       Then delete test data
 
       Examples:
-      | data                |  seed  |  time_1  | time_2 | time_3 | data_input    | centroid  |
-      | data/diabetes.csv | BigML |  10      | 10     | 30     | {"pregnancies": 0, "plasma glucose": 118, "blood pressure": 84, "triceps skin thickness": 47, "insulin": 230, "bmi": 45.8, "diabetes pedigree": 0.551, "age": 31, "diabetes": "true"} | Cluster 3 |
+      | data                |  time_1  | time_2 | time_3 | data_input    | centroid  |
+      | data/diabetes.csv |  10      | 10     | 30     | {"pregnancies": 0, "plasma glucose": 118, "blood pressure": 84, "triceps skin thickness": 47, "insulin": 230, "bmi": 45.8, "diabetes pedigree": 0.551, "age": 31, "diabetes": "true"} | Cluster 3 |
 
 
   Scenario Outline: Successfully creating an anomaly score:

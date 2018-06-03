@@ -51,7 +51,6 @@ public class EnsemblesStepdefs {
         JSONObject args = new JSONObject();
         args.put("number_of_models", numberOfModels);
         args.put("ensemble_sample", ensembleSample);
-
         args.put("tags", Arrays.asList("unitTest"));
 
         String datasetId = (String) context.dataset.get("resource");

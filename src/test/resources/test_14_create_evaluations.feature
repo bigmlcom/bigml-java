@@ -3,7 +3,6 @@ Feature: Create Evaluations
     I need to create a model and a dataset first
 
      Scenario Outline: Successfully creating an evaluation:
-        Given that I use production mode with seed="<seed>"
         Given I create a data source uploading a "<data>" file
         And I wait until the source is ready less than <time_1> secs
         And I add the unitTest tag to the data source waiting less than <time_1> secs
@@ -17,12 +16,11 @@ Feature: Create Evaluations
         Then delete test data
 
         Examples:
-        | data             | seed      | time_1  | time_2 | time_3 | time_4 | measure       | value  |
-        | data/iris.csv | BigML | 50      | 50     | 50     | 50     | average_phi   | 1      |
+        | data	| time_1  | time_2 | time_3 | time_4 | measure       | value  |
+        | data/iris.csv | 50      | 50     | 50     | 50     | average_phi   | 1      |
 
 
     Scenario Outline: Successfully creating an evaluation for an ensemble:
-        Given that I use production mode with seed="<seed>"
         Given I create a data source uploading a "<data>" file
         And I wait until the source is ready less than <time_1> secs
         And I add the unitTest tag to the data source waiting less than <time_1> secs
@@ -36,12 +34,11 @@ Feature: Create Evaluations
         Then delete test data
 
         Examples:
-        | data             | seed      | time_1  | time_2 | number_of_models | time_3 | time_4 | measure       | value  |
-        | data/iris.csv | BigML | 50      | 50     | 5                | 80     | 80     | average_phi   | 0.97064   |
+        | data             | time_1  | time_2 | number_of_models | time_3 | time_4 | measure       | value  |
+        | data/iris.csv | 50      | 50     | 5                | 80     | 80     | average_phi   | 0.97064   |
 
 
     Scenario Outline: Successfully creating an evaluation for a logistic regression:
-        Given that I use production mode with seed="<seed>"
         Given I create a data source uploading a "<data>" file
         And I wait until the source is ready less than <time_1> secs
         And I add the unitTest tag to the data source waiting less than <time_1> secs
@@ -55,5 +52,5 @@ Feature: Create Evaluations
         Then delete test data
 
         Examples:
-        | data             | seed      | time_1  | time_2 | tlp | time_3 | time_4 | measure       | value  |
-        | data/iris.csv | BigML | 50      | 50     | 5                | 800     | 80     | average_phi   | 0.89054   |
+        | data             | time_1  | time_2 | tlp | time_3 | time_4 | measure       | value  |
+        | data/iris.csv | 50      | 50     | 5                | 800     | 80     | average_phi   | 0.89054   |

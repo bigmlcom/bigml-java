@@ -3,7 +3,6 @@ Feature: Create an anomaly detector from a dataset or dataset list
   I need to create some datasets first
 
   Scenario Outline: Successfully creating an anomaly detector from a dataset and a dataset list:
-    Given that I use production mode with seed="<seed>"
     Given I create a data source uploading a "<data>" file
     And I wait until the source is ready less than <time_1> secs
     And I add the unitTest tag to the data source waiting less than <time_1> secs
@@ -22,13 +21,12 @@ Feature: Create an anomaly detector from a dataset or dataset list
     Then delete test data
 
   Examples:
-    | data                | seed      | time_1  | time_2 | time_3 | time_4 |
-    | data/iris.csv       | BigML     |  40     | 40     | 40     | 100    |
-    | data/tiny_kdd.csv   | BigML     |  40     | 40     | 40     | 100    |
+    | data                | time_1  | time_2 | time_3 | time_4 |
+    | data/iris.csv       |  40     | 40     | 40     | 100    |
+    | data/tiny_kdd.csv   |  40     | 40     | 40     | 100    |
 
 
   Scenario Outline: Successfully creating an anomaly detector from a dataset and generating the anomalous dataset:
-    Given that I use production mode with seed="<seed>"
     Given I create a data source uploading a "<data>" file
     And I wait until the source is ready less than <time_1> secs
     And I add the unitTest tag to the data source waiting less than <time_1> secs
@@ -41,5 +39,5 @@ Feature: Create an anomaly detector from a dataset or dataset list
     And I check that the dataset has <rows> rows
 
     Examples:
-    | data                | seed      | time_1  | time_2 | time_3 | time_4 |  rows|
-    | data/iris.csv       | BigML     |  40     | 40     | 40     | 100    |  1 |
+    | data                | time_1  | time_2 | time_3 | time_4 |  rows|
+    | data/iris.csv       | 40     | 40     | 40     | 100    |  1 |

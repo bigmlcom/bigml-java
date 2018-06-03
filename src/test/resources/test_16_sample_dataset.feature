@@ -3,7 +3,6 @@ Feature: Download the sample to filesystem
     I need to create a sample
 
     Scenario Outline: Successfully creating a sample from a dataset:
-        Given that I use production mode with seed="<seed>"
         Given I create a data source uploading a "<data>" file
         And I wait until the source is ready less than <time_1> secs
         And I add the unitTest tag to the data source waiting less than <time_1> secs
@@ -17,12 +16,11 @@ Feature: Download the sample to filesystem
         Then delete test data
 
         Examples:
-        | data          | seed  | time_1  | time_2 | time_3 |   time_4  |   params                            |   name                 |
-        | data/iris.csv | BigML |   30    |  30    |  30    |   50      |   {"name": "my new sample name"}    | "my new sample name"   |
+        | data          | time_1  | time_2 | time_3 |   time_4  |   params                            |   name                 |
+        | data/iris.csv |   30    |  30    |  30    |   50      |   {"name": "my new sample name"}    | "my new sample name"   |
 
 
     Scenario Outline: Successfully creating, reading and downloading a sample:
-        Given that I use production mode with seed="<seed>"
         Given I create a data source uploading a "<data>" file
         And I wait until the source is ready less than <time_1> secs
         And I add the unitTest tag to the data source waiting less than <time_1> secs

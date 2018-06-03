@@ -25,7 +25,6 @@ Feature: Create Predictions
 
 
     Scenario Outline: Successfully creating a prediction from local model
-        Given that I use production mode with seed="<seed>"
         Given I create a data source uploading a "<data>" file
         And I wait until the source is ready less than <time_1> secs
         And I add the unitTest tag to the data source waiting less than <time_1> secs
@@ -39,5 +38,5 @@ Feature: Create Predictions
         Then delete test data
 
         Examples:
-          | data  | seed      | time_1  | time_2 | time_3 | objective1 | prediction1  | objective2 | prediction2  |
-          | data/iris.csv | BigML |  15      | 15     | 15     | {"petal width": 0.5}    | Iris-setosa | {"000003": 0.5}    | Iris-setosa |
+          | data  | time_1  | time_2 | time_3 | objective1 | prediction1  | objective2 | prediction2  |
+          | data/iris.csv |  15      | 15     | 15     | {"petal width": 0.5}    | Iris-setosa | {"000003": 0.5}    | Iris-setosa |

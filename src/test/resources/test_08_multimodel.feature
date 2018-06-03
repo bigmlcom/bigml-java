@@ -3,7 +3,6 @@ Feature:  Create a model from a dataset list
     I need to create some datasets first
 
     Scenario Outline: Successfully creating a model from a dataset list:
-        Given that I use production mode with seed="<seed>"
         Given I create a data source uploading a "<data>" file
         And I wait until the source is ready less than <time_1> secs
         And I add the unitTest tag to the data source waiting less than <time_1> secs
@@ -19,12 +18,11 @@ Feature:  Create a model from a dataset list
         Then delete test data
 
         Examples:
-          | data                | seed      |  time_1  | time_2 | time_3 |  time_4 |
-          | data/iris.csv    | BigML     |   10     | 10     | 10     |  10     |
+          | data	|  time_1  | time_2 | time_3 |  time_4 |
+          | data/iris.csv    |   10     | 10     | 10     |  10     |
 
 
     Scenario Outline: Successfully creating a model from a dataset list and predicting with it using median:
-        Given that I use production mode with seed="<seed>"
         Given I create a data source uploading a "<data>" file
         And I wait until the source is ready less than <time_1> secs
         And I add the unitTest tag to the data source waiting less than <time_1> secs
@@ -37,5 +35,5 @@ Feature:  Create a model from a dataset list
         Then delete test data
 
         Examples:
-          | data                | seed      |  time_1  | time_2 | time_3 |  input_data |  prediction    |
-          | data/grades.csv    | BigML     |   10     | 10     | 10     |  {"Tutorial": 99.47, "Midterm": 53.12, "TakeHome": 87.96}    |    63.33  |
+          | data	|  time_1  | time_2 | time_3 |  input_data |  prediction    |
+          | data/grades.csv    |   10     | 10     | 10     |  {"Tutorial": 99.47, "Midterm": 53.12, "TakeHome": 87.96}    |    63.33  |

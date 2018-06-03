@@ -44,9 +44,7 @@ Add the following lines to your project's pom.xml file if you want to use the SN
 ## Requirements
 
 You will find in the `binding.properties` file where to setup your BigML
-credentials
-`BIGML_USERNAME` and `BIGML_API_KEY`, and the `BIGML_SEED` to be used by BigML
-to make deterministic samples and models.
+credentialsc`BIGML_USERNAME` and `BIGML_API_KEY`.
 They can be overwritten passing the values as JVM variables with `-D`.
 
 The project uses Maven as project manager.

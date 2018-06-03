@@ -7,6 +7,8 @@
 * DevMode removed
 * OptiML Resource
 * Fusion Resource
+* Removing seed as a connection attribute.
+
 
 ### Bugs
 

@@ -3,7 +3,6 @@ Feature: Create Batch Predictions
     I need to create a model and a dataset first
 
   Scenario Outline: Successfully creating a batch prediction:
-        Given that I use production mode with seed="<seed>"
         Given I create a data source uploading a "<data>" file
         And I wait until the source is ready less than <time_1> secs
         And I add the unitTest tag to the data source waiting less than <time_1> secs
@@ -19,11 +18,10 @@ Feature: Create Batch Predictions
         Then delete test data
 
         Examples:
-          | data             | seed      | time_1  | time_2 | time_3 | time_4 | local_file | predictions_file |
-          | data/iris.csv | BigML |   30      | 30     | 50     | 50     | data/downloaded_batch_predictions.csv | data/batch_predictions.csv |
+          | data             | time_1  | time_2 | time_3 | time_4 | local_file | predictions_file |
+          | data/iris.csv |   30      | 30     | 50     | 50     | data/downloaded_batch_predictions.csv | data/batch_predictions.csv |
 
   Scenario Outline: Successfully creating a batch prediction for an ensemble:
-        Given that I use production mode with seed="<seed>"
         Given I create a data source uploading a "<data>" file
         And I wait until the source is ready less than <time_1> secs
         And I add the unitTest tag to the data source waiting less than <time_1> secs
@@ -38,12 +36,11 @@ Feature: Create Batch Predictions
         Then delete test data
 
         Examples:
-          | data             | seed      | time_1  | time_2 | number_of_models | time_3 | time_4 | local_file | predictions_file |
-          | data/iris.csv | BigML |   30      | 30     | 5                | 80     | 50     | data/downloaded_batch_predictions_e.csv | data/batch_predictions_e.csv |
+          | data             | time_1  | time_2 | number_of_models | time_3 | time_4 | local_file | predictions_file |
+          | data/iris.csv |   30      | 30     | 5                | 80     | 50     | data/downloaded_batch_predictions_e.csv | data/batch_predictions_e.csv |
 
 
 	Scenario Outline: Successfully creating a batch centroid from a cluster:
-        Given that I use production mode with seed="<seed>"
         Given I create a data source uploading a "<data>" file
         And I wait until the source is ready less than <time_1> secs
         And I add the unitTest tag to the data source waiting less than <time_1> secs
@@ -58,12 +55,11 @@ Feature: Create Batch Predictions
 		Then delete test data
 
         Examples:
-          | data             | seed      |  time_1  | time_2 | time_3 | time_4 | local_file | predictions_file       |
-          | data/diabetes.csv | BigML |   50      | 50     | 50     | 50     | data/downloaded_batch_predictions_c.csv |data/batch_predictions_c.csv |
+          | data             |  time_1  | time_2 | time_3 | time_4 | local_file | predictions_file       |
+          | data/diabetes.csv |   50      | 50     | 50     | 50     | data/downloaded_batch_predictions_c.csv |data/batch_predictions_c.csv |
 
 
     Scenario Outline: Successfully creating a source from a batch prediction:
-        Given that I use production mode with seed="<seed>"
         Given I create a data source uploading a "<data>" file
         And I wait until the source is ready less than <time_1> secs
         And I add the unitTest tag to the data source waiting less than <time_1> secs
@@ -79,9 +75,9 @@ Feature: Create Batch Predictions
         Then delete test data
 
         Examples:
-          | data              | seed      |  time_1   | time_2 | time_3 | time_4 |
-          | data/iris.csv     | BigML     |   30      | 30     | 50     | 50     |
-          | data/diabetes.csv | BigML     |   30      | 30     | 50     | 50     |
+          | data              |  time_1   | time_2 | time_3 | time_4 |
+          | data/iris.csv     |   30      | 30     | 50     | 50     |
+          | data/diabetes.csv |   30      | 30     | 50     | 50     |
 
 
     Scenario Outline: Successfully creating a batch anomaly score from an anomaly detector:
@@ -103,7 +99,6 @@ Feature: Create Batch Predictions
 
 
     Scenario Outline: Successfully creating a batch prediction for a logistic regression:
-        Given that I use production mode with seed="<seed>"
         Given I create a data source uploading a "<data>" file
         And I wait until the source is ready less than <time_1> secs
         And I add the unitTest tag to the data source waiting less than <time_1> secs
@@ -117,5 +112,5 @@ Feature: Create Batch Predictions
         Then the batch prediction file "<local_file>" is like "<predictions_file>"
 
         Examples:
-          | data              | seed      |  time_1   | time_2 | time_3 | time_4 | local_file | predictions_file       |
-          | data/iris.csv     | BigML     |   30      | 30     | 50     | 50     | data/downloaded_batch_predictions_lr.csv | data/batch_predictions_lr.csv |
+          | data              |  time_1   | time_2 | time_3 | time_4 | local_file | predictions_file       |
+          | data/iris.csv     |   30      | 30     | 50     | 50     | data/downloaded_batch_predictions_lr.csv | data/batch_predictions_lr.csv |

@@ -1,7 +1,6 @@
 Feature: Testing Whizzml Execution REST api calls
 
     Scenario Outline: Scenario: Successfully creating a whizzml script execution:
-        Given that I use production mode with seed="<seed>"
         Given I create a whizzml script from a excerpt of code "<source_code>"
         And I wait until the script is ready less than <time_1> secs
         And I create a whizzml script execution from an existing script
@@ -16,7 +15,6 @@ Feature: Testing Whizzml Execution REST api calls
 
 
     Scenario Outline: Scenario: Successfully creating a whizzml script execution from a list of scripts:
-        Given that I use production mode with seed="<seed>"
         Given I reset scripts
         Given I create a whizzml script from a excerpt of code "<source_code>"
         And I wait until the script is ready less than <time_1> secs

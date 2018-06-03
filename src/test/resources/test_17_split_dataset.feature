@@ -3,7 +3,6 @@ Feature: Create a split dataset
     I need to create an origin dataset
 
     Scenario Outline: Successfully creating a split dataset:
-        Given that I use production mode with seed="<seed>"
         Given I create a data source uploading a "<data>" file
         And I wait until the source is ready less than <time_1> secs
         And I add the unitTest tag to the data source waiting less than <time_1> secs
@@ -16,5 +15,5 @@ Feature: Create a split dataset
         Then delete test data
 
 	Examples:
-		| data             | seed      | time_1  | time_2 | time_3 | rate |
-        | data/iris.csv    | BigML     |  10     | 10     | 10     | 0.8  |
+		| data             | time_1  | time_2 | time_3 | rate |
+        | data/iris.csv    |  10     | 10     | 10     | 0.8  |

@@ -50,11 +50,6 @@ public class BigMLClient {
     private String bigmlDomain;
     private String bigmlApiKey;
 
-    /**
-     * A string to be hashed to generate deterministic samples
-     */
-    private String seed;
-
     private Source source;
     private Dataset dataset;
     private Model model;
@@ -96,10 +91,11 @@ public class BigMLClient {
     protected BigMLClient() {
     }
 
-    public static BigMLClient getInstance() throws AuthenticationException {
+    public static BigMLClient getInstance() 
+    		throws AuthenticationException {
         if (instance == null) {
             instance = new BigMLClient();
-            instance.init();
+            instance.init(null, null, null, null);
         }
         return instance;
     }
@@ -112,32 +108,24 @@ public class BigMLClient {
         }
         return instance;
     }
-
-    public static BigMLClient getInstance(final String seed, final String storage)
-            throws AuthenticationException {
-        if (instance == null) {
-            instance = new BigMLClient();
-            instance.init(null, null, seed, storage);
-        }
-        return instance;
-    }
-   
+    
     @Deprecated
     public static BigMLClient getInstance(final boolean devMode)
             throws AuthenticationException {
         if (instance == null) {
             instance = new BigMLClient();
-            instance.init();
+            instance.init(null, null, null, null);
         }
         return instance;
     }
     
     @Deprecated
-    public static BigMLClient getInstance(final String seed, final boolean devMode)
+    public static BigMLClient getInstance(final String seed, 
+    		final boolean devMode)
             throws AuthenticationException {
         if (instance == null) {
             instance = new BigMLClient();
-            instance.init(seed);
+            instance.init(null, null, null, null);
         }
         return instance;
     }
@@ -148,7 +136,7 @@ public class BigMLClient {
             throws AuthenticationException {
         if (instance == null) {
             instance = new BigMLClient();
-            instance.init(apiUser, apiKey);
+            instance.init(null, apiUser, apiKey, null);
         }
         return instance;
     }
@@ -177,21 +165,12 @@ public class BigMLClient {
     
     @Deprecated
     public static BigMLClient getInstance(final String apiUser,
-            final String apiKey, final String seed, final boolean devMode, final String storage)
+            final String apiKey, final String seed, 
+            final boolean devMode, final String storage)
             throws AuthenticationException {
         if (instance == null) {
             instance = new BigMLClient();
-            instance.init(apiUser, apiKey, seed, storage);
-        }
-        return instance;
-    }
-    
-    public static BigMLClient getInstance(final String apiUser,
-            final String apiKey, final String seed, final String storage)
-            throws AuthenticationException {
-        if (instance == null) {
-            instance = new BigMLClient();
-            instance.init(apiUser, apiKey, seed, storage);
+            instance.init(null, apiUser, apiKey, storage);
         }
         return instance;
     }
@@ -202,17 +181,18 @@ public class BigMLClient {
             throws AuthenticationException {
         if (instance == null) {
             instance = new BigMLClient();
-            instance.init(bigmlDomain, apiUser, apiKey, seed, storage);
+            instance.init(bigmlDomain, apiUser, apiKey, storage);
         }
         return instance;
     }
     
-    public static BigMLClient getInstance(final String bigmlDomain, final String apiUser,
-            final String apiKey, final String seed, final String storage)
+    public static BigMLClient getInstance(final String bigmlDomain, 
+    		final String apiUser, final String apiKey, 
+    		final String storage)
             throws AuthenticationException {
         if (instance == null) {
             instance = new BigMLClient();
-            instance.init(bigmlDomain, apiUser, apiKey, seed, storage);
+            instance.init(bigmlDomain, apiUser, apiKey, storage);
         }
         return instance;
     }
@@ -228,62 +208,22 @@ public class BigMLClient {
       return value;
     }
     
-    /**
-     * Initialization object.
-     */
-    private void init() throws AuthenticationException {
-        initConfiguration();
-        initBigmlSettings(null, null, null);
-        initResources();
-    }
-
-    /**
-     * Initialization object.
-     */
-    private void init(final String seed) throws AuthenticationException {
-        initConfiguration();
-        initBigmlSettings(null, null, seed);
-        initResources();
-    }
     
-
-    /**
-     * Initialization object.
-     */
-    private void init(final String apiUser, final String apiKey) throws AuthenticationException {
-        initConfiguration();
-        initBigmlSettings(apiUser, apiKey, null);
-        initResources();
-    }
-
-    
-    /**
-     * Initialization object.
-     */
-    private void init(final String apiUser, final String apiKey, String seed, final String storage)
-            throws AuthenticationException {
-        this.storage = storage;
-        initConfiguration();
-        initBigmlSettings(apiUser, apiKey, seed);
-        initResources();
-    }
-
     /**
      * Initialization object.
      */
     private void init(final String bigmlDomain, final String apiUser,
-                      final String apiKey, String seed, final String storage)
+                      final String apiKey, final String storage)
             throws AuthenticationException {
         this.bigmlDomain = bigmlDomain;
         this.storage = storage;
         initConfiguration();
-        initBigmlSettings(apiUser, apiKey, seed);
+        initBigmlSettings(apiUser, apiKey);
         initResources();
     }
 
     private void initBigmlSettings(final String apiUser,
-                                   final String apiKey,
-                                   final String seed) 
+                                   final String apiKey) 
       throws AuthenticationException {
 
         this.bigmlUser = apiUser != null ? apiUser : this.setting("BIGML_USERNAME");
@@ -301,11 +241,6 @@ public class BigMLClient {
             }
         }
 
-        // The seed to be used to create deterministic samples and models
-        this.seed = seed != null ? seed : this.setting("BIGML_SEED");
-        if( this.seed == null || this.seed.equals("") ) {
-            this.seed = props.getProperty("BIGML_SEED");
-        }
     }
 
     private void initConfiguration() {
@@ -369,15 +304,7 @@ public class BigMLClient {
     public String getBigMLUrl() {
         return bigmlUrl;
     }
-
-    public String getSeed() {
-        return seed;
-    }
-
-    public void setSeed(String seed) {
-        this.seed = seed;
-    }
-
+    
     public CacheManager getCacheManager() {
         return cacheManager;
     }
@@ -1069,18 +996,8 @@ public class BigMLClient {
      *            number of times to try the operation. Optional
      *
      */
-    public JSONObject createModel(final String resourceId, JSONObject args,
-            Integer waitTime, Integer retries) {
-
-        // Setting the seed automatically if it was informed during the initialization
-        if( seed != null && !seed.equals("") ) {
-            if( args == null ) {
-                args = new JSONObject();
-            }
-            if( !args.containsKey("seed") ) {
-                args.put("seed", seed);
-            }
-        }
+    public JSONObject createModel(final String resourceId, 
+    		JSONObject args, Integer waitTime, Integer retries) {
 
         return model.create(resourceId, args, waitTime, retries);
     }
@@ -1129,18 +1046,8 @@ public class BigMLClient {
      *            number of times to try the operation. Optional
      *
      */
-    public JSONObject createModel(final List datasetsIds, JSONObject args,
-            Integer waitTime, Integer retries) {
-
-        // Setting the seed automatically if it was informed during the initialization
-        if( seed != null && !seed.equals("") ) {
-            if( args == null ) {
-                args = new JSONObject();
-            }
-            if( !args.containsKey("seed") ) {
-                args.put("seed", seed);
-            }
-        }
+    public JSONObject createModel(final List datasetsIds, 
+    		JSONObject args, Integer waitTime, Integer retries) {
 
         return model.create(datasetsIds, args, waitTime, retries);
     }
@@ -1500,18 +1407,8 @@ public class BigMLClient {
      *            number of times to try the operation. Optional
      *
      */
-    public JSONObject createAnomaly(final String datasetId, JSONObject args,
-                                  Integer waitTime, Integer retries) {
-
-        // Setting the seed automatically if it was informed during the initialization
-        if( seed != null && !seed.equals("") ) {
-            if( args == null ) {
-                args = new JSONObject();
-            }
-            if( !args.containsKey("seed") ) {
-                args.put("seed", seed);
-            }
-        }
+    public JSONObject createAnomaly(final String datasetId, 
+    		JSONObject args, Integer waitTime, Integer retries) {
 
         return anomaly.create(datasetId, args, waitTime, retries);
     }
@@ -1535,18 +1432,8 @@ public class BigMLClient {
      *            number of times to try the operation. Optional
      *
      */
-    public JSONObject createAnomaly(final List datasetsIds, JSONObject args,
-                                  Integer waitTime, Integer retries) {
-
-        // Setting the seed automatically if it was informed during the initialization
-        if( seed != null && !seed.equals("") ) {
-            if( args == null ) {
-                args = new JSONObject();
-            }
-            if( !args.containsKey("seed") ) {
-                args.put("seed", seed);
-            }
-        }
+    public JSONObject createAnomaly(final List datasetsIds, 
+    		JSONObject args, Integer waitTime, Integer retries) {
 
         return anomaly.create(datasetsIds, args, waitTime, retries);
     }
@@ -2476,16 +2363,6 @@ public class BigMLClient {
             final String datasetId, JSONObject args, Integer waitTime,
             Integer retries) {
 
-        // Setting the seed automatically if it was informed during the initialization
-        if( seed != null && !seed.equals("") ) {
-            if( args == null ) {
-                args = new JSONObject();
-            }
-            if( !args.containsKey("seed") ) {
-                args.put("seed", seed);
-            }
-        }
-
         return evaluation.create(modelId, datasetId, args, waitTime, retries);
     }
 
@@ -2680,18 +2557,8 @@ public class BigMLClient {
      *            number of times to try the operation. Optional
      *
      */
-    public JSONObject createEnsemble(final String datasetId, JSONObject args,
-            Integer waitTime, Integer retries) {
-
-        // Setting the seed automatically if it was informed during the initialization
-        if( seed != null && !seed.equals("") ) {
-            if( args == null ) {
-                args = new JSONObject();
-            }
-            if( !args.containsKey("seed") ) {
-                args.put("seed", seed);
-            }
-        }
+    public JSONObject createEnsemble(final String datasetId, 
+    		JSONObject args, Integer waitTime, Integer retries) {
 
         return ensemble.create(datasetId, args, waitTime, retries);
     }
@@ -2740,18 +2607,8 @@ public class BigMLClient {
      *            number of times to try the operation. Optional
      *
      */
-    public JSONObject createEnsemble(final List datasetsIds, JSONObject args,
-            Integer waitTime, Integer retries) {
-
-        // Setting the seed automatically if it was informed during the initialization
-        if( seed != null && !seed.equals("") ) {
-            if( args == null ) {
-                args = new JSONObject();
-            }
-            if( !args.containsKey("seed") ) {
-                args.put("seed", seed);
-            }
-        }
+    public JSONObject createEnsemble(final List datasetsIds, 
+    		JSONObject args, Integer waitTime, Integer retries) {
 
         return ensemble.create(datasetsIds, args, waitTime, retries);
     }
@@ -3426,21 +3283,8 @@ public class BigMLClient {
      *            number of times to try the operation. Optional
      *
      */
-    public JSONObject createCluster(final String datasetId, JSONObject args,
-            Integer waitTime, Integer retries) {
-
-        // Setting the seed automatically if it was informed during the initialization
-        if( seed != null && !seed.equals("") ) {
-            if( args == null ) {
-                args = new JSONObject();
-            }
-            if( !args.containsKey("seed") ) {
-                args.put("seed", seed);
-            }
-            if( !args.containsKey("cluster_seed") ) {
-                args.put("cluster_seed", seed);
-            }
-        }
+    public JSONObject createCluster(final String datasetId, 
+    		JSONObject args, Integer waitTime, Integer retries) {
 
         return cluster.create(datasetId, args, waitTime, retries);
     }
@@ -3489,18 +3333,8 @@ public class BigMLClient {
      *            number of times to try the operation. Optional
      *
      */
-    public JSONObject create(final List datasetsIds, JSONObject args,
-            Integer waitTime, Integer retries) {
-
-        // Setting the seed automatically if it was informed during the initialization
-        if( seed != null && !seed.equals("") ) {
-            if( args == null ) {
-                args = new JSONObject();
-            }
-            if( !args.containsKey("cluster_seed") ) {
-                args.put("cluster_seed", seed);
-            }
-        }
+    public JSONObject create(final List datasetsIds, 
+    		JSONObject args, Integer waitTime, Integer retries) {
 
         return cluster.create(datasetsIds, args, waitTime, retries);
     }
@@ -4551,15 +4385,8 @@ public class BigMLClient {
      *            number of times to try the operation. Optional
      *
      */
-    public JSONObject createCorrelation(final String datasetId, JSONObject args,
-            Integer waitTime, Integer retries) {
-
-        // Setting the seed automatically if it was informed during the initialization
-        if( seed != null && !seed.equals("") ) {
-            if( args == null ) {
-                args = new JSONObject();
-            }
-        }
+    public JSONObject createCorrelation(final String datasetId, 
+    		JSONObject args, Integer waitTime, Integer retries) {
 
         return correlation.create(datasetId, args, waitTime, retries);
     }
@@ -4734,15 +4561,8 @@ public class BigMLClient {
      *            number of times to try the operation. Optional
      *
      */
-    public JSONObject createStatisticalTest(final String datasetId, JSONObject args,
-            Integer waitTime, Integer retries) {
-
-        // Setting the seed automatically if it was informed during the initialization
-        if( seed != null && !seed.equals("") ) {
-            if( args == null ) {
-                args = new JSONObject();
-            }
-        }
+    public JSONObject createStatisticalTest(final String datasetId, 
+    		JSONObject args, Integer waitTime, Integer retries) {
 
         return statisticalTest.create(datasetId, args, waitTime, retries);
     }
@@ -4919,18 +4739,8 @@ public class BigMLClient {
      *            number of times to try the operation. Optional
      *
      */
-    public JSONObject createLogisticRegression(final String datasetId, JSONObject args,
-            Integer waitTime, Integer retries) {
-
-        // Setting the seed automatically if it was informed during the initialization
-        if( seed != null && !seed.equals("") ) {
-            if( args == null ) {
-                args = new JSONObject();
-            }
-            if( !args.containsKey("seed") ) {
-                args.put("seed", seed);
-            }
-        }
+    public JSONObject createLogisticRegression(final String datasetId, 
+    		JSONObject args, Integer waitTime, Integer retries) {
 
         return logisticRegression.create(datasetId, args, waitTime, retries);
     }
@@ -4955,18 +4765,8 @@ public class BigMLClient {
      *            number of times to try the operation. Optional
      *
      */
-    public JSONObject createLogisticRegression(final List datasetsIds, JSONObject args,
-            Integer waitTime, Integer retries) {
-
-        // Setting the seed automatically if it was informed during the initialization
-        if( seed != null && !seed.equals("") ) {
-            if( args == null ) {
-                args = new JSONObject();
-            }
-            if( !args.containsKey("seed") ) {
-                args.put("seed", seed);
-            }
-        }
+    public JSONObject createLogisticRegression(final List datasetsIds, 
+    		JSONObject args, Integer waitTime, Integer retries) {
 
         return logisticRegression.create(datasetsIds, args, waitTime, retries);
     }
@@ -6080,18 +5880,8 @@ public class BigMLClient {
      *            number of times to try the operation. Optional
      *
      */
-    public JSONObject createTopicModel(final List datasetsIds, JSONObject args,
-            Integer waitTime, Integer retries) {
-
-        // Setting the seed automatically if it was informed during the initialization
-        if( seed != null && !seed.equals("") ) {
-            if( args == null ) {
-                args = new JSONObject();
-            }
-            if( !args.containsKey("seed") ) {
-                args.put("seed", seed);
-            }
-        }
+    public JSONObject createTopicModel(final List datasetsIds, 
+    		JSONObject args, Integer waitTime, Integer retries) {
 
         return topicModel.create(datasetsIds, args, waitTime, retries);
     }
@@ -6880,18 +6670,8 @@ public class BigMLClient {
      *            number of times to try the operation. Optional
      *
      */
-    public JSONObject createTimeSeries(final List datasetsIds, JSONObject args,
-            Integer waitTime, Integer retries) {
-
-        // Setting the seed automatically if it was informed during the initialization
-        if( seed != null && !seed.equals("") ) {
-            if( args == null ) {
-                args = new JSONObject();
-            }
-            if( !args.containsKey("seed") ) {
-                args.put("seed", seed);
-            }
-        }
+    public JSONObject createTimeSeries(final List datasetsIds, 
+    		JSONObject args, Integer waitTime, Integer retries) {
 
         return timeSeries.create(datasetsIds, args, waitTime, retries);
     }
