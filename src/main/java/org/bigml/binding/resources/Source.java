@@ -67,29 +67,6 @@ public class Source extends AbstractResource {
      *            the name you want to give to the new source. Optional
      * @param sourceParser
      *            set of parameters to parse the source. Optional
-     */
-    @Deprecated
-    public JSONObject createLocalSource(final String fileName, String name,
-            String sourceParser) {
-        JSONObject sourceParserJson = (JSONObject) JSONValue
-                .parse(sourceParser);
-        return this.createLocalSource(fileName, name, sourceParserJson);
-    }
-
-    /**
-     * Creates a source using a local file.
-     *
-     * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * HTTP/1.1 Host: bigml.io Content-Type: multipart/form-data;
-     *
-     * @param fileName
-     *            file containing your data in csv format. It can be compressed,
-     *            gzipped, or zipped. Required multipart/form-data;
-     *            charset=utf-8
-     * @param name
-     *            the name you want to give to the new source. Optional
-     * @param sourceParser
-     *            set of parameters to parse the source. Optional
      *
      */
     public JSONObject createLocalSource(final String fileName, final String name,
@@ -279,26 +256,6 @@ public class Source extends AbstractResource {
      *            set of parameters to create the source. Optional
      *
      */
-    @Deprecated
-    public JSONObject createRemoteSource(final String url,
-            final String sourceParser) {
-        JSONObject requestObject = sourceParser != null ? (JSONObject) JSONValue
-                .parse(sourceParser) : null;
-        return createRemoteSource(url, requestObject);
-    }
-
-    /**
-     * Creates a source using a URL.
-     *
-     * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * HTTP/1.1 Host: bigml.io Content-Type: application/json;
-     *
-     * @param url
-     *            url for remote source
-     * @param sourceParser
-     *            set of parameters to create the source. Optional
-     *
-     */
     public JSONObject createRemoteSource(final String url,
             final JSONObject sourceParser) {
         return this.createRemoteSource(url, sourceParser, null);
@@ -335,27 +292,6 @@ public class Source extends AbstractResource {
             logger.error("Error creating source");
             return null;
         }
-    }
-
-    /**
-     * Creates a source using inline data.
-     *
-     * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * HTTP/1.1 Host: bigml.io Content-Type: application/json;
-     *
-     * @param data
-     *            inline data for source
-     * @param sourceParser
-     *            set of parameters to create the source. Optional
-     *
-     */
-    @Deprecated
-    public JSONObject createInlineSource(final String data,
-            final String sourceParser) {
-
-        JSONObject requestObject = sourceParser != null ? (JSONObject) JSONValue
-                .parse(sourceParser) : null;
-        return createInlineSource(data, requestObject);
     }
 
     /**

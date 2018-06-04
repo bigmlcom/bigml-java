@@ -69,31 +69,6 @@ public class Model extends AbstractModelResource {
      *            number of times to try the operation. Optional
      *
      */
-    @Deprecated
-    public JSONObject create(final String resourceId, String args,
-            Integer waitTime, Integer retries) {
-        return create(resourceId, (JSONObject) JSONValue.parse(args), waitTime, retries);
-    }
-
-    /**
-     * Creates a new model.
-     *
-     * POST /andromeda/model?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     *
-     * @param resourceId
-     *            a unique identifier in the form [dataset|cluster]/id
-     *            where id is a string of 24 alpha-numeric chars for the
-     *            remote resource to attach the model.
-     * @param args
-     *            set of parameters for the new model. Optional
-     * @param waitTime
-     *            time (milliseconds) to wait for next check of FINISHED status
-     *            for source before to start to create the model. Optional
-     * @param retries
-     *            number of times to try the operation. Optional
-     *
-     */
     public JSONObject create(final String resourceId, JSONObject args,
             Integer waitTime, Integer retries) {
 

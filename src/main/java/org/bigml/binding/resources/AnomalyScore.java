@@ -4,7 +4,6 @@ import org.bigml.binding.BigMLClient;
 import org.bigml.binding.utils.CacheManager;
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,41 +48,6 @@ public class AnomalyScore extends AbstractResource {
     			final CacheManager cacheManager) {
     		super.init(apiUser, apiKey, cacheManager, 
     			ANOMALYSCORE_RE, ANOMALYSCORE_PATH);
-    }
-
-    /**
-     * Creates a new anomaly score.
-     *
-     * POST
-     * /andromeda/anomalyscore?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     *
-     * @param anomalyId
-     *            a unique identifier in the form anomaly/id where
-     *            id is a string of 24 alpha-numeric chars for the anomaly
-     *            to attach the anomaly score.
-     * @param inputData
-     *            an object with field's id/value pairs representing the
-     *            instance you want to create an anomaly score for.
-     * @param byName
-     *            if we use the name of the fields instead of the internal code
-     *            as the key to locate the fields in the inputData map.
-     * @param args
-     *            set of parameters for the new anomaly score. Required
-     * @param waitTime
-     *            time (milliseconds) to wait for next check of FINISHED status
-     *            for anomaly before to start to create the anomaly score. Optional
-     * @param retries
-     *            number of times to try the operation. Optional
-     *
-     */
-    @Deprecated
-    public JSONObject create(final String anomalyId,
-            JSONObject inputData, Boolean byName, String args,
-            Integer waitTime, Integer retries) {
-        JSONObject argsJSON = (JSONObject) JSONValue.parse(args);
-        return create(anomalyId, inputData, byName, argsJSON, waitTime,
-                retries);
     }
 
     /**

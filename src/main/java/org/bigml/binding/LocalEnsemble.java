@@ -325,37 +325,6 @@ public class LocalEnsemble implements Serializable {
      * weighted: CONFIDENCE_CODE 2 - probability weighted majority vote /
      * average: PROBABILITY_CODE
      */
-    @Deprecated
-    public Map<Object, Object> predict(final String inputData, Boolean byName,
-            Integer method, Boolean withConfidence) throws Exception {
-        if (method == null) {
-            method = PredictionMethod.PLURALITY.getCode();
-        }
-
-        PredictionMethod intMethod = PredictionMethod.valueOf(method);
-
-        if (byName == null) {
-            byName = true;
-        }
-        if (withConfidence == null) {
-            withConfidence = false;
-        }
-
-        JSONObject inputDataObj = (JSONObject) JSONValue.parse(inputData);
-        MultiVote votes = this.multiModel.generateVotes(inputDataObj, byName,
-                null, withConfidence);
-        return votes.combine(intMethod, withConfidence, null, null, null, null, null);
-    }
-
-    /**
-     * Makes a prediction based on the prediction made by every model.
-     * 
-     * The method parameter is a numeric key to the following combination
-     * methods in classifications/regressions: 0 - majority vote (plurality)/
-     * average: PLURALITY_CODE 1 - confidence weighted majority vote / error
-     * weighted: CONFIDENCE_CODE 2 - probability weighted majority vote /
-     * average: PROBABILITY_CODE
-     */
     public Map<Object, Object> predict(final JSONObject inputData,
             Boolean byName, PredictionMethod method, Boolean withConfidence)
             throws Exception {
@@ -422,26 +391,6 @@ public class LocalEnsemble implements Serializable {
 
         return votes.combine(method, withConfidence, addConfidence, addDistribution, addCount, addMedian, options);
 
-    }
-
-    /**
-     * Convenience version of predict that take as inputs a map from field ids
-     * or names to their values as Java objects. See also predict(String,
-     * Boolean, Integer, Boolean).
-     */
-    @Deprecated
-    public Map<Object, Object> predictWithMap(Map<String, Object> inputs,
-            Boolean byName, Integer method, Boolean conf) throws Exception {
-        JSONObject inputObj = (JSONObject) JSONValue.parse(JSONValue
-                .toJSONString(inputs));
-
-        if ( method == null ) {
-            method = PredictionMethod.PLURALITY.getCode();
-        }
-
-        PredictionMethod intMethod = PredictionMethod.valueOf(method);
-
-        return predict(inputObj, byName, intMethod, conf);
     }
 
     /**

@@ -2,7 +2,6 @@ package org.bigml.binding.resources;
 
 import org.bigml.binding.utils.CacheManager;
 import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,35 +71,6 @@ public class BatchCentroid extends AbstractResource {
      *            number of times to try the operation. Optional
      *
      */
-    @Deprecated
-    public JSONObject create(final String clusterId, final String datasetId,
-            String args, Integer waitTime, Integer retries) {
-        return create(clusterId, datasetId, (JSONObject) JSONValue.parse(args),
-                waitTime, retries);
-    }
-
-    /**
-     * Creates a new batchcentroid.
-     *
-     * POST /andromeda/batchcentroid?username=$BIGML_USERNAME;api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
-     *
-     * @param clusterId
-     *            a unique identifier in the form cluster/id where id is a
-     *            string of 24 alpha-numeric chars for the cluster.
-     * @param datasetId
-     *            a unique identifier in the form dataset/id where id is a
-     *            string of 24 alpha-numeric chars for the dataset.
-     * @param args
-     *            set of parameters for the new batchcentroid. Optional
-     * @param waitTime
-     *            time (milliseconds) to wait for next check of FINISHED status
-     *            for centroid before to start to create the
-     *            batchcentroid. Optional
-     * @param retries
-     *            number of times to try the operation. Optional
-     *
-     */
     public JSONObject create(final String clusterId, final String datasetId,
             JSONObject args, Integer waitTime, Integer retries) {
         if (clusterId == null || clusterId.length() == 0
@@ -137,13 +107,14 @@ public class BatchCentroid extends AbstractResource {
     /**
      * Retrieves the batch centroid file.
      *
-     * Downloads predictions, that are stored in a remote CSV file. If a path is
-     * given in filename, the contents of the file are downloaded and saved
-     * locally. A file-like object is returned otherwise.
+     * Downloads predictions, that are stored in a remote CSV file. If a 
+     * path is given in filename, the contents of the file are 
+     * downloaded and saved locally. A file-like object is returned 
+     * otherwise.
      *
      * @param batchCentroidId
-     *            a unique identifier in the form batchCentroid/id where id is a
-     *            string of 24 alpha-numeric chars.
+     *            a unique identifier in the form batchCentroid/id where 
+     *            id is a string of 24 alpha-numeric chars.
      * @param filename
      *            Path to save file locally
      *
@@ -164,9 +135,10 @@ public class BatchCentroid extends AbstractResource {
     /**
      * Retrieves the batch centroid file.
      *
-     * Downloads predictions, that are stored in a remote CSV file. If a path is
-     * given in filename, the contents of the file are downloaded and saved
-     * locally. A file-like object is returned otherwise.
+     * Downloads predictions, that are stored in a remote CSV file. If a 
+     * path is given in filename, the contents of the file are 
+     * downloaded and saved locally. A file-like object is returned 
+     * otherwise.
      *
      * @param batchCentroid
      *            a batch centroid JSONObject.
@@ -174,11 +146,10 @@ public class BatchCentroid extends AbstractResource {
      *            Path to save file locally
      *
      */
-    public JSONObject downloadBatchCentroid(final JSONObject batchCentroid,
-            final String filename) {
+    public JSONObject downloadBatchCentroid(
+    		final JSONObject batchCentroid, final String filename) {
 
         String resourceId = (String) batchCentroid.get("resource");
-
         if (resourceId != null) {
             String url = BIGML_URL + resourceId + DOWNLOAD_DIR;
             return download(url, filename);

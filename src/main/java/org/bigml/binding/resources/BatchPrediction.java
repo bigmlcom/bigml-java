@@ -2,7 +2,6 @@ package org.bigml.binding.resources;
 
 import org.bigml.binding.utils.CacheManager;
 import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,39 +44,6 @@ public class BatchPrediction extends AbstractResource {
     			final CacheManager cacheManager) {
     		super.init(apiUser, apiKey, cacheManager, 
     			BATCH_PREDICTION_RE, BATCH_PREDICTION_PATH);
-    }
-
-    /**
-     * Creates a new batch prediction.
-     *
-     * POST /andromeda/batchprediction?username=$BIGML_USERNAME;api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
-     *
-     * @param model
-     *            a unique identifier in the form model/id, ensemble/id or
-     *            logisticregression/id where id is a string of 24 alpha-numeric
-     *            chars for the nodel, nsemble or logisticregression to attach
-     *            the prediction.
-     * @param datasetId
-     *            a unique identifier in the form dataset/id where id is a
-     *            string of 24 alpha-numeric chars for the dataset to attach the
-     *            evaluation.
-     * @param args
-     *            set of parameters for the new batch prediction. Optional
-     * @param waitTime
-     *            time (milliseconds) to wait for next check of FINISHED status
-     *            for model before to start to create the batch prediction.
-     *            Optional
-     * @param retries
-     *            number of times to try the operation. Optional
-     *
-     */
-    @Deprecated
-    public JSONObject create(final String model,
-            final String datasetId, String args, Integer waitTime,
-            Integer retries) {
-        JSONObject argsJSON = (JSONObject) JSONValue.parse(args);
-        return create(model, datasetId, argsJSON, waitTime, retries);
     }
 
     /**

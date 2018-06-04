@@ -1,7 +1,6 @@
 package org.bigml.binding.resources;
 
 import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,36 +19,6 @@ public abstract class AbstractModelResource extends AbstractResource {
 
     // Logging
     Logger logger = LoggerFactory.getLogger(AbstractModelResource.class);
-    
-    
-    /**
-     * Creates a resource from a `dataset`.
-     *
-     * POST /andromeda/xxxxx?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     *
-     * @param datasetId
-     *            a unique identifier in the form dataset/id where id is a
-     *            string of 24 alpha-numeric chars for the dataset to attach the
-     *            resource.
-     * @param args
-     *            set of parameters for the new resource. Optional
-     * @param waitTime
-     *            time (milliseconds) to wait for next check of FINISHED status
-     *            for dataset before to start to create the resource. Optional
-     * @param retries
-     *            number of times to try the operation. Optional
-     *
-     */
-    @Deprecated
-    public JSONObject create(final String datasetId, String args,
-            Integer waitTime, Integer retries) {
-
-        String[] datasetsIds = { datasetId };
-        JSONObject requestObject = createFromDatasets(datasetsIds, args,
-                waitTime, retries, null);
-        return createResource(this.resourceUrl, requestObject.toJSONString());
-    }
     
     
     /**
@@ -76,35 +45,6 @@ public abstract class AbstractModelResource extends AbstractResource {
         String[] datasetsIds = { datasetId };
         JSONObject requestObject = createFromDatasets(datasetsIds, args,
                 waitTime, retries, null);
-        return createResource(this.resourceUrl, requestObject.toJSONString());
-    }
-    
-    
-    /**
-     * Creates a resource from a list of `datasets`.
-     *
-     * POST /andromeda/xxxxx?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     *
-     * @param datasetsIds
-     *            list of identifiers in the form dataset/id where id is a
-     *            string of 24 alpha-numeric chars for the dataset to attach the
-     *            resource.
-     * @param args
-     *            set of parameters for the new resource. Optional
-     * @param waitTime
-     *            time (milliseconds) to wait for next check of FINISHED status
-     *            for dataet before to start to create the resource. Optional
-     * @param retries
-     *            number of times to try the operation. Optional
-     *
-     */
-    @Deprecated
-    public JSONObject create(final List datasetsIds, String args,
-            Integer waitTime, Integer retries) {
-
-        JSONObject requestObject = createFromDatasets(
-                (String[]) datasetsIds.toArray(new String[datasetsIds.size()]), args, waitTime, retries, null);
         return createResource(this.resourceUrl, requestObject.toJSONString());
     }
     
@@ -144,19 +84,6 @@ public abstract class AbstractModelResource extends AbstractResource {
     // # Protected methods
     // #
     // ################################################################
-    
-    
-    /**
-     * Builds args dictionary for the create call from a `dataset` or a list of
-     * `datasets`
-     */
-    @Deprecated
-    protected JSONObject createFromDatasets(final String[] datasets,
-            String args, Integer waitTime, Integer retries, String key) {
-
-        return createFromDatasets(datasets, (JSONObject) JSONValue.parse(args),
-                waitTime, retries, key);
-    }
 
     /**
      * Builds args dictionary for the create call from a `dataset` or a list of

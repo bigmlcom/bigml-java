@@ -14,8 +14,8 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * Entry point to create, retrieve, list, update, and delete sources, datasets,
- * models, predictions, evaluations, ensembles, etc.
+ * Entry point to create, retrieve, list, update, and delete sources, 
+ * datasets, models, predictions, evaluations, ensembles, etc.
  *
  * Full API documentation on the API can be found from BigML at:
  * https://bigml.com/developers
@@ -331,27 +331,6 @@ public class BigMLClient {
      * @param sourceParser
      *            set of parameters to parse the source. Optional
      */
-    @Deprecated
-    public JSONObject createSource(final String fileName, String name,
-            String sourceParser) {
-        return source.createLocalSource(fileName, name, sourceParser);
-    }
-
-    /**
-     * Creates a new source.
-     *
-     * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * HTTP/1.1 Host: bigml.io Content-Type: multipart/form-data;
-     *
-     * @param fileName
-     *            file containing your data in csv format. It can be compressed,
-     *            gzipped, or zipped. Required multipart/form-data;
-     *            charset=utf-8
-     * @param name
-     *            the name you want to give to the new source. Optional
-     * @param sourceParser
-     *            set of parameters to parse the source. Optional
-     */
     public JSONObject createSource(final String fileName, String name,
             JSONObject sourceParser) {
         return source.createLocalSource(fileName, name, sourceParser);
@@ -377,24 +356,6 @@ public class BigMLClient {
     public JSONObject createSource(final String fileName, String name,
             JSONObject sourceParser, JSONObject args) {
         return source.createLocalSource(fileName, name, sourceParser, args);
-    }
-
-    /**
-     * Creates a source using a URL.
-     *
-     * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * HTTP/1.1 Host: bigml.io Content-Type: application/json;
-     *
-     * @param url
-     *            url for remote source
-     * @param sourceParser
-     *            set of parameters to create the source. Optional
-     *
-     */
-    @Deprecated
-    public JSONObject createRemoteSource(final String url,
-            final String sourceParser) {
-        return source.createRemoteSource(url, sourceParser);
     }
 
     /**
@@ -503,24 +464,6 @@ public class BigMLClient {
             final JSONObject sourceParser, final JSONObject args) {
 
         return source.createSourceFromBatchAnomalyScore(batchAnomalyScoreId, sourceParser, args);
-    }
-
-    /**
-     * Creates a source using a URL.
-     *
-     * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * HTTP/1.1 Host: bigml.io Content-Type: application/json;
-     *
-     * @param data
-     *            inline data for source
-     * @param sourceParser
-     *            set of parameters to create the source. Optional
-     *
-     */
-    @Deprecated
-    public JSONObject createInlineSource(final String data,
-            final String sourceParser) {
-        return source.createInlineSource(data, sourceParser);
     }
 
     /**
@@ -687,35 +630,6 @@ public class BigMLClient {
     /**
      * Creates a remote dataset.
      *
-     * Uses remote `source` to create a new dataset using the arguments in
-     * `args`. If `wait_time` is higher than 0 then the dataset creation request
-     * is not sent until the `source` has been created successfuly.
-     *
-     * POST /andromeda/dataset?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     *
-     * @param sourceId
-     *            a unique identifier in the form source/id where id is a string
-     *            of 24 alpha-numeric chars for the source to attach the
-     *            dataset.
-     * @param args
-     *            set of parameters for the new dataset. Optional
-     * @param waitTime
-     *            time to wait for next check of FINISHED status for source
-     *            before to start to create the dataset. Optional
-     * @param retries
-     *            number of times to try the operation. Optional
-     *
-     */
-    @Deprecated
-    public JSONObject createDataset(final String sourceId, String args,
-            Integer waitTime, Integer retries) {
-        return dataset.create(sourceId, args, waitTime, retries);
-    }
-
-    /**
-     * Creates a remote dataset.
-     *
      * Uses a remote resource to create a new dataset using the arguments in `args`.
      * The allowed remote resources can be:
      *      - source
@@ -787,6 +701,21 @@ public class BigMLClient {
     public JSONObject getDataset(final String datasetId) {
         return dataset.get(datasetId);
     }
+    
+    /**
+     * Retrieves a dataset.
+     *
+     * GET
+     * /andromeda/dataset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io
+     *
+     * @param datasetJSON
+     *            a dataset JSONObject
+     *
+     */
+    public JSONObject getDataset(final JSONObject datasetJSON) {
+        return dataset.get(datasetJSON);
+    }
 
     /**
      * Returns the ids of the fields that contain errors and their number.
@@ -804,21 +733,6 @@ public class BigMLClient {
      */
     public Map<String, Long> getErrorCounts(final JSONObject datasetJSON) {
         return dataset.getErrorCounts(datasetJSON);
-    }
-
-    /**
-     * Retrieves a dataset.
-     *
-     * GET
-     * /andromeda/dataset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * HTTP/1.1 Host: bigml.io
-     *
-     * @param datasetJSON
-     *            a dataset JSONObject
-     *
-     */
-    public JSONObject getDataset(final JSONObject datasetJSON) {
-        return dataset.get(datasetJSON);
     }
 
     /**
@@ -940,7 +854,7 @@ public class BigMLClient {
      *
      */
     public JSONObject downloadDataset(final String datasetId,
-                                                final String filename) {
+                                      final String filename) {
         return dataset.downloadDataset(datasetId, filename);
     }
 
@@ -971,60 +885,10 @@ public class BigMLClient {
      *            number of times to try the operation. Optional
      *
      */
-    @Deprecated
-    public JSONObject createModel(final String resourceId, String args,
-            Integer waitTime, Integer retries) {
-        return model.create(resourceId, args, waitTime, retries);
-    }
-
-    /**
-     * Creates a new model.
-     *
-     * POST /andromeda/model?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     *
-     * @param resourceId
-     *            a unique identifier in the form [dataset|cluster]/id
-     *            where id is a string of 24 alpha-numeric chars for the
-     *            remote resource to attach the model.
-     * @param args
-     *            set of parameters for the new model. Optional
-     * @param waitTime
-     *            time to wait for next check of FINISHED status for source
-     *            before to start to create the model. Optional
-     * @param retries
-     *            number of times to try the operation. Optional
-     *
-     */
     public JSONObject createModel(final String resourceId, 
     		JSONObject args, Integer waitTime, Integer retries) {
 
         return model.create(resourceId, args, waitTime, retries);
-    }
-
-    /**
-     * Creates a mdel from a list of `datasets`.
-     *
-     * POST /andromeda/mdel?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     *
-     * @param datasetsIds
-     *            list of identifiers in the form dataset/id where id is a
-     *            string of 24 alpha-numeric chars for the dataset to attach the
-     *            mdel.
-     * @param args
-     *            set of parameters for the new mdel. Optional
-     * @param waitTime
-     *            time (milliseconds) to wait for next check of FINISHED status
-     *            for source before to start to create the mdel. Optional
-     * @param retries
-     *            number of times to try the operation. Optional
-     *
-     */
-    @Deprecated
-    public JSONObject createModel(final List datasetsIds, String args,
-            Integer waitTime, Integer retries) {
-        return model.create(datasetsIds, args, waitTime, retries);
     }
 
     /**
@@ -1801,74 +1665,11 @@ public class BigMLClient {
      *            number of times to try the operation. Optional
      *
      */
-    @Deprecated
-    public JSONObject createPrediction(final String modelId,
-            JSONObject inputData, Boolean byName, String args,
-            Integer waitTime, Integer retries) {
-        return prediction.create(modelId, inputData, byName, args, waitTime, retries);
-    }
-
-    /**
-     * Creates a new prediction.
-     *
-     * POST
-     * /andromeda/prediction?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     *
-     * @param modelId
-     *            a unique identifier in the form model/id, ensemble/id or
-     *            logisticregression/id where id is a string of 24 alpha-numeric
-     *            chars for the nodel, nsemble or logisticregression to attach
-     *            the prediction.
-     * @param inputData
-     *            an object with field's id/value pairs representing the
-     *            instance you want to create a prediction for.
-     * @param byName
-     * @param args
-     *            set of parameters for the new prediction. Required
-     * @param waitTime
-     *            time to wait for next check of FINISHED status for model
-     *            before to start to create the prediction. Optional
-     * @param retries
-     *            number of times to try the operation. Optional
-     *
-     */
-    @Deprecated
     public JSONObject createPrediction(final String modelId,
             JSONObject inputData, Boolean byName, JSONObject args,
             Integer waitTime, Integer retries) {
         return prediction.create(modelId, inputData, byName, args,
                 waitTime, retries);
-    }
-
-    /**
-     * Creates a new prediction.
-     *
-     * POST
-     * /andromeda/prediction?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     *
-     * @param modelId
-     *            a unique identifier in the form model/id, ensemble/id or
-     *            logisticregression/id where id is a string of 24 alpha-numeric
-     *            chars for the nodel, nsemble or logisticregression to attach
-     *            the prediction.
-     * @param inputData
-     *            an object with field's id/value pairs representing the
-     *            instance you want to create a prediction for.
-     * @param args
-     *            set of parameters for the new prediction. Required
-     * @param waitTime
-     *            time to wait for next check of FINISHED status for model
-     *            before to start to create the prediction. Optional
-     * @param retries
-     *            number of times to try the operation. Optional
-     *
-     */
-    public JSONObject createPrediction(final String modelId,
-            JSONObject inputData, String args, Integer waitTime,
-            Integer retries) {
-        return prediction.create(modelId, inputData, false, args, waitTime, retries);
     }
 
     /**
@@ -2054,71 +1855,6 @@ public class BigMLClient {
      * @param inputData
      *            an object with field's id/value pairs representing the
      *            instance you want to create an anomaly score for.
-     * @param byName
-     *
-     * @param args
-     *            set of parameters for the new anomaly score. Required
-     * @param waitTime
-     *            time to wait for next check of FINISHED status for anomaly
-     *            before to start to create the anomaly score. Optional
-     * @param retries
-     *            number of times to try the operation. Optional
-     *
-     */
-    @Deprecated
-    public JSONObject createAnomalyScore(final String anomalyId,
-            JSONObject inputData, Boolean byName, JSONObject args,
-            Integer waitTime, Integer retries) {
-        return anomalyScore.create(anomalyId, inputData, byName, args,
-                waitTime, retries);
-    }
-
-    /**
-     * Creates a new anomaly score.
-     *
-     * POST
-     * /andromeda/anomalyscore?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     *
-     * @param anomaly
-     *            a anomaly JSONObject
-     * @param inputData
-     *            an object with field's id/value pairs representing the
-     *            instance you want to create an anomaly score for.
-     * @param byName
-     *
-     * @param args
-     *            set of parameters for the new anomaly score. Required
-     * @param waitTime
-     *            time to wait for next check of FINISHED status for anomaly
-     *            before to start to create the anomaly score. Optional
-     * @param retries
-     *            number of times to try the operation. Optional
-     *
-     */
-    @Deprecated
-    public JSONObject createAnomalyScore(final JSONObject anomaly,
-            JSONObject inputData, Boolean byName, JSONObject args,
-            Integer waitTime, Integer retries) {
-        String anomalyId = (String) anomaly.get("resource");
-        return  createAnomalyScore(anomalyId, inputData, byName, args,
-                waitTime, retries);
-    }
-
-    /**
-     * Creates a new anomaly score.
-     *
-     * POST
-     * /andromeda/anomalyscore?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     *
-     * @param anomalyId
-     *            a unique identifier in the form anomaly/id where
-     *            id is a string of 24 alpha-numeric chars for the anomaly
-     *            to attach the anomaly score.
-     * @param inputData
-     *            an object with field's id/value pairs representing the
-     *            instance you want to create an anomaly score for.
      * @param args
      *            set of parameters for the new anomaly score. Required
      * @param waitTime
@@ -2160,8 +1896,8 @@ public class BigMLClient {
             JSONObject inputData, JSONObject args,
             Integer waitTime, Integer retries) {
         String anomalyId = (String) anomaly.get("resource");
-        return  createAnomalyScore(anomalyId, inputData, false, args,
-                waitTime, retries);
+        return  createAnomalyScore(anomalyId, inputData, args, 
+        		waitTime, retries);
     }
 
     /**
@@ -2301,38 +2037,6 @@ public class BigMLClient {
     // # https://bigml.com/api/evaluations
     // #
     // ################################################################
-
-    /**
-     * Creates a new evaluation.
-     *
-     * POST
-     * /andromeda/evaluation?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     *
-     * @param modelId
-     *            a unique identifier in the form model/id, ensemble/id or
-     *            logisticregression/id where id is a string of 24 alpha-numeric
-     *            chars for the nodel, nsemble or logisticregression to attach
-     *            the prediction.
-     * @param datasetId
-     *            a unique identifier in the form dataset/id where id is a
-     *            string of 24 alpha-numeric chars for the dataset to attach the
-     *            evaluation.
-     * @param args
-     *            set of parameters for the new evaluation. Optional
-     * @param waitTime
-     *            time to wait for next check of FINISHED status for model
-     *            before to start to create the evaluation. Optional
-     * @param retries
-     *            number of times to try the operation. Optional
-     *
-     */
-    @Deprecated
-    public JSONObject createEvaluation(final String modelId,
-            final String datasetId, String args, Integer waitTime, Integer retries) {
-        return evaluation.create(modelId, datasetId, args, waitTime,
-                retries);
-    }
 
     /**
      * Creates a new evaluation.
@@ -2532,60 +2236,10 @@ public class BigMLClient {
      *            number of times to try the operation. Optional
      *
      */
-    @Deprecated
-    public JSONObject createEnsemble(final String datasetId, String args,
-            Integer waitTime, Integer retries) {
-        return ensemble.create(datasetId, args, waitTime, retries);
-    }
-
-    /**
-     * Creates a new ensemble.
-     *
-     * POST /andromeda/ensemble?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     *
-     * @param datasetId
-     *            a unique identifier in the form dataset/id where id is a
-     *            string of 24 alpha-numeric chars for the dataset to attach the
-     *            evaluation.
-     * @param args
-     *            set of parameters for the new ensemble. Optional
-     * @param waitTime
-     *            time to wait for next check of FINISHED status for dataset
-     *            before to start to create the ensemble. Optional
-     * @param retries
-     *            number of times to try the operation. Optional
-     *
-     */
     public JSONObject createEnsemble(final String datasetId, 
     		JSONObject args, Integer waitTime, Integer retries) {
 
         return ensemble.create(datasetId, args, waitTime, retries);
-    }
-
-    /**
-     * Creates an ensemble from a list of `datasets`.
-     *
-     * POST /andromeda/ensemble?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     *
-     * @param datasetsIds
-     *            list of identifiers in the form dataset/id where id is a
-     *            string of 24 alpha-numeric chars for the dataset to attach the
-     *            ensemble.
-     * @param args
-     *            set of parameters for the new ensemble. Optional
-     * @param waitTime
-     *            time (milliseconds) to wait for next check of FINISHED status
-     *            for source before to start to create the ensemble. Optional
-     * @param retries
-     *            number of times to try the operation. Optional
-     *
-     */
-    @Deprecated
-    public JSONObject createEnsemble(final List datasetsIds, String args,
-            Integer waitTime, Integer retries) {
-        return ensemble.create(datasetsIds, args, waitTime, retries);
     }
 
     /**
@@ -2764,39 +2418,6 @@ public class BigMLClient {
     // # https://bigml.com/api/batch_predictions
     // #
     // ################################################################
-
-    /**
-     * Creates a new batch prediction.
-     *
-     * POST /andromeda/batchprediction?username=$BIGML_USERNAME;api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
-     *
-     * @param modelId
-     *            a unique identifier in the form model/id, ensemble/id or
-     *            logisticregression/id where id is a string of 24 alpha-numeric
-     *            chars for the nodel, nsemble or logisticregression to attach
-     *            the prediction.
-     * @param datasetId
-     *            a unique identifier in the form dataset/id where id is a
-     *            string of 24 alpha-numeric chars for the dataset to attach the
-     *            evaluation.
-     * @param args
-     *            set of parameters for the new batch prediction. Optional
-     * @param waitTime
-     *            time (milliseconds) to wait for next check of FINISHED status
-     *            for model before to start to create the batch prediction.
-     *            Optional
-     * @param retries
-     *            number of times to try the operation. Optional
-     *
-     */
-    @Deprecated
-    public JSONObject createBatchPrediction(final String modelId,
-            final String datasetId, String args, Integer waitTime,
-            Integer retries) {
-        return batchPrediction.create(modelId, datasetId, args,
-                waitTime, retries);
-    }
 
     /**
      * Creates a new batch prediction.
@@ -3258,60 +2879,10 @@ public class BigMLClient {
      *            number of times to try the operation. Optional
      *
      */
-    @Deprecated
-    public JSONObject createCluster(final String datasetId, String args,
-            Integer waitTime, Integer retries) {
-        return cluster.create(datasetId, args, waitTime, retries);
-    }
-
-    /**
-     * Creates a new cluster.
-     *
-     * POST /andromeda/cluster?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     *
-     * @param datasetId
-     *            a unique identifier in the form dataset/id where id is a
-     *            string of 24 alpha-numeric chars for the dataset to attach the
-     *            evaluation.
-     * @param args
-     *            set of parameters for the new ensemble. Optional
-     * @param waitTime
-     *            time to wait for next check of FINISHED status for dataset
-     *            before to start to create the ensemble. Optional
-     * @param retries
-     *            number of times to try the operation. Optional
-     *
-     */
     public JSONObject createCluster(final String datasetId, 
     		JSONObject args, Integer waitTime, Integer retries) {
 
         return cluster.create(datasetId, args, waitTime, retries);
-    }
-
-    /**
-     * Creates a cluster from a list of `datasets`.
-     *
-     * POST /andromeda/cluster?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     *
-     * @param datasetsIds
-     *            list of identifiers in the form dataset/id where id is a
-     *            string of 24 alpha-numeric chars for the dataset to attach the
-     *            cluster.
-     * @param args
-     *            set of parameters for the new cluster. Optional
-     * @param waitTime
-     *            time (milliseconds) to wait for next check of FINISHED status
-     *            for source before to start to create the cluster. Optional
-     * @param retries
-     *            number of times to try the operation. Optional
-     *
-     */
-    @Deprecated
-    public JSONObject create(final List datasetsIds, String args,
-            Integer waitTime, Integer retries) {
-        return cluster.create(datasetsIds, args, waitTime, retries);
     }
 
     /**
@@ -3508,32 +3079,6 @@ public class BigMLClient {
      *            number of times to try the operation. Optional
      *
      */
-    @Deprecated
-    public JSONObject createCentroid(final String clusterId,
-            JSONObject inputDataJSON, String args, Integer waitTime,
-            Integer retries) {
-        return centroid.create(clusterId, inputDataJSON, args, waitTime,
-                retries);
-    }
-
-    /**
-     * Creates a new centroid.
-     *
-     * POST /andromeda/centroid?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     *
-     * @param clusterId
-     *            a unique identifier in the form cluster/id where id is a
-     *            string of 24 alpha-numeric chars for the cluster.
-     * @param args
-     *            set of parameters for the new centroid. Optional
-     * @param waitTime
-     *            time (milliseconds) to wait for next check of FINISHED status
-     *            for centroid before to start to create the centroid. Optional
-     * @param retries
-     *            number of times to try the operation. Optional
-     *
-     */
     public JSONObject createCentroid(final String clusterId,
             JSONObject inputDataJSON, JSONObject args, Integer waitTime,
             Integer retries) {
@@ -3693,36 +3238,6 @@ public class BigMLClient {
     // # https://bigml.com/api/batch_centroids
     // #
     // ################################################################
-
-    /**
-     * Creates a new batch_centroid.
-     *
-     * POST /andromeda/batch_centroid?username=$BIGML_USERNAME;api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
-     *
-     * @param clusterId
-     *            a unique identifier in the form cluster/id where id is a
-     *            string of 24 alpha-numeric chars for the cluster.
-     * @param datasetId
-     *            a unique identifier in the form dataset/id where id is a
-     *            string of 24 alpha-numeric chars for the dataset.
-     * @param args
-     *            set of parameters for the new batch_centroid. Optional
-     * @param waitTime
-     *            time (milliseconds) to wait for next check of FINISHED status
-     *            for batch_centroid before to start to create the
-     *            batch_centroid. Optional
-     * @param retries
-     *            number of times to try the operation. Optional
-     *
-     */
-    @Deprecated
-    public JSONObject createBatchCentroid(final String clusterId,
-            final String datasetId, String args, Integer waitTime,
-            Integer retries) {
-        return batchCentroid.create(clusterId, datasetId, args, waitTime,
-                retries);
-    }
 
     /**
      * Creates a new batch_centroid.
@@ -5471,31 +4986,6 @@ public class BigMLClient {
      *            number of times to try the operation. Optional
      *
      */
-    @Deprecated
-    public JSONObject createAssociation(final String datasetId, String args,
-            Integer waitTime, Integer retries) {
-        return association.create(datasetId, args, waitTime, retries);
-    }
-
-    /**
-     * Creates a new association.
-     *
-     * POST /andromeda/association?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     *
-     * @param datasetId
-     *            a unique identifier in the form dataset/id where id is a
-     *            string of 24 alpha-numeric chars for the dataset to attach the
-     *            association.
-     * @param args
-     *            set of parameters for the new association. Optional
-     * @param waitTime
-     *            time to wait for next check of FINISHED status for dataset
-     *            before to start to create the association. Optional
-     * @param retries
-     *            number of times to try the operation. Optional
-     *
-     */
     public JSONObject createAssociation(final String datasetId, JSONObject args,
             Integer waitTime, Integer retries) {
 
@@ -6995,31 +6485,6 @@ public class BigMLClient {
     // # https://bigml.com/api/deepnets
     // #
     // ################################################################
-
-    /**
-     * Creates a new deepnet.
-     *
-     * POST /andromeda/deepnet?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     *
-     * @param datasetId
-     *            a unique identifier in the form dataset/id where id is a
-     *            string of 24 alpha-numeric chars for the dataset to attach the
-     *            deepnet.
-     * @param args
-     *            set of parameters for the new deepnet. Optional
-     * @param waitTime
-     *            time to wait for next check of FINISHED status for dataset
-     *            before to start to create the deepnet. Optional
-     * @param retries
-     *            number of times to try the operation. Optional
-     *
-     */
-    @Deprecated
-    public JSONObject createDeepnet(final String datasetId, String args,
-            Integer waitTime, Integer retries) {
-        return deepnet.create(datasetId, args, waitTime, retries);
-    }
 
     /**
      * Creates a new deepnet.

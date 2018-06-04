@@ -59,40 +59,6 @@ public class Dataset extends AbstractResource {
     /**
      * Creates a remote dataset.
      *
-     * Uses remote `source` to create a new dataset using the arguments in
-     * `args`. If `wait_time` is higher than 0 then the dataset creation request
-     * is not sent until the `source` has been created successfuly.
-     *
-     *
-     * POST /andromeda/dataset?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
-     * HTTP/1.1 Host: bigml.io Content-Type: application/json
-     *
-     * @param sourceId
-     *            a unique identifier in the form source/id where id is a string
-     *            of 24 alpha-numeric chars for the source to attach the
-     *            dataset.
-     * @param args
-     *            set of parameters for the new dataset. Optional
-     * @param waitTime
-     *            time (milliseconds) to wait for next check of FINISHED status
-     *            for source before to start to create the dataset. Optional
-     * @param retries
-     *            number of times to try the operation. Optional
-     *
-     */
-    @Deprecated
-    public JSONObject create(final String sourceId, String args,
-            Integer waitTime, Integer retries) {
-
-        JSONObject argsJSON = args != null ? (JSONObject) JSONValue.parse(args)
-                : null;
-        return create(sourceId, argsJSON, waitTime, retries);
-
-    }
-
-    /**
-     * Creates a remote dataset.
-     *
      * Uses a remote resource to create a new dataset using the
      * arguments in `args`.
      *

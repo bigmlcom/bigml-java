@@ -682,30 +682,6 @@ public class MultiVote implements Serializable {
     }
 
 
-    /**
-     * Reduces a number of predictions voting for classification and averaging
-     * predictions for regression.
-     *
-     * @param method {0|1|2|3} method Code associated to the voting method (plurality,
-     *        confidence weighted or probability weighted or threshold).
-     * @param withConfidence if withConfidence is true, the combined confidence
-     *                       (as a weighted of the prediction average of the confidences
-     *                       of votes for the combined prediction) will also be given.
-     * @return {{"prediction": prediction, "confidence": combinedConfidence}}
-     */
-    @Deprecated
-    public HashMap<Object, Object> combine(Integer method,
-                                           Boolean withConfidence, Boolean addConfidence,
-                                           Boolean addDistribution, Boolean addCount,
-                                           Boolean addMedian, Map options) {
-        if (method == null) {
-            method = PredictionMethod.PLURALITY.getCode();
-        }
-
-        PredictionMethod intMethod = PredictionMethod.valueOf(method);
-        return combine(intMethod, withConfidence, addConfidence, addDistribution, addCount,
-                addMedian, options);
-    }
 
     /**
      * Reduces a number of predictions voting for classification and averaging
