@@ -434,7 +434,7 @@ public class ModelFields implements Serializable {
      *
      * @param value the value to normalize
      */
-    protected Object normalize(Object value) {
+    protected <T> T normalize(T value) {
 //        if( value instanceof String ) {
             return (missingTokens.contains(value) ? null : value);
 //        }

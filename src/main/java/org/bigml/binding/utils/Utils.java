@@ -297,6 +297,9 @@ public class Utils {
         if (json.get(field) instanceof Double) {
             return json.get(field);
         }
+        if (json.get(field) instanceof Integer) {
+            return json.get(field);
+        }
         if (json.get(field) instanceof Boolean) {
             return json.get(field);
         }
@@ -316,6 +319,42 @@ public class Utils {
         }
 
         return null;
+    }
+
+    private static <T1, T2> T1 cast(T2 o, T1 d) {
+
+        if (o instanceof Double && d instanceof Long) {
+            return (T1)((Long)((Number)o).longValue());
+        }
+        if (o instanceof Long && d instanceof Double) {
+            return (T1)((Double)((Number)o).doubleValue());
+        }
+        if (o instanceof Double && d instanceof Float) {
+            return (T1)((Float)((Number)o).floatValue());
+        }
+        if (o instanceof Float && d instanceof Double) {
+            return (T1)((Double)((Number)o).doubleValue());
+        }
+        return (T1)o;
+    }
+
+    public static <T> T getFromJSONOr(JSONObject json,
+                                      String key,
+                                      T def) {
+      T result = def;      
+      if (json.containsKey(key)) {
+        Object obj = getJSONObject(json, key);
+        if (obj != null) {
+          result = cast(obj, def);
+        }
+      }
+      return result;
+    }
+
+    public static JSONObject getFromJSONOr(JSONObject json,
+                                           String key) {
+
+      return getFromJSONOr(json, key, new JSONObject());
     }
 
     /**
@@ -355,12 +394,12 @@ public class Utils {
 
         path = path.substring(path.indexOf(".") + 1, path.length());
         if (path.length() > 0) {
-            return getJSONObject(json, path);
+           return getJSONObject(json, path);
         }
-
+        
         return defaultValue;
     }
-
+      
     /**
      * Inverts a dictionary changing keys per values
      *

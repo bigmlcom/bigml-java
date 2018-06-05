@@ -4,6 +4,7 @@
 
 ### Improvements
 
+* Added support for Local Time Series.
 * DevMode removed
 * OptiML Resource
 * Fusion Resource

@@ -34,33 +34,14 @@ public class DatasetsStepdefs {
     @Autowired
     private ContextRepository context;
 
-    @Given("^I create a dataset$")
-    public void I_create_a_dataset() throws AuthenticationException {
-        String sourceId = (String) context.source.get("resource");
-
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
-
-        JSONObject resource = BigMLClient.getInstance().createDataset(sourceId,
-                args, 5, null);
-        context.status = (Integer) resource.get("code");
-        context.location = (String) resource.get("location");
-        context.dataset = (JSONObject) resource.get("object");
-        commonSteps.the_resource_has_been_created_with_status(context.status);
-    }
-
     @Given("^I create a dataset with \"(.*)\"$")
     public void I_create_a_dataset_with_options(String args) throws Throwable {
         String sourceId = (String) context.source.get("resource");
-        JSONObject argsJSON = args != null ? (JSONObject) JSONValue.parse(args)
-                : null;
+        JSONObject argsJSON = args != null ?
+            (JSONObject) JSONValue.parse(args) :
+            new JSONObject();
 
-        if( argsJSON != null ) {
-            argsJSON.put("tags", Arrays.asList("unitTest"));
-        } else {
-            argsJSON = new JSONObject();
-            argsJSON.put("tags", Arrays.asList("unitTest"));
-        }
+        argsJSON.put("tags", Arrays.asList("unitTest"));
 
         JSONObject resource = BigMLClient.getInstance().createDataset(sourceId,
                 argsJSON, 5, null);
@@ -68,6 +49,11 @@ public class DatasetsStepdefs {
         context.location = (String) resource.get("location");
         context.dataset = (JSONObject) resource.get("object");
         commonSteps.the_resource_has_been_created_with_status(context.status);
+    }
+
+    @Given("^I create a dataset$")
+    public void I_create_a_dataset() throws Throwable {
+        I_create_a_dataset_with_options(null);
     }
 
 

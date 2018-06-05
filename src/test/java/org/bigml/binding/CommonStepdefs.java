@@ -129,11 +129,11 @@ public class CommonStepdefs {
 	
 	@Given("^I create a (configuration|project) with \"(.*)\"$")
     public void I_create_a_resource_with_(String resourceName, String args)
-        throws AuthenticationException {
+        throws AuthenticationException, Exception {
 
         JSONObject argsJSON = (JSONObject) JSONValue.parse(args);
         argsJSON.put("tags", Arrays.asList("unitTest"));
-        
+
         try {
 			Method method = getClientMethod("create-args", resourceName);
 			
@@ -151,28 +151,39 @@ public class CommonStepdefs {
     }
 	
 	
-	@Given("^I create a[n]* (anomaly detector|association|correlation|deepnet|logisticregression|sample|statisticaltest|time series) from a dataset$")
-	public void I_create_a_resource_from_a_dataset(String resourceName)
+	@Given("^I create a[n]* (anomaly detector|association|correlation|deepnet|logisticregression|sample|statisticaltest|time series) from a dataset with \"(.*)\"$")
+	public void I_create_a_resource_from_a_dataset_with(String resourceName, String args)
 			throws Throwable {
 
 		String datasetId = (String) ((JSONObject) getResource("dataset"))
 				.get("resource");
 
-		JSONObject args = new JSONObject();
-		args.put("tags", Arrays.asList("unitTest"));
+        JSONObject argsJSON = args != null ?
+            (JSONObject) JSONValue.parse(args) :
+            new JSONObject();
+
+		argsJSON.put("tags", Arrays.asList("unitTest"));
 
 		try {
 			Method method = getClientMethod("create", resourceName);
 			JSONObject resource = (JSONObject) method.invoke(
-					BigMLClient.getInstance(), datasetId, args, 5, null);
+					BigMLClient.getInstance(), datasetId, argsJSON, 5, null);
 			context.status = (Integer) resource.get("code");
 			context.location = (String) resource.get("location");
 
-			setResource(resourceName, (JSONObject) resource.get("object"));
+            setResource(resourceName, (JSONObject) resource.get("object"));
+
 			the_resource_has_been_created_with_status(context.status);
 		} catch (Exception e) {
 			assertFalse(true);
 		}
+	}
+
+	@Given("^I create a[n]* (anomaly detector|association|correlation|deepnet|logisticregression|sample|statisticaltest|time series) from a dataset$")
+	public void I_create_a_resource_from_a_dataset(String resourceName)
+			throws Throwable {
+
+        I_create_a_resource_from_a_dataset_with(resourceName, null);
 	}
 
 	public void I_wait_until_resource_status_code_is(String resourceName,

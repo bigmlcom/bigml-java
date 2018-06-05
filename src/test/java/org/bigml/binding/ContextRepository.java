@@ -55,12 +55,14 @@ public class ContextRepository {
     
     JSONObject localPrediction = null;
     Prediction localModelPrediction = null;
+    JSONObject localForecast = null;
     
     LocalPredictiveModel localModel = null;
     LocalCluster localCluster = null;
     LocalLogisticRegression localLogisticRegression = null;
     LocalDeepnet localDeepnet = null;
-    
+    LocalTimeseries localTimeSeries = null;
+
     MultiModel multiModel = null;
     List<MultiVote> votes = null;
     
