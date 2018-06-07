@@ -8,6 +8,22 @@
 * OptiML Resource
 * Fusion Resource
 * Removing seed as a connection attribute.
+* Added support for Local Topic Models
+
+	In order to give support to java 6 users the binding uses version 
+	4.7.0 for lucene-core and lucene-analyzers-common. If java is 1.8 or 
+	greater set the version of these libraries to 7.3.1 in pom.xml
+	
+    		<dependency>
+		    <groupId>org.apache.lucene</groupId>
+		    <artifactId>lucene-core</artifactId>
+		    <version>7.3.1</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.lucene</groupId>
+		    <artifactId>lucene-analyzers-common</artifactId>
+		    <version>7.3.1</version>
+		</dependency>
 
 
 ### Bugs
