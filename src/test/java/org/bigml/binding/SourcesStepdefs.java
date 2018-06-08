@@ -33,11 +33,12 @@ public class SourcesStepdefs {
     @Given("^I create a data source uploading a \"([^\"]*)\" file$")
     public void I_create_a_data_source_uploading_a_file(String fileName)
             throws AuthenticationException {
-//        JSONObject args = new JSONObject();
-//        args.put("tags", Arrays.asList("unitTest"));
+    	
+    	JSONObject args = new JSONObject();
+        args.put("tags", Arrays.asList("unitTest"));
 
-        JSONObject resource = BigMLClient.getInstance().createSource(fileName,
-                "new source", new JSONObject());
+        JSONObject resource = BigMLClient.getInstance().createSource(
+        		fileName, "new source", args);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.source = (JSONObject) resource.get("object");
@@ -48,8 +49,11 @@ public class SourcesStepdefs {
     @Given("^I create a data source using the url \"([^\"]*)\"$")
     public void I_create_a_data_source_using_the_url(String url)
             throws AuthenticationException {
-        JSONObject resource = BigMLClient.getInstance().createRemoteSource(url,
-                new JSONObject());
+    	JSONObject args = new JSONObject();
+        args.put("tags", Arrays.asList("unitTest"));
+        
+        JSONObject resource = BigMLClient.getInstance().createRemoteSource(
+        		url, args);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.source = (JSONObject) resource.get("object");
@@ -68,31 +72,17 @@ public class SourcesStepdefs {
         } catch (IOException e) {
             throw new RuntimeException("Unable to load the file.", e);
         }
+        
+        JSONObject args = new JSONObject();
+        args.put("tags", Arrays.asList("unitTest"));
 
-        JSONObject resource = BigMLClient.getInstance().createInlineSource(inlineData,
-                new JSONObject());
+        JSONObject resource = BigMLClient.getInstance().createInlineSource(
+        		inlineData, args);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.source = (JSONObject) resource.get("object");
 
         commonSteps.the_resource_has_been_created_with_status(context.status);
-    }
-
-    @Given("^I add the unitTest tag to the data source waiting less than (\\d+) secs$")
-    public void I_add_the_unitTest_tag_to_the_data_source(int secs)
-            throws Throwable {
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
-
-        JSONObject resource = BigMLClient.getInstance().updateSource(
-                context.source, args);
-
-        context.status = (Integer) resource.get("code");
-        context.location = (String) resource.get("location");
-        context.source = (JSONObject) resource.get("object");
-        commonSteps
-                .the_resource_has_been_updated_with_status(context.status);
-        I_wait_until_the_source_is_ready_less_than_secs(secs);
     }
 
     @Given("^I wait until the resource status code is either (\\d) or (\\d) less than (\\d+)")

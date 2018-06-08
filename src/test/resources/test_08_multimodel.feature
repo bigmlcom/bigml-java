@@ -5,7 +5,6 @@ Feature:  Create a model from a dataset list
     Scenario Outline: Successfully creating a model from a dataset list:
         Given I create a data source uploading a "<data>" file
         And I wait until the source is ready less than <time_1> secs
-        And I add the unitTest tag to the data source waiting less than <time_1> secs
         And I create a dataset
         And I wait until the dataset is ready less than <time_2> secs
         And I store the dataset id in a list
@@ -25,7 +24,6 @@ Feature:  Create a model from a dataset list
     Scenario Outline: Successfully creating a model from a dataset list and predicting with it using median:
         Given I create a data source uploading a "<data>" file
         And I wait until the source is ready less than <time_1> secs
-        And I add the unitTest tag to the data source waiting less than <time_1> secs
         And I create a dataset
         And I wait until the dataset is ready less than <time_2> secs
         Then I create a model

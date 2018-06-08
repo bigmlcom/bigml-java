@@ -5,7 +5,6 @@ Feature: Create Predictions locally from Ensembles
   Scenario Outline: Successfully creating a local prediction from an Ensemble:
     Given I create a data source uploading a "<data>" file
     And I wait until the source is ready less than <time_1> secs
-    And I add the unitTest tag to the data source waiting less than <time_1> secs
     And I create a dataset
     And I wait until the dataset is ready less than <time_2> secs
     And I create an ensemble of <number_of_models> models
@@ -23,7 +22,6 @@ Feature: Create Predictions locally from Ensembles
   Scenario Outline: Successfully obtaining field importance from an Ensemble:
     Given I create a data source uploading a "<data>" file
     And I wait until the source is ready less than <time_1> secs
-    And I add the unitTest tag to the data source waiting less than <time_1> secs
     And I create a dataset
     And I wait until the dataset is ready less than <time_2> secs
     And I create a model with "<parms1>"
@@ -44,7 +42,6 @@ Feature: Create Predictions locally from Ensembles
   Scenario Outline: Successfully creating a local prediction from an Ensemble adding confidence:
     Given I create a data source uploading a "<data>" file
     And I wait until the source is ready less than <time_1> secs
-    And I add the unitTest tag to the data source waiting less than <time_1> secs
     And I create a dataset
     And I wait until the dataset is ready less than <time_2> secs
     And I create an ensemble of <number_of_models> models
@@ -65,7 +62,6 @@ Feature: Create Predictions locally from Ensembles
   #  Scenario Outline: Successfully obtaining field importance from an Ensemble created from local models:
   #    Given I create a data source uploading a "<data>" file
   #    And I wait until the source is ready less than <time_1> secs
-  #    And I add the unitTest tag to the data source waiting less than <time_1> secs
   #    And I create a dataset
   #    And I wait until the dataset is ready less than <time_2> secs
   #    And I create a model with "<parms1>"
@@ -86,7 +82,6 @@ Feature: Create Predictions locally from Ensembles
   Scenario Outline: Successfully creating a local prediction from an Ensemble:
     Given I create a data source uploading a "<data>" file
     And I wait until the source is ready less than <time_1> secs
-    And I add the unitTest tag to the data source waiting less than <time_1> secs
     And I create a dataset
     And I wait until the dataset is ready less than <time_2> secs
     And I create an ensemble of <number_of_models> models
@@ -103,7 +98,6 @@ Feature: Create Predictions locally from Ensembles
   Scenario Outline: Successfully creating a local prediction from an Ensemble with max models:
     Given I create a data source uploading a "<data>" file
     And I wait until the source is ready less than <time_1> secs
-    And I add the unitTest tag to the data source waiting less than <time_1> secs
     And I create a dataset
     And I wait until the dataset is ready less than <time_2> secs
     And I create an ensemble of <number_of_models> models

@@ -5,7 +5,6 @@ Feature: Create an anomaly detector from a dataset or dataset list
   Scenario Outline: Successfully creating an anomaly detector from a dataset and a dataset list:
     Given I create a data source uploading a "<data>" file
     And I wait until the source is ready less than <time_1> secs
-    And I add the unitTest tag to the data source waiting less than <time_1> secs
     And I create a dataset
     And I wait until the dataset is ready less than <time_2> secs
     Then I create an anomaly detector from a dataset
@@ -29,7 +28,6 @@ Feature: Create an anomaly detector from a dataset or dataset list
   Scenario Outline: Successfully creating an anomaly detector from a dataset and generating the anomalous dataset:
     Given I create a data source uploading a "<data>" file
     And I wait until the source is ready less than <time_1> secs
-    And I add the unitTest tag to the data source waiting less than <time_1> secs
     And I create a dataset
     And I wait until the dataset is ready less than <time_2> secs
     Then I create an anomaly detector of <rows> anomalies from a dataset

@@ -5,7 +5,6 @@ Feature: Inspect the information of a local model
   Scenario Outline: Successfully creating a model and translate the tree model into a set of IF-THEN rules:
     Given I create a data source uploading a "<data>" file
     And I wait until the source is ready less than <time_1> secs
-    And I add the unitTest tag to the data source waiting less than <time_1> secs
     And I create a dataset
     And I wait until the dataset is ready less than <time_2> secs
     And I create a model
@@ -27,7 +26,6 @@ Feature: Inspect the information of a local model
   Scenario Outline: Successfully creating a model and translate the tree model into a set of IF-THEN rules:
     Given I create a data source uploading a "<data>" file
     And I wait until the source is ready less than <time_1> secs
-    And I add the unitTest tag to the data source waiting less than <time_1> secs
     And I update the source with "<options>" waiting less than <time_1> secs
     And I create a dataset
     And I wait until the dataset is ready less than <time_2> secs
@@ -50,7 +48,6 @@ Feature: Inspect the information of a local model
   Scenario Outline: Successfully creating a model with missing values and translate the tree model into a set of IF-THEN rules:
     Given I create a data source uploading a "<data>" file
     And I wait until the source is ready less than <time_1> secs
-    And I add the unitTest tag to the data source waiting less than <time_1> secs
     And I create a dataset
     And I wait until the dataset is ready less than <time_2> secs
     And I create a model with missing splits
@@ -67,7 +64,6 @@ Feature: Inspect the information of a local model
   Scenario Outline: Successfully creating a model and translate the tree model into a set of Java rules:
     Given I create a data source uploading a "<data>" file
     And I wait until the source is ready less than <time_1> secs
-    And I add the unitTest tag to the data source waiting less than <time_1> secs
     And I create a dataset
     And I wait until the dataset is ready less than <time_2> secs
     And I create a model
@@ -90,7 +86,6 @@ Feature: Inspect the information of a local model
   Scenario Outline: Successfully creating a model and translate the tree model into a set of Java rules:
     Given I create a data source uploading a "<data>" file
     And I wait until the source is ready less than <time_1> secs
-    And I add the unitTest tag to the data source waiting less than <time_1> secs
     And I update the source with "<options>" waiting less than <time_1> secs
     And I create a dataset
     And I wait until the dataset is ready less than <time_2> secs
@@ -113,7 +108,6 @@ Feature: Inspect the information of a local model
   Scenario Outline: Successfully creating a model with missing values and translate the tree model into a set of Java rules:
     Given I create a data source uploading a "<data>" file
     And I wait until the source is ready less than <time_1> secs
-    And I add the unitTest tag to the data source waiting less than <time_1> secs
     And I create a dataset
     And I wait until the dataset is ready less than <time_2> secs
     And I create a model with missing splits
@@ -130,7 +124,6 @@ Feature: Inspect the information of a local model
   Scenario Outline: Successfully creating a model and check its data distribution:
     Given I create a data source uploading a "<data>" file
     And I wait until the source is ready less than <time_1> secs
-    And I add the unitTest tag to the data source waiting less than <time_1> secs
     And I create a dataset
     And I wait until the dataset is ready less than <time_2> secs
     And I create a model
@@ -152,7 +145,6 @@ Feature: Inspect the information of a local model
   Scenario Outline: Successfully creating a model and check its data distribution:
     Given I create a data source uploading a "<data>" file
     And I wait until the source is ready less than <time_1> secs
-    And I add the unitTest tag to the data source waiting less than <time_1> secs
     And I create a dataset
     And I wait until the dataset is ready less than <time_2> secs
     And I create a model

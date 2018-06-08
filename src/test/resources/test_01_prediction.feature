@@ -6,7 +6,6 @@ I need to create a model first
   Scenario Outline: Successfully creating a prediction:
       Given I create a data source uploading a "<data>" file
       And I wait until the source is ready less than <time_1> secs
-      And I add the unitTest tag to the data source waiting less than <time_1> secs
       And I create a dataset
       And I wait until the dataset is ready less than <time_2> secs
       And I create a model
@@ -24,7 +23,6 @@ I need to create a model first
   Scenario Outline: Successfully creating a prediction from a source in a remote location:
       Given I create a data source using the url "<url>"
       And I wait until the source is ready less than <time_1> secs
-      And I add the unitTest tag to the data source waiting less than <time_1> secs
       And I create a dataset
       And I wait until the dataset is ready less than <time_2> secs
       And I create a model
@@ -42,7 +40,6 @@ I need to create a model first
 #    Given I create a data source uploading a "<data>" file in asynchronous mode
 #    And I wait until the source has been created less than <time_1> secs
 #    And I wait until the source is ready less than <time_2> secs
-#    And I add the unitTest tag to the data source waiting less than <time_1> secs
 #    And I create a dataset
 #    And I wait until the dataset is ready less than <time_3> secs
 #    And I create a model
@@ -59,7 +56,6 @@ I need to create a model first
   Scenario Outline: Successfully creating a prediction from inline data source:
       Given I create a data source from inline data slurped from "<data>"
       And I wait until the source is ready less than <time_1> secs
-      And I add the unitTest tag to the data source waiting less than <time_1> secs
       And I create a dataset
       And I wait until the dataset is ready less than <time_2> secs
       And I create a model
@@ -76,7 +72,6 @@ I need to create a model first
   Scenario Outline: Successfully creating a centroid and the associated dataset:
       Given I create a data source uploading a "<data>" file
       And I wait until the source is ready less than <time_1> secs
-      And I add the unitTest tag to the data source waiting less than <time_1> secs
       And I create a dataset
       And I wait until the dataset is ready less than <time_2> secs
       And I create a cluster
@@ -97,7 +92,6 @@ I need to create a model first
   Scenario Outline: Successfully creating an anomaly score:
       Given I create a data source uploading a "<data>" file
       And I wait until the source is ready less than <time_1> secs
-      And I add the unitTest tag to the data source waiting less than <time_1> secs
       And I create a dataset
       And I wait until the dataset is ready less than <time_2> secs
       And I create an anomaly detector from a dataset
@@ -115,7 +109,6 @@ I need to create a model first
   Scenario Outline: Successfully creating a topic model:
       Given I create a data source uploading a "<data>" file
       And I wait until the source is ready less than <time_1> secs
-      And I add the unitTest tag to the data source waiting less than <time_1> secs
       And I update the source with "<options>" waiting less than <time_1> secs
       And I create a dataset
       And I wait until the dataset is ready less than <time_2> secs

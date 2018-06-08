@@ -5,7 +5,6 @@ Feature: Create Batch Predictions
   Scenario Outline: Successfully creating a batch prediction:
         Given I create a data source uploading a "<data>" file
         And I wait until the source is ready less than <time_1> secs
-        And I add the unitTest tag to the data source waiting less than <time_1> secs
         And I create a dataset
         And I wait until the dataset is ready less than <time_2> secs
         And I create a model
@@ -24,7 +23,6 @@ Feature: Create Batch Predictions
   Scenario Outline: Successfully creating a batch prediction for an ensemble:
         Given I create a data source uploading a "<data>" file
         And I wait until the source is ready less than <time_1> secs
-        And I add the unitTest tag to the data source waiting less than <time_1> secs
         And I create a dataset
         And I wait until the dataset is ready less than <time_2> secs
         And I create an ensemble of <number_of_models> models
@@ -43,7 +41,6 @@ Feature: Create Batch Predictions
 	Scenario Outline: Successfully creating a batch centroid from a cluster:
         Given I create a data source uploading a "<data>" file
         And I wait until the source is ready less than <time_1> secs
-        And I add the unitTest tag to the data source waiting less than <time_1> secs
         And I create a dataset
         And I wait until the dataset is ready less than <time_2> secs
         And I create a cluster
@@ -62,7 +59,6 @@ Feature: Create Batch Predictions
     Scenario Outline: Successfully creating a source from a batch prediction:
         Given I create a data source uploading a "<data>" file
         And I wait until the source is ready less than <time_1> secs
-        And I add the unitTest tag to the data source waiting less than <time_1> secs
         And I create a dataset
         And I wait until the dataset is ready less than <time_2> secs
         And I create a model
@@ -71,7 +67,6 @@ Feature: Create Batch Predictions
         And I wait until the batch prediction is ready less than <time_4> secs
         Then I create a source from the batch prediction
         And I wait until the source is ready less than <time_1> secs
-        And I add the unitTest tag to the data source waiting less than <time_1> secs
         Then delete test data
 
         Examples:
@@ -101,7 +96,6 @@ Feature: Create Batch Predictions
     Scenario Outline: Successfully creating a batch prediction for a logistic regression:
         Given I create a data source uploading a "<data>" file
         And I wait until the source is ready less than <time_1> secs
-        And I add the unitTest tag to the data source waiting less than <time_1> secs
         And I create a dataset
         And I wait until the dataset is ready less than <time_2> secs
         And I create a logisticregression from a dataset

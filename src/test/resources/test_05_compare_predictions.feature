@@ -7,7 +7,6 @@ Feature: Create Predictions
   Scenario Outline: Successfully comparing predictions:
     Given I create a data source uploading a "<data>" file
     And I wait until the source is ready less than <time_1> secs
-    And I add the unitTest tag to the data source waiting less than <time_1> secs
     And I create a dataset
     And I wait until the dataset is ready less than <time_2> secs
     And I create a model
@@ -30,7 +29,6 @@ Feature: Create Predictions
     Given I create a data source uploading a "<data>" file
     And I wait until the source is ready less than <time_1> secs
     And I update the source with "<options>" waiting less than <time_1> secs
-    And I add the unitTest tag to the data source waiting less than <time_1> secs
     And I create a dataset
     And I wait until the dataset is ready less than <time_2> secs
     And I create a model
@@ -57,7 +55,6 @@ Feature: Create Predictions
   Scenario Outline: Successfully comparing predictions with proportional missing strategy:
     Given I create a data source uploading a "<data>" file
     And I wait until the source is ready less than <time_1> secs
-    And I add the unitTest tag to the data source waiting less than <time_1> secs
     And I create a dataset
     And I wait until the dataset is ready less than <time_2> secs
     And I create a model
@@ -79,7 +76,6 @@ Feature: Create Predictions
   Scenario Outline: Successfully comparing predictions with proportional missing strategy:
     Given I create a data source uploading a "<data>" file
     And I wait until the source is ready less than <time_1> secs
-    And I add the unitTest tag to the data source waiting less than <time_1> secs
     And I create a dataset
     And I wait until the dataset is ready less than <time_2> secs
     And I create a model
@@ -102,7 +98,6 @@ Feature: Create Predictions
   Scenario Outline: Successfully comparing predictions with proportional missing strategy for missing_splits models:
     Given I create a data source uploading a "<data>" file
     And I wait until the source is ready less than <time_1> secs
-    And I add the unitTest tag to the data source waiting less than <time_1> secs
     And I create a dataset
     And I wait until the dataset is ready less than <time_2> secs
     And I create a model with missing splits

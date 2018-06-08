@@ -3,7 +3,6 @@ Feature: Compare predictions
     Scenario Outline: Successfully comparing centroids with or without text options:
         Given I create a data source uploading a "<data>" file
         And I wait until the source is ready less than <time_1> secs
-        And I add the unitTest tag to the data source waiting less than <time_1> secs
         And I update the source with "<options>" waiting less than <time_1> secs
         And I create a dataset
         And I wait until the dataset is ready less than <time_2> secs
@@ -37,7 +36,6 @@ Feature: Compare predictions
     Scenario Outline: Successfully comparing centroids with configuration options:
         Given I create a data source uploading a "<data>" file
         And I wait until the source is ready less than <time_1> secs
-        And I add the unitTest tag to the data source waiting less than <time_1> secs
         And I create a dataset
         And I wait until the dataset is ready less than <time_2> secs
         And I create a cluster with options "<options>"
@@ -57,7 +55,6 @@ Feature: Compare predictions
     Scenario Outline: Successfully comparing scores from anomaly detectors:
         Given I create a data source uploading a "<data>" file
         And I wait until the source is ready less than <time_1> secs
-        And I add the unitTest tag to the data source waiting less than <time_1> secs
         And I create a dataset
         And I wait until the dataset is ready less than <time_2> secs
         And I create an anomaly detector from a dataset
