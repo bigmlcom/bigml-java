@@ -265,7 +265,8 @@ public class BigMLClient {
 
     private void initResources() {
         // Lets create the storage folder in it was informed
-        this.cacheManager = new CacheManager(storage);
+        //this.cacheManager = new CacheManager(storage);
+        this.cacheManager = null;
 
         source = new Source(this.bigmlUser, this.bigmlApiKey, cacheManager);
         dataset = new Dataset(this.bigmlUser, this.bigmlApiKey, cacheManager);
