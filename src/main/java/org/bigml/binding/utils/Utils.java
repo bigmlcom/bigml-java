@@ -162,8 +162,7 @@ public class Utils {
             connection.setUseCaches (false);
 
             // Sending the body to the server
-            OutputStreamWriter output = new OutputStreamWriter(connection.getOutputStream());
-
+            OutputStreamWriter output = new OutputStreamWriter(connection.getOutputStream(), "UTF-8");
             output.write(Utils.unescapeJSONString(body));
             output.flush();
             output.close();
