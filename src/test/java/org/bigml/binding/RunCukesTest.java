@@ -31,6 +31,7 @@ import cucumber.junit.Cucumber;
         "src/test/resources/test_19_missing_and_errors.feature",
         "src/test/resources/test_20_rename_duplicated_names.feature",
         "src/test/resources/test_21_projects.feature",
+        "src/test/resources/test_24_cluster_derived.feature",
         "src/test/resources/test_25_correlation.feature",
         "src/test/resources/test_26_statistical_test.feature",
         "src/test/resources/test_27_logistic_regression.feature",

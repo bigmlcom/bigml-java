@@ -14,16 +14,18 @@ import java.util.Map;
 /**
  * Centroid structure for the BigML local Cluster
  *
- * This module defines an auxiliary Centroid predicate structure that is used
- * in the cluster.
+ * This module defines an auxiliary Centroid predicate structure that is 
+ * used in the cluster.
  */
 public class LocalCentroid implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     protected static final String[] STATISTIC_MEASURES = {
-            "Minimum", "Mean", "Median", "Maximum", "Standard deviation" };
-
+            "Minimum", "Mean", "Median", "Maximum", 
+            "Standard deviation", "Sum", "Sum squares", "Variance" };
+    
+    private JSONObject centroid;
     private JSONObject center;
     private int count;
     private String centroidId;
@@ -32,6 +34,7 @@ public class LocalCentroid implements Serializable {
 
 
     public LocalCentroid(JSONObject centroidData) {
+    	centroid = centroidData;
         center = (JSONObject) Utils.getJSONObject(centroidData, "center", new JSONObject());
         count = ((Number) Utils.getJSONObject(centroidData, "count", new Integer(0))).intValue();
         centroidId = (String) Utils.getJSONObject(centroidData, "id", null);
@@ -39,6 +42,9 @@ public class LocalCentroid implements Serializable {
         distance = (JSONObject) Utils.getJSONObject(centroidData, "distance", new JSONObject());
     }
 
+    public JSONObject getCentroid() {
+        return centroid;
+    }
 
     public String getCentroidId() {
         return centroidId;
@@ -47,25 +53,38 @@ public class LocalCentroid implements Serializable {
     public String getName() {
         return name;
     }
+    
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public int getCount() {
         return count;
+    }
+    
+    public void setCount(int count) {
+        this.count = count;
     }
 
     public JSONObject getCenter() {
         return center;
     }
-
+    
+    public JSONObject getDistance() {
+        return distance;
+    }
+    
     /**
      * Squared Distance from the given input data to the centroid
      */
     public Double distance2(Map<String, Object> inputData, Map<String, Object> termSets,
                                JSONObject scales, Double stopDistance2) {
-
+    	
         double distance2 = 0.0;
         for (Object centerKey : center.keySet()) {
             String fieldId = (String) centerKey;
             Object value = center.get(fieldId);
+            
 
             if (value instanceof JSONArray) {
                 // We are talking about a TEXT field (list of terms)
@@ -80,8 +99,8 @@ public class LocalCentroid implements Serializable {
             } else {
                 // Delta Value = (InputData Value - Centroid Value) * Scale of the Field
                 // Delta Value ^ 2
-                distance2 += Math.pow((((Number) inputData.get(fieldId)).doubleValue() - ((Number) value).doubleValue())
-                        * ((Number) scales.get(fieldId)).doubleValue(), 2);
+            	distance2 += Math.pow((((Number) inputData.get(fieldId)).doubleValue() - ((Number) value).doubleValue())
+                    * ((Number) scales.get(fieldId)).doubleValue(), 2);
             }
 
             if (stopDistance2 != null && distance2 >= stopDistance2) {
@@ -94,10 +113,12 @@ public class LocalCentroid implements Serializable {
 
 
     /**
-     * Print the statistics for the training data clustered around the centroid
+     * Print the statistics for the training data clustered around the 
+     * centroid
      */
     public StringBuilder printStatistics() {
-        StringBuilder text = new StringBuilder(String.format("%s:\n", name));
+        StringBuilder text = new StringBuilder(
+        		String.format("%s:\n", name));
 
         for (String measureTitle : STATISTIC_MEASURES) {
             String measure = measureTitle.toLowerCase().replace(' ', '_');
@@ -113,8 +134,8 @@ public class LocalCentroid implements Serializable {
     /**
      * Returns the distance defined by cosine similarity
      */
-    protected double cosineDistance2(List<String> terms, JSONArray centroidTerms,
-                                     double scale) {
+    protected double cosineDistance2(
+    		List<String> terms, JSONArray centroidTerms, double scale) {
         // Centroid values for the field can be an empty list.
         // Then the distance for an empty input is 1
         // (before applying the scale factor).

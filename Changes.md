@@ -8,6 +8,10 @@
 * OptiML Resource
 * Fusion Resource
 * Removing seed as a connection attribute.
+* Local Clusters. 
+	- Support for optype items
+	- New utility methods: closestInCluster, sortedCentroids.
+	- Fixed bugs.
 * Added support for Local Topic Models
 
 	In order to give support to java 6 users the binding uses version 
@@ -29,6 +33,7 @@
 ### Bugs
 
 * Fixed test suite
+* Deactivated cache manager due to strange behaviour in resources relaod.
 
 
 ## 1.7.0 version

@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.*;
 
 import org.bigml.binding.resources.AbstractResource;
+import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -127,6 +128,7 @@ public class ModelsStepdefs {
         context.models.add(context.model);
         commonSteps.the_resource_has_been_created_with_status(context.status);
     }
+    
 
     @Given("^I wait until the model status code is either (\\d) or (\\d) less than (\\d+)$")
     public void I_wait_until_model_status_code_is(int code1, int code2, int secs)
@@ -334,5 +336,39 @@ public class ModelsStepdefs {
         Integer code = (Integer) context.model.get("code");
         assertEquals(AbstractResource.HTTP_OK, code.intValue());
 
+    }
+    
+    
+    @Then("^I create a model associated to centroid \"(.*)\"$")
+    public void I_create_a_model_associated_to_centroid(String centroidId) 
+    		throws Throwable {
+        String clusterId = (String) context.cluster.get("resource");
+        
+        JSONObject args = new JSONObject();
+        args.put("tags", Arrays.asList("unitTest"));
+        args.put("centroid", centroidId);
+
+        JSONObject resource = BigMLClient.getInstance().createModel(
+        		clusterId, args, 5, null);
+        context.status = (Integer) resource.get("code");
+        context.location = (String) resource.get("location");
+        context.model = (JSONObject) resource.get("object");
+        commonSteps.the_resource_has_been_created_with_status(context.status);
+    }
+    
+    @Then("^the model is associated to the centroid \"([^\"]*)\" of the cluster$")
+    public void the_model_is_associated_to_the_centroid_of_the_cluster(String centroid) 
+    		throws Throwable {
+        
+    	JSONObject resource = BigMLClient.getInstance().getCluster(
+            (String) context.cluster.get("resource"));
+
+        context.status = (Integer) resource.get("code");
+        assertEquals(AbstractResource.HTTP_OK, context.status);
+        
+        assertEquals(context.model.get("resource"), 
+        	String.format("model/%s",
+                Utils.getJSONObject(resource,
+                        String.format("object.cluster_models.%s", centroid) )));
     }
 }

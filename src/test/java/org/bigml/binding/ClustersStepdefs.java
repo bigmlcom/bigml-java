@@ -14,6 +14,7 @@ import java.util.GregorianCalendar;
 
 import org.bigml.binding.resources.AbstractResource;
 import org.bigml.binding.utils.Utils;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.slf4j.Logger;
@@ -34,9 +35,6 @@ public class ClustersStepdefs {
     @Autowired
     private ContextRepository context;
 
-    private String sharedHash;
-    private String sharedKey;
-
     private String downloadedFile;
 
     @Given("^I create a cluster with options \"(.*)\"$")
@@ -44,7 +42,6 @@ public class ClustersStepdefs {
         String datasetId = (String) context.dataset.get("resource");
 
         JSONObject args = (JSONObject) JSONValue.parse(options);
-
         args.put("k", 8);
         args.put("seed", "BigML");
         args.put("cluster_seed", "BigML");
@@ -122,6 +119,7 @@ public class ClustersStepdefs {
     public void I_get_the_cluster(String clusterId)
             throws AuthenticationException {
         JSONObject resource = BigMLClient.getInstance().getCluster(clusterId);
+        
         Integer code = (Integer) resource.get("code");
         assertEquals(code.intValue(), AbstractResource.HTTP_OK);
         context.cluster = (JSONObject) resource.get("object");
@@ -147,7 +145,7 @@ public class ClustersStepdefs {
     @When("^I create a local centroid for \"(.*)\"$")
     public void I_create_a_local_centroid_for(String inputData)
             throws AuthenticationException {
-        context.localCentroid = context.localCluster.calculateCentroid((JSONObject) JSONValue.parse(inputData),
+        context.localCentroid = context.localCluster.centroid((JSONObject) JSONValue.parse(inputData),
                 Boolean.TRUE);
     }
 
@@ -304,4 +302,18 @@ public class ClustersStepdefs {
     // }
     //
     // }
+    
+    
+    @Then("^the data point in the cluster closest to \"(.*)\" is \"(.*)\"$")
+    public void closest_in_cluster(String reference, String closest) throws Throwable {
+        JSONObject referencePoint = (JSONObject) JSONValue.parse(reference);
+        JSONObject closestObj = (JSONObject) JSONValue.parse(closest);
+        
+        JSONObject closestInCluster = context.localCluster.closestInCluster(
+        		referencePoint, 1, null, true);
+        JSONObject result = (JSONObject) (
+        		(JSONArray) closestInCluster.get("closest")).get(0);
+        
+        assertEquals(closestObj, result);
+    }
 }
