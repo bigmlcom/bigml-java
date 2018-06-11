@@ -28,6 +28,7 @@
 		    <artifactId>lucene-analyzers-common</artifactId>
 		    <version>7.3.1</version>
 		</dependency>
+* Added support for Local Logistic Regression
 
 
 ### Bugs

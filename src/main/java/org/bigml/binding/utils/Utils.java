@@ -15,6 +15,7 @@ import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -35,6 +36,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 
+import org.apache.commons.lang3.StringUtils;
 import org.bigml.binding.BigMLClient;
 import org.bigml.binding.Constants;
 import org.bigml.binding.localmodel.Tree;
@@ -1006,6 +1008,57 @@ public class Utils {
                 (Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE)));
         Matcher matcher = pattern.matcher(text);
         return (matcher.find() ? matcher.groupCount() : 0);
+    }
+    
+    
+    /**
+     * Checks the operating point contents and extracts and array with 
+     * the three defined variables
+     */
+    public static Object[] parseOperatingPoint(JSONObject operatingPoint,
+    		String[] operatingKinds, List<String> classNames) {
+        
+    	String kind, positiveClass;
+    	Double threshold;
+    	
+    	if (!operatingPoint.containsKey("kind")) {
+    		throw new IllegalArgumentException(
+           		 	"Failed to find the kind of operating point.");
+    	} else {
+    		kind = (String) operatingPoint.get("kind");
+    		if (!Arrays.asList(operatingKinds).contains(kind)) {
+    			throw new IllegalArgumentException(
+    				String.format("Unexpected operating point kind. " +
+    						"Allowed values are: %s",
+    						StringUtils.join(operatingKinds,",")));
+    		}
+    	}
+    	
+    	if (!operatingPoint.containsKey("threshold")) {
+    		throw new IllegalArgumentException(
+           		 	"Failed to find the threshold of the operating point.");
+    	}
+    	threshold = (Double) operatingPoint.get("threshold");
+    	if (threshold > 1 || threshold < 0) {
+    		throw new IllegalArgumentException(
+           		 	"The threshold value should be in the 0 to 1 range.");
+    	}
+    	
+    	if (!operatingPoint.containsKey("positive_class")) {
+    		throw new IllegalArgumentException(
+           		 	"The operating point needs to have a positive_class" +
+    				" attribute");
+    	} else {
+    		positiveClass = (String) operatingPoint.get("positive_class");
+    		if (!classNames.contains(positiveClass)) {
+    			throw new IllegalArgumentException(
+        				String.format("The positive class must be one of the " +
+        						"objective field classes: %s",
+        						StringUtils.join(classNames,",")));
+    		}
+    	}
+    	
+        return new Object[] {kind, threshold, positiveClass};
     }
 
 }

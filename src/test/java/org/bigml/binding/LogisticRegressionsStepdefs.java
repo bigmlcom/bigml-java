@@ -2,9 +2,9 @@ package org.bigml.binding;
 
 import cucumber.annotation.en.Given;
 import cucumber.annotation.en.Then;
-import cucumber.annotation.en.When;
 import org.bigml.binding.resources.AbstractResource;
 import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +23,6 @@ public class LogisticRegressionsStepdefs {
     @Autowired
     private ContextRepository context;
 
-    private String sharedHash;
-    private String sharedKey;
-
     @Given("^I create a logisticregression from a dataset$")
     public void I_create_a_logisticregression_from_a_dataset() throws AuthenticationException {
         String datasetId = (String) context.dataset.get("resource");
@@ -40,7 +37,33 @@ public class LogisticRegressionsStepdefs {
         context.logisticregression = (JSONObject) resource.get("object");
         commonSteps.the_resource_has_been_created_with_status(context.status);
     }
+    
+    @Given("^I create a logisticregression with objective \"([^\"]*)\" and params \"(.*)\"$")
+    public void I_create_a_logisticregression_with_objective_and_params(String objective, String params) 
+    		throws Throwable {
+        
+    	String datasetId = (String) context.dataset.get("resource");
 
+    	JSONObject args = new JSONObject();
+    	if (!"".equals(params)) {
+    		args = (JSONObject) JSONValue.parse(params);
+    	}
+        args.put("tags", Arrays.asList("unitTest"));
+        args.put("objective_field", objective);
+        
+        JSONObject resource = BigMLClient.getInstance().createLogisticRegression(datasetId,
+                args, 5, null);
+        context.status = (Integer) resource.get("code");
+        context.location = (String) resource.get("location");
+        context.logisticregression = (JSONObject) resource.get("object");
+        commonSteps.the_resource_has_been_created_with_status(context.status); 	
+    }
+
+    @Given("^I create a local logisticregression$")
+    public void I_create_a_local_logisticregression() throws Exception {
+        context.localLogisticRegression = 
+        		new LocalLogisticRegression(context.logisticregression);
+    }
 
     @Given("^I wait until the logisticregression is ready less than (\\d+) secs$")
     public void I_wait_until_the_logisticregression_is_ready_less_than_secs(int secs) throws AuthenticationException {

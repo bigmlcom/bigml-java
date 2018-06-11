@@ -2,12 +2,10 @@ package org.bigml.binding;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 import org.bigml.binding.resources.AbstractResource;
+import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -115,6 +113,97 @@ public class PredictionsStepdefs {
         String objective = (String) obj.get(expected);
         assertEquals(pred, objective);
     }
+    
+    
+    @When("^I create a prediction with logisticregression with operating kind \"(.*)\" for \"(.*)\"$")
+    public void I_create_a_prediction_with_logistic_with_operating_kind(
+    		String kind, String inputData)
+            throws AuthenticationException {
+
+    	String logisticId = (String) context.logisticregression.get("resource");
+
+        JSONObject args = new JSONObject();
+        args.put("tags", Arrays.asList("unitTest"));
+        args.put("operating_kind", kind);
+
+        JSONObject resource = BigMLClient.getInstance().createPrediction(
+        		logisticId, (JSONObject) JSONValue.parse(inputData), args, 5, null);
+
+        context.status = (Integer) resource.get("code");
+        context.location = (String) resource.get("location");
+        context.prediction = (JSONObject) resource.get("object");
+        commonSteps.the_resource_has_been_created_with_status(context.status);
+    }
+
+    
+    @When("^I create a local prediction with logisticregression with operating kind \"(.*)\" for \"(.*)\"$")
+    public void I_create_a_local_prediction_with_logistic_with_operating_kind(
+    		String kind, String inputData)
+            throws AuthenticationException {
+
+    	JSONObject data = (JSONObject) JSONValue.parse(inputData);
+    	JSONObject prediction = context.localLogisticRegression.predict(
+    			data, null, kind, true, true);
+        context.localPrediction = prediction;
+    }
+
+
+    @When("^I create a logisticregression prediction for \"(.*)\"$")
+    public void I_create_a_logisticregression_prediction_for(String inputData)
+            throws AuthenticationException {
+
+    	String logisticId = (String) context.logisticregression.get("resource");
+
+    	JSONObject args = new JSONObject();
+    	args.put("tags", Arrays.asList("unitTest"));
+        
+        JSONObject resource = BigMLClient.getInstance().createPrediction(
+        		logisticId, (JSONObject) JSONValue.parse(inputData), args, 5, null);
+
+        context.status = (Integer) resource.get("code");
+        context.location = (String) resource.get("location");
+        context.prediction = (JSONObject) resource.get("object");
+        commonSteps.the_resource_has_been_created_with_status(context.status);
+    }
+    
+    
+    @Then("^I create a local logisticregression prediction for \"(.*)\"$")
+    public void I_create_a_local_logisticregression_prediction_for(String inputData) 
+    		throws Throwable {
+    	
+    	JSONObject data = (JSONObject) JSONValue.parse(inputData);
+    	JSONObject prediction = context.localLogisticRegression.predict(
+    			data, null, null, true, true);
+    	context.localPrediction = prediction;
+    }
+    
+    @Then("^the logisticregression prediction is \"(.*)\"$")
+    public void the_logisticregression_prediction_is(String prediction) 
+    		throws Throwable {
+    	assertTrue(prediction.equals((String) context.prediction.get("output")));
+    }
+
+    @Then("^the logisticregression probability for the prediction is \"([^\"]*)\"$")
+    public void the_logisticregression_probability_for_the_prediction_is(double probability) 
+    		throws Throwable {
+    	Double prob =  (Double) context.prediction.get("probability");
+    	assert(Utils.roundOff(prob, 4) == Utils.roundOff(probability, 4));
+    	
+    }
+
+    @Then("^the local logisticregression prediction is \"([^\"]*)\"$")
+    public void the_local_logisticregression_prediction_is(String prediction) 
+    		throws Throwable {
+    	assertTrue(prediction.equals((String) context.localPrediction.get("prediction")));
+    }
+
+    @Then("^the local logisticregression probability for the prediction is \"([^\"]*)\"$")
+    public void the_local_logistic_regression_probability_for_the_prediction_is(double probability) 
+    		throws Throwable {
+    	Double prob =  (Double) context.localPrediction.get("probability");
+    	assert(Utils.roundOff(prob, 4) == Utils.roundOff(probability, 4));
+    }
+
 
     @Given("^I wait until the predition status code is either (\\d) or (\\d) less than (\\d+)")
     public void I_wait_until_prediction_status_code_is(int code1, int code2,

@@ -189,7 +189,7 @@ public abstract class AbstractResource {
     		String resourcePath) {
 
         try {
-        		this.bigmlUser = apiUser != null ? apiUser : System
+        	this.bigmlUser = apiUser != null ? apiUser : System
                     .getProperty("BIGML_USERNAME");
             this.bigmlApiKey = apiKey != null ? apiKey : System
                     .getProperty("BIGML_API_KEY");

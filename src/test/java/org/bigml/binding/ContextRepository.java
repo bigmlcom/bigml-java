@@ -20,6 +20,7 @@ public class ContextRepository {
     JSONArray  anomalyScores = null;
     JSONObject batchAnomalyScore = null;
     JSONObject prediction = null;
+    JSONObject localPrediction = null;
     JSONObject evaluation = null;
     JSONObject ensemble = null;
     JSONArray models = null;
@@ -44,6 +45,7 @@ public class ContextRepository {
     JSONArray statisticaltests = null;
     JSONObject logisticregression = null;
     JSONArray logisticregressions = null;
+    LocalLogisticRegression localLogisticRegression = null;
     JSONObject script = null;
     JSONArray scripts = null;
     JSONObject execution = null;

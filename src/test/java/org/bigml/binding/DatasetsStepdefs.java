@@ -127,7 +127,26 @@ public class DatasetsStepdefs {
         assertEquals(AbstractResource.HTTP_OK, code.intValue());
         context.dataset = (JSONObject) resource.get("object");
     }
-
+    
+    
+    @Given("^I update the dataset with \"(.*)\" waiting less than (\\d+) secs$")
+    public void I_update_the_dataset_with(String args, int secs)
+            throws Throwable {
+        if (args.equals("{}")) {
+            assertTrue("No update params. Continue", true);
+        } else {
+            String datasetId = (String) context.dataset.get("resource");
+            JSONObject resource = BigMLClient.getInstance().updateDataset(
+            		datasetId, args);
+            context.status = (Integer) resource.get("code");
+            context.location = (String) resource.get("location");
+            context.dataset = (JSONObject) resource.get("object");
+            commonSteps
+                    .the_resource_has_been_updated_with_status(context.status);
+            I_wait_until_the_dataset_is_ready_less_than_secs(secs);
+        }
+    }
+    
     @Given("^I store the dataset id in a list$")
     public void I_store_the_dataset_id_in_a_list()
             throws AuthenticationException {

@@ -37,6 +37,8 @@ public class BigMLClient {
     final public static String BIGML_URL = "https://bigml.io/";
     
     final public static Locale DEFAUL_LOCALE = Locale.ENGLISH;
+    
+    final public static String STORAGE = "./storage";
 
     /**
      * Logging
