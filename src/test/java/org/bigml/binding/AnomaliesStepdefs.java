@@ -4,7 +4,6 @@ import cucumber.annotation.en.Given;
 import cucumber.annotation.en.Then;
 import cucumber.annotation.en.When;
 import org.bigml.binding.resources.AbstractResource;
-import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -12,8 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.util.*;
 
 import static org.junit.Assert.*;
@@ -25,8 +22,9 @@ public class AnomaliesStepdefs {
 
     LocalAnomaly localAnomaly;
     Double localScore;
-
-    CommonStepdefs commonSteps = new CommonStepdefs();
+    
+    @Autowired
+    CommonStepdefs commonSteps;
 
     @Autowired
     private ContextRepository context;
@@ -48,22 +46,6 @@ public class AnomaliesStepdefs {
         }
 
         JSONObject resource = BigMLClient.getInstance().createAnomaly(datasetsIds,
-                args, 5, null);
-        context.status = (Integer) resource.get("code");
-        context.location = (String) resource.get("location");
-        context.anomaly = (JSONObject) resource.get("object");
-        commonSteps.the_resource_has_been_created_with_status(context.status);
-    }
-
-    @Given("^I create an anomaly detector from a dataset$")
-    public void I_create_an_anomaly() throws AuthenticationException {
-        String datasetId = (String) context.dataset.get("resource");
-
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
-//        args.put("missing_splits", false);
-
-        JSONObject resource = BigMLClient.getInstance().createAnomaly(datasetId,
                 args, 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
@@ -95,89 +77,12 @@ public class AnomaliesStepdefs {
         localAnomaly = new LocalAnomaly(context.anomaly);
     }
 
-    @Given("^I wait until the anomaly detector status code is either (\\d) or (\\d) less than (\\d+)$")
-    public void I_wait_until_anomaly_status_code_is(int code1, int code2, int secs)
-            throws AuthenticationException {
-        Long code = (Long) ((JSONObject) context.anomaly.get("status"))
-                .get("code");
-        GregorianCalendar start = new GregorianCalendar();
-        start.add(Calendar.SECOND, secs);
-        Date end = start.getTime();
-        while (code.intValue() != code1 && code.intValue() != code2) {
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException e) {
-            }
-            assertTrue("Time exceded ", end.after(new Date()));
-            I_get_the_anomaly((String) context.anomaly.get("resource"));
-            code = (Long) ((JSONObject) context.anomaly.get("status"))
-                    .get("code");
-        }
-        assertEquals(code1, code.intValue());
-    }
-
-    @Given("^I wait until the anomaly score status code is either (\\d) or (\\d) less than (\\d+)$")
-    public void I_wait_until_anomaly_score_status_code_is(int code1, int code2, int secs)
-            throws AuthenticationException {
-        Long code = (Long) ((JSONObject) context.anomalyScore.get("status"))
-                .get("code");
-        GregorianCalendar start = new GregorianCalendar();
-        start.add(Calendar.SECOND, secs);
-        Date end = start.getTime();
-        while (code.intValue() != code1 && code.intValue() != code2) {
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException e) {
-            }
-            assertTrue("Time exceded ", end.after(new Date()));
-            I_get_the_anomaly_score((String) context.anomalyScore.get("resource"));
-            code = (Long) ((JSONObject) context.anomalyScore.get("status"))
-                    .get("code");
-        }
-        assertEquals(code1, code.intValue());
-    }
-
-    @Given("^I wait until the batch anomaly score status code is either (\\d) or (\\d) less than (\\d+)$")
-    public void I_wait_until_batch_anomaly_score_status_code_is(int code1, int code2, int secs)
-            throws AuthenticationException {
-        Long code = (Long) ((JSONObject) context.batchAnomalyScore.get("status"))
-                .get("code");
-        GregorianCalendar start = new GregorianCalendar();
-        start.add(Calendar.SECOND, secs);
-        Date end = start.getTime();
-        while (code.intValue() != code1 && code.intValue() != code2) {
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException e) {
-            }
-            assertTrue("Time exceded ", end.after(new Date()));
-            I_get_the_batch_anomaly_score((String) context.batchAnomalyScore.get("resource"));
-            code = (Long) ((JSONObject) context.batchAnomalyScore.get("status"))
-                    .get("code");
-        }
-        assertEquals(code1, code.intValue());
-    }
-
-    @Given("^I wait until the anomaly detector is ready less than (\\d+) secs$")
-    public void I_wait_until_the_anomaly_is_ready_less_than_secs(int secs)
-            throws AuthenticationException {
-        I_wait_until_anomaly_status_code_is(AbstractResource.FINISHED,
-                AbstractResource.FAULTY, secs);
-    }
-
-    @When("^I wait until the batch anomaly score is ready less than (\\d+) secs$")
-    public void I_wait_until_the_batch_anomaly_score_is_ready_less_than_secs(
-            int secs) throws Throwable {
-        I_wait_until_batch_anomaly_score_status_code_is(AbstractResource.FINISHED,
-                AbstractResource.FAULTY, secs);
-    }
-
-
-
     @Given("^I wait until the anomaly detector is ready less than (\\d+) secs and I return it$")
     public JSONObject I_wait_until_the_anomaly_is_ready_less_than_secs_and_return(
-            int secs) throws AuthenticationException {
-        I_wait_until_anomaly_status_code_is(AbstractResource.FINISHED,
+            int secs) throws Throwable {
+    	commonSteps.I_wait_until_resource_status_code_is(
+    			"anomaly detector",
+    			AbstractResource.FINISHED,
                 AbstractResource.FAULTY, secs);
         return context.anomaly;
     }
@@ -201,44 +106,6 @@ public class AnomaliesStepdefs {
                                         (String) context.anomaly.get("dataset") : null);
 
         assertEquals(datasetId, anomalyDatasetId);
-    }
-
-    @Given("^I get the anomaly detector \"(.*)\"")
-    public void I_get_the_anomaly(String anomalyId) throws AuthenticationException {
-        JSONObject resource = BigMLClient.getInstance().getAnomaly(anomalyId);
-        Integer code = (Integer) resource.get("code");
-        assertEquals(AbstractResource.HTTP_OK, code.intValue());
-        context.anomaly = (JSONObject) resource.get("object");
-    }
-
-    @Given("^I get the anomaly score \"(.*)\"")
-    public void I_get_the_anomaly_score(String anomalyScoreId) throws AuthenticationException {
-        JSONObject resource = BigMLClient.getInstance().getAnomalyScore(anomalyScoreId);
-        Integer code = (Integer) resource.get("code");
-        assertEquals(AbstractResource.HTTP_OK, code.intValue());
-        context.anomalyScore = (JSONObject) resource.get("object");
-    }
-
-    @Given("^I get the batch anomaly score \"(.*)\"")
-    public void I_get_the_batch_anomaly_score(String batchAnomalyScoreId)
-            throws AuthenticationException {
-        JSONObject resource = BigMLClient.getInstance().
-                getBatchAnomalyScore(batchAnomalyScoreId);
-        Integer code = (Integer) resource.get("code");
-        assertEquals(AbstractResource.HTTP_OK, code.intValue());
-        context.batchAnomalyScore = (JSONObject) resource.get("object");
-    }
-
-    @Given("^I delete the anomaly detector$")
-    public void I_delete_the_anomaly() throws AuthenticationException {
-        assertNotNull("The anomaly does not exists", context.anomaly);
-
-        String anomalyId = (String) context.anomaly.get("resource");
-
-        JSONObject resource = BigMLClient.getInstance().deleteAnomaly(anomalyId);
-
-        context.status = (Integer) resource.get("code");
-        assertEquals(AbstractResource.HTTP_NO_CONTENT, context.status);
     }
 
     @Given("^I create an anomaly detector with \"(.*)\"$")

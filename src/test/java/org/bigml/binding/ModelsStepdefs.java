@@ -23,8 +23,8 @@ public class ModelsStepdefs {
     // Logging
     Logger logger = LoggerFactory.getLogger(ModelsStepdefs.class);
 
-//    MultiModel multiModel;
-    CommonStepdefs commonSteps = new CommonStepdefs();
+    @Autowired
+    CommonStepdefs commonSteps;
 
     @Autowired
     private ContextRepository context;
@@ -128,50 +128,15 @@ public class ModelsStepdefs {
         context.models.add(context.model);
         commonSteps.the_resource_has_been_created_with_status(context.status);
     }
-    
-
-    @Given("^I wait until the model status code is either (\\d) or (\\d) less than (\\d+)$")
-    public void I_wait_until_model_status_code_is(int code1, int code2, int secs)
-            throws AuthenticationException {
-        Long code = (Long) ((JSONObject) context.model.get("status"))
-                .get("code");
-        GregorianCalendar start = new GregorianCalendar();
-        start.add(Calendar.SECOND, secs);
-        Date end = start.getTime();
-        while (code.intValue() != code1 && code.intValue() != code2) {
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException e) {
-            }
-            assertTrue("Time exceded ", end.after(new Date()));
-            I_get_the_model((String) context.model.get("resource"));
-            code = (Long) ((JSONObject) context.model.get("status"))
-                    .get("code");
-        }
-        assertEquals(code1, code.intValue());
-    }
-
-    @Given("^I wait until the model is ready less than (\\d+) secs$")
-    public void I_wait_until_the_model_is_ready_less_than_secs(int secs)
-            throws AuthenticationException {
-        I_wait_until_model_status_code_is(AbstractResource.FINISHED,
-                AbstractResource.FAULTY, secs);
-    }
 
     @Given("^I wait until the model is ready less than (\\d+) secs and I return it$")
     public JSONObject I_wait_until_the_model_is_ready_less_than_secs_and_return(
-            int secs) throws AuthenticationException {
-        I_wait_until_model_status_code_is(AbstractResource.FINISHED,
+            int secs) throws Throwable {
+    	commonSteps.I_wait_until_resource_status_code_is(
+        		"model",
+        		AbstractResource.FINISHED,
                 AbstractResource.FAULTY, secs);
         return context.model;
-    }
-
-    @Given("^I get the model \"(.*)\"")
-    public void I_get_the_model(String modelId) throws AuthenticationException {
-        JSONObject resource = BigMLClient.getInstance().getModel(modelId);
-        Integer code = (Integer) resource.get("code");
-        assertEquals(AbstractResource.HTTP_OK, code.intValue());
-        context.model = (JSONObject) resource.get("object");
     }
 
     @Given("^I retrieve a list of remote models tagged with \"(.*)\"$")

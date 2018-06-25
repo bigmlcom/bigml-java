@@ -5,7 +5,7 @@ Feature: Create TimeSeries
         And I wait until the source is ready less than <time_1> secs
         And I create a dataset
         And I wait until the dataset is ready less than <time_2> secs
-        And I create time series from a dataset
+        And I create a time series from a dataset
         And I wait until the time series is ready less than <time_3> secs
         And I update the time series name to "<time_series_name>"
         When I wait until the time series is ready less than <time_4> secs

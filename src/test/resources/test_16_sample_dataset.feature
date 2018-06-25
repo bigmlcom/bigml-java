@@ -7,11 +7,11 @@ Feature: Download the sample to filesystem
         And I wait until the source is ready less than <time_1> secs
         And I create a dataset
         And I wait until the dataset is ready less than <time_2> secs
-        And I create a sample from dataset
+        And I create a sample from a dataset
         And I wait until the sample is ready less than <time_3> secs
         And I update the sample with "<params>" waiting less than <time_4> secs
         And I wait until the sample is ready less than <time_3> secs
-		Then I check the sample name <name>
+		Then the sample name is <name>
         Then delete test data
 
         Examples:
@@ -24,7 +24,7 @@ Feature: Download the sample to filesystem
         And I wait until the source is ready less than <time_1> secs
         And I create a dataset
         And I wait until the dataset is ready less than <time_2> secs
-        And I create a sample from dataset
+        And I create a sample from a dataset
         And I wait until the sample is ready less than <time_3> secs
         And I download the sample file to "<local_file>" with <rows> rows and "<seed>" seed
         Then the sample file "<expected_file>" is like "<local_file>"

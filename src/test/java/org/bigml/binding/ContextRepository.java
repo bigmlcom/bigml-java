@@ -12,46 +12,29 @@ public class ContextRepository {
 
     int status;
     String location = null;
+    
     JSONObject source = null;
     JSONObject dataset = null;
     JSONObject model = null;
     JSONObject anomaly = null;
     JSONObject anomalyScore = null;
-    JSONArray  anomalyScores = null;
     JSONObject batchAnomalyScore = null;
     JSONObject prediction = null;
-    JSONObject localPrediction = null;
     JSONObject evaluation = null;
     JSONObject ensemble = null;
-    JSONArray models = null;
-    JSONArray anomalies = null;
-    JSONArray datasets = null;
-    JSONArray sources = null;
     JSONObject batchPrediction = null;
     JSONObject cluster = null;
-    LocalCluster localCluster = null;
-    JSONObject  localCentroid = null;
+    JSONObject localCentroid = null;
     JSONObject centroid = null;
     JSONObject batchCentroid = null;
     JSONObject project = null;
-    JSONArray projects = null;
     JSONObject sample = null;
-    JSONArray samples = null;
-    MultiModel multiModel = null;
-    List<MultiVote> votes = null;
     JSONObject correlation = null;
-    JSONArray correlations = null;
-    JSONObject statisticaltest = null;
-    JSONArray statisticaltests = null;
-    JSONObject logisticregression = null;
-    JSONArray logisticregressions = null;
-    LocalLogisticRegression localLogisticRegression = null;
+    JSONObject statisticalTest = null;
+    JSONObject logisticRegression = null;
     JSONObject script = null;
-    JSONArray scripts = null;
     JSONObject execution = null;
-    JSONArray executions = null;
     JSONObject library = null;
-    JSONArray libraries = null;
     JSONObject association = null;
     JSONObject topicModel = null;
     JSONObject topicDistribution = null;
@@ -62,7 +45,21 @@ public class ContextRepository {
     JSONObject deepnet = null;
     JSONObject optiML = null;
     JSONObject fusion = null;
-
+    
+    JSONArray models = null;
+    JSONArray anomalies = null;
+    JSONArray datasets = null;
+    JSONArray sources = null;
+    JSONArray scripts = null;
+    
+    JSONObject localPrediction = null;
+    
+    LocalCluster localCluster = null;
+    LocalLogisticRegression localLogisticRegression = null;
+    
+    MultiModel multiModel = null;
+    List<MultiVote> votes = null;
+    
     Map<String, Long> datasetErrorCounts;
     Map<String, Long> datasetMissingCounts;
 
@@ -125,14 +122,6 @@ public class ContextRepository {
 
     public void setAnomalyScore(JSONObject anomalyScore) {
         this.anomalyScore = anomalyScore;
-    }
-
-    public JSONArray getAnomalyScores() {
-        return anomalyScores;
-    }
-
-    public void setAnomalyScores(JSONArray anomalyScores) {
-        this.anomalyScores = anomalyScores;
     }
 
     public JSONObject getBatchAnomalyScore() {
@@ -239,28 +228,12 @@ public class ContextRepository {
         this.project = project;
     }
 
-    public JSONArray getProjects() {
-        return projects;
-    }
-
-    public void setProject(JSONArray projects) {
-        this.projects = projects;
-    }
-
     public JSONObject getSample() {
         return sample;
     }
 
     public void setSample(JSONObject sample) {
         this.sample = sample;
-    }
-
-    public JSONArray getSamples() {
-        return samples;
-    }
-
-    public void setSamples(JSONArray samples) {
-        this.samples = samples;
     }
 
     public Map<String, Long> getDatasetErrorCounts() {
@@ -311,44 +284,20 @@ public class ContextRepository {
         this.correlation = correlation;
     }
 
-    public JSONArray getCorrelations() {
-        return correlations;
+    public JSONObject getStatisticalTest() {
+        return statisticalTest;
     }
 
-    public void setCorrelations(JSONArray correlations) {
-        this.correlations = correlations;
+    public void setStatisticalTest(JSONObject statisticalTest) {
+        this.statisticalTest = statisticalTest;
     }
 
-    public JSONObject getStatisticaltest() {
-        return statisticaltest;
+    public JSONObject getLogisticRegression() {
+        return logisticRegression;
     }
 
-    public void setStatisticaltest(JSONObject statisticaltest) {
-        this.statisticaltest = statisticaltest;
-    }
-
-    public JSONArray getStatisticaltests() {
-        return statisticaltests;
-    }
-
-    public void setStatisticaltests(JSONArray statisticaltests) {
-        this.statisticaltests = statisticaltests;
-    }
-
-    public JSONObject getLogisticregression() {
-        return logisticregression;
-    }
-
-    public void setLogisticregression(JSONObject logisticregression) {
-        this.logisticregression = logisticregression;
-    }
-
-    public JSONArray getLogisticregressions() {
-        return logisticregressions;
-    }
-
-    public void setLogisticregressions(JSONArray logisticregressions) {
-        this.logisticregressions = logisticregressions;
+    public void setLogisticRegression(JSONObject logisticRegression) {
+        this.logisticRegression = logisticRegression;
     }
 
     public JSONObject getScript() {
@@ -375,28 +324,12 @@ public class ContextRepository {
         this.execution = execution;
     }
 
-    public JSONArray getExecutions() {
-        return executions;
-    }
-
-    public void setExecutions(JSONArray executions) {
-        this.executions = executions;
-    }
-
     public JSONObject getLibrary() {
         return library;
     }
 
     public void setLibrary(JSONObject library) {
         this.library = library;
-    }
-
-    public JSONArray getLibraries() {
-        return libraries;
-    }
-
-    public void setLibraries(JSONArray libraries) {
-        this.libraries = libraries;
     }
 
     public JSONObject getAssociation() {

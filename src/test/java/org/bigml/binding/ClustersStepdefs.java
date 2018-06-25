@@ -29,8 +29,9 @@ public class ClustersStepdefs {
 
     // Logging
     Logger logger = LoggerFactory.getLogger(ClustersStepdefs.class);
-
-    CommonStepdefs commonSteps = new CommonStepdefs();
+    
+    @Autowired
+    CommonStepdefs commonSteps;
 
     @Autowired
     private ContextRepository context;
@@ -78,39 +79,13 @@ public class ClustersStepdefs {
     public void I_create_a_local_cluster() throws Exception {
         context.localCluster = new LocalCluster(context.cluster);
     }
-
-    @Given("^I wait until the cluster status code is either (\\d) or (\\d) less than (\\d+)$")
-    public void I_wait_until_cluster_status_code_is(int code1, int code2,
-            int secs) throws AuthenticationException {
-        Long code = (Long) ((JSONObject) context.cluster.get("status"))
-                .get("code");
-        GregorianCalendar start = new GregorianCalendar();
-        start.add(Calendar.SECOND, secs);
-        Date end = start.getTime();
-        while (code.intValue() != code1 && code.intValue() != code2) {
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException e) {
-            }
-            assertTrue("Time exceded ", end.after(new Date()));
-            I_get_the_cluster((String) context.cluster.get("resource"));
-            code = (Long) ((JSONObject) context.cluster.get("status"))
-                    .get("code");
-        }
-        assertEquals(code1, code.intValue());
-    }
-
-    @Given("^I wait until the cluster is ready less than (\\d+) secs$")
-    public void I_wait_until_thecluster_is_ready_less_than_secs(int secs)
-            throws AuthenticationException {
-        I_wait_until_cluster_status_code_is(AbstractResource.FINISHED,
-                AbstractResource.FAULTY, secs);
-    }
-
+    
     @Given("^I wait until the cluster is ready less than (\\d+) secs and I return it$")
     public JSONObject I_wait_until_the_cluster_is_ready_less_than_secs_and_return(
-            int secs) throws AuthenticationException {
-        I_wait_until_cluster_status_code_is(AbstractResource.FINISHED,
+            int secs) throws Throwable {
+    	commonSteps.I_wait_until_resource_status_code_is(
+    			"cluster",
+    			AbstractResource.FINISHED,
                 AbstractResource.FAULTY, secs);
         return context.cluster;
     }
@@ -221,46 +196,7 @@ public class ClustersStepdefs {
         context.batchCentroid = (JSONObject) resource.get("object");
         commonSteps.the_resource_has_been_created_with_status(context.status);
     }
-
-    @Given("^I get the batch centroid \"(.*)\"")
-    public void I_get_the_batch_centroid(String batchCentroidId)
-            throws AuthenticationException {
-        JSONObject resource = BigMLClient.getInstance().getBatchCentroid(
-                batchCentroidId);
-        Integer code = (Integer) resource.get("code");
-        assertEquals(AbstractResource.HTTP_OK, code.intValue());
-        context.batchCentroid = (JSONObject) resource.get("object");
-    }
-
-    @Given("^I wait until the batch centroid is ready less than (\\d+) secs$")
-    public void I_wait_until_the_batch_centroid_is_ready_less_than_secs(int secs)
-            throws AuthenticationException {
-        I_wait_until_batch_centroid_code_is(AbstractResource.FINISHED,
-                AbstractResource.FAULTY, secs);
-    }
-
-    @Given("^I wait until the batch centroid status code is either (\\d) or (\\d) less than (\\d+)$")
-    public void I_wait_until_batch_centroid_code_is(int code1, int code2,
-            int secs) throws AuthenticationException {
-        Long code = (Long) ((JSONObject) context.batchCentroid.get("status"))
-                .get("code");
-        GregorianCalendar start = new GregorianCalendar();
-        start.add(Calendar.SECOND, secs);
-        Date end = start.getTime();
-        while (code.intValue() != code1 && code.intValue() != code2) {
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException e) {
-            }
-            assertTrue("Time exceded ", end.after(new Date()));
-            I_get_the_batch_centroid((String) context.batchCentroid
-                    .get("resource"));
-            code = (Long) ((JSONObject) context.batchCentroid.get("status"))
-                    .get("code");
-        }
-        assertEquals(code1, code.intValue());
-    }
-
+    
     @When("^I download the created centroid file to \"([^\"]*)\"$")
     public void I_download_the_created_centroid_file_to(String fileTo)
             throws Throwable {
@@ -285,25 +221,6 @@ public class ClustersStepdefs {
         }
     }
 
-    // @Then("^the batch prediction file \"([^\"]*)\" is like \"([^\"]*)\"$")
-    // public void the_batch_prediction_file_is_like(String downloadedFile,
-    // String checkFile)
-    // throws Throwable {
-    //
-    // FileInputStream downloadFis = new FileInputStream(new
-    // File(downloadedFile));
-    // FileInputStream checkFis = new FileInputStream(new File(checkFile));
-    //
-    // String localCvs = Utils.inputStreamAsString(downloadFis);
-    // String checkCvs = Utils.inputStreamAsString(checkFis);
-    //
-    // if (!localCvs.equals(checkCvs)) {
-    // throw new Exception();
-    // }
-    //
-    // }
-    
-    
     @Then("^the data point in the cluster closest to \"(.*)\" is \"(.*)\"$")
     public void closest_in_cluster(String reference, String closest) throws Throwable {
         JSONObject referencePoint = (JSONObject) JSONValue.parse(reference);

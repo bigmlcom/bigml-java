@@ -23,8 +23,9 @@ public class LocalModelsStepdefs {
     Logger logger = LoggerFactory.getLogger(LocalModelsStepdefs.class);
 
     LocalPredictiveModel predictiveModel;
-
-    CommonStepdefs commonSteps = new CommonStepdefs();
+    
+    @Autowired
+    CommonStepdefs commonSteps;
 
     @Autowired
     private ContextRepository context;

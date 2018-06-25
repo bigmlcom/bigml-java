@@ -2,7 +2,6 @@ package org.bigml.binding;
 
 import cucumber.annotation.en.Given;
 import cucumber.annotation.en.Then;
-import cucumber.annotation.en.When;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -24,8 +23,9 @@ public class LocalEnsembleStepdefs {
     Logger logger = LoggerFactory.getLogger(LocalEnsembleStepdefs.class);
 
     LocalEnsemble predictiveEnsemble;
-
-    CommonStepdefs commonSteps = new CommonStepdefs();
+    
+    @Autowired
+    CommonStepdefs commonSteps;
 
     @Autowired
     private ContextRepository context;
@@ -131,88 +131,4 @@ public class LocalEnsembleStepdefs {
         }
     }
 
-//    @Then("^the numerical prediction of proportional missing strategy local prediction for \"(.*)\" is ([\\d,.]+)$")
-//    public void the_numerical_prediction_of_proportional_missing_strategy_local_predictionfor_is(String args, double expectedPrediction) {
-//        try {
-//            JSONObject inputObj = (JSONObject) JSONValue.parse(args);
-//            HashMap<Object, Object> p = predictiveEnsemble.predict(inputObj, true, false, MissingStrategy.PROPORTIONAL);
-//            Double actualPrediction = (Double) p.get("prediction");
-//            assertEquals(String.format("%.4g%n", expectedPrediction), String.format("%.4g%n", actualPrediction));
-//        } catch (InputDataParseException parseException) {
-//            assertTrue("", false);
-//        }
-//    }
-//
-//    @Then("^the proportional missing strategy local prediction for \"(.*)\" is \"([^\"]*)\"$")
-//    public void the_proportional_missing_strategy_local_prediction_for_is(String args, String pred) {
-//        try {
-//            JSONObject inputObj = (JSONObject) JSONValue.parse(args);
-//            HashMap<Object, Object> p = predictiveEnsemble.predict(inputObj, true, false, MissingStrategy.PROPORTIONAL);
-//            String prediction = (String) p.get("prediction");
-//            assertTrue("", prediction != null && prediction.equals(pred));
-//        } catch (InputDataParseException parseException) {
-//            assertTrue("", false);
-//        }
-//    }
-//
-//    @Then("^the confidence of the proportional missing strategy local prediction for \"(.*)\" is ([\\d,.]+)$")
-//    public void the_confidence_of_the_missing_strategy_local_predictionfor_is(String args, double expectedConfidence) {
-//        try {
-//            JSONObject inputObj = (JSONObject) JSONValue.parse(args);
-//            HashMap<Object, Object> p = predictiveEnsemble.predict(inputObj, true, true, MissingStrategy.PROPORTIONAL);
-//            Double actualConfidence = (Double) p.get("confidence");
-//            assertEquals(String.format("%.4g%n", expectedConfidence), String.format("%.4g%n", actualConfidence));
-//        } catch (InputDataParseException parseException) {
-//            assertTrue("", false);
-//        }
-//    }
-//
-//    @Then("^the confidence of the local prediction for \"(.*)\" is ([\\d,.]+)$")
-//    public void the_confidence_of_the_local_prediction_for_is(String args, double expectedConfidence) {
-//        try {
-//            JSONObject inputObj = (JSONObject) JSONValue.parse(args);
-//            HashMap<Object, Object> p = predictiveEnsemble.predict(inputObj, true, true);
-//            Double actualConfidence = (Double) p.get("confidence");
-//            assertEquals(String.format("%.4g%n", expectedConfidence), String.format("%.4g%n", actualConfidence));
-//        } catch (InputDataParseException parseException) {
-//            assertTrue("", false);
-//        }
-//    }
-//
-//    @Then("^the local prediction for \"(.*)\" is \"([^\"]*)\"$")
-//    public void the_local_prediction_for_is(String args, String pred) {
-//        try {
-//            JSONObject inputObj = (JSONObject) JSONValue.parse(args);
-//            HashMap<Object, Object> p = predictiveEnsemble.predict(inputObj, null);
-//            String prediction = (String) p.get("prediction");
-//            assertEquals(pred, prediction);
-//        } catch (InputDataParseException parseException) {
-//            assertTrue("", false);
-//        }
-//    }
-//
-//    @Then("^the local prediction by name=(true|false) for \"(.*)\" is \"([^\"]*)\"$")
-//    public void the_local_prediction_byname_for_is(String by_name, String args,
-//            String pred) {
-//        try {
-//            Boolean byName = new Boolean(by_name);
-//            HashMap<Object, Object> p = predictiveEnsemble.predict( (JSONObject) JSONValue.parse(args),
-//                    byName);
-//            String prediction = (String) p.get("prediction");
-//            assertEquals(pred, prediction);
-//        } catch (InputDataParseException parseException) {
-//            assertTrue("", false);
-//        }
-//    }
-//
-//    @Then("^\"(.*)\" field\'s name is changed to \"(.*)\"$")
-//    public void field_name_to_new_name(String fieldId, String newName) {
-//        JSONObject field = (JSONObject) Utils.getJSONObject(
-//                predictiveEnsemble.fields(), fieldId);
-//        if (!field.get("name").equals(newName)) {
-//            field.put("name", newName);
-//        }
-//        assertEquals(newName, field.get("name"));
-//    }
-//
 }

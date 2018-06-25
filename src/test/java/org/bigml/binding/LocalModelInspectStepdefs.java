@@ -1,19 +1,12 @@
 package org.bigml.binding;
 
 import cucumber.annotation.en.Given;
-import cucumber.annotation.en.Then;
-import cucumber.annotation.en.When;
 import org.bigml.binding.localmodel.Predicate;
-import org.bigml.binding.resources.AbstractResource;
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -24,8 +17,9 @@ public class LocalModelInspectStepdefs {
 
     LocalPredictiveModel localModel;
     String output;
-
-    CommonStepdefs commonSteps = new CommonStepdefs();
+    
+    @Autowired
+    CommonStepdefs commonSteps;
 
     @Autowired
     private ContextRepository context;

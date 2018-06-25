@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import java.util.*;
 
-import org.bigml.binding.resources.AbstractResource;
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -21,8 +20,9 @@ public class PredictionsStepdefs {
 
     // Logging
     Logger logger = LoggerFactory.getLogger(PredictionsStepdefs.class);
-
-    CommonStepdefs commonSteps = new CommonStepdefs();
+    
+    @Autowired
+    CommonStepdefs commonSteps;
 
     @Autowired
     private ContextRepository context;
@@ -59,16 +59,6 @@ public class PredictionsStepdefs {
         context.location = (String) resource.get("location");
         context.prediction = (JSONObject) resource.get("object");
         commonSteps.the_resource_has_been_created_with_status(context.status);
-    }
-
-    @Given("^I get the prediction \"(.*)\"")
-    public void I_get_the_prediction(String predictionId)
-            throws AuthenticationException {
-        JSONObject resource = BigMLClient.getInstance().getPrediction(
-                predictionId);
-        Integer code = (Integer) resource.get("code");
-        assertEquals(AbstractResource.HTTP_OK, code.intValue());
-        context.prediction = (JSONObject) resource.get("object");
     }
 
     @Then("^the numerical prediction for \"([^\"]*)\" is ([\\d,.]+)$")
@@ -120,7 +110,7 @@ public class PredictionsStepdefs {
     		String kind, String inputData)
             throws AuthenticationException {
 
-    	String logisticId = (String) context.logisticregression.get("resource");
+    	String logisticId = (String) context.logisticRegression.get("resource");
 
         JSONObject args = new JSONObject();
         args.put("tags", Arrays.asList("unitTest"));
@@ -152,7 +142,7 @@ public class PredictionsStepdefs {
     public void I_create_a_logisticregression_prediction_for(String inputData)
             throws AuthenticationException {
 
-    	String logisticId = (String) context.logisticregression.get("resource");
+    	String logisticId = (String) context.logisticRegression.get("resource");
 
     	JSONObject args = new JSONObject();
     	args.put("tags", Arrays.asList("unitTest"));
@@ -204,35 +194,6 @@ public class PredictionsStepdefs {
     	assert(Utils.roundOff(prob, 4) == Utils.roundOff(probability, 4));
     }
 
-
-    @Given("^I wait until the predition status code is either (\\d) or (\\d) less than (\\d+)")
-    public void I_wait_until_prediction_status_code_is(int code1, int code2,
-            int secs) throws AuthenticationException {
-        Long code = (Long) ((JSONObject) context.prediction.get("status"))
-                .get("code");
-        GregorianCalendar start = new GregorianCalendar();
-        start.add(Calendar.SECOND, secs);
-        Date end = start.getTime();
-        while (code.intValue() != code1 && code.intValue() != code2) {
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException e) {
-            }
-            assertTrue("Time exceded ", end.after(new Date()));
-            I_get_the_prediction((String) context.prediction.get("resource"));
-            code = (Long) ((JSONObject) context.prediction.get("status"))
-                    .get("code");
-        }
-        assertEquals(code1, code.intValue());
-    }
-
-    @Given("^I wait until the prediction is ready less than (\\d+) secs$")
-    public void I_wait_until_the_prediction_is_ready_less_than_secs(int secs)
-            throws AuthenticationException {
-        I_wait_until_prediction_status_code_is(AbstractResource.FINISHED,
-                AbstractResource.FAULTY, secs);
-    }
-
     @Given("^I combine the votes in \"(.*)\"$")
     public void I_combine_the_votes(String dir)
             throws AuthenticationException {
@@ -282,16 +243,5 @@ public class PredictionsStepdefs {
         Double prediction = (Double) votes.get(0).getPredictions()[0].get("prediction");
         assertEquals(expectedPrediction, prediction);
     }
-
-//    @Given("^I create a batch prediction for \"(.*)\" and save it in \"(.*)\"$")
-//    public void i_create_a_batch_prediction_for_and_save_it_in(String inputDataList, String directory)
-//            throws AuthenticationException {
-//        if( directory != null && directory.length() > 0 ) {
-//            File dirFile = new File(directory);
-//            if( !dirFile.exists() ) {
-//                dirFile.mkdirs();
-//            }
-//        }
-//    }
 
 }
