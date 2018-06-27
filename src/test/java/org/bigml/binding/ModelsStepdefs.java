@@ -325,6 +325,7 @@ public class ModelsStepdefs {
     public void the_model_is_associated_to_the_centroid_of_the_cluster(String centroid) 
     		throws Throwable {
         
+    	BigMLClient.getInstance().getCacheManager().cleanCache();
     	JSONObject resource = BigMLClient.getInstance().getCluster(
             (String) context.cluster.get("resource"));
 

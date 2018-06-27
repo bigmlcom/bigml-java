@@ -504,7 +504,7 @@ public class CommonStepdefs {
 	@Then("^delete all test data$")
 	public void delete_all_test_data() throws Exception {
 
-		// BigMLClient.getInstance().getCacheManager().cleanCache();
+		BigMLClient.getInstance().getCacheManager().cleanCache();
 
 		// Fusions
 		JSONArray fusions = (JSONArray) BigMLClient.getInstance()

@@ -239,18 +239,17 @@ public class DatasetsStepdefs {
     public void i_check_dataset_from_cluster_centroid() throws Throwable {
         JSONObject changes = new JSONObject();
         changes.put("private", new Boolean(false));
-
+        
+        BigMLClient.getInstance().getCacheManager().cleanCache();
         JSONObject resource = BigMLClient.getInstance().getCluster(
             (String) context.cluster.get("resource"));
 
         context.status = (Integer) resource.get("code");
         assertEquals(AbstractResource.HTTP_OK, context.status);
 
-        /*
         assertEquals(context.getDataset().get("resource"), String.format("dataset/%s",
                 Utils.getJSONObject(resource,
                         String.format("object.cluster_datasets.%s", context.centroid.get("centroid_id")) )));
-        */
     }
 
     @When("^I download the dataset file to \"([^\"]*)\"$")
@@ -299,6 +298,7 @@ public class DatasetsStepdefs {
     public void the_dataset_is_associated_to_the_centroid_of_the_cluster(String centroid) 
     		throws Throwable {
         
+    	BigMLClient.getInstance().getCacheManager().cleanCache();
     	JSONObject resource = BigMLClient.getInstance().getCluster(
             (String) context.cluster.get("resource"));
 

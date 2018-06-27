@@ -266,16 +266,9 @@ public class BigMLClient {
     }
 
     private void initResources() {
+        // Lets create the storage folder in it was informed
+        this.cacheManager = new CacheManager(storage);
         
-    	// TODO: the use of the cache is making some resources not to be
-    	// reloaded correctly, for example, a cluster after creating
-    	// datasets from it, so clusters_datasets is not retrieved as expected.
-    	// We deactivate the use of the cache for now.
-    	
-    	// Lets create the storage folder in it was informed
-        //this.cacheManager = new CacheManager(storage);
-        this.cacheManager = null;
-
         source = new Source(this.bigmlUser, this.bigmlApiKey, cacheManager);
         dataset = new Dataset(this.bigmlUser, this.bigmlApiKey, cacheManager);
         model = new Model(this.bigmlUser, this.bigmlApiKey, cacheManager);
