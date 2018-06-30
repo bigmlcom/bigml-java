@@ -105,6 +105,8 @@ public class PredictionsStepdefs {
     }
     
     
+    // Logistic Regressions
+    
     @When("^I create a prediction with logisticregression with operating kind \"(.*)\" for \"(.*)\"$")
     public void I_create_a_prediction_with_logistic_with_operating_kind(
     		String kind, String inputData)
@@ -136,8 +138,7 @@ public class PredictionsStepdefs {
     			data, null, kind, true, true);
         context.localPrediction = prediction;
     }
-
-
+    
     @When("^I create a logisticregression prediction for \"(.*)\"$")
     public void I_create_a_logisticregression_prediction_for(String inputData)
             throws AuthenticationException {
@@ -194,6 +195,131 @@ public class PredictionsStepdefs {
     	assert(Utils.roundOff(prob, 4) == Utils.roundOff(probability, 4));
     }
 
+    
+    // Deepnets
+    
+    @When("^I create a prediction with deepnet with operating point \"(.*)\" for \"(.*)\"$")
+    public void I_create_a_prediction_with_deepnet_with_operating_point(
+    		String operatingPoint, String inputData)
+            throws AuthenticationException {
+
+    	String deepnetId = (String) context.deepnet.get("resource");
+
+        JSONObject args = new JSONObject();
+        args.put("tags", Arrays.asList("unitTest"));
+        args.put("operating_point", (JSONObject) JSONValue.parse(operatingPoint));
+
+        JSONObject resource = BigMLClient.getInstance().createPrediction(
+        		deepnetId, (JSONObject) JSONValue.parse(inputData), args, 5, null);
+
+        context.status = (Integer) resource.get("code");
+        context.location = (String) resource.get("location");
+        context.prediction = (JSONObject) resource.get("object");
+        commonSteps.the_resource_has_been_created_with_status(context.status);
+    }
+    
+    @When("^I create a local prediction with deepnet with operating point \"(.*)\" for \"(.*)\"$")
+    public void I_create_a_local_prediction_with_deepnet_with_operating_point(
+    		String operatingPoint, String inputData)
+            throws AuthenticationException {
+    	
+    	JSONObject data = (JSONObject) JSONValue.parse(inputData);
+    	
+    	JSONObject prediction = context.localDeepnet.predict(
+    			data, (JSONObject) JSONValue.parse(operatingPoint), null, true, true);
+        context.localPrediction = prediction;
+    }
+    
+    @When("^I create a prediction with deepnet with operating kind \"(.*)\" for \"(.*)\"$")
+    public void I_create_a_prediction_with_deepnet_with_operating_kind(
+    		String kind, String inputData)
+            throws AuthenticationException {
+
+    	String deepnetId = (String) context.deepnet.get("resource");
+
+        JSONObject args = new JSONObject();
+        args.put("tags", Arrays.asList("unitTest"));
+        args.put("operating_kind", kind);
+
+        JSONObject resource = BigMLClient.getInstance().createPrediction(
+        		deepnetId, (JSONObject) JSONValue.parse(inputData), args, 5, null);
+
+        context.status = (Integer) resource.get("code");
+        context.location = (String) resource.get("location");
+        context.prediction = (JSONObject) resource.get("object");
+        commonSteps.the_resource_has_been_created_with_status(context.status);
+    }
+
+    
+    @When("^I create a local prediction with deepnet with operating kind \"(.*)\" for \"(.*)\"$")
+    public void I_create_a_local_prediction_with_deepnet_with_operating_kind(
+    		String kind, String inputData)
+            throws AuthenticationException {
+
+    	JSONObject data = (JSONObject) JSONValue.parse(inputData);
+    	JSONObject prediction = context.localDeepnet.predict(
+    			data, null, kind, true, true);
+        context.localPrediction = prediction;
+    }
+    
+    @When("^I create a deepnet prediction for \"(.*)\"$")
+    public void I_create_a_deepnet_prediction_for(String inputData)
+            throws AuthenticationException {
+
+    	String deepnetId = (String) context.deepnet.get("resource");
+    	
+    	JSONObject args = new JSONObject();
+    	args.put("tags", Arrays.asList("unitTest"));
+        
+        JSONObject resource = BigMLClient.getInstance().createPrediction(
+        		deepnetId, (JSONObject) JSONValue.parse(inputData), args, 5, null);
+        
+        context.status = (Integer) resource.get("code");
+        context.location = (String) resource.get("location");
+        context.prediction = (JSONObject) resource.get("object");
+        commonSteps.the_resource_has_been_created_with_status(context.status);
+    }
+    
+    @Then("^I create a local deepnet prediction for \"(.*)\"$")
+    public void I_create_a_local_deepnet_prediction_for(String inputData) 
+    		throws Throwable {
+    	
+    	JSONObject data = (JSONObject) JSONValue.parse(inputData);
+    	JSONObject prediction = context.localDeepnet.predict(
+    			data, null, null, true, true);
+    	context.localPrediction = prediction;
+    }
+    
+    @Then("^the deepnet prediction for objective \"([^\"]*)\" is \"(.*)\"$")
+    public void the_deepnet_prediction_is(String objective, String prediction) 
+    		throws Throwable {
+    	
+    	JSONObject pred = (JSONObject) context.prediction.get("prediction");
+    	if (pred.get(objective) instanceof String) {
+    		assertTrue(prediction.equals((String) pred.get(objective)));
+    	} else {
+    		double result = (Double) pred.get(objective);
+    		double expected = Double.parseDouble(prediction);
+    		assertTrue(Utils.roundOff(expected,5) == Utils.roundOff(result,5));
+    	}
+    	
+    }
+
+    @Then("^the local deepnet prediction is \"([^\"]*)\"$")
+    public void the_local_deepnet_prediction_is(String prediction) 
+    		throws Throwable {
+    	
+    	if (context.localPrediction.get("prediction") instanceof String) {
+    		assertTrue(prediction.equals((String) context.localPrediction.get("prediction")));
+    	} else {
+    		double result = (Double) context.localPrediction.get("probability");
+    		double expected = Double.parseDouble(prediction);
+    		assertTrue(expected == Utils.roundOff(result, 5));
+    	}
+    	
+    }
+
+    
     @Given("^I combine the votes in \"(.*)\"$")
     public void I_combine_the_votes(String dir)
             throws AuthenticationException {

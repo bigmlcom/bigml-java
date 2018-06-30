@@ -1038,7 +1038,7 @@ public class Utils {
     		throw new IllegalArgumentException(
            		 	"Failed to find the threshold of the operating point.");
     	}
-    	threshold = (Double) operatingPoint.get("threshold");
+    	threshold = ((Number) operatingPoint.get("threshold")).doubleValue();
     	if (threshold > 1 || threshold < 0) {
     		throw new IllegalArgumentException(
            		 	"The threshold value should be in the 0 to 1 range.");

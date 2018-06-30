@@ -29,6 +29,7 @@
 		    <version>7.3.1</version>
 		</dependency>
 * Added support for Local Logistic Regression
+* Added support for Local Deepnet
 
 
 ### Bugs
