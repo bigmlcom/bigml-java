@@ -34,7 +34,7 @@
 ### Bugs
 
 * Fixed test suite
-* Deactivated cache manager due to strange behaviour in resources relaod.
+* Fixed bug in predictions for Deepnets.
 
 
 ## 1.7.0 version

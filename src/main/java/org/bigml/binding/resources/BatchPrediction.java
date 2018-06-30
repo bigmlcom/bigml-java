@@ -76,10 +76,15 @@ public class BatchPrediction extends AbstractResource {
             Integer retries) {
 
         if (model == null || model.length() == 0 ||
-            !(model.matches(MODEL_RE) || model.matches(ENSEMBLE_RE) || model.matches(LOGISTICREGRESSION_RE))) {
-            logger.info("Wrong model, ensemble or logisticregression id");
-            return null;
-        }
+                !(model.matches(MODEL_RE) || 
+                  model.matches(ENSEMBLE_RE) || 
+                  model.matches(LOGISTICREGRESSION_RE) || 
+                  model.matches(DEEPNET_RE) ||
+                  model.matches(FUSION_RE))) {
+                logger.info("Wrong model, ensemble, logisticregression, deepnet or fusion id");
+                return null;
+            }
+        
         if (datasetId == null || datasetId.length() == 0
                 || !datasetId.matches(DATASET_RE)) {
             logger.info("Wrong dataset id");
@@ -99,6 +104,14 @@ public class BatchPrediction extends AbstractResource {
         			waitForResource(model, "logisticRegressionIsReady", waitTime, retries);
         		}
         		
+        		if (model.matches(DEEPNET_RE)) {
+        			waitForResource(model, "deepnetIsReady", waitTime, retries);
+        		}
+        		
+        		if (model.matches(FUSION_RE)) {
+        			waitForResource(model, "fusionIsReady", waitTime, retries);
+        		}
+        		
         		waitForResource(datasetId, "datasetIsReady", waitTime, retries);
             
 
@@ -115,6 +128,12 @@ public class BatchPrediction extends AbstractResource {
             }
             if (model.matches(LOGISTICREGRESSION_RE)) {
                 requestObject.put("logisticregression", model);
+            }
+            if (model.matches(DEEPNET_RE)) {
+                requestObject.put("deepnet", model);
+            }
+            if (model.matches(FUSION_RE)) {
+                requestObject.put("fusion", model);
             }
             requestObject.put("dataset", datasetId);
 

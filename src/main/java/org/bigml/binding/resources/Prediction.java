@@ -83,8 +83,12 @@ public class Prediction extends AbstractResource {
         JSONObject modelJSON = null;
 
         if (model == null || model.length() == 0 ||
-            !(model.matches(MODEL_RE) || model.matches(ENSEMBLE_RE) || model.matches(LOGISTICREGRESSION_RE))) {
-            logger.info("Wrong model, ensemble or logisticregression id");
+            !(model.matches(MODEL_RE) || 
+              model.matches(ENSEMBLE_RE) || 
+              model.matches(LOGISTICREGRESSION_RE) || 
+              model.matches(DEEPNET_RE) ||
+              model.matches(FUSION_RE))) {
+            logger.info("Wrong model, ensemble, logisticregression, deepnet or fusion id");
             return null;
         }
 
@@ -93,19 +97,23 @@ public class Prediction extends AbstractResource {
             retries = retries != null ? retries : 10;
 
             if (model.matches(ENSEMBLE_RE)) {
-            		waitForResource(model, "ensembleIsReady", waitTime, retries);
+            	waitForResource(model, "ensembleIsReady", waitTime, retries);
             }
 
             if (model.matches(MODEL_RE)) {
-            		waitForResource(model, "modelIsReady", waitTime, retries);
+            	waitForResource(model, "modelIsReady", waitTime, retries);
             }
 
             if (model.matches(LOGISTICREGRESSION_RE)) {
-            		waitForResource(model, "logisticRegressionIsReady", waitTime, retries);
+            	waitForResource(model, "logisticRegressionIsReady", waitTime, retries);
+            }
+            
+            if (model.matches(DEEPNET_RE)) {
+            	waitForResource(model, "deepnetIsReady", waitTime, retries);
             }
             
             if (model.matches(FUSION_RE)) {
-	        		waitForResource(model, "fusionIsReady", waitTime, retries);
+	        	waitForResource(model, "fusionIsReady", waitTime, retries);
 	        }
 
             // Input data
@@ -149,6 +157,12 @@ public class Prediction extends AbstractResource {
             }
             if (model.matches(LOGISTICREGRESSION_RE)) {
                 requestObject.put("logisticregression", model);
+            }
+            if (model.matches(DEEPNET_RE)) {
+                requestObject.put("deepnet", model);
+            }
+            if (model.matches(FUSION_RE)) {
+                requestObject.put("fusion", model);
             }
 
             requestObject.put("input_data", inputDataJSON);
