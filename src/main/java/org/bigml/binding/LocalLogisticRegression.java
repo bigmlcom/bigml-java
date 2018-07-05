@@ -45,7 +45,7 @@ import org.bigml.binding.resources.AbstractResource;
  * logistic.predict(predictors)
  * 
  */
-public class LocalLogisticRegression extends ModelFields {
+public class LocalLogisticRegression extends ModelFields implements SupervisedModelInterface {
 
 	private static final long serialVersionUID = 1L;
 
@@ -247,7 +247,20 @@ public class LocalLogisticRegression extends ModelFields {
 		}
 
 	}
-
+	
+	/**
+	 * Returns the resourceId
+	 */
+	public String getResourceId() {
+		return logisticRegressionId;
+	}
+	
+	/**
+	 * Returns the class names
+	 */
+	public List<String> getClassNames() {
+		return classNames;
+	}
 	
 	/**
 	 * Predicts a probability for each possible output class, based on
@@ -256,7 +269,23 @@ public class LocalLogisticRegression extends ModelFields {
      * 
      * @param inputData	Input data to be predicted
 	 */
-	private JSONArray predictProbability(JSONObject inputData) {
+	public JSONArray predictProbability(JSONObject inputData) {
+		try {
+			return predictProbability(inputData, null);
+		} catch (Exception e) {
+			return null;
+		}
+	}
+	
+	/**
+	 * Predicts a probability for each possible output class, based on
+     * input values. The input fields must be a dictionary keyed by 
+     * field name or field ID.
+     * 
+     * @param inputData	Input data to be predicted
+	 */
+	public JSONArray predictProbability(JSONObject inputData,
+			MissingStrategy missingStrategy) throws Exception {
 		JSONObject prediction = predict(inputData, null, null, true, false);
 		JSONArray distribution = (JSONArray) prediction.get("distribution");
 		sortPredictions(distribution);
@@ -375,20 +404,10 @@ public class LocalLogisticRegression extends ModelFields {
         
         // In case that missing_numerics is False, checks that all numeric
         // fields are present in input data.
-        if (missingNumerics == null) {
-        	for (Object fieldId : fields.keySet()) {
-                JSONObject field = (JSONObject) fields.get(fieldId);
-                if( Arrays.binarySearch(OPTIONAL_FIELDS, field.get("optype")) == -1 &&
-                    !inputData.containsKey(fieldId) ) {
-                     throw new IllegalArgumentException(
-                    		 "Failed to predict a centroid. Input data " +
-                             "must contain values for all numeric " +
-                             "fields to get a logistic regression prediction.");
-                }
-        		
-        	}
-        }
-        
+        if (!this.missingNumerics) {
+			Utils.checkNoMissingNumerics(inputData, this.fields);
+		}
+
         if (balanceFields != null && balanceFields==true) {
         	balanceInput(inputData, fields);
         }
@@ -546,18 +565,22 @@ public class LocalLogisticRegression extends ModelFields {
 				
 			}
 		}
+		
 				
 		// missings
 		for (Object field: inputFields) {
 			String fieldId = (String) field;
 			boolean contribution = false;
 			JSONArray coefficients = getCoefficients(category, fieldId);
-			
+						
 			try {
 				if (numericFields.containsKey(fieldId) &&
 						!numericInputs.containsKey(fieldId)) {
-					double coeff = ((Number) 
-							coefficients.get(1)).doubleValue();
+					
+					Number coeffN = coefficients.size() == 1 ?
+							(Number) coefficients.get(0):
+							(Number) coefficients.get(1);
+					double coeff = ((Number) coeffN).doubleValue();
 					probability += coeff;
 			        contribution = true;
 				} else {

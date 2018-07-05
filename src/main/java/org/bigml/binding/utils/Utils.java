@@ -1101,5 +1101,23 @@ public class Utils {
     	
         return new Object[] {kind, threshold, positiveClass};
     }
-
+    
+    /**
+     * Checks whether some numeric fields are missing in the input data
+     */
+    public static void checkNoMissingNumerics(
+    		JSONObject inputData, JSONObject fields) {
+    	
+    	for (Object fieldId : fields.keySet()) {
+            JSONObject field = (JSONObject) fields.get(fieldId);
+            String optype = (String) Utils.getJSONObject(field, "optype");
+            
+            if ("numeric".equals(optype) && !inputData.containsKey((String) fieldId)) {
+            	throw new IllegalArgumentException(
+               		 	"Failed to predict. Input data must contain values" +
+        				" for all numeric fields to get a prediction.");
+            }
+    	}
+    }
+    
 }

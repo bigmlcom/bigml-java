@@ -6871,6 +6871,39 @@ public class BigMLClient {
 
         return fusion.create(modelsIds, args, waitTime, retries);
     }
+    
+    /**
+     * Creates a fusion from a list of models definitions.
+     *
+     * POST /andromeda/fusion?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param models
+     *            list of models definitions int he form
+     *            
+     *           {
+     *           	"id": xxx/id, where xxx is
+     *            			one of the model types availables and id is a string
+     *            			of 24 alpha-numeric chars for the model to include in
+     *            			the fusion resource,
+     *            	"weight": a number specifying the weight of the submodel 
+     *            			in the fusion
+     *            }
+     * @param args
+     *            set of parameters for the new fusion. Optional
+     * @param waitTime
+     *            time (milliseconds) to wait for next check of FINISHED 
+     *            status for every submodel before to start to create 
+     *            the fusion. Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     *
+     */
+    public JSONObject createFusionWithModels(final List<JSONObject> models,
+        JSONObject args, Integer waitTime, Integer retries) {
+
+        return fusion.createWithModels(models, args, waitTime, retries);
+    }
 
     /**
      * Retrieves a fusion.

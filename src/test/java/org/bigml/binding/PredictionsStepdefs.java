@@ -110,6 +110,15 @@ public class PredictionsStepdefs {
         
     }
     
+    @Then("^the probability for the prediction is ([\\d,.]+)$")
+    public void the_probability_for_the_prediction_is(Double expected) {
+    	Double probability = (Double) context.prediction.get("probability");
+    	if (probability == null) {
+    		probability = (Double) context.prediction.get("confidence");
+    	}
+        assertEquals(String.format("%.4g", expected), String.format("%.4g",probability));
+        
+    }
     
     // Models
     
@@ -585,5 +594,61 @@ public class PredictionsStepdefs {
         Double prediction = (Double) votes.get(0).getPredictions()[0].get("prediction");
         assertEquals(expectedPrediction, prediction);
     }
+    
+    
+    
+    // Fusions
+    
+    @When("^I create a prediction with fusion for \"(.*)\"$")
+    public void I_create_a_prediction_with_fusion_for(String inputData) throws AuthenticationException {
+        String fusionId = (String) context.fusion.get("resource");
 
+        JSONObject args = new JSONObject();
+        args.put("tags", Arrays.asList("unitTest"));
+
+        JSONObject resource = BigMLClient.getInstance().createPrediction(
+        		fusionId, (JSONObject) JSONValue.parse(inputData), args, 5, null);
+        context.status = (Integer) resource.get("code");
+        context.location = (String) resource.get("location");
+        context.prediction = (JSONObject) resource.get("object");
+        commonSteps.the_resource_has_been_created_with_status(context.status);
+    }
+    
+    @When("^I create a local fusion prediction for \"(.*)\"$")
+    public void I_create_a_local_fusion_prediction(String inputData)
+            throws Exception {
+    	
+    	JSONObject data = (JSONObject) JSONValue.parse(inputData);  	
+    	try {
+	        context.localPrediction = context.localFusion.predict(
+	        		data, null, null, true, true);
+    	} catch (Exception e) {
+			e.printStackTrace();
+		}
+        
+    }
+    
+    @Then("^the local fusion prediction is \"([^\"]*)\"$")
+    public void the_local_fusion_prediction_is(String prediction) 
+    		throws Throwable {
+    	if (context.localPrediction.get("prediction") instanceof String) {
+    		assertTrue(prediction.equals((String) context.localPrediction.get("prediction")));
+    	} else {
+    		double result = (Double) context.localPrediction.get("prediction");
+    		double expected = Double.parseDouble(prediction);
+    		assertTrue(expected == Utils.roundOff(result, 5));
+    	}
+    }
+    
+    @Then("^the local prediction probability is (.*)$")
+    public void the_local_prediction_probability_is(Double expected) 
+    		throws Throwable {
+    	
+    	Double actual = (Double) context.localPrediction.get("probability");
+    	if (actual == null) {
+    		actual = (Double) context.localPrediction.get("confidence");
+    	}
+    	assertEquals(String.format("%.4g", expected), String.format("%.4g",actual));
+    	
+    }
 }

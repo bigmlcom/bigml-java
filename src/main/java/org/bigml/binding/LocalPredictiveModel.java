@@ -61,7 +61,7 @@ import java.util.*;
  * generate prediction locally.
  *
  */
-public class LocalPredictiveModel extends BaseModel implements PredictionConverter, Serializable {
+public class LocalPredictiveModel extends BaseModel implements PredictionConverter, Serializable, SupervisedModelInterface {
 
     private static final long serialVersionUID = 1L;
     
@@ -187,6 +187,14 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
             throw new InvalidModelException();
         }
     }
+    
+    
+    /**
+	 * Returns the class names
+	 */
+	public List<String> getClassNames() {
+		return classNames;
+	}
     
     
     /**

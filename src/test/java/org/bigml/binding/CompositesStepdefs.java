@@ -1,10 +1,15 @@
 package org.bigml.binding;
 
 import java.util.Arrays;
+
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,5 +64,37 @@ public class CompositesStepdefs {
         context.fusion = (JSONObject) resource.get("object");
         commonSteps.the_resource_has_been_created_with_status(context.status);
     }
-
+    
+    @Given("^I create a fusion from models with weights \"(.*)\"$")
+    public void I_create_a_fusion_from_models_with_weights(String weightsStr) throws Throwable {
+    	JSONArray weights = (JSONArray) JSONValue.parse(weightsStr);
+    	
+        List<JSONObject> models = new ArrayList<JSONObject>();
+        for (int iModel = 0; iModel < context.models.size(); iModel++ ) {
+            JSONObject modelInList = (JSONObject) context.models.get(iModel);
+            
+            JSONObject modelWeight = new JSONObject();
+            modelWeight.put("id", modelInList.get("resource"));
+            modelWeight.put("weight", ((Number) weights.get(iModel)).doubleValue());
+            
+            models.add(modelWeight);
+        }
+        JSONObject args = new JSONObject();
+        args.put("tags", Arrays.asList("unitTest"));
+        
+        JSONObject resource = BigMLClient.getInstance().createFusionWithModels(
+        		models, args, 5, null);
+        
+        context.status = (Integer) resource.get("code");
+        context.location = (String) resource.get("location");
+        context.fusion = (JSONObject) resource.get("object");
+        commonSteps.the_resource_has_been_created_with_status(context.status);
+    }
+    
+    
+    @Given("^I create a local fusion$")
+    public void I_create_a_local_fusion() throws Exception {
+    	context.localFusion = new LocalFusion(context.fusion);
+        assertTrue("", context.localFusion != null);
+    }
 }

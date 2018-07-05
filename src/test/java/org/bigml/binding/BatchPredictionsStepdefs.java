@@ -35,53 +35,48 @@ public class BatchPredictionsStepdefs {
     public void I_create_a_batch_prediction_for_the_dataset_with_the_model()
             throws Throwable {
         String modelId = (String) context.model.get("resource");
-        String datasetId = (String) context.dataset.get("resource");
-
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
-
-        JSONObject resource = BigMLClient.getInstance().createBatchPrediction(
-                modelId, datasetId, args, 5, 3);
-        context.status = (Integer) resource.get("code");
-        context.location = (String) resource.get("location");
-        context.batchPrediction = (JSONObject) resource.get("object");
-        commonSteps.the_resource_has_been_created_with_status(context.status);
+        I_create_a_batch_prediction_for_the_dataset_with(modelId);
     }
 
     @When("^I create a batch prediction for the dataset with the ensemble$")
     public void I_create_a_batch_prediction_for_the_dataset_with_the_ensemble()
             throws Throwable {
         String ensembleId = (String) context.ensemble.get("resource");
-        String datasetId = (String) context.dataset.get("resource");
-
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
-
-        JSONObject resource = BigMLClient.getInstance().createBatchPrediction(
-                ensembleId, datasetId, args, 5, 3);
-        context.status = (Integer) resource.get("code");
-        context.location = (String) resource.get("location");
-        context.batchPrediction = (JSONObject) resource.get("object");
-        commonSteps.the_resource_has_been_created_with_status(context.status);
+        I_create_a_batch_prediction_for_the_dataset_with(ensembleId);
     }
 
     @When("^I create a batch prediction for the dataset with the logistic regression$")
     public void I_create_a_batch_prediction_for_the_dataset_with_the_logistic_regression()
             throws Throwable {
         String logisticRegresionId = (String) context.logisticRegression.get("resource");
+        I_create_a_batch_prediction_for_the_dataset_with(logisticRegresionId);
+    }
+    
+    @When("^I create a batch prediction for the dataset with the fusion$")
+    public void I_create_a_batch_prediction_for_the_dataset_with_the_fusion()
+            throws Throwable {
+        String fusionId = (String) context.fusion.get("resource");
+        I_create_a_batch_prediction_for_the_dataset_with(fusionId);
+    }
+    
+    
+    public void I_create_a_batch_prediction_for_the_dataset_with(String resourceId)
+            throws Throwable {
         String datasetId = (String) context.dataset.get("resource");
 
         JSONObject args = new JSONObject();
         args.put("tags", Arrays.asList("unitTest"));
 
         JSONObject resource = BigMLClient.getInstance().createBatchPrediction(
-                logisticRegresionId, datasetId, args, 5, 3);
+        		resourceId, datasetId, args, 5, 3);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.batchPrediction = (JSONObject) resource.get("object");
         commonSteps.the_resource_has_been_created_with_status(context.status);
     }
-
+    
+    
+    
     @When("^I download the created predictions file to \"([^\"]*)\"$")
     public void I_download_the_created_predictions_file_to(String fileTo)
             throws Throwable {

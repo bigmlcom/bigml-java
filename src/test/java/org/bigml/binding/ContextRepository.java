@@ -63,6 +63,7 @@ public class ContextRepository {
     LocalLogisticRegression localLogisticRegression = null;
     LocalDeepnet localDeepnet = null;
     LocalTimeseries localTimeSeries = null;
+    LocalFusion localFusion = null;
 
     MultiModel multiModel = null;
     List<MultiVote> votes = null;

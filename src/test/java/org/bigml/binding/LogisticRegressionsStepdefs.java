@@ -1,6 +1,8 @@
 package org.bigml.binding;
 
 import cucumber.annotation.en.Given;
+
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.slf4j.Logger;
@@ -39,7 +41,12 @@ public class LogisticRegressionsStepdefs {
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.logisticRegression = (JSONObject) resource.get("object");
-        commonSteps.the_resource_has_been_created_with_status(context.status); 	
+        commonSteps.the_resource_has_been_created_with_status(context.status);
+        
+        if( context.models == null ) {
+            context.models = new JSONArray();
+        }
+        context.models.add(context.logisticRegression);
     }
 
     @Given("^I create a local logisticregression$")

@@ -33,6 +33,7 @@
 * Added support for Local Deepnet
 * LocalPredictiveModel: support for operating_point, operating_kind
 * LocalEnsemble: support for operating_point, operating_kind
+* Added support for Local Fusions
 
 ### Bugs
 

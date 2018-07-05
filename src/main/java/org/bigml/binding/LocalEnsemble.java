@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
  * can be used to generate prediction.
  * 
  */
-public class LocalEnsemble extends ModelFields implements Serializable {
+public class LocalEnsemble extends ModelFields implements Serializable, SupervisedModelInterface {
 
 	private static final long serialVersionUID = 1L;
 
@@ -288,7 +288,20 @@ public class LocalEnsemble extends ModelFields implements Serializable {
 		if (modelsSplit.size() == 1) {
 			multiModel = new MultiModel(models, fields, classNames);
 		}
-
+	}
+	
+	/**
+	 * Returns the resourceId
+	 */
+	public String getResourceId() {
+		return ensembleId;
+	}
+	
+	/**
+	 * Returns the class names
+	 */
+	public List<String> getClassNames() {
+		return classNames;
 	}
 
 	/**

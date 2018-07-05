@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 
-public class LocalDeepnet extends ModelFields {
+public class LocalDeepnet extends ModelFields implements SupervisedModelInterface {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -178,6 +178,20 @@ public class LocalDeepnet extends ModelFields {
 		}	
 	}
 	
+	/**
+	 * Returns the resourceId
+	 */
+	public String getResourceId() {
+		return deepnetId;
+	}
+	
+	/**
+	 * Returns the class names
+	 */
+	public List<String> getClassNames() {
+		return classNames;
+	}
+	
 	
 	/**
 	 * Makes a prediction based on a number of field values.
@@ -274,6 +288,20 @@ public class LocalDeepnet extends ModelFields {
         return prediction;
 	}
 	
+	/**
+	 * Predicts a probability for each possible output class, based on
+     * input values. The input fields must be a dictionary keyed by
+     * field name or field ID.
+     *
+     * @param inputData	Input data to be predicted
+	 */
+	private JSONArray predictProbability(JSONObject inputData) {
+		try {
+			return predictProbability(inputData, null);
+		} catch (Exception e) {
+			return null;
+		}
+	}
 	
 	
 	/**
@@ -283,7 +311,9 @@ public class LocalDeepnet extends ModelFields {
      *
      * @param inputData	Input data to be predicted
 	 */
-	private JSONArray predictProbability(JSONObject inputData) {
+	public JSONArray predictProbability(
+			JSONObject inputData, MissingStrategy missingStrategy) 
+			throws Exception {
 		
 		JSONObject prediction = null;
 		if (regression) {
