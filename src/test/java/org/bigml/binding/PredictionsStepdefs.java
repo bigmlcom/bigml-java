@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import java.util.*;
 
+import org.bigml.binding.localmodel.Prediction;
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -81,7 +82,96 @@ public class PredictionsStepdefs {
         Double actualConfidence = (Double) context.prediction.get("confidence");
         assertEquals(String.format("%.4g", expectedConfidence), String.format("%.4g",actualConfidence));
     }
+    
+    
+    // Models
+    
+    @When("^I create a prediction with model with operating point \"(.*)\" for \"(.*)\"$")
+    public void I_create_a_prediction_with_model_with_operating_point(
+    		String operatingPoint, String inputData)
+            throws AuthenticationException {
 
+    	String modelId = (String) context.model.get("resource");
+
+        JSONObject args = new JSONObject();
+        args.put("tags", Arrays.asList("unitTest"));
+        args.put("operating_point", (JSONObject) JSONValue.parse(operatingPoint));
+
+        JSONObject resource = BigMLClient.getInstance().createPrediction(
+        		modelId, (JSONObject) JSONValue.parse(inputData), args, 5, null);
+
+        context.status = (Integer) resource.get("code");
+        context.location = (String) resource.get("location");
+        context.prediction = (JSONObject) resource.get("object");
+        commonSteps.the_resource_has_been_created_with_status(context.status);
+    }
+    
+    @When("^I create a local prediction with model with operating point \"(.*)\" for \"(.*)\"$")
+    public void I_create_a_local_prediction_with_model_with_operating_point(
+    		String operatingPoint, String inputData)
+            throws Exception {
+    	
+    	JSONObject data = (JSONObject) JSONValue.parse(inputData);
+    	
+    	try {
+	    	Prediction prediction = context.localModel.predict(
+	    			data, null, (JSONObject) JSONValue.parse(operatingPoint), null, true, true);
+	        context.localModelPrediction = prediction;
+    	} catch (Exception e) {
+			e.printStackTrace();
+		}
+        
+    }
+    
+    @When("^I create a prediction with model with operating kind \"(.*)\" for \"(.*)\"$")
+    public void I_create_a_prediction_with_model_with_operating_kind(
+    		String kind, String inputData)
+            throws AuthenticationException {
+
+    	String modelId = (String) context.model.get("resource");
+
+        JSONObject args = new JSONObject();
+        args.put("tags", Arrays.asList("unitTest"));
+        args.put("operating_kind", kind);
+
+        JSONObject resource = BigMLClient.getInstance().createPrediction(
+        		modelId, (JSONObject) JSONValue.parse(inputData), args, 5, null);
+
+        context.status = (Integer) resource.get("code");
+        context.location = (String) resource.get("location");
+        context.prediction = (JSONObject) resource.get("object");
+        commonSteps.the_resource_has_been_created_with_status(context.status);
+    }
+
+    
+    @When("^I create a local prediction with model with operating kind \"(.*)\" for \"(.*)\"$")
+    public void I_create_a_local_prediction_with_model_with_operating_kind(
+    		String kind, String inputData)
+            throws Exception {
+
+    	JSONObject data = (JSONObject) JSONValue.parse(inputData);
+    	Prediction prediction = context.localModel.predict(
+    			data, null, null, kind, true, true);
+        context.localModelPrediction = prediction;
+    }
+    
+    @Then("^the local model prediction is \"([^\"]*)\"$")
+    public void the_local_model_prediction_is(String prediction) 
+    		throws Throwable {
+    	
+    	if (context.localModelPrediction.get("prediction") instanceof String) {
+    		assertTrue(prediction.equals((String) context.localModelPrediction.get("prediction")));
+    	} else {
+    		double result = (Double) context.localModelPrediction.get("probability");
+    		double expected = Double.parseDouble(prediction);
+    		assertTrue(expected == Utils.roundOff(result, 5));
+    	}
+    	
+    }
+    
+    
+    // Ensembles
+    
     @When("^I create a prediction with ensemble for \"(.*)\"$")
     public void I_create_a_prediction_with_ensemble_for(String inputData) throws AuthenticationException {
         String ensembleId = (String) context.ensemble.get("resource");

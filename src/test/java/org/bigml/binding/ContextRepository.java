@@ -1,5 +1,6 @@
 package org.bigml.binding;
 
+import org.bigml.binding.localmodel.Prediction;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -53,7 +54,9 @@ public class ContextRepository {
     JSONArray scripts = null;
     
     JSONObject localPrediction = null;
+    Prediction localModelPrediction = null;
     
+    LocalPredictiveModel localModel = null;
     LocalCluster localCluster = null;
     LocalLogisticRegression localLogisticRegression = null;
     LocalDeepnet localDeepnet = null;

@@ -35,6 +35,8 @@ package org.bigml.binding;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
+import org.bigml.binding.localmodel.AbstractTree;
+import org.bigml.binding.localmodel.BoostedTree;
 import org.bigml.binding.localmodel.Predicate;
 import org.bigml.binding.localmodel.Prediction;
 import org.bigml.binding.localmodel.Tree;
@@ -62,6 +64,8 @@ import java.util.*;
 public class LocalPredictiveModel extends BaseModel implements PredictionConverter, Serializable {
 
     private static final long serialVersionUID = 1L;
+    
+    protected static final int PRECISION = 5;
 
     /**
      * Logging
@@ -96,67 +100,161 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
 
     public static Double DEFAULT_IMPURITY = 0.2;
 
+    private static final String[] OPERATING_POINT_KINDS = {
+    		"probability", "confidence" };
+    
     private JSONObject root;
     private Tree tree;
+    private BoostedTree boostedTree;
     private Map<String, Tree> idsMap;
     private Map<String, List<String>> terms = new HashMap<String, List<String>>();
     private int maxBins = 0;
-
+    
+    private Boolean regression = false;
+    private JSONObject boosting = null;
+    private List<String> classNames = new ArrayList<String>();
+    private List<String> objectiveCategories = new ArrayList<String>();
+    private HashMap<String, Double> laplacianTerm;
 
     /**
      * Constructor
      *
-     * @param model
-     *            the json representation for the remote model
+     * @param model		the json representation for the remote model
      */
     public LocalPredictiveModel(JSONObject model) throws Exception {
         super(model);
-
+        
         try {
-            String prefix = Utils.getJSONObject(model, "object") != null ? "object."
-                    : "";
-
-            this.root = (JSONObject) Utils.getJSONObject(model, prefix
-                    + "model.root");
+        	if (model.containsKey("object") &&
+        			model.get("object") instanceof JSONObject) {
+        		model = (JSONObject) model.get("object");
+    		}
+        	
+        	// boosting models are to be handled using the BoostedTree
+            // class
+        	boolean boostedEnsemble = (Boolean) Utils.getJSONObject(
+        			model, "boosted_ensemble", false);
+        	if (boostedEnsemble) {
+        		this.boosting = (JSONObject) Utils.getJSONObject(
+        				model, "boosting", null);
+        	}
+        	
+        	String optype = (String) Utils.getJSONObject(
+					fields, objectiveField + ".optype");
+        	
+        	this.regression = 
+        			(!isBoosting() && "numeric".equals(optype) ) ||
+        			(isBoosting() && boosting.get("objective_class") == null);
+        	
+            this.root = (JSONObject) Utils.getJSONObject(model, "model.root");
 
             this.idsMap = new HashMap<String, Tree>();
-
-            this.tree = new Tree(root, this.fields, objectiveField,
-                    (JSONObject) Utils.getJSONObject(model, prefix + "model.distribution.training"), null, idsMap, true, 0);
-
-            if( this.tree.isRegression() )
-                this.maxBins = this.tree.getMaxBins();
-
+            
+            if (isBoosting()) {
+            	this.boostedTree = new BoostedTree(
+            			root, this.fields, objectiveField);
+            } else {
+            	// will store global information in the tree: regression and
+                // max_bins number
+            	JSONObject distribution = (JSONObject) Utils.getJSONObject(
+            			model, "model.distribution.training");
+            	JSONObject treeInfo = new JSONObject();
+            	treeInfo.put("max_bins", maxBins);
+            	this.tree = new Tree(root, this.fields, objectiveField,
+            			distribution, null, idsMap, true, treeInfo);
+            	
+            	if (this.tree.isRegression()) {
+                    this.maxBins = this.tree.getMaxBins();
+            	} else {
+            		JSONArray rootDist = (JSONArray) this.tree.getDistribution();
+            		for (Object dist: rootDist) {
+            			classNames.add((String) ((JSONArray) dist).get(0));
+            		}
+            		Collections.sort(classNames);
+            		
+            		JSONArray categories = (JSONArray) Utils.getJSONObject(
+    						(JSONObject) fields.get(objectiveField), 
+                			"summary.categories", new JSONArray());
+            		
+            		for (Object category: categories) {
+            			objectiveCategories.add((String) ((JSONArray) category).get(0));
+            		}
+            	}
+            }
+            
+            if (!this.regression && !isBoosting()) {
+            	this.laplacianTerm = laplacianTerm();
+            }
         } catch (Exception e) {
+        	e.printStackTrace();
             logger.error("Invalid model structure", e);
             throw new InvalidModelException();
         }
     }
-
+    
+    
+    /**
+     * Correction term based on the training dataset distribution
+     * 
+     */
+    private HashMap<String, Double> laplacianTerm() {
+    	HashMap<String, Double> categoryMap = new HashMap<String, Double>();
+    	
+    	JSONArray rootDist = (JSONArray) this.tree.getDistribution();
+    	if (this.tree.getWeighted()) {
+    		for (Object dist: rootDist) {
+    			JSONArray category = (JSONArray) dist;
+    			String cat = (String) category.get(0);
+    			categoryMap.put(cat, 0.0);
+    		}
+    		
+    	} else {
+    		double total = 0.0;
+    		for (Object dist: rootDist) {
+    			total += ((Number) ((JSONArray) dist).get(1)).doubleValue();
+    		}
+    		
+    		for (Object dist: rootDist) {
+    			JSONArray category = (JSONArray) dist;
+    			String cat = (String) category.get(0);
+    			Double value = ((Number)category.get(1)).doubleValue();
+    			categoryMap.put(cat, value / total);
+    		}
+    	}
+    	
+    	return categoryMap;
+    }
+    
     /**
      * Describes and return the fields for this model.
      */
     public JSONObject fields() {
-        return tree.listFields();
+    	return isBoosting() ? boostedTree.listFields() : tree.listFields();
     }
-
-
+    
     /**
      * Checks if the tree is a regression problem
      */
     public boolean isRegression() {
-        return tree.isRegression();
+    	return tree.isRegression();
     }
-
+    
+    /**
+     * Checks if the tree is a boosting problem
+     */
+    public boolean isBoosting() {
+        return this.boosting != null && this.boosting.size() > 0;
+    }
+    
     /**
      * Returns a list that includes all the leaves of the model.
      *
      * @return all the leave nodes
      */
     public List<Tree> getLeaves() {
-        return this.tree.getLeaves(null);
+    	return this.tree.getLeaves(null);
     }
-
+    
     /**
      * Returns a list that includes all the leaves of the model.
      *
@@ -168,7 +266,16 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
     public List<Tree> getLeaves(TreeNodeFilter filter) {
         return this.tree.getLeaves(filter);
     }
-
+    
+    /**
+     * Returns a list that includes all the leaves of the model.
+     *
+     * @return all the leave nodes
+     */
+    public List<BoostedTree> getBoostedLeaves() {
+    	return this.boostedTree.getLeaves();
+    }
+    
     /**
      * Returns True if the gini impurity of the node distribution
      * goes above the impurity threshold.
@@ -178,6 +285,12 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
      * @return all the leave nodes after apply the impurity threshold
      */
     public List<Tree> getImpureLeaves(Double impurityThreshold) {
+    	if (isBoosting() || isRegression()) {
+    		throw new IllegalArgumentException(
+    				"This method is available for non-boosting " +
+    				"categorization models only.");
+    	}
+    	
         final Double impurityThresholdToUse = (impurityThreshold == null ?
                 DEFAULT_IMPURITY : impurityThreshold);
 
@@ -189,7 +302,8 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
             }
         });
     }
-
+    
+    
     /**
      * Makes a prediction based on a number of field values.
      *
@@ -202,13 +316,16 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
     }
 
     /**
-     * Makes a prediction based on a number of field values using a Last Prediction Strategy
+     * Makes a prediction based on a number of field values using a 
+     * Last Prediction Strategy
      *
-     * By default the input fields must be keyed by field name but you can use `by_name`
-     *  to input them directly keyed by id.
+     * By default the input fields must be keyed by field name but you 
+     * can use `by_name` to input them directly keyed by id.
      *
      */
-    public Prediction predict(final String args, Boolean byName) throws InputDataParseException {
+    public Prediction predict(final String args, Boolean byName) 
+    		throws InputDataParseException {
+    	
         if (byName == null) {
             byName = true;
         }
@@ -218,8 +335,6 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
             throw new InputDataParseException("Input data format not valid");
         }
         JSONObject inputData = argsData;
-
-
         return predict(inputData, byName);
     }
 
@@ -234,7 +349,8 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
     }
 
     /**
-     * Makes a prediction based on a number of field values using a Last Prediction Strategy
+     * Makes a prediction based on a number of field values using a 
+     * Last Prediction Strategy
      *
      * The input fields must be keyed by field name.
      */
@@ -244,24 +360,63 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
     }
 
     /**
-     * Makes a prediction based on a number of field values using the specified Missing Strategy
+     * Makes a prediction based on a number of field values using the 
+     * specified Missing Strategy
      *
      * The input fields must be keyed by field name.
      */
     public Prediction predict(final JSONObject args, Boolean byName, MissingStrategy strategy)
-            throws InputDataParseException {
-        return predict(args, byName, strategy, null).get(0);
+            throws Exception {
+        return predict(args, strategy, null, null, true, byName);
     }
-
+    
     /**
      * Makes a multiple predictions based on a number of field values using the Last Prediction strategy
      *
      * The input fields must be keyed by field name.
+     * 
+     * @deprecated
      */
     public List<Prediction> predict(final JSONObject args, Boolean byName, Object multiple)
             throws InputDataParseException {
         return predict(args, byName, MissingStrategy.LAST_PREDICTION, multiple);
     }
+    
+    /**
+     * Convenience version of predict that take as inputs a map from field ids
+     * or names to their values as Java objects. See also predict(String,
+     * Boolean, Integer, Boolean).
+     */
+    public Prediction predictWithMap(
+            final Map<String, Object> inputs, Boolean byName, Boolean withConfidence)
+            throws Exception {
+
+        JSONObject inputObj = (JSONObject) JSONValue.parse(JSONValue
+                .toJSONString(inputs));
+        return predict(inputObj, MissingStrategy.LAST_PREDICTION, null, null, true, byName);
+    }
+
+    public Prediction predictWithMap(
+            final Map<String, Object> inputs, Boolean byName, MissingStrategy missingStrategy)
+            throws Exception {
+
+        JSONObject inputObj = (JSONObject) JSONValue.parse(JSONValue
+                .toJSONString(inputs));
+        return predict(inputObj, missingStrategy, null, null, true, byName);
+    }
+
+    public Prediction predictWithMap(
+            final Map<String, Object> inputs, Boolean byName)
+            throws Exception {
+    	
+        return predictWithMap(inputs, byName, MissingStrategy.LAST_PREDICTION);
+    }
+
+    public Prediction predictWithMap(
+            final Map<String, Object> inputs) throws Exception {
+        return predictWithMap(inputs, false, MissingStrategy.LAST_PREDICTION);
+    }
+    
 
     /**
      * Makes a prediction based on a number of field values.
@@ -293,6 +448,7 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
      *  literal 'all', that will cause the entire distribution
      *  in the node to be returned.
      *
+     *  @deprecated
      */
     public List<Prediction> predict(final JSONObject args, Boolean byName, MissingStrategy strategy, Object multiple)
             throws InputDataParseException {
@@ -379,41 +535,355 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
             return outputs;
         }
     }
+    
+    
+    /**
+	 * Makes a prediction based on a number of field values.
+	 * 
+	 * @param inputData			Input data to be predicted
+	 * @param missingStrategy:  LAST_PREDICTION|PROPORTIONAL missing strategy for
+     *                     		missing fields
+	 * @param operatingPoint
+	 * 			In classification models, this is the point of the
+     *          ROC curve where the model will be used at. The
+     *          operating point can be defined in terms of:
+     *                - the positive class, the class that is important to
+     *                  predict accurately
+     *                - the probability_threshold (or confidence_threshold),
+     *                      the probability (or confidence) that is stablished
+     *                      as minimum for the positive_class to be predicted.
+     *          The operating_point is then defined as a map with
+     *          two attributes, e.g.:
+     *                  {"positive_class": "Iris-setosa",
+     *                   "probability_threshold": 0.5}
+     *              or
+     *              	{"positive_class": "Iris-setosa",
+     *              	"confidence_threshold": 0.5}
+	 * @param operatingKind		 
+	 * 			"probability" or "confidence". Sets the property that 
+	 * 			decides the prediction. Used only if no operating_point 
+	 * 			is used
+	 * 
+	 * @param full
+	 * 			Boolean that controls whether to include the prediction's
+     *          attributes. By default, only the prediction is produced. If set
+     *          to True, the rest of available information is added in a
+     *          dictionary format. The dictionary keys can be:
+     *             - prediction: the prediction value
+     *             - confidence: prediction's confidence
+     *             - probability: prediction's probability
+     *             - path: rules that lead to the prediction
+     *             - count: number of training instances supporting the
+     *                      prediction
+     *             - next: field to check in the next split
+     *             - min: minim value of the training instances in the
+     *             		  predicted node
+     *             - max: maximum value of the training instances in the
+     *              	  predicted node
+     *             - median: median of the values of the training instances
+     *               		 in the predicted node 
+     *             - unused_fields: list of fields in the input data that
+     *             					are not being used in the model
+	 */
+    public Prediction predict(
+			JSONObject inputData, MissingStrategy missingStrategy, 
+			JSONObject operatingPoint, String operatingKind, Boolean full, 
+			Boolean byName) throws Exception {
+		
+    	if (missingStrategy == null) {
+    		missingStrategy = MissingStrategy.LAST_PREDICTION;
+        }
+    	
+    	if (full == null) {
+			full = false;
+		}
+    	
+    	if (byName == null) {
+            byName = true;
+        }
+    	
+    	// Checks and cleans inputData leaving the fields used in the model
+        inputData = filterInputData(inputData, full, byName);
+        
+        List<String> unusedFields = (List<String>) 
+        		inputData.get("unusedFields");
+		inputData = (JSONObject) inputData.get("newInputData");
+		
+		// Strips affixes for numeric values and casts to the final field type
+        Utils.cast(inputData, fields);
+    	
+    	
+        // When operating_point is used, we need the probabilities
+        // (or confidences) of all possible classes to decide, so se use
+        // the `predict_probability` or `predict_confidence` methods
+        if (operatingPoint != null) {
+        	if (regression) {
+        		throw new IllegalArgumentException(
+        				"The operating_point argument can only be" +
+                        " used in classifications.");
+        	}
+        	
+        	return predictOperating(inputData, missingStrategy, operatingPoint);
+        }
+        
+        if (operatingKind != null) {
+        	if (regression) {
+        		throw new IllegalArgumentException(
+        				"he operating_kind argument can only be" +
+                        " used in classifications.");
+        	}
+        	
+        	return predictOperatingKind(inputData, missingStrategy, operatingKind);
+        }
+        
+        Prediction prediction = isBoosting() ?
+        		this.boostedTree.predict(inputData, null, missingStrategy) : 
+        		this.tree.predict(inputData, null, missingStrategy);
+        
+        if (isBoosting() && missingStrategy == MissingStrategy.PROPORTIONAL) {
+        	// output has to be recomputed and comes in a different format
+        	
+        	HashMap pred = (HashMap) prediction.get("prediction");
+        	Double gSum = (Double) pred.get("gSum");
+        	Double hSum = (Double) pred.get("hSum");
+            Long population = ((Number) prediction.get("count")).longValue();
+            List<String> path = (List<String>) prediction.get("path");
+        	
+            Long lambda = (Long) this.boosting.get("lambda");
+            prediction =  new Prediction(
+            		(- gSum / (hSum +  lambda)), population, path, null);
+        }
+        
+        // next
+        List children = (List) prediction.get("children");
+        String field = (children == null || children.size() == 0 ? 
+        		null : ((AbstractTree) children.get(0)).getPredicate().getField());
+        if( field != null && fields.containsKey(field) ) {
+            field = fieldsNameById.get(field);
+        }
+        prediction.setNext(field);
+        prediction.remove("children");
+        
+        if (!isBoosting() && !isRegression()) {
+        	String pred = (String) prediction.get("prediction");
+        	HashMap<String, Double> probabilities = probabilities(
+        			(JSONArray) prediction.get("distribution"));
+        	prediction.put("probability", probabilities.get(pred));
+        }
+       
+        if (full) {
+        	prediction.put("unused_fields", unusedFields);
+        }
+        
+		return prediction;
+	}
+    
+    
+    /**
+     * Computes the probability of a distribution using a Laplacian correction
+     */
+    private HashMap<String, Double> probabilities(JSONArray distribution) {
+    	HashMap<String, Double> categoryMap = laplacianTerm;
+    	double total = this.tree.getWeighted() ? 0 : 1;
+    	for (Object item : distribution) {
+            JSONArray distInfo = (JSONArray) item;
+            String cat = (String) distInfo.get(0);
+            Double value = ((Number) distInfo.get(1)).doubleValue();
+            
+            categoryMap.put(cat, categoryMap.get(cat) + value);
+            total += value;
+    	}
+    	
+    	for (String key : categoryMap.keySet()) {
+    		categoryMap.put(key, categoryMap.get(key) / total);
+    	}
+    	return categoryMap;
+    }
+    
+    
+    /**
+     * 
+     */
+    private JSONArray toOutput(HashMap<String, Double> categoryMap, String key) {
+    	JSONArray output = new JSONArray();
+    	
+    	for (String name: classNames) {
+    		Prediction element = new Prediction();
+    		element.put("category", name);
+    		element.put(key, Utils.roundOff(categoryMap.get(name), PRECISION));
+    		output.add(element);
+    	}
+    	
+    	return output;
+    }
+    
+    
+    /**
+	 * For classification models, Predicts a probability for
+     * each possible output class, based on input values.  The input
+     * fields must be a dictionary keyed by field name or field ID.
+     * 
+     * For regressions, the output is a single element list
+     * containing the prediction.
+     * 
+     * @param inputData			Input data to be predicted
+     * @param missingStrategy	LAST_PREDICTION|PROPORTIONAL missing strategy
+     *                        	for missing fields
+	 */
+    private JSONArray predictProbability(
+			JSONObject inputData, MissingStrategy missingStrategy) 
+    		throws Exception {
+    	JSONArray output = new JSONArray();
+    	
+		Prediction prediction = null;
+		if (isBoosting() || isRegression()) {
+			prediction = predict(inputData, missingStrategy, 
+								 null, null, true, false);
+			output.add(prediction);
+		} else {
+			prediction = predict(inputData, missingStrategy, 
+					 			 null, null, true, false);
+			HashMap<String, Double> categoryMap = probabilities(
+        			(JSONArray) prediction.get("distribution"));
+			output = toOutput(categoryMap, "probability");
+		}
+		
+		return output;
+	}
 
     /**
-     * Convenience version of predict that take as inputs a map from field ids
-     * or names to their values as Java objects. See also predict(String,
-     * Boolean, Integer, Boolean).
-     */
-    public Prediction predictWithMap(
-            final Map<String, Object> inputs, Boolean byName, Boolean withConfidence)
-            throws InputDataParseException {
-
-        JSONObject inputObj = (JSONObject) JSONValue.parse(JSONValue
-                .toJSONString(inputs));
-        return predict(inputObj, byName, MissingStrategy.LAST_PREDICTION, null).get(0);
+	 * For classification models, Predicts a confidence for
+     * each possible output class, based on input values.  The input
+     * fields must be a dictionary keyed by field name or field ID.
+     * 
+     * For regressions, the output is a single element list
+     * containing the prediction.
+     *
+     * @param inputData			Input data to be predicted
+     * @param missingStrategy	LAST_PREDICTION|PROPORTIONAL missing strategy
+     *                        	for missing fields
+	 */
+    private JSONArray predictConfidence(
+			JSONObject inputData, MissingStrategy missingStrategy) 
+    		throws Exception {
+		
+    	JSONArray output = new JSONArray();
+    	
+		Prediction prediction = null;
+		if (isRegression()) {
+			prediction = predict(inputData, missingStrategy, 
+								 null, null, true, false);
+			output.add(prediction);
+		} else {
+			if (isBoosting()) {
+				throw new IllegalArgumentException(
+        				"This method is available for non-boosting" +
+                        " models only.");
+			}
+		}
+		
+		HashMap<String, Double> categoryMap = new HashMap<String, Double>();
+		JSONArray distribution = tree.getDistribution();
+		for (Object item : distribution) {
+            JSONArray distInfo = (JSONArray) item;
+            categoryMap.put((String) distInfo.get(0), 0.0);
+		}
+		
+		prediction = predict(inputData, missingStrategy, 
+				 null, null, true, false);
+		distribution = (JSONArray) prediction.get("distribution");
+		
+		for (Object item : distribution) {
+            JSONArray distInfo = (JSONArray) item;
+            String name = (String) distInfo.get(0);
+            categoryMap.put(name, Tree.wsConfidence(name, distribution));
+		}
+		
+		return toOutput(categoryMap, "confidence");
     }
-
-    public Prediction predictWithMap(
-            final Map<String, Object> inputs, Boolean byName, MissingStrategy missingStrategy)
-            throws InputDataParseException {
-
-        JSONObject inputObj = (JSONObject) JSONValue.parse(JSONValue
-                .toJSONString(inputs));
-        return predict(inputObj, byName, missingStrategy, null).get(0);
-    }
-
-    public Prediction predictWithMap(
-            final Map<String, Object> inputs, Boolean byName)
-            throws InputDataParseException {
-        return predictWithMap(inputs, byName, MissingStrategy.LAST_PREDICTION);
-    }
-
-    public Prediction predictWithMap(
-            final Map<String, Object> inputs) throws InputDataParseException {
-        return predictWithMap(inputs, false, MissingStrategy.LAST_PREDICTION);
-    }
-
+    
+    /**
+	 * Computes the prediction based on a user-given operating point.
+	 */
+	private Prediction predictOperating(
+			JSONObject inputData, MissingStrategy missingStrategy, 
+			JSONObject operatingPoint) throws Exception {
+		
+		if (missingStrategy == null) {
+       		missingStrategy = MissingStrategy.LAST_PREDICTION;
+        }
+		
+		Object[] operating = Utils.parseOperatingPoint(
+				operatingPoint, OPERATING_POINT_KINDS, classNames);
+		String kind = (String) operating[0];
+		Double threshold = (Double) operating[1];
+		String positiveClass = (String) operating[2];
+		
+		JSONArray predictions = null;		
+   		if (kind.equals("probability")) {
+   			predictions = predictProbability(inputData, missingStrategy);
+   		} else {
+   			predictions = predictConfidence(inputData, missingStrategy);
+   		}
+   		
+   		for (Object pred: predictions) {
+   			Prediction prediction = (Prediction) pred;
+			String category = (String) prediction.get("category");
+			if (category.equals(positiveClass) &&
+					(Double) prediction.get(kind) > threshold) {
+				prediction.put("prediction", prediction.get("category"));
+		   		prediction.remove("category");
+				return prediction;
+			}
+		}
+   		
+   		Prediction prediction = (Prediction) predictions.get(0);
+   		String category = (String) prediction.get("category");
+		if (category.equals(positiveClass)) {
+			prediction = (Prediction) predictions.get(1);
+		}
+   		prediction.put("prediction", prediction.get("category"));
+   		prediction.remove("category");
+   		
+   		return prediction;
+	}
+    
+    
+    /**
+   	 * Computes the prediction based on a user-given operating kind.
+   	 */
+   	private Prediction predictOperatingKind(
+   			JSONObject inputData, MissingStrategy missingStrategy, 
+   			String operatingKind) throws Exception {
+   		
+   		if (missingStrategy == null) {
+       		missingStrategy = MissingStrategy.LAST_PREDICTION;
+        }
+   		
+   		String kind = operatingKind.toLowerCase();
+   		if (!Arrays.asList(OPERATING_POINT_KINDS).contains(kind)) {
+   			throw new IllegalArgumentException(
+   					String.format("Allowed operating kinds are %", OPERATING_POINT_KINDS));
+   		}
+   		
+   		JSONArray predictions = null;		
+   		if (kind.equals("probability")) {
+   			predictions = predictProbability(inputData, missingStrategy);
+   		} else {
+   			predictions = predictConfidence(inputData, missingStrategy);
+   		}
+   		
+   		sortPredictions(predictions, kind);
+   		
+   		Prediction prediction = (Prediction) predictions.get(0);
+   		prediction.put("prediction", prediction.get("category"));
+   		prediction.remove("category");
+   		
+   		return prediction;	
+   	}
+    
+    
+    
     /**
      * Builds the list of ids that go from a given id to the tree root
      */
@@ -445,6 +915,11 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
      * Returns a IF-THEN rule set that implements the model.
      */
     public String rules() {
+    	if (isBoosting()) {
+    		throw new IllegalArgumentException(
+    				"This method is not available for boosting models. ");
+    	}
+    	
         return tree.rules(Predicate.RuleLanguage.PSEUDOCODE);
     }
 
@@ -452,6 +927,11 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
      * Returns a IF-THEN rule set that implements the model.
      */
     public String rules(Predicate.RuleLanguage language) {
+    	if (isBoosting()) {
+    		throw new IllegalArgumentException(
+    				"This method is not available for boosting models. ");
+    	}
+    	
         return tree.rules(language);
     }
 
@@ -459,10 +939,15 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
      * Returns a IF-THEN rule set that implements the model.
      */
     public String rules(Predicate.RuleLanguage language, final String filterId, boolean subtree) {
+    	if (isBoosting()) {
+    		throw new IllegalArgumentException(
+    				"This method is not available for boosting models. ");
+    	}
+    	
         List<String> idsPath = getIdsPath(filterId);
         return tree.rules(language, idsPath, subtree);
     }
-
+    
     /**
      * Given a prediction string, returns its value in the required type
      *
@@ -473,7 +958,9 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
     public Object toPrediction(String valueAsString, Locale locale) {
         locale = (locale != null ? locale : BigMLClient.DEFAUL_LOCALE);
 
-        String objectiveFieldName = tree.getObjectiveField();
+        String objectiveFieldName = isBoosting() ?
+        		boostedTree.getObjectiveField() : 
+        		tree.getObjectiveField();
         if( "numeric".equals(Utils.getJSONObject(fields, objectiveFieldName + ".optype")) ) {
             String dataTypeStr = (String) Utils.getJSONObject(fields, objectiveFieldName + ".'datatype'");
             DataTypeEnum dataType = DataTypeEnum.valueOf(dataTypeStr.toUpperCase().replace("-",""));
@@ -537,6 +1024,10 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
      * The tree nodes information in a row format
      */
     public List getNodesInfo(List<String> headers, boolean leavesOnly) {
+    	if (isBoosting()) {
+    		throw new IllegalArgumentException(
+    				"This method is not available for boosting models. ");
+    	}
         return tree.getNodesInfo(headers, leavesOnly);
     }
 
@@ -544,7 +1035,12 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
      * Outputs the node structure to in array format, including the
      * header names in the first row
      */
-    public List<List> getTreeArray(boolean leavesOnly) {
+    private List<List> getTreeArray(boolean leavesOnly) {
+    	if (isBoosting()) {
+    		throw new IllegalArgumentException(
+    				"This method is not available for boosting models. ");
+    	}
+    	
         List<String> headerNames = new ArrayList<String>();
 
         // Adding the objective field name
@@ -575,7 +1071,14 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
     /**
      * Outputs the node structure to in CSV file, including the
      */
-    public void exportTreeCSV(String outputFilePath, boolean leavesOnly) throws IOException {
+    public void exportTreeCSV(String outputFilePath, boolean leavesOnly) 
+    		throws IOException {
+    	
+    	if (isBoosting()) {
+    		throw new IllegalArgumentException(
+    				"This method is not available for boosting models. ");
+    	}
+    	
         List<List> rows = getTreeArray(leavesOnly);
 
         Writer treeFile = null;
@@ -604,7 +1107,7 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
         }
 
     }
-
+    
     /**
      * Groups in categories or bins the predicted data
      *
@@ -621,7 +1124,12 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
      *              - impurity
      */
     public Map<Object, GroupPrediction> getGroupPrediction() {
-
+    	
+    	if (isBoosting()) {
+    		throw new IllegalArgumentException(
+    				"This method is not available for boosting models. ");
+    	}
+    	
         Map<Object, GroupPrediction> groups = new HashMap<Object, GroupPrediction>();
 
         JSONArray distribution = tree.getDistribution();
@@ -640,13 +1148,12 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
         return groups;
     }
 
-
     /**
      * Adds instances to groups array
      *
      * Used by getGroupPrediction()
      */
-    protected void addToGroups(Map<Object, GroupPrediction> groups, List<Predicate> path, Object output,
+    private void addToGroups(Map<Object, GroupPrediction> groups, List<Predicate> path, Object output,
                              long count, double confidence, double impurity) {
         GroupPrediction groupPrediction = groups.get(output);
         if( groupPrediction == null ) {
@@ -668,7 +1175,8 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
      *
      * Used by getGroupPrediction()
      */
-    protected long getDepthFirstSearch(Map<Object, GroupPrediction> groups, Tree tree, List<Predicate> path) {
+    private long getDepthFirstSearch(Map<Object, GroupPrediction> groups, 
+    								 Tree tree, List<Predicate> path) {
         if( path == null ) {
             path= new ArrayList<Predicate>();
         }
@@ -713,7 +1221,12 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
      * Returns training data distribution
      */
     public JSONArray getDataDistribution() {
-
+    	
+    	if (isBoosting()) {
+    		throw new IllegalArgumentException(
+    				"This method is not available for boosting models. ");
+    	}
+    	
         JSONArray distribution = new JSONArray();
         distribution.addAll(tree.getDistribution());
 
@@ -728,19 +1241,7 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
                     o2Val = ((Number) o2Val).doubleValue();
                 }
 
-//                if(o2Val.getClass().equals(o1Val.getClass()) )  {
-//                    // both numbers are instances of the same type!
-//                    if (o1Val instanceof Comparable) {
-//                        // and they implement the Comparable interface
                 return ((Comparable) o1Val).compareTo(o2Val);
-//                    }
-//                }
-                // for all different Number types, let's check there double values
-//                if (o1Num.doubleValue() < o2Num.doubleValue())
-//                    return -1;
-//                if (o1Num.doubleValue() > o2Num.doubleValue())
-//                    return 1;
-//                return 0;
             }
         });
 
@@ -751,6 +1252,12 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
      * Returns model predicted distribution
      */
     public JSONArray getPredictionDistribution() {
+    	
+    	if (isBoosting()) {
+    		throw new IllegalArgumentException(
+    				"This method is not available for boosting models. ");
+    	}
+    	
         return getPredictionDistribution(null);
     }
 
@@ -758,7 +1265,12 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
      * Returns model predicted distribution
      */
     public JSONArray getPredictionDistribution(Map<Object, GroupPrediction> groups) {
-
+    	
+    	if (isBoosting()) {
+    		throw new IllegalArgumentException(
+    				"This method is not available for boosting models. ");
+    	}
+    	
         if( groups == null ) {
             groups = getGroupPrediction();
         }
@@ -787,20 +1299,7 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
                     o1Val = ((Number) o1Val).doubleValue();
                     o2Val = ((Number) o2Val).doubleValue();
                 }
-
-//                if (((Object) o2Num).getClass().equals(((Object) o1Num).getClass())) {
-//                    // both numbers are instances of the same type!
-//                    if (o1Num instanceof Comparable) {
-//                        // and they implement the Comparable interface
                 return ((Comparable) o1Val).compareTo(o2Val);
-//                    }
-//                }
-                // for all different Number types, let's check there double values
-//                if (o1Num.doubleValue() < o2Num.doubleValue())
-//                    return -1;
-//                if (o1Num.doubleValue() > o2Num.doubleValue())
-//                    return 1;
-//                return 0;
             }
         });
 
@@ -812,8 +1311,13 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
      *
      * @param out
      */
-    public String   summarize(Boolean addFieldImportance) throws IOException {
-
+    public String summarize(Boolean addFieldImportance) throws IOException {
+    	
+    	if (isBoosting()) {
+    		throw new IllegalArgumentException(
+    				"This method is not available for boosting models. ");
+    	}
+    	
         StringBuilder summarize = new StringBuilder();
 
         if( addFieldImportance == null ) {
@@ -990,38 +1494,10 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
     }
 
     // TODO: hadoop_python_mapper
+    // TODO: tableau
 
 
-
-//    /**
-//     * Prints distribution data
-//     */
-//    private void printDistribution(JSONArray distribution, OutputStream out) throws IOException {
-//
-//        // Reduce distribution
-//        long total = 0;
-//        for (Object group : distribution) {
-//            JSONArray groupItem = (JSONArray) group;
-//            total += ((Number) groupItem.get(1)).longValue();
-//        }
-//
-//        for (Object group : distribution) {
-//            JSONArray groupItem = (JSONArray) group;
-//            long numOfInstances = ((Number) groupItem.get(1)).longValue();
-//            out.write(String.format("    %s: %4.2f%% (%d instance%s)%n",
-//                    groupItem.get(0),
-//                    (((numOfInstances * 1.0) / total) * 100),
-//                    groupItem.get(1),
-//                    numOfInstances == 1 ? "" : "s").getBytes());
-//        }
-//    }
-
-//    private void printImportance(OutputStream out) throws IOException {
-//
-//    }
-
-
-
+    
     private enum DataTypeEnum {
         DOUBLE, FLOAT, INTEGER,
         INT8, INT16, INT32, INT64,
@@ -1115,4 +1591,28 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
             this.impurity = impurity;
         }
     }
+    
+   	
+   	/**
+	  * Sorts the categories in the predicted node according to the
+      *  given criteria
+	  * 
+	  */
+	 private void sortPredictions(JSONArray predictions, final String property) {
+		Collections.sort(predictions, new Comparator<Prediction>() {
+         @Override
+         public int compare(Prediction o1, Prediction o2) {
+         	Double o1p = (Double) o1.get(property);
+         	Double o2p = (Double) o2.get(property);
+         	
+         	if (o1p.doubleValue() == o2p.doubleValue()) {
+         		return ((String) o1.get("category")).
+                 		compareTo(((String) o2.get("category")));
+         	}
+         	
+             return o2p.compareTo(o1p);
+         }
+     });
+	}
+
 }

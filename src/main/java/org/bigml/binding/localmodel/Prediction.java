@@ -16,14 +16,16 @@ import java.util.List;
  */
 public class Prediction extends HashMap<Object, Object> {
 
+	private static final long serialVersionUID = 1L;
+
     public Prediction() {
         super(9);
     }
 
     public Prediction(Object prediction, Double confidence, Long count, Double median,
                       List<String> path, JSONArray distribution, String distributionUnit,
-                      List<Tree> children ) {
-        super(9);
+                      List<Tree> children, Integer min, Integer max ) {
+        super(11);
 
         setPrediction(prediction);
         setConfidence(confidence);
@@ -33,7 +35,20 @@ public class Prediction extends HashMap<Object, Object> {
         setDistribution(distribution);
         setDistributionUnit(distributionUnit);
         setChildren(children);
+        setMin(min);
+        setMax(max);
     }
+
+    public Prediction(Object prediction, Long count, 
+    		List<String> path, List<BoostedTree> children ) {
+    	super(5);
+   
+		setPrediction(prediction);
+		setCount(count);
+		setPath(path);
+		setChildren(children);
+    }
+
 
     public Object getPrediction() {
         return this.get("prediction");
@@ -99,13 +114,29 @@ public class Prediction extends HashMap<Object, Object> {
         this.put("distributionUnit", distributionUnit);
     }
 
-    public List<Tree> getChildren() {
+    public List getChildren() {
         return (List<Tree>) this.get("children");
     }
 
-    public void setChildren(List<Tree> children) {
+    public void setChildren(List children) {
         this.put("children", children);
     }
+
+    public Integer getMin() {
+		return (Integer) this.get("min");
+	}
+
+	public void setMin(Integer min) {
+		this.put("min", min);
+	}
+
+	public Integer getMax() {
+		return (Integer) this.get("max");
+	}
+
+    public void setMax(Integer max) {
+		this.put("max", max);
+	}
 
     /**
      * The field that determines next split in the tree
