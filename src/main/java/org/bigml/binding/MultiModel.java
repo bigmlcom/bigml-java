@@ -44,16 +44,32 @@ public class MultiModel implements Serializable {
     private static String PREDICTIONS_FILE_SUFFIX = "_predictions.csv";
 
     private JSONArray models;
+    protected JSONObject fields = null;
+    private List<String> classNames = new ArrayList<String>();
     private MultiVote votes;
+    private List<LocalPredictiveModel> localModels = 
+    		new ArrayList<LocalPredictiveModel>();
 
+    
     /**
      * Constructor
      * 
-     * @param models
-     *              the json representation for the remote models
+     * @param models	the json representation for the remote models
      */
-    public MultiModel(Object models) throws Exception {
-        super();
+    public MultiModel(Object models) 
+    		throws Exception {
+    	this(models, null, null);
+    }
+    
+    /**
+     * Constructor
+     * 
+     * @param models	the json representation for the remote models
+     */
+    public MultiModel(Object models, JSONObject fields, List<String> classNames) 
+    		throws Exception {
+
+    	super();
 
         if (models instanceof JSONArray) {
             this.models = (JSONArray) models;
@@ -64,15 +80,174 @@ public class MultiModel implements Serializable {
             this.models = new JSONArray();
             this.models.add(models);
         }
+        
+        this.classNames = classNames;
+        for (Object model: this.models) {
+        	LocalPredictiveModel localModel = 
+        		new LocalPredictiveModel((JSONObject) model);
+        	
+        	if (fields != null) {
+        		localModel.setFields(fields);
+        	}        	
+        	localModels.add(localModel);
+        }
     }
 
+    
     /**
      * Lists all the model/ids that compound the multi model.
      */
     public JSONArray listModels() {
         return this.models;
     }
+    
 
+    /**
+     * Generates a MultiVote object that contains the predictions made 
+     * by each of the models.
+     */
+    public MultiVote generateVotes(final JSONObject inputData, 
+            MissingStrategy strategy, List<String> unusedFields) 
+            throws Exception {
+        
+        if (strategy == null) {
+            strategy = MissingStrategy.LAST_PREDICTION;
+        }
+
+        MultiVote votes = new MultiVote();
+        for (int i = 0; i < localModels.size(); i++) {
+            LocalPredictiveModel localModel = (LocalPredictiveModel) localModels.get(i);
+            
+            Prediction predictionInfo = localModel.predict(
+            		inputData, strategy, null, null, true, unusedFields, false);
+            
+            
+            if (localModel.isBoosting()) {
+            	votes.boosting = true;
+            	predictionInfo.put("weight", localModel.getBoosting().get("weight"));
+            	
+            	String objectiveClass = (String) 
+            			localModel.getBoosting().get("objective_class");
+            	if (objectiveClass != null) {
+            		predictionInfo.put("class", objectiveClass);
+            	}
+            }
+            
+        	votes.append(predictionInfo);
+        }
+        
+        return votes;
+    }
+    
+    
+    /**
+     * Generates a MultiVote object that contains the predictions made by each
+     * of the models.
+     */
+    public MultiVoteList generateVotesDistribution(
+    		final JSONObject inputData, MissingStrategy strategy, 
+    		PredictionMethod method) throws Exception {
+        
+        if (strategy == null) {
+            strategy = MissingStrategy.LAST_PREDICTION;
+        }
+        if (method == null) {
+        	method = PredictionMethod.PROBABILITY;
+        }
+
+        MultiVoteList votes = new MultiVoteList(null);
+        for (int i = 0; i < localModels.size(); i++) {
+            LocalPredictiveModel localModel = (LocalPredictiveModel) localModels.get(i);
+            localModel.setClassNames(classNames);
+            
+            if (method == PredictionMethod.PLURALITY) {
+            	double total = 0.0;
+            	List<Double> predictionList = new ArrayList<Double>();
+            	for (int j=0; j<classNames.size(); j++) {
+            		predictionList.add(0.0);
+            	}
+            	
+            	Prediction predictionInfo = localModel.predict(inputData, false, strategy);
+            	String prediction = (String) predictionInfo.get("prediction");
+            	predictionList.set(classNames.indexOf(prediction), 1.0);
+            	
+            	votes.append(predictionList);
+            } else {
+            	JSONArray predictionInfo = null;
+            	String key = "probability";
+            	if (method == PredictionMethod.CONFIDENCE) {
+            		predictionInfo = localModel.predictConfidence(inputData, strategy);
+            		key = "confidence";
+            	} else {
+            		predictionInfo = localModel.predictProbability(inputData, strategy);
+            	}
+            	
+            	List<Double> predictionList = new ArrayList<Double>();
+            	for (Object pred : predictionInfo) {
+            		Prediction prediction = (Prediction) pred;
+            		predictionList.add((Double) prediction.get(key));
+            	}
+            	
+            	votes.append(predictionList);
+            }
+            
+        }
+        
+        return votes;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+    
+    /**
+     * Makes a prediction based on the prediction made by every model.
+     *
+     * The method parameter is a numeric key to the following combination
+     *   methods in classifications/regressions:
+     *      0 - majority vote (plurality)/ average: PLURALITY_CODE
+     *      1 - confidence weighted majority vote / error weighted:
+     *              CONFIDENCE_CODE
+     *      2 - probability weighted majority vote / average:
+     *              PROBABILITY_CODE
+     *      3 - threshold filtered vote / doesn't apply:
+     *              THRESHOLD_COD
+     */
+    public HashMap<Object, Object> predict(final JSONObject inputData,
+            MissingStrategy strategy, PredictionMethod method, Map options)
+            throws Exception {
+
+        if (method == null) {
+            method = PredictionMethod.PLURALITY;
+        }
+        
+        if (strategy == null) {
+        	strategy = MissingStrategy.LAST_PREDICTION;
+        }
+        
+        votes = this.generateVotes(inputData, strategy, null);
+        HashMap<Object, Object> result =  votes.combine(method, options);
+        return result;
+    }
+    
+    
     /**
      * Makes a prediction based on the prediction made by every model.
      * 
@@ -95,11 +270,10 @@ public class MultiModel implements Serializable {
             withConfidence = false;
         }
 
-        votes = this.generateVotes(inputData, byName, null, null);
-
-        return votes.combine(method, withConfidence, null, null, null, null, null);
+        votes = this.generateVotes(inputData, null, null);
+        return votes.combine(method, null);
     }
-
+    
     /**
      * Makes a prediction based on the prediction made by every model.
      *
@@ -129,12 +303,26 @@ public class MultiModel implements Serializable {
             withConfidence = false;
         }
 
-        votes = this.generateVotes(inputData, byName, strategy, addMedian);
+        votes = this.generateVotes(inputData, strategy, null);
 
-        return votes.combine(method, withConfidence, addConfidence,
-                addDistribution, addCount, addMedian, options);
+        return votes.combine(method, options);
     }
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     /**
      * Makes predictions for a list of input data.
      *
@@ -162,25 +350,25 @@ public class MultiModel implements Serializable {
         batchPredict(inputDataList, outputFilePath, null, null, null, null, null, null);
     }
 
-        /**
-         * Makes predictions for a list of input data.
-         *
-         * The predictions generated for each model are stored in an output
-         * file. The name of the file will use the following syntax:
-         *
-         *      model_[id of the model]__predictions.csv
-         *
-         * For instance, when using model/50c0de043b563519830001c2 to predict,
-         * the output file name will be
-         *
-         *      model_50c0de043b563519830001c2__predictions.csv
-         *
-         * The method parameter is a numeric key to the following combination
-         * methods in classifications/regressions: 0 - majority vote (plurality)/
-         * average: PLURALITY_CODE 1 - confidence weighted majority vote / error
-         * weighted: CONFIDENCE_CODE 2 - probability weighted majority vote /
-         * average: PROBABILITY_CODE
-         */
+    /**
+     * Makes predictions for a list of input data.
+     *
+     * The predictions generated for each model are stored in an output
+     * file. The name of the file will use the following syntax:
+     *
+     *      model_[id of the model]__predictions.csv
+     *
+     * For instance, when using model/50c0de043b563519830001c2 to predict,
+     * the output file name will be
+     *
+     *      model_50c0de043b563519830001c2__predictions.csv
+     *
+     * The method parameter is a numeric key to the following combination
+     * methods in classifications/regressions: 0 - majority vote (plurality)/
+     * average: PLURALITY_CODE 1 - confidence weighted majority vote / error
+     * weighted: CONFIDENCE_CODE 2 - probability weighted majority vote /
+     * average: PROBABILITY_CODE
+     */
     public List<MultiVote> batchPredict(final JSONArray inputDataList,
             String outputFilePath, Boolean byName, Boolean reuse,
             MissingStrategy strategy, Set<String> headers, Boolean toFile,
@@ -309,35 +497,7 @@ public class MultiModel implements Serializable {
         return votes;
     }
 
-    /**
-     * Generates a MultiVote object that contains the predictions made by each
-     * of the models.
-     */
-    public MultiVote generateVotes(final JSONObject inputData, Boolean byName,
-            MissingStrategy strategy, Boolean addMedian) throws Exception {
-        if (byName == null) {
-            byName = true;
-        }
-        if (strategy == null) {
-            strategy = MissingStrategy.LAST_PREDICTION;
-        }
-        if (addMedian == null) {
-            addMedian = false;
-        }
-
-        MultiVote votes = new MultiVote();
-
-        for (int i = 0; i < models.size(); i++) {
-            JSONObject model = (JSONObject) models.get(i);
-            LocalPredictiveModel localModel = new LocalPredictiveModel(model);
-
-            Prediction predictionInfo = localModel.predict(inputData, byName, strategy);
-
-            votes.append(predictionInfo);
-        }
-
-        return votes;
-    }
+    
 
 
     /**

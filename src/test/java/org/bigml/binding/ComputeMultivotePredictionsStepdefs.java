@@ -54,7 +54,7 @@ public class ComputeMultivotePredictionsStepdefs {
             }
 
             // build multivote
-            multivote = new MultiVote(exampleArray);
+            multivote = new MultiVote(exampleArray, null);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -65,8 +65,7 @@ public class ComputeMultivotePredictionsStepdefs {
             String method) throws Throwable {
         try {
             PredictionMethod intMethod = PredictionMethod.valueOf(new Integer(method));
-            combinedPrediction = multivote.combine(intMethod, true,
-                    null, null, null, null, null);
+            combinedPrediction = multivote.combine(intMethod, null);
         } catch (Exception e) {
             assertTrue("" == "Incorrect method");
         }
@@ -88,8 +87,14 @@ public class ComputeMultivotePredictionsStepdefs {
     @Then("^the confidence for the combined prediction is (.*)$")
     public void the_confidence_for_the_combined_prediction_is_(double confidence)
             throws Throwable {
+    	
+    	String key = "confidence";
+    	if (combinedPrediction.get("confidence") == null) {
+    		key = "probability";
+    	}
+    	
         String confidenceValue = String.format("%.12g%n",
-                ((Number) combinedPrediction.get("confidence")).doubleValue());
+                ((Number) combinedPrediction.get(key)).doubleValue());
         assertTrue(confidenceValue.equals(String.format("%.12g%n", confidence)));
     }
 

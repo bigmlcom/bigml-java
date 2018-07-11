@@ -2,6 +2,8 @@ package org.bigml.binding;
 
 import cucumber.annotation.en.Given;
 import cucumber.annotation.en.Then;
+import cucumber.annotation.en.When;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -22,8 +24,6 @@ public class LocalEnsembleStepdefs {
     // Logging
     Logger logger = LoggerFactory.getLogger(LocalEnsembleStepdefs.class);
 
-    LocalEnsemble predictiveEnsemble;
-    
     @Autowired
     CommonStepdefs commonSteps;
 
@@ -39,28 +39,29 @@ public class LocalEnsembleStepdefs {
         for (;modelIndex < context.models.size(); modelIndex++) {
             modelsIds.add(((JSONObject) context.models.get(modelIndex)).get("resource"));
         }
-        predictiveEnsemble = new LocalEnsemble(modelsIds, null);
-        assertTrue("", predictiveEnsemble != null);
+        context.localEnsemble = new LocalEnsemble(modelsIds, null);
+        assertTrue("", context.localEnsemble != null);
     }
 
     @Given("^I create a local ensemble with max models (\\d+)$")
     public void I_create_a_local_ensemble_with_max_models(int maxModels) throws Exception {
-        predictiveEnsemble = new LocalEnsemble(context.ensemble, maxModels);
-        assertTrue("", predictiveEnsemble != null);
+    	context.localEnsemble = new LocalEnsemble(context.ensemble, maxModels);
+        assertTrue("", context.localEnsemble != null);
     }
 
     @Given("^I create a local ensemble$")
     public void I_create_a_local_ensemble() throws Exception {
-        predictiveEnsemble = new LocalEnsemble(context.ensemble);
-        assertTrue("", predictiveEnsemble != null);
+    	context.localEnsemble = new LocalEnsemble(context.ensemble);
+        assertTrue("", context.localEnsemble != null);
     }
 
     @Then("^the local ensemble prediction for \"(.*)\" is \"([^\"]*)\" with confidence ([\\d,.]+)$")
     public void the_local_prediction_by_name_for_is_with_confidence(String args, String pred, Double expectedConfidence) {
         try {
             JSONObject inputObj = (JSONObject) JSONValue.parse(args);
-            Map<Object, Object> p = predictiveEnsemble
-                    .predict(inputObj, true, PredictionMethod.PLURALITY, true);
+            Map<Object, Object> p = context.localEnsemble
+                    .predict(inputObj, PredictionMethod.PLURALITY, null, null, null, null, null, true, true);
+            
             String prediction = (String) p.get("prediction");
             Double actualConfidence = (Double) p.get("confidence");
             assertTrue("", prediction != null && prediction.equals(pred));
@@ -75,9 +76,10 @@ public class LocalEnsembleStepdefs {
     public void the_local_prediction_using_median_with_confidence_for_is(String args, String expectedPrediction) {
         try {
             JSONObject inputObj = (JSONObject) JSONValue.parse(args);
-            Map<Object, Object> p = predictiveEnsemble
-                    .predict(inputObj, true, PredictionMethod.PLURALITY, true, null, MissingStrategy.LAST_PREDICTION,
-                            true, true, true, true);
+            Map<Object, Object> p = context.localEnsemble
+                    .predict(inputObj, PredictionMethod.PLURALITY, null, MissingStrategy.LAST_PREDICTION,
+                            null, null, true, true, true);
+            
             Object prediction = p.get("prediction");
             if( prediction instanceof Number ) { // Regression
                 Double expected = Double.parseDouble(expectedPrediction);
@@ -91,17 +93,25 @@ public class LocalEnsembleStepdefs {
     }
 
     @Then("^the local ensemble prediction for \"(.*)\" is \"([^\"]*)\"$")
-    public void the_local_prediction_by_name_for_is(String args, String pred) {
+    public void the_local_prediction_for_is(String args, String pred) {
         try {
             JSONObject inputObj = (JSONObject) JSONValue.parse(args);
-            Map<Object, Object> p = predictiveEnsemble
-                    .predict(inputObj, true, PredictionMethod.PLURALITY, true);
-            String prediction = (String) p.get("prediction");
-            assertTrue("", prediction != null && prediction.equals(pred));
+            Map<Object, Object> p = context.localEnsemble
+                    .predict(inputObj, PredictionMethod.PLURALITY, null, null, null, null, null, true, true);
+            
+            Object prediction = p.get("prediction");
+            if( prediction instanceof Number ) { // Regression
+                Double expected = Double.parseDouble(pred);
+                assertEquals(String.format("%.4g", expected), String.format("%.4g", prediction));
+            } else {
+                assertTrue("", prediction != null && prediction.equals(pred));
+            }
         } catch (Exception parseException) {
+        	parseException.printStackTrace();
             assertTrue("", false);
         }
     }
+    
 
     @Then("^the field importance text is \"(.*?)\"$")
     public void the_field_importance_print(String expFieldImportance) {
@@ -113,7 +123,7 @@ public class LocalEnsembleStepdefs {
                 expFieldImportanceMap.put((String) fieldImportanceObj.get(0), (Double) fieldImportanceObj.get(1));
             }
 
-            List<JSONArray> actualFieldImportanceArr = predictiveEnsemble.getFieldImportanceData();
+            List<JSONArray> actualFieldImportanceArr = context.localEnsemble.getFieldImportanceData();
             Map<String, Double> actFieldImportanceMap = new HashMap<String, Double>();
             for (JSONArray fieldImportance : actualFieldImportanceArr) {
                 actFieldImportanceMap.put( (String) fieldImportance.get(0), (Double) fieldImportance.get(1));
@@ -127,8 +137,33 @@ public class LocalEnsembleStepdefs {
                         String.format("%.12g%n", actFieldImportanceMap.get(fieldName)));
             }
         } catch (Exception parseException) {
+        	parseException.printStackTrace();
             assertTrue("", false);
         }
     }
-
+    
+    
+    
+    @When("^I create a proportional missing strategy local prediction with ensemble with \"(.*)\" for \"(.*)\"$")
+    public void I_create_a_proportional_missing_strategy_local_prediction_with_ensemble(String options, String args)
+            throws AuthenticationException {
+        
+    	try {
+            JSONObject inputData = (JSONObject) JSONValue.parse(args);   
+            JSONObject opts = (JSONObject) JSONValue.parse(options);
+            
+            String operatingKind = null;
+            if (opts.get("operating_kind") != null) {
+            	operatingKind = (String) opts.get("operating_kind");
+            }
+            
+            JSONObject prediction = context.localEnsemble
+                    .predict(inputData, null, null, MissingStrategy.PROPORTIONAL, null, 
+                    		operatingKind, true, true, true);
+            
+            context.localPrediction = prediction;
+        } catch (Exception e) {
+            assertTrue("", false);
+        }
+    }
 }

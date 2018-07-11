@@ -13,7 +13,7 @@ Feature: Compute MultiVote predictions
           | predictions               | method       | prediction    | confidence            |
           | data/predictions_c.json| 0            | a             | 0.450471270879        |
           | data/predictions_c.json| 1            | a             | 0.552021302649        |
-          | data/predictions_c.json| 2            | a             | 0.403632421178        |
+          | data/predictions_c.json| 2            | a             | 0.40363        |
 
 
     Scenario Outline: Successfully computing predictions combinations:

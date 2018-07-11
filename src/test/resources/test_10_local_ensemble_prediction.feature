@@ -92,7 +92,7 @@ Feature: Create Predictions locally from Ensembles
 
     Examples:
       | data            |  time_1  | time_2 | time_3 | number_of_models |  data_input    |prediction  |
-      | data/grades.csv   |  10      | 10     | 50     | 2              | {}             | 65.83    |
+      | data/grades.csv   |  10      | 10     | 50     | 2              | {}             | 69.0934    |
 
 
   Scenario Outline: Successfully creating a local prediction from an Ensemble with max models:

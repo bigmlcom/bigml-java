@@ -114,7 +114,6 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
     private JSONObject boosting = null;
     private List<String> classNames = new ArrayList<String>();
     private List<String> objectiveCategories = new ArrayList<String>();
-    private HashMap<String, Double> laplacianTerm;
 
     /**
      * Constructor
@@ -182,9 +181,6 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
             	}
             }
             
-            if (!this.regression && !isBoosting()) {
-            	this.laplacianTerm = laplacianTerm();
-            }
         } catch (Exception e) {
         	e.printStackTrace();
             logger.error("Invalid model structure", e);
@@ -233,6 +229,20 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
     }
     
     /**
+     * Sets the fields for this model.
+     */
+    public void setFields(JSONObject fields) {
+    	this.fields = fields;
+    }
+    
+    /**
+     * Sets the classNames for this model.
+     */
+    public void setClassNames(List<String> classNames) {
+    	this.classNames = classNames;
+    }
+    
+    /**
      * Checks if the tree is a regression problem
      */
     public boolean isRegression() {
@@ -244,6 +254,13 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
      */
     public boolean isBoosting() {
         return this.boosting != null && this.boosting.size() > 0;
+    }
+    
+    /**
+     * Checks if the tree is a boosting problem
+     */
+    public JSONObject getBoosting() {
+        return this.boosting;
     }
     
     /**
@@ -367,7 +384,7 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
      */
     public Prediction predict(final JSONObject args, Boolean byName, MissingStrategy strategy)
             throws Exception {
-        return predict(args, strategy, null, null, true, byName);
+        return predict(args, strategy, null, null, true, null, byName);
     }
     
     /**
@@ -402,7 +419,7 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
 
         JSONObject inputObj = (JSONObject) JSONValue.parse(JSONValue
                 .toJSONString(inputs));
-        return predict(inputObj, missingStrategy, null, null, true, byName);
+        return predict(inputObj, missingStrategy, null, null, true, null, byName);
     }
 
     public Prediction predictWithMap(
@@ -537,6 +554,14 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
     }
     
     
+    public Prediction predict(
+			JSONObject inputData, MissingStrategy missingStrategy, 
+			JSONObject operatingPoint, String operatingKind, Boolean full, 
+			Boolean byName) throws Exception {
+    	return predict(inputData, missingStrategy, operatingPoint, 
+    				  operatingKind, full, null, byName);
+    }
+    
     /**
 	 * Makes a prediction based on a number of field values.
 	 * 
@@ -588,7 +613,7 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
     public Prediction predict(
 			JSONObject inputData, MissingStrategy missingStrategy, 
 			JSONObject operatingPoint, String operatingKind, Boolean full, 
-			Boolean byName) throws Exception {
+			List<String> unusedFields, Boolean byName) throws Exception {
 		
     	if (missingStrategy == null) {
     		missingStrategy = MissingStrategy.LAST_PREDICTION;
@@ -605,13 +630,13 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
     	// Checks and cleans inputData leaving the fields used in the model
         inputData = filterInputData(inputData, full, byName);
         
-        List<String> unusedFields = (List<String>) 
-        		inputData.get("unusedFields");
+        if (unusedFields == null) {
+        	unusedFields = (List<String>) inputData.get("unusedFields");
+        }
 		inputData = (JSONObject) inputData.get("newInputData");
 		
 		// Strips affixes for numeric values and casts to the final field type
         Utils.cast(inputData, fields);
-    	
     	
         // When operating_point is used, we need the probabilities
         // (or confidences) of all possible classes to decide, so se use
@@ -629,7 +654,7 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
         if (operatingKind != null) {
         	if (regression) {
         		throw new IllegalArgumentException(
-        				"he operating_kind argument can only be" +
+        				"The operating_kind argument can only be" +
                         " used in classifications.");
         	}
         	
@@ -644,12 +669,14 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
         	// output has to be recomputed and comes in a different format
         	
         	HashMap pred = (HashMap) prediction.get("prediction");
-        	Double gSum = (Double) pred.get("gSum");
-        	Double hSum = (Double) pred.get("hSum");
+        	
+        	Double gSum = (Double) pred.get("g_sum");
+        	Double hSum = (Double) pred.get("h_sum");
             Long population = ((Number) prediction.get("count")).longValue();
             List<String> path = (List<String>) prediction.get("path");
         	
             Long lambda = (Long) this.boosting.get("lambda");
+            
             prediction =  new Prediction(
             		(- gSum / (hSum +  lambda)), population, path, null);
         }
@@ -683,7 +710,7 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
      * Computes the probability of a distribution using a Laplacian correction
      */
     private HashMap<String, Double> probabilities(JSONArray distribution) {
-    	HashMap<String, Double> categoryMap = laplacianTerm;
+    	HashMap<String, Double> categoryMap = laplacianTerm();
     	double total = this.tree.getWeighted() ? 0 : 1;
     	for (Object item : distribution) {
             JSONArray distInfo = (JSONArray) item;
@@ -697,6 +724,7 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
     	for (String key : categoryMap.keySet()) {
     		categoryMap.put(key, categoryMap.get(key) / total);
     	}
+
     	return categoryMap;
     }
     
@@ -730,7 +758,7 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
      * @param missingStrategy	LAST_PREDICTION|PROPORTIONAL missing strategy
      *                        	for missing fields
 	 */
-    private JSONArray predictProbability(
+    public JSONArray predictProbability(
 			JSONObject inputData, MissingStrategy missingStrategy) 
     		throws Exception {
     	JSONArray output = new JSONArray();
@@ -763,7 +791,7 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
      * @param missingStrategy	LAST_PREDICTION|PROPORTIONAL missing strategy
      *                        	for missing fields
 	 */
-    private JSONArray predictConfidence(
+    public JSONArray predictConfidence(
 			JSONObject inputData, MissingStrategy missingStrategy) 
     		throws Exception {
 		

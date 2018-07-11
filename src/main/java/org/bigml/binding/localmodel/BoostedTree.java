@@ -32,8 +32,8 @@ public class BoostedTree extends AbstractTree {
     		BoostedTree.class.getName());
 
     private final List<BoostedTree> children;
-    private final Double gSum;
-    private final Double hSum;
+    private final Double g_sum;
+    private final Double h_sum;
     
     
     /**
@@ -53,8 +53,8 @@ public class BoostedTree extends AbstractTree {
             }
         }
         
-        this.gSum = (Double) root.get("g_sum");
-        this.hSum = (Double) root.get("h_sum");   
+        this.g_sum = ((Number) root.get("g_sum")).doubleValue();
+        this.h_sum = ((Number) root.get("h_sum")).doubleValue();
     }
 
 
@@ -120,7 +120,7 @@ public class BoostedTree extends AbstractTree {
             		inputData, lastNode, path, false);
             
             return new Prediction(finalDistribution,
-            		(Long) finalDistribution.get("count"), 
+            		((Number) finalDistribution.get("count")).longValue(), 
                     path, lastNode.getTree().getChildren());
         } else {
             throw new UnsupportedOperationException(
@@ -157,8 +157,8 @@ public class BoostedTree extends AbstractTree {
         // We are in a leaf node... the only thing we need to do is return 
     	// distribution of the node as a Map object
         if( children.isEmpty() ) {
-        	finalDistribution.put("gSum", gSum);
-        	finalDistribution.put("hSum", hSum);
+        	finalDistribution.put("g_sum", g_sum);
+        	finalDistribution.put("h_sum", h_sum);
         	finalDistribution.put("count", count);
         	
             lastNode.setTree(this);
@@ -189,14 +189,13 @@ public class BoostedTree extends AbstractTree {
             for (BoostedTree child : children) {
             	Map<Object, Object> distribution = 
             		child.predictProportional(inputData, lastNode, path, missingFound);
-                
                 gSum += (Double) distribution.get("g_sum");
                 hSum += (Double) distribution.get("h_sum");
-                population += (Double) distribution.get("count");
+                population += ((Number) distribution.get("count")).longValue();
             }
             
-            finalDistribution.put("gSum", gSum);
-        	finalDistribution.put("hSum", hSum);
+            finalDistribution.put("g_sum", gSum);
+        	finalDistribution.put("h_sum", hSum);
         	finalDistribution.put("count", population);
         	
             lastNode.setTree(this);

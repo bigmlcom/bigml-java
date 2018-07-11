@@ -44,6 +44,23 @@ public class PredictionsStepdefs {
         context.prediction = (JSONObject) resource.get("object");
         commonSteps.the_resource_has_been_created_with_status(context.status);
     }
+    
+    @When("^I create a proportional missing strategy prediction with ensemble with \"(.*)\" for \"(.*)\"$")
+    public void I_create_a_proportional_missing_strategy_prediction_with_ensemble(String data, String inputData)
+            throws AuthenticationException {
+        String ensembleId = (String) context.ensemble.get("resource");
+        
+        JSONObject args = (JSONObject) JSONValue.parse(data);
+        args.put("tags", Arrays.asList("unitTest"));
+        args.put("missing_strategy", 1);
+        
+        JSONObject resource = BigMLClient.getInstance().createPrediction(
+        		ensembleId, (JSONObject) JSONValue.parse(inputData), args, 5, null);
+        context.status = (Integer) resource.get("code");
+        context.location = (String) resource.get("location");
+        context.prediction = (JSONObject) resource.get("object");
+        commonSteps.the_resource_has_been_created_with_status(context.status);
+    }
 
     @When("^I create a prediction for \"(.*)\"$")
     public void I_create_a_prediction(String inputData)
@@ -73,14 +90,24 @@ public class PredictionsStepdefs {
     @Then("^the prediction for \"([^\"]*)\" is \"([^\"]*)\"$")
     public void the_prediction_for_is(String objectiveField, String pred) {
         JSONObject obj = (JSONObject) context.prediction.get("prediction");
-        String objective = (String) obj.get(objectiveField);
-        assertEquals(pred, objective);
+        
+        Object prediction = obj.get(objectiveField);
+        if( prediction instanceof Number ) { // Regression
+            Double expected = Double.parseDouble(pred);
+            assertEquals(String.format("%.4g", expected), String.format("%.4g", prediction));
+        } else {
+            assertTrue("", prediction != null && prediction.equals(pred));
+        }
     }
 
     @Then("^the confidence for the prediction is ([\\d,.]+)$")
     public void the_confidence_for_the_prediction_is(Double expectedConfidence) {
-        Double actualConfidence = (Double) context.prediction.get("confidence");
+    	Double actualConfidence = (Double) context.prediction.get("confidence");
+    	if (actualConfidence == null) {
+    		actualConfidence = (Double) context.prediction.get("probability");
+    	}
         assertEquals(String.format("%.4g", expectedConfidence), String.format("%.4g",actualConfidence));
+        
     }
     
     
@@ -111,11 +138,11 @@ public class PredictionsStepdefs {
     		String operatingPoint, String inputData)
             throws Exception {
     	
-    	JSONObject data = (JSONObject) JSONValue.parse(inputData);
-    	
+    	JSONObject data = (JSONObject) JSONValue.parse(inputData);  	
     	try {
-	    	Prediction prediction = context.localModel.predict(
-	    			data, null, (JSONObject) JSONValue.parse(operatingPoint), null, true, true);
+    		Prediction prediction = context.localModel.predict(
+	    			data, null, (JSONObject) JSONValue.parse(operatingPoint), null, true, null, true);
+	    	
 	        context.localModelPrediction = prediction;
     	} catch (Exception e) {
 			e.printStackTrace();
@@ -152,6 +179,7 @@ public class PredictionsStepdefs {
     	JSONObject data = (JSONObject) JSONValue.parse(inputData);
     	Prediction prediction = context.localModel.predict(
     			data, null, null, kind, true, true);
+    	
         context.localModelPrediction = prediction;
     }
     
@@ -192,6 +220,105 @@ public class PredictionsStepdefs {
         JSONObject obj = (JSONObject) context.prediction.get("prediction");
         String objective = (String) obj.get(expected);
         assertEquals(pred, objective);
+    }
+    
+    @When("^I create a prediction with ensemble with operating point \"(.*)\" for \"(.*)\"$")
+    public void I_create_a_prediction_with_ensemble_with_operating_point(
+    		String operatingPoint, String inputData)
+            throws AuthenticationException {
+
+    	String ensembleId = (String) context.ensemble.get("resource");
+
+        JSONObject args = new JSONObject();
+        args.put("tags", Arrays.asList("unitTest"));
+        args.put("operating_point", (JSONObject) JSONValue.parse(operatingPoint));
+
+        JSONObject resource = BigMLClient.getInstance().createPrediction(
+        		ensembleId, (JSONObject) JSONValue.parse(inputData), args, 5, null);
+
+        context.status = (Integer) resource.get("code");
+        context.location = (String) resource.get("location");
+        context.prediction = (JSONObject) resource.get("object");
+        commonSteps.the_resource_has_been_created_with_status(context.status);
+    }
+    
+    @When("^I create a local prediction with ensemble with operating point \"(.*)\" for \"(.*)\"$")
+    public void I_create_a_local_prediction_with_ensemble_with_operating_point(
+    		String operatingPoint, String inputData)
+            throws Exception {
+    	
+    	JSONObject data = (JSONObject) JSONValue.parse(inputData);
+    	
+    	try {
+	    	JSONObject prediction = context.localEnsemble
+	                .predict(data, null, null, null,
+	                		(JSONObject) JSONValue.parse(operatingPoint), 
+	                		null, true, true, true);
+	    	
+	        context.localPrediction = prediction;
+    	} catch (Exception e) {
+			e.printStackTrace();
+		}
+        
+    }
+    
+    @When("^I create a prediction with ensemble with operating kind \"(.*)\" for \"(.*)\"$")
+    public void I_create_a_prediction_with_ensemble_with_operating_kind(
+    		String kind, String inputData)
+            throws AuthenticationException {
+
+    	String ensembleId = (String) context.ensemble.get("resource");
+
+        JSONObject args = new JSONObject();
+        args.put("tags", Arrays.asList("unitTest"));
+        args.put("operating_kind", kind);
+
+        JSONObject resource = BigMLClient.getInstance().createPrediction(
+        		ensembleId, (JSONObject) JSONValue.parse(inputData), args, 5, null);
+        
+        context.status = (Integer) resource.get("code");
+        context.location = (String) resource.get("location");
+        context.prediction = (JSONObject) resource.get("object");
+        commonSteps.the_resource_has_been_created_with_status(context.status);
+    }
+
+    
+    @When("^I create a local prediction with ensemble with operating kind \"(.*)\" for \"(.*)\"$")
+    public void I_create_a_local_prediction_with_ensemble_with_operating_kind(
+    		String kind, String inputData)
+            throws Exception {
+
+    	JSONObject data = (JSONObject) JSONValue.parse(inputData);
+    	JSONObject prediction = context.localEnsemble
+                .predict(data, null, null, null,
+                        null, kind, true, true, true);
+    	
+        context.localPrediction = prediction;
+    }
+    
+    @Then("^the local ensemble prediction is \"([^\"]*)\"$")
+    public void the_local_ensemble_prediction_is(String prediction) 
+    		throws Throwable {
+    	if (context.localPrediction.get("prediction") instanceof String) {
+    		assertTrue(prediction.equals((String) context.localPrediction.get("prediction")));
+    	} else {
+    		double result = (Double) context.localPrediction.get("prediction");
+    		double expected = Double.parseDouble(prediction);
+    		assertTrue(expected == Utils.roundOff(result, 5));
+    	}
+    }
+    
+    
+    @Then("^the local ensemble confidence is (.*)$")
+    public void the_local_ensemble_confidence_is(Double expectedConfidence) 
+    		throws Throwable {
+    	
+    	Double actualConfidence = (Double) context.localPrediction.get("confidence");
+    	if (actualConfidence == null) {
+    		actualConfidence = (Double) context.localPrediction.get("probability");
+    	}
+    	assertEquals(String.format("%.4g", expectedConfidence), String.format("%.4g",actualConfidence));
+    	
     }
     
     
@@ -439,8 +566,7 @@ public class PredictionsStepdefs {
         JSONArray predictions = (JSONArray) JSONValue.parse(predictionsStr);
         for (int iVote = 0; iVote < context.votes.size(); iVote++ ) {
             MultiVote vote = context.votes.get(iVote);
-            Map<Object,Object> combinedPrediction = vote.combine(PredictionMethod.CONFIDENCE, false,
-                    null, null, null, null, null);
+            Map<Object,Object> combinedPrediction = vote.combine(PredictionMethod.CONFIDENCE, null);
             assertEquals("The predictions are not equals", predictions.get(iVote),
                     combinedPrediction.get("prediction"));
         }

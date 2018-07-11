@@ -936,9 +936,9 @@ public class Tree extends AbstractTree {
             TreeHolder lastNode = new TreeHolder();
             Map<Object, Number> finalDistribution = predictProportional(
             		inputData, lastNode, path, false, false);
-
+            
             if( isRegression() ) {
-                // singular case:
+            	// singular case:
                 // when the prediction is the one given in a 1-instance node
                 if( finalDistribution.size() == 1 ) {
                     long instances = finalDistribution.values().toArray(new Number[1])[0].longValue();
@@ -953,23 +953,45 @@ public class Tree extends AbstractTree {
 
                 // when there's more instances, sort elements by their mean
                 JSONArray distribution  = Utils.convertDistributionMapToSortedArray(finalDistribution);
-
+                
                 String distributionUnit = (distribution.size() > BINS_LIMIT ? "bins" : "counts");
 
                 distribution = Utils.mergeBins(distribution, BINS_LIMIT);
+                
                 long totalInstances = calculateTotalInstances(distribution);
 
-                double prediction = Utils.meanOfDistribution(distribution);
-
-                double confidence = regressionError(unbiasedSampleVariance(distribution, prediction),
-                        totalInstances, DEFAULT_RZ);
-
+                double prediction = 0.0;
+                double confidence = 0.0;
+                if (distribution.size() == 1) {
+                	// where there's only one bin, there will be no error, but
+                    // we use a correction derived from the parent's error
+                	prediction = ((Number) ((JSONArray) distribution.get(0)).get(0)).doubleValue();
+                	
+                	if (totalInstances < 2) {
+                		totalInstances = 1;
+                	}
+                	
+                	try {
+                		// some strange models can have nodes with no confidence
+                		confidence = lastNode.tree.getConfidence();
+                	} catch (Exception e) {
+                		confidence = 0.0;
+                	}
+                } else {
+                	prediction = Utils.meanOfDistribution(distribution);
+                	confidence = regressionError(unbiasedSampleVariance(distribution, prediction),
+                            totalInstances, DEFAULT_RZ);
+                }
+                
+                Integer dMin = !this.regression ? null : this.min;
+                Integer dMax = !this.regression ? null : this.max;
+                
                 return new Prediction(prediction, confidence, totalInstances,
-                                distributionMedian(distribution, totalInstances),
-                                path, distribution, distributionUnit,
-                                lastNode.getTree().getChildren(), 
-                                (Integer) finalDistribution.get("min"),
-                                (Integer) finalDistribution.get("max"));
+                        distributionMedian(distribution, totalInstances),
+                        path, distribution, distributionUnit,
+                        lastNode.getTree().getChildren(), 
+                        dMin,
+                        dMax);
             } else {
                 JSONArray distribution  = Utils.convertDistributionMapToSortedArray(finalDistribution);
                 long totalInstances = calculateTotalInstances(distribution);
@@ -1028,7 +1050,7 @@ public class Tree extends AbstractTree {
                     }
                     return child.predictProportional(inputData, lastNode, path, missingFound, median);
                 }
-            }
+            }	
         } else {
             // missing value found, the unique path stops
             missingFound = true;
@@ -1038,26 +1060,20 @@ public class Tree extends AbstractTree {
             }
             
             /*
-            long population = 0; 
-            
             minimums = []
             maximums = []
-            
+            population = 0
             for child in self.children:
                 (subtree_distribution, subtree_min,
                  subtree_max, _, subtree_pop, _) = \
                     child.predict_proportional(input_data, path,
                                                missing_found, median,
                                                parent=self)
-                                               
                 if subtree_min is not None:
                     minimums.append(subtree_min)
-                    
                 if subtree_max is not None:
                     maximums.append(subtree_max)
-                    
                 population += subtree_pop
-                
                 final_distribution = merge_distributions(
                     final_distribution, subtree_distribution)
             return (final_distribution,

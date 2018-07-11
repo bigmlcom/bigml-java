@@ -826,9 +826,11 @@ public class Utils {
 
     public static Map<Object, Number> convertDistributionArrayToMap(JSONArray distribution) {
         Map<Object, Number> newDistribution = new HashMap<Object, Number>();
-        for (Object distValueObj : distribution) {
-            JSONArray distValueArr = (JSONArray) distValueObj;
-            newDistribution.put(distValueArr.get(0), (Number) distValueArr.get(1));
+        if (distribution != null) {
+	        for (Object distValueObj : distribution) {
+	            JSONArray distValueArr = (JSONArray) distValueObj;
+	            newDistribution.put(distValueArr.get(0), (Number) distValueArr.get(1));
+	        }
         }
 
         return newDistribution;

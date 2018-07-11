@@ -109,8 +109,51 @@ Feature: Testing Deepnet REST api calls
         | data/iris.csv | 50      | 50     | 30000  | {"petal length": 2} | 000004  | Iris-setosa   | {}    | probability   |
         
         
-        
-       
+    Scenario Outline: Successfully comparing predictions for ensembles with operating point
+        Given I create a data source uploading a "<data>" file
+        And I wait until the source is ready less than <time_1> secs
+        And I create a dataset
+        And I wait until the dataset is ready less than <time_2> secs
+        And I create an ensemble
+        And I wait until the ensemble is ready less than <time_3> secs
+        And I create a local ensemble
+        When I create a prediction with ensemble with operating point "<operating_point>" for "<data_input>"
+        Then the prediction for "<objective>" is "<prediction>"
+        When I create a local prediction with ensemble with operating point "<operating_point>" for "<data_input>"
+        Then the local ensemble prediction is "<prediction>"
+        Then I delete the ensemble
+
+        Examples:
+        | data	| time_1  | time_2 | time_3 | data_input | objective	| prediction	| operating_point	|
+        | data/iris.csv | 50      | 50     | 30000	| {"petal width": 4} | 000004	| Iris-setosa	| {"kind": "probability", "threshold": 0.1, "positive_class": "Iris-setosa"}	|
+		| data/iris.csv | 50      | 50     | 30000	| {"petal width": 4} | 000004	| Iris-virginica	| {"kind": "probability", "threshold": 0.9, "positive_class": "Iris-setosa"}	|
+		| data/iris.csv | 50      | 50     | 30000	| {"sepal length": 4.1, "sepal width": 2.4} | 000004	| Iris-setosa	| {"kind": "confidence", "threshold": 0.1, "positive_class": "Iris-setosa"}	|	
+		| data/iris.csv | 50      | 50     | 30000	| {"sepal length": 4.1, "sepal width": 2.4}| 000004	| Iris-versicolor	| {"kind": "confidence", "threshold": 0.9, "positive_class": "Iris-setosa"}	|
+	
+	
+	Scenario Outline: Successfully comparing predictions for ensembles with operating kind
+        Given I create a data source uploading a "<data>" file
+        And I wait until the source is ready less than <time_1> secs
+        And I create a dataset
+        And I wait until the dataset is ready less than <time_2> secs
+        And I create an ensemble
+        And I wait until the ensemble is ready less than <time_3> secs
+        And I create a local ensemble
+        When I create a prediction with ensemble with operating kind "<operating_kind>" for "<data_input>"
+        Then the prediction for "<objective>" is "<prediction>"
+        When I create a local prediction with ensemble with operating kind "<operating_kind>" for "<data_input>"
+        Then the local ensemble prediction is "<prediction>"
+        Then I delete the ensemble
+
+        Examples:
+        | data  | time_1  | time_2 | time_3 | data_input | objective    | prediction    | operating_kind    |
+        | data/iris.csv | 50      | 50     | 30000  | {"petal length": 2.46} | 000004   | Iris-versicolor   | probability   |
+        | data/iris.csv | 50      | 50     | 30000  | {"petal length": 2} | 000004  | Iris-setosa   | probability   |      
+        | data/iris.csv | 50      | 50     | 30000  | {"petal length": 2.46} | 000004   | Iris-versicolor   | confidence   |
+        | data/iris.csv | 50      | 50     | 30000  | {"petal length": 2} | 000004  | Iris-setosa   | confidence   |
+        | data/iris.csv | 50      | 50     | 30000  | {"petal length": 2.46} | 000004   | Iris-versicolor   | votes   |
+        | data/iris.csv | 50      | 50     | 30000  | {"petal length": 2} | 000004  | Iris-setosa   | votes   |
+	   
 	
      Scenario Outline: Successfully comparing predictions for logistic regressions with operating kind
         Given I create a data source uploading a "<data>" file
