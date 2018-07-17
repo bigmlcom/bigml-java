@@ -18,7 +18,7 @@ Feature:  Create a model from a dataset list
 
         Examples:
           | data	|  time_1  | time_2 | time_3 |  time_4 |
-          | data/iris.csv    |   10     | 10     | 10     |  10     |
+          | data/iris.csv    |   30     | 30     | 30     |  30     |
 
 
     Scenario Outline: Successfully creating a model from a dataset list and predicting with it using median:
@@ -34,4 +34,4 @@ Feature:  Create a model from a dataset list
 
         Examples:
           | data	|  time_1  | time_2 | time_3 |  input_data |  prediction    |
-          | data/grades.csv    |   10     | 10     | 10     |  {"Tutorial": 99.47, "Midterm": 53.12, "TakeHome": 87.96}    |    63.33  |
+          | data/grades.csv    |   30     | 30     | 30     |  {"Tutorial": 99.47, "Midterm": 53.12, "TakeHome": 87.96}    |    63.33  |
