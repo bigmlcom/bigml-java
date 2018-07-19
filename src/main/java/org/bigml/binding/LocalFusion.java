@@ -239,7 +239,7 @@ public class LocalFusion extends ModelFields implements SupervisedModelInterface
 		MultiVoteList votes = new MultiVoteList(null);
 		
 		if (!this.missingNumerics) {
-			Utils.checkNoMissingNumerics(inputData, this.fields);
+			Utils.checkNoMissingNumerics(inputData, this.fields, null);
 		}
 		
 		BigMLClient bigmlClient = BigMLClient.getInstance();
@@ -480,7 +480,7 @@ public class LocalFusion extends ModelFields implements SupervisedModelInterface
 		inputData = (JSONObject) inputData.get("newInputData");
 		
 		if (!this.missingNumerics) {
-			Utils.checkNoMissingNumerics(inputData, this.fields);
+			Utils.checkNoMissingNumerics(inputData, this.fields, null);
 		}
 		
 		// Strips affixes for numeric values and casts to the final field type

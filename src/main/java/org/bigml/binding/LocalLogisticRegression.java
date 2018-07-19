@@ -85,6 +85,7 @@ public class LocalLogisticRegression extends ModelFields implements SupervisedMo
 	private String regularization;
 	private JSONObject fieldCodings;
 	private List<String> classNames = new ArrayList<String>();
+	private String weightField;
 	
 	
 	public LocalLogisticRegression(JSONObject logistic) throws Exception {
@@ -132,7 +133,9 @@ public class LocalLogisticRegression extends ModelFields implements SupervisedMo
 				"objective_field");
 		objectiveFields = (JSONArray) Utils.getJSONObject(logistic,
 				"objective_fields");
-
+		
+		weightField = (String) Utils.getJSONObject(logistic, "weight_field");
+		
 		if (datasetFieldTypes == null || inputFields == null
 				|| (objectiveField == null && objectiveFields == null)) {
 			throw new Exception(
@@ -405,7 +408,7 @@ public class LocalLogisticRegression extends ModelFields implements SupervisedMo
         // In case that missing_numerics is False, checks that all numeric
         // fields are present in input data.
         if (!this.missingNumerics) {
-			Utils.checkNoMissingNumerics(inputData, this.fields);
+			Utils.checkNoMissingNumerics(inputData, this.fields, this.weightField);
 		}
 
         if (balanceFields != null && balanceFields==true) {

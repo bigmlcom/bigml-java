@@ -1106,13 +1106,14 @@ public class Utils {
      * Checks whether some numeric fields are missing in the input data
      */
     public static void checkNoMissingNumerics(
-    		JSONObject inputData, JSONObject fields) {
+    		JSONObject inputData, JSONObject fields, String weightField) {
     	
     	for (Object fieldId : fields.keySet()) {
             JSONObject field = (JSONObject) fields.get(fieldId);
             String optype = (String) Utils.getJSONObject(field, "optype");
-            
-            if ("numeric".equals(optype) && !inputData.containsKey((String) fieldId)) {
+            if ("numeric".equals(optype) && 
+            		!inputData.containsKey((String) fieldId) &&
+            		(weightField == null || !weightField.equals((String) fieldId))) {
             	throw new IllegalArgumentException(
                		 	"Failed to predict. Input data must contain values" +
         				" for all numeric fields to get a prediction.");

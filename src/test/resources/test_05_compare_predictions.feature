@@ -186,7 +186,26 @@ Feature: Create Predictions
         | data/spam.csv | 50      | 50     | 180  | {"fields": {"000001": {"optype": "text", "term_analysis": {"token_mode": "full_terms_only", "language": "en"}}}}  | {"Message": "A normal message"}  |  ham | 0.9169  | 000000  |
         | data/spam.csv | 50      | 50     | 180  | {"fields": {"000001": {"optype": "text", "term_analysis": {"token_mode": "all", "language": "en"}}}}  | {"Message": "mobile"}  |  ham | 0.8057 | 000000  |
         | data/movies.csv | 50      | 50     | 180  | {"fields": {"000007": {"optype": "items", "item_analysis": {"separator": "$"}}}}  | {"gender": "Female", "genres": "Adventure$Action", "timestamp": 993906291, "occupation": "K-12 student", "zipcode": 59583, "rating": 3}  |  Under 18  | 0.8393  | 000002  |
-         
+    
+    
+    Scenario Outline: Successfully comparing predictions with text options
+        Given I create a data source uploading a "<data>" file
+        And I wait until the source is ready less than <time_1> secs
+        And I create a dataset
+        And I wait until the dataset is ready less than <time_2> secs
+        And I create a logisticregression with objective "<objective>" and params "<params>"
+        And I wait until the logisticregression is ready less than <time_3> secs
+        And I create a local logisticregression
+        When I create a logisticregression prediction for "<data_input>"
+      	Then the logisticregression prediction is "<prediction>"
+      	And the logisticregression probability for the prediction is "<probability>"
+        And I create a local logisticregression prediction for "<data_input>"
+        Then the local logisticregression prediction is "<prediction>"       
+        And the local logisticregression probability for the prediction is "<probability>"
+
+        Examples:
+        | data  | time_1  | time_2 | time_3 | params | data_input | prediction | probability | objective |
+        | data/iris.csv | 50      | 50     | 180  | {"weight_field": "000000", "missing_numerics": false}  | {"petal width": 1.5, "petal length": 2, "sepal width":1}  |  Iris-versicolor | 0.9547  | 000004  |     
 
      Scenario Outline: Successfully comparing predictions with text options
         Given I create a data source uploading a "<data>" file
