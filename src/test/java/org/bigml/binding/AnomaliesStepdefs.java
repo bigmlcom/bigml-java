@@ -29,9 +29,6 @@ public class AnomaliesStepdefs {
     @Autowired
     private ContextRepository context;
 
-    private String sharedHash;
-    private String sharedKey;
-
     @Given("^I create an anomaly detector from a dataset list$")
     public void I_create_an_anomaly_from_a_dataset_list() throws AuthenticationException {
         JSONObject args = new JSONObject();
@@ -135,91 +132,6 @@ public class AnomaliesStepdefs {
         context.location = (String) resource.get("location");
         context.anomaly = (JSONObject) resource.get("object");
         commonSteps.the_resource_has_been_created_with_status(context.status);
-    }
-
-    @Given("^I retrieve a list of remote anomaly detector tagged with \"(.*)\"$")
-    public void I_retrieve_a_list_of_remote_anomaly_tagged_with(String tag)
-            throws Throwable {
-        context.anomalies = new JSONArray();
-        JSONArray anomalies = (JSONArray) BigMLClient.getInstance()
-                .listAnomalies("tags__in=" + tag).get("objects");
-        for (int i = 0; i < anomalies.size(); i++) {
-            JSONObject anomalyResource = (JSONObject) anomalies.get(i);
-            JSONObject resource = BigMLClient.getInstance().getAnomaly(
-                    (String) anomalyResource.get("resource"));
-            context.anomalies.add(resource);
-        }
-    }
-
-    @Given("^I make the anomaly detector public$")
-    public void I_make_the_anomaly_public() throws Throwable {
-        JSONObject changes = new JSONObject();
-        changes.put("private", new Boolean(false));
-        changes.put("white_box", new Boolean(true));
-
-        JSONObject resource = BigMLClient.getInstance().updateAnomaly(
-                context.anomaly, changes);
-        context.status = (Integer) resource.get("code");
-        context.location = (String) resource.get("location");
-        context.anomaly = (JSONObject) resource.get("object");
-        commonSteps.the_resource_has_been_updated_with_status(context.status);
-    }
-
-    @Given("^I check the anomaly detector status using the anomaly's public url$")
-    public void I_check_the_anomaly_status_using_the_anomaly_s_public_url()
-            throws Throwable {
-        String anomalyId = (String) context.anomaly.get("resource");
-        JSONObject resource = BigMLClient.getInstance().getAnomaly(
-                "public/" + anomalyId);
-
-        context.status = (Integer) resource.get("code");
-        context.location = (String) resource.get("location");
-        context.anomaly = resource;
-
-        Integer code = (Integer) context.anomaly.get("code");
-        assertEquals(AbstractResource.HTTP_OK, code.intValue());
-    }
-
-    @Given("^I make the anomaly detector shared$")
-    public void make_the_anomaly_shared() throws Throwable {
-        JSONObject changes = new JSONObject();
-        changes.put("shared", new Boolean(true));
-
-        JSONObject resource = BigMLClient.getInstance().updateAnomaly(
-                context.model, changes);
-        context.status = (Integer) resource.get("code");
-        context.location = (String) resource.get("location");
-        context.anomaly = (JSONObject) resource.get("object");
-        commonSteps.the_resource_has_been_updated_with_status(context.status);
-    }
-
-    @Given("^I get the anomaly detector sharing info$")
-    public void get_sharing_info() throws Throwable {
-        sharedHash = (String) context.anomaly.get("shared_hash");
-        sharedKey = (String) context.anomaly.get("sharing_key");
-    }
-
-    @Given("^I check the anomaly detector status using the anomaly's shared url$")
-    public void anomaly_from_shared_url() throws Throwable {
-        JSONObject resource = BigMLClient.getInstance().getAnomaly(
-                "shared/anomaly/" + this.sharedHash);
-        context.status = (Integer) resource.get("code");
-        context.location = (String) resource.get("location");
-        context.anomaly = resource;
-        Integer code = (Integer) context.anomaly.get("code");
-        assertEquals(AbstractResource.HTTP_OK, code.intValue());
-    }
-
-    @Given("^I check the anomaly status using the anomaly's shared key$")
-    public void anomaly_from_shared_key() throws Throwable {
-        String apiUser = System.getProperty("BIGML_USERNAME");
-        JSONObject resource = BigMLClient.getInstance().getModel(
-                "shared/anomaly/" + this.sharedHash, apiUser, this.sharedKey);
-        context.status = (Integer) resource.get("code");
-        context.location = (String) resource.get("location");
-        context.anomaly = resource;
-        Integer code = (Integer) context.anomaly.get("code");
-        assertEquals(AbstractResource.HTTP_OK, code.intValue());
     }
 
     @When("^I download the created batch anomaly score file to \"([^\"]*)\"$")

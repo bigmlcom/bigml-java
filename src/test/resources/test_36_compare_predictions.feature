@@ -14,7 +14,7 @@ Feature: Testing Deepnet REST api calls
         Then the prediction for "<objective>" is "<prediction>"
         When I create a local prediction with model with operating point "<operating_point>" for "<data_input>"
         Then the local model prediction is "<prediction>"
-        Then I delete the model
+        Then delete test data
 
         Examples:
         | data	| time_1  | time_2 | time_3 | data_input | objective	| prediction	| operating_point	|
@@ -36,6 +36,7 @@ Feature: Testing Deepnet REST api calls
         Then the prediction for "<objective>" is "<prediction>"
         When I create a local prediction with model with operating kind "<operating_kind>" for "<data_input>"
         Then the local model prediction is "<prediction>"
+        Then delete test data
 
         Examples:
         | data	| time_1  | time_2 | time_3 | data_input | objective	| prediction	| operating_kind	|
@@ -57,7 +58,7 @@ Feature: Testing Deepnet REST api calls
         Then the deepnet prediction for objective "<objective>" is "<prediction>"
         And I create a local deepnet prediction for "<data_input>"
         Then the local deepnet prediction is "<prediction>"
-        Then I delete the deepnet
+        Then delete test data
 
         Examples:
         | data  | time_1  | time_2 | time_3 | data_input | objective    | prediction    | params    |
@@ -82,7 +83,7 @@ Feature: Testing Deepnet REST api calls
         Then the prediction for "<objective>" is "<prediction>"
         When I create a local prediction with deepnet with operating point "<operating_point>" for "<data_input>"
         Then the local deepnet prediction is "<prediction>"
-        Then I delete the deepnet
+        Then delete test data
 
         Examples:
         | data	| time_1  | time_2 | time_3 | data_input | objective	| prediction	| params	| operating_point	|
@@ -101,7 +102,7 @@ Feature: Testing Deepnet REST api calls
         Then the prediction for "<objective>" is "<prediction>"
         When I create a local prediction with deepnet with operating kind "<operating_kind>" for "<data_input>"
         Then the local deepnet prediction is "<prediction>"
-        Then I delete the deepnet
+        Then delete test data
 
         Examples:
         | data  | time_1  | time_2 | time_3 | data_input | objective    | prediction    | params    | operating_kind    |
@@ -121,7 +122,7 @@ Feature: Testing Deepnet REST api calls
         Then the prediction for "<objective>" is "<prediction>"
         When I create a local prediction with ensemble with operating point "<operating_point>" for "<data_input>"
         Then the local ensemble prediction is "<prediction>"
-        Then I delete the ensemble
+        Then delete test data
 
         Examples:
         | data	| time_1  | time_2 | time_3 | data_input | objective	| prediction	| operating_point	|
@@ -143,7 +144,7 @@ Feature: Testing Deepnet REST api calls
         Then the prediction for "<objective>" is "<prediction>"
         When I create a local prediction with ensemble with operating kind "<operating_kind>" for "<data_input>"
         Then the local ensemble prediction is "<prediction>"
-        Then I delete the ensemble
+        Then delete test data
 
         Examples:
         | data  | time_1  | time_2 | time_3 | data_input | objective    | prediction    | operating_kind    |
@@ -167,6 +168,7 @@ Feature: Testing Deepnet REST api calls
         Then the prediction for "<objective>" is "<prediction>"
         When I create a local prediction with logisticregression with operating kind "<operating_kind>" for "<data_input>"
         Then the local logisticregression prediction is "<prediction>"
+        Then delete test data
 
         Examples:
         | data	| time_1  | time_2 | time_3 | data_input | objective	| prediction	| operating_kind	|

@@ -7,7 +7,6 @@ import cucumber.annotation.Before;
 
 public class BeforeSteps {
 
-    CommonStepdefs commonSteps = new CommonStepdefs();
 
     @Autowired
     private ContextRepository contextRepository;
@@ -19,7 +18,6 @@ public class BeforeSteps {
 
     @After
     public void afterScenario() throws AuthenticationException {
-        // commonSteps.delete_test_data();
     }
 
 }

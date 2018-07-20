@@ -375,6 +375,147 @@ public class CommonStepdefs {
 
 	@Then("^delete test data$")
 	public void delete_test_data() throws AuthenticationException {
+		if (context.models != null) {
+			int modelToRemove = -1;
+			for (int iModel = 0; iModel < context.models.size(); iModel++) {
+				JSONObject modelInList = (JSONObject) context.models
+						.get(iModel);
+				if (context.model != null && 
+						modelInList.get("resource").equals(context.model.get("resource"))) {
+					modelToRemove = iModel;
+					break;
+				}
+				if (context.ensemble != null &&
+						modelInList.get("resource").equals(context.ensemble.get("resource"))) {
+					modelToRemove = iModel;
+					break;
+				}
+				if (context.deepnet != null && 
+						modelInList.get("resource").equals(context.deepnet.get("resource"))) {
+					modelToRemove = iModel;
+					break;
+				}
+				if (context.logisticRegression != null && 
+						modelInList.get("resource").equals(context.logisticRegression.get("resource"))) {
+					modelToRemove = iModel;
+					break;
+				}
+				if (context.fusion != null && 
+						modelInList.get("resource").equals(context.fusion.get("resource"))) {
+					modelToRemove = iModel;
+					break;
+				}
+			}
+
+			if (modelToRemove >= 0) {
+				context.models.remove(modelToRemove);
+			}
+		}
+		
+		
+		if (context.fusion != null) {
+			BigMLClient.getInstance().deleteFusion(
+					(String) context.fusion.get("resource"));
+			context.fusion = null;
+		}
+		if (context.optiML != null) {
+			BigMLClient.getInstance().deleteOptiML(
+					(String) context.optiML.get("resource"));
+			context.optiML = null;
+		}
+		if (context.deepnet != null) {
+			BigMLClient.getInstance()
+					.deleteDeepnet((String) context.deepnet.get("resource"));
+			context.deepnet = null;
+		}
+		if (context.forecast != null) {
+			BigMLClient.getInstance()
+					.deleteForecast((String) context.forecast.get("resource"));
+			context.forecast = null;
+		}
+		if (context.timeSeries != null) {
+			BigMLClient.getInstance()
+					.deleteTimeSeries((String) context.timeSeries.get("resource"));
+			context.timeSeries = null;
+		}
+		if (context.configuration != null) {
+			BigMLClient.getInstance()
+					.deleteConfiguration((String) context.configuration.get("resource"));
+			context.configuration = null;
+		}
+		if (context.batchTopicDistribution != null) {
+			BigMLClient.getInstance()
+					.deleteBatchTopicDistribution((String) context.batchTopicDistribution.get("resource"));
+			context.batchTopicDistribution = null;
+		}
+		if (context.topicDistribution != null) {
+			BigMLClient.getInstance()
+					.deleteTopicDistribution((String) context.topicDistribution.get("resource"));
+			context.topicDistribution = null;
+		}
+		if (context.topicModel != null) {
+			BigMLClient.getInstance()
+					.deleteTopicModel((String) context.topicModel.get("resource"));
+			context.topicModel = null;
+		}
+		if (context.association != null) {
+			BigMLClient.getInstance()
+					.deleteAssociation((String) context.association.get("resource"));
+			context.association = null;
+		}if (context.execution != null) {
+			BigMLClient.getInstance()
+					.deleteExecution((String) context.execution.get("resource"));
+			context.execution = null;
+		}
+		if (context.library != null) {
+			BigMLClient.getInstance()
+					.deleteLibrary((String) context.library.get("resource"));
+			context.library = null;
+		}
+		if (context.script != null) {
+			if (context.scripts != null) {
+				int scriptToRemove = -1;
+				for (int iScript = 0; iScript < context.anomalies
+						.size(); iScript++) {
+					JSONObject scriptInList = (JSONObject) context.anomalies
+							.get(iScript);
+					if (scriptInList.get("resource")
+							.equals(context.script.get("resource"))) {
+						scriptToRemove = iScript;
+						break;
+					}
+				}
+
+				if (scriptToRemove >= 0) {
+					context.scripts.remove(scriptToRemove);
+				}
+			}
+
+			BigMLClient.getInstance()
+					.deleteScript((String) context.script.get("resource"));
+			context.script = null;
+		}
+		if (context.scripts != null) {
+			for (Object script : context.scripts) {
+				BigMLClient.getInstance().deleteScript((String) script);
+			}
+			context.script = null;
+		}
+		if (context.logisticRegression != null) {
+			BigMLClient.getInstance()
+					.deleteLogisticRegression((String) context.logisticRegression.get("resource"));
+			context.logisticRegression = null;
+		}
+		if (context.statisticalTest != null) {
+			BigMLClient.getInstance()
+					.deleteStatisticalTest((String) context.statisticalTest.get("resource"));
+			context.statisticalTest = null;
+		}
+		if (context.correlation != null) {
+			BigMLClient.getInstance()
+					.deleteCorrelation((String) context.correlation.get("resource"));
+			context.correlation = null;
+		}
 		if (context.batchCentroid != null) {
 			BigMLClient.getInstance().deleteBatchCentroid(
 					(String) context.batchCentroid.get("resource"));
@@ -405,21 +546,17 @@ public class CommonStepdefs {
 					.deleteCluster((String) context.cluster.get("resource"));
 			context.cluster = null;
 		}
-
 		if (context.project != null) {
 			BigMLClient.getInstance()
 					.deleteProject((String) context.project.get("resource"));
 			context.project = null;
 		}
-
 		if (context.sample != null) {
 			BigMLClient.getInstance()
 					.deleteSample((String) context.sample.get("resource"));
 			context.sample = null;
 		}
-
 		if (context.anomaly != null) {
-
 			if (context.anomalies != null) {
 				int anomalyToRemove = -1;
 				for (int iAnomaly = 0; iAnomaly < context.anomalies
@@ -459,36 +596,26 @@ public class CommonStepdefs {
 					(String) context.batchAnomalyScore.get("resource"));
 			context.batchAnomalyScore = null;
 		}
+		
+		
+		
+
+		
+		
 		if (context.model != null) {
-
-			if (context.models != null) {
-				int modelToRemove = -1;
-				for (int iModel = 0; iModel < context.models.size(); iModel++) {
-					JSONObject modelInList = (JSONObject) context.models
-							.get(iModel);
-					if (modelInList.get("resource")
-							.equals(context.model.get("resource"))) {
-						modelToRemove = iModel;
-						break;
-					}
-				}
-
-				if (modelToRemove >= 0) {
-					context.models.remove(modelToRemove);
-				}
-			}
-
-			BigMLClient.getInstance()
-					.deleteModel((String) context.model.get("resource"));
+			deleteModel((String) context.model.get("resource"));
 			context.model = null;
 		}
+		
+		
 		if (context.models != null) {
 			for (Object model : context.models) {
-				BigMLClient.getInstance().deleteModel(
-						(String) ((JSONObject) model).get("resource"));
+				deleteModel((String) ((JSONObject) model).get("resource"));
 			}
 			context.models = null;
 		}
+		
+		
 		if (context.ensemble != null) {
 			BigMLClient.getInstance()
 					.deleteEnsemble((String) context.ensemble.get("resource"));
@@ -511,12 +638,52 @@ public class CommonStepdefs {
 			context.source = null;
 		}
 	}
+	
+	
+	private void deleteModel(String modelId) {
+		try {
+			if (modelId.startsWith("model/")) {
+	            BigMLClient.getInstance().deleteModel(modelId);
+			}
+			if (modelId.startsWith("ensemble/")) {
+	            BigMLClient.getInstance().deleteEnsemble(modelId);
+			}
+			if (modelId.startsWith("deepnet/")) {
+	            BigMLClient.getInstance().deleteDeepnet(modelId);
+			}
+			if (modelId.startsWith("logisticregression/")) {
+	            BigMLClient.getInstance().deleteLogisticRegression(modelId);
+			}
+			if (modelId.startsWith("fusion/")) {
+	            BigMLClient.getInstance().deleteFusion(modelId);
+			}
+		} catch (Exception e) {}
+	}
+	
 
 	@Then("^delete all test data$")
 	public void delete_all_test_data() throws Exception {
 
 		BigMLClient.getInstance().getCacheManager().cleanCache();
 
+		// Projects
+		JSONArray projects = (JSONArray) BigMLClient.getInstance()
+				.listProjects(";tags__in=unitTest").get("objects");
+		for (int i = 0; i < projects.size(); i++) {
+			JSONObject project = (JSONObject) projects.get(i);
+			BigMLClient.getInstance()
+					.deleteProject((String) project.get("resource"));
+		}
+		
+		// Samples
+		JSONArray samples = (JSONArray) BigMLClient.getInstance()
+				.listSamples(";tags__in=unitTest").get("objects");
+		for (int i = 0; i < samples.size(); i++) {
+			JSONObject sample = (JSONObject) samples.get(i);
+			BigMLClient.getInstance()
+					.deleteSample((String) sample.get("resource"));
+		}
+		
 		// Fusions
 		JSONArray fusions = (JSONArray) BigMLClient.getInstance()
 				.listFusions(";tags__in=unitTest").get("objects");
@@ -600,8 +767,6 @@ public class CommonStepdefs {
 			BigMLClient.getInstance()
 					.deleteTopicModel((String) topicModel.get("resource"));
 		}
-
-		/* PLACEHOLDER FOR ASSOCIATIONSET */
 
 		// Associations
 		JSONArray associations = (JSONArray) BigMLClient.getInstance()

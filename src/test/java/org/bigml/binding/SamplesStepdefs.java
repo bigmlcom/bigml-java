@@ -1,6 +1,5 @@
 package org.bigml.binding;
 
-import cucumber.annotation.en.Given;
 import cucumber.annotation.en.Then;
 import cucumber.annotation.en.When;
 import org.apache.commons.csv.CSVFormat;
@@ -8,7 +7,6 @@ import org.apache.commons.csv.CSVPrinter;
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,62 +27,6 @@ public class SamplesStepdefs {
     @Autowired
     private ContextRepository context;
 
-
-    @Given("^I create a sample from dataset with \"(.*)\"$")
-    public void I_create_a_sample_from_dataset_with_options(String args) throws Throwable {
-        String datasetId = (String) context.dataset.get("resource");
-        JSONObject argsJSON = args != null ? (JSONObject) JSONValue.parse(args)
-                : null;
-
-        if( argsJSON != null ) {
-            argsJSON.put("tags", Arrays.asList("unitTest"));
-        } else {
-            argsJSON = new JSONObject();
-            argsJSON.put("tags", Arrays.asList("unitTest"));
-        }
-
-        JSONObject resource = BigMLClient.getInstance().createSample(datasetId,
-                argsJSON, 5, null);
-        context.status = (Integer) resource.get("code");
-        context.location = (String) resource.get("location");
-        context.sample = (JSONObject) resource.get("object");
-        commonSteps.the_resource_has_been_created_with_status(context.status);
-    }
-
-    @Given("^I ask for the missing values counts in the fields of the sample$")
-    public void I_ask_for_the_missing_values_counts_in_the_fields_of_the_sample()
-            throws AuthenticationException {
-        Fields fields = new Fields((JSONObject) context.sample.get("fields"));
-        context.sampleMissingCounts = fields.getMissingCounts();
-    }
-
-    @Given("^I ask for the error counts in the fields of the sample$")
-    public void I_ask_for_the_error_counts_in_the_fields_of_the_sample()
-            throws AuthenticationException {
-        String sampleId = (String) context.sample.get("resource");
-        context.sampleErrorCounts = BigMLClient.getInstance().getErrorCounts(sampleId);
-    }
-
-    @Given("^the (missing values counts|error counts) dict for the sample is \"(.*)\"$")
-    public void I_get_the_error_values_for_the_sample(String missingOrErrors, String propertiesDict)
-            throws AuthenticationException {
-        JSONObject propertiesDictJSON = propertiesDict != null ? (JSONObject) JSONValue.parse(propertiesDict)
-                : null;
-
-        assertNotNull("No sample available in the context", context.sample);
-        assertNotNull("The propertiesDict was not informed", propertiesDictJSON);
-
-
-        if( missingOrErrors.equals("error counts") ) {
-            for (String fieldId : context.sampleErrorCounts.keySet()) {
-                assertEquals(context.sampleErrorCounts.get(fieldId), propertiesDictJSON.get(fieldId));
-            }
-        } else {
-            for (String fieldId : context.sampleMissingCounts.keySet()) {
-                assertEquals(context.sampleMissingCounts.get(fieldId), propertiesDictJSON.get(fieldId));
-            }
-        }
-    }
 
     @When("^I download the sample file to \"([^\"]*)\" with (\\d+) rows and \"([^\"]*)\" seed$")
     public void I_download_the_sample_content_to(String fileTo, Long numOfRows, String seed)

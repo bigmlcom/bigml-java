@@ -50,7 +50,6 @@ public class ContextRepository {
     JSONArray models = null;
     JSONArray anomalies = null;
     JSONArray datasets = null;
-    JSONArray sources = null;
     JSONArray scripts = null;
     
     JSONObject localPrediction = null;
@@ -162,14 +161,6 @@ public class ContextRepository {
 
     public void setEnsemble(JSONObject ensemble) {
         this.ensemble = ensemble;
-    }
-
-    public JSONArray getSources() {
-        return sources;
-    }
-
-    public void setSources(JSONArray sources) {
-        this.sources = sources;
     }
 
     public JSONArray getDatasets() {

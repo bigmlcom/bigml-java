@@ -141,23 +141,15 @@ public class BatchPredictionsStepdefs {
     public void I_create_a_source_from_the_batch_prediction() throws Throwable {
 
         String batchPredictionId = (String) context.batchPrediction.get("resource");
-
         assertNotNull("A batch prediction id is needed.", batchPredictionId);
 
         JSONObject source = BigMLClient.getInstance().createSourceFromBatchPrediction(batchPredictionId,
                 new JSONObject());
 
-
         Integer code = (Integer) source.get("code");
         assertEquals(AbstractResource.HTTP_CREATED, code.intValue());
         context.location = (String) source.get("location");
         context.source = (JSONObject) source.get("object");
-
-        if( context.sources == null ) {
-            context.sources = new JSONArray();
-        }
-
-        context.sources.add(source.get("resource"));
     }
 
 }

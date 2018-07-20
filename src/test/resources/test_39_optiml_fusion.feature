@@ -11,6 +11,7 @@ Feature: Testing REST api calls
         When I wait until the optiml is ready less than <time_4> secs
         Then the optiml name is "<optiml_name>"
         Then I delete the optiml
+        Then delete test data
 
         Examples:
         | data                | time_1  | time_2 | time_3 | time_4 | optiml_name |
@@ -38,6 +39,7 @@ Feature: Testing REST api calls
         And I wait until the evaluation is ready less than <time_4> secs
         Then the measured "<measure>" is <value>
         Then I delete the fusion
+        Then delete test data
 
         Examples:
         | data                | time_1  | time_2 | time_3 | time_4 | fusion_name | data_input    | objective | prediction  | measure       | value  |

@@ -1,7 +1,5 @@
 package org.bigml.binding;
 
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -79,15 +77,6 @@ public class SourcesStepdefs {
         context.source = (JSONObject) resource.get("object");
 
         commonSteps.the_resource_has_been_created_with_status(context.status);
-    }
-
-    @Given("^The source has development (true|false)$")
-    public void The_source_has_development(String isDevStr) throws Throwable {
-        Boolean isDev = new Boolean(isDevStr);
-
-        Boolean isModelInDev = (Boolean) context.source.get("dev");
-
-        assertTrue(isDev.booleanValue() == isModelInDev.booleanValue());
     }
 
 }
