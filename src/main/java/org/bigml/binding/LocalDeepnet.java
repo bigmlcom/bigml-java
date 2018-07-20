@@ -3,7 +3,6 @@ package org.bigml.binding;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -50,8 +49,6 @@ public class LocalDeepnet extends ModelFields implements SupervisedModelInterfac
 	private static final long serialVersionUID = 1L;
 	
 	private static String DEEPNET_RE = "^deepnet/[a-f,0-9]{24}$";
-	
-	private static final int PRECISION = 5;
 	
 	/**
 	 * Logging
@@ -323,7 +320,7 @@ public class LocalDeepnet extends ModelFields implements SupervisedModelInterfac
 		}
 		
 		JSONArray distribution = (JSONArray) prediction.get("distribution");
-		sortPredictions(distribution);
+		Utils.sortPredictions(distribution, "probability", "prediction");
 		return distribution;
 		
 	}
@@ -561,7 +558,7 @@ public class LocalDeepnet extends ModelFields implements SupervisedModelInterfac
 	        	JSONObject probabilityCategory = new JSONObject();
 	        	probabilityCategory.put("category", classNames.get(i));
 	        	probabilityCategory.put("probability", Utils.roundOff(
-	        			pred.get(0).get(i), PRECISION));
+	        			pred.get(0).get(i), Constants.PRECISION));
 
 	        	distribution.add(probabilityCategory);
 	        }
@@ -570,27 +567,6 @@ public class LocalDeepnet extends ModelFields implements SupervisedModelInterfac
 		}
 
 		return result;
-	}
-	
-	/**
-	  * Sorting utility
-	  * 
-	  */
-	 private void sortPredictions(JSONArray predictions) {
-		Collections.sort(predictions, new Comparator<JSONObject>() {
-           @Override
-           public int compare(JSONObject o1, JSONObject o2) {
-           	Double o1p = (Double) o1.get("probability");
-           	Double o2p = (Double) o2.get("probability");
-           	
-           	if (o1p.doubleValue() == o2p.doubleValue()) {
-           		return ((String) o1.get("prediction")).
-                   		compareTo(((String) o2.get("prediction")));
-           	}
-           	
-               return o2p.compareTo(o1p);
-           }
-       });
 	}
 
 }

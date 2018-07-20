@@ -3,7 +3,6 @@ package org.bigml.binding;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.bigml.binding.resources.AbstractResource;
@@ -505,7 +504,7 @@ public class LocalFusion extends ModelFields implements SupervisedModelInterface
         		inputData, missingStrategy);
         
         if (!regression) {
-        	sortPredictions(predictions);
+        	Utils.sortPredictions(predictions, "probability", "prediction");
         }
         
         JSONObject prediction = (JSONObject) predictions.get(0);
@@ -515,29 +514,7 @@ public class LocalFusion extends ModelFields implements SupervisedModelInterface
         	prediction.put("unused_fields", unusedFields);
         }
 
-		return prediction;
-        
-	}
-	
-	/**
-	  * Sorting utility
-	  * 
-	  */
-	 private void sortPredictions(JSONArray predictions) {
-		Collections.sort(predictions, new Comparator<JSONObject>() {
-           @Override
-           public int compare(JSONObject o1, JSONObject o2) {
-           	Double o1p = (Double) o1.get("probability");
-           	Double o2p = (Double) o2.get("probability");
-           	
-           	if (o1p.doubleValue() == o2p.doubleValue()) {
-           		return ((String) o1.get("prediction")).
-                   		compareTo(((String) o2.get("prediction")));
-           	}
-           	
-               return o2p.compareTo(o1p);
-           }
-       });
+		return prediction;  
 	}
 
 }

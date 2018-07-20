@@ -29,7 +29,6 @@
 package org.bigml.binding;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.*;
 
 import org.bigml.binding.resources.AbstractResource;
@@ -46,7 +45,7 @@ import org.slf4j.LoggerFactory;
  * can be used to generate prediction.
  * 
  */
-public class LocalEnsemble extends ModelFields implements Serializable, SupervisedModelInterface {
+public class LocalEnsemble extends ModelFields implements SupervisedModelInterface {
 
 	private static final long serialVersionUID = 1L;
 
@@ -899,26 +898,6 @@ public class LocalEnsemble extends ModelFields implements Serializable, Supervis
 		return prediction;
 	}
 
-	/**
-	 * Sorting utility
-	 * 
-	 */
-	private void sortPredictions(JSONArray predictions, final String property) {
-		Collections.sort(predictions, new Comparator<JSONObject>() {
-			@Override
-			public int compare(JSONObject o1, JSONObject o2) {
-				Double o1p = (Double) o1.get(property);
-				Double o2p = (Double) o2.get(property);
-
-				if (o1p.doubleValue() == o2p.doubleValue()) {
-					return ((String) o1.get("category"))
-							.compareTo(((String) o2.get("category")));
-				}
-
-				return o2p.compareTo(o1p);
-			}
-		});
-	}
 
 	/**
 	 * For classification models, Predicts a probability for each possible
@@ -963,7 +942,7 @@ public class LocalEnsemble extends ModelFields implements Serializable, Supervis
 			}
 		}
 
-		sortPredictions(predictions, "probability");
+		Utils.sortPredictions(predictions, "probability", "category");
 		return predictions;
 
 	}
@@ -1008,7 +987,7 @@ public class LocalEnsemble extends ModelFields implements Serializable, Supervis
 			}
 		}
 
-		sortPredictions(predictions, "confidence");
+		Utils.sortPredictions(predictions, "confidence", "category");
 		return predictions;
 	}
 
@@ -1052,7 +1031,7 @@ public class LocalEnsemble extends ModelFields implements Serializable, Supervis
 			}
 		}
 
-		sortPredictions(predictions, "votes");
+		Utils.sortPredictions(predictions, "votes", "category");
 		return predictions;
 	}
 

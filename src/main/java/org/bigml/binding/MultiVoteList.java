@@ -20,7 +20,6 @@ public class MultiVoteList implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
-	private static final int PRECISION = 5;
 
     /**
      * Logging
@@ -100,7 +99,7 @@ public class MultiVoteList implements Serializable {
     	
     	for (int i=0; i<output.length; i++) {
     		Double value = (Double) output[i];
-    		output[i] = Utils.roundOff(value / total, PRECISION);
+    		output[i] = Utils.roundOff(value / total, Constants.PRECISION);
     	}
     	
     	return Arrays.asList(output);

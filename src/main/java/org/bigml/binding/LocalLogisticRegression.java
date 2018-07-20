@@ -8,8 +8,6 @@ import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,8 +58,6 @@ public class LocalLogisticRegression extends ModelFields implements SupervisedMo
 
 	protected static final String[] OPTIONAL_FIELDS = { 
     		"categorical", "text", "items", "datetime" };
-
-	protected static final int PRECISION = 5;
 	
 	/**
 	 * Logging
@@ -201,7 +197,7 @@ public class LocalLogisticRegression extends ModelFields implements SupervisedMo
 				missingNumerics = (Boolean) Utils.getJSONObject(
 						logisticInfo, "missing_numerics");
 				
-				// initializae ModelFields
+				// initialize ModelFields
 				super.initialize((JSONObject) fields, null, null, null,
 								 true, true, true);
 				
@@ -291,7 +287,7 @@ public class LocalLogisticRegression extends ModelFields implements SupervisedMo
 			MissingStrategy missingStrategy) throws Exception {
 		JSONObject prediction = predict(inputData, null, null, true, false);
 		JSONArray distribution = (JSONArray) prediction.get("distribution");
-		sortPredictions(distribution);
+		Utils.sortPredictions(distribution, "probability", "prediction");
 		return distribution;
 	}
 	
@@ -453,7 +449,7 @@ public class LocalLogisticRegression extends ModelFields implements SupervisedMo
         		probabilityCategory.get("probability")).doubleValue();
         	probability /= total;
         	probabilityCategory.put("probability", 
-        			Utils.roundOff(probability, PRECISION));
+        			Utils.roundOff(probability, Constants.PRECISION));
         }
         
         // Chooses the most probable category as prediction
@@ -465,7 +461,7 @@ public class LocalLogisticRegression extends ModelFields implements SupervisedMo
         	distribution.add(probabilityCategory);
         }
         
-        sortPredictions(distribution);
+        Utils.sortPredictions(distribution, "probability", "prediction");
         JSONObject prediction = (JSONObject) distribution.get(0);
         
         JSONObject result = new JSONObject();
@@ -568,7 +564,6 @@ public class LocalLogisticRegression extends ModelFields implements SupervisedMo
 				
 			}
 		}
-		
 				
 		// missings
 		for (Object field: inputFields) {
@@ -737,24 +732,4 @@ public class LocalLogisticRegression extends ModelFields implements SupervisedMo
 	  	} 
 	 }
 	 
-	 /**
-	  * Sorting utility
-	  * 
-	  */
-	 private void sortPredictions(JSONArray predictions) {
-		Collections.sort(predictions, new Comparator<JSONObject>() {
-            @Override
-            public int compare(JSONObject o1, JSONObject o2) {
-            	Double o1p = (Double) o1.get("probability");
-            	Double o2p = (Double) o2.get("probability");
-            	
-            	if (o1p.doubleValue() == o2p.doubleValue()) {
-            		return ((String) o1.get("prediction")).
-                    		compareTo(((String) o2.get("prediction")));
-            	}
-            	
-                return o2p.compareTo(o1p);
-            }
-        });
-	}
 }

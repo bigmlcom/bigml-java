@@ -1121,4 +1121,27 @@ public class Utils {
     	}
     }
     
+    
+    /**
+	  * Sorts list of predictions
+	  * 
+	  */
+    public static void sortPredictions(JSONArray predictions, 
+			 final String primaryKey, final String secondaryKey) {
+		 
+		Collections.sort(predictions, new Comparator<JSONObject>() {
+           @Override
+           public int compare(JSONObject o1, JSONObject o2) {
+           	Double o1p = (Double) o1.get(primaryKey);
+           	Double o2p = (Double) o2.get(primaryKey);
+           	
+           	if (o1p.doubleValue() == o2p.doubleValue()) {
+           		return ((String) o1.get(secondaryKey)).
+                   		compareTo(((String) o2.get(secondaryKey)));
+           	}
+           	
+               return o2p.compareTo(o1p);
+           }
+       });
+	}
 }

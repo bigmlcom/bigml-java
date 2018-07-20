@@ -28,8 +28,6 @@ public class MultiVote implements Serializable {
      */
     static Logger LOGGER = LoggerFactory.getLogger(MultiVote.class.getName());
     
-    protected static final int PRECISION = 5;
-    
     public final static String[] PREDICTION_HEADERS = new String[] { 
     		"prediction", "confidence", "order", "distribution", "count" };
     
@@ -523,7 +521,7 @@ public class MultiVote implements Serializable {
         n2 = n * n;
         wsSqrt = Math.sqrt((p * (1 - p) / n) + (z2 / (4 * n2)));
         
-        return Utils.roundOff((p + (z2 / (2 * n)) - (z * wsSqrt)) / (1 + (z2 / n)), PRECISION);
+        return Utils.roundOff((p + (z2 / (2 * n)) - (z * wsSqrt)) / (1 + (z2 / n)), Constants.PRECISION);
     }
     
     
@@ -566,14 +564,6 @@ public class MultiVote implements Serializable {
 
         average.putAll(getGroupedDistribution(this));
         average.put("count", instances);
-        
-        /*
-        if( total > 0 ) {
-            average.put("median", medianResult / total);
-        } else {
-            average.put("median", Double.NaN);
-        }*/
-
         return average;
     }
     
@@ -767,7 +757,7 @@ public class MultiVote implements Serializable {
         prediction = new HashMap<Object, Object>();
         prediction.put("prediction", predictionName);
         prediction.put("probability", Utils.roundOff(
-        		(Double) predictionInfo.get("probability"), PRECISION));
+        		(Double) predictionInfo.get("probability"), Constants.PRECISION));
         
     	return prediction;
     }

@@ -17,5 +17,8 @@ public interface Constants {
     final public static String OPERATOR_GE = ">=";
     final public static String OPERATOR_GT = ">";
     final public static String OPERATOR_IN = "in";
-
+    
+    // Round
+    final public static int PRECISION = 5;
+    
 }

@@ -61,12 +61,10 @@ import java.util.*;
  * generate prediction locally.
  *
  */
-public class LocalPredictiveModel extends BaseModel implements PredictionConverter, Serializable, SupervisedModelInterface {
+public class LocalPredictiveModel extends BaseModel implements PredictionConverter, SupervisedModelInterface {
 
     private static final long serialVersionUID = 1L;
     
-    protected static final int PRECISION = 5;
-
     /**
      * Logging
      */
@@ -746,7 +744,7 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
     	for (String name: classNames) {
     		Prediction element = new Prediction();
     		element.put("category", name);
-    		element.put(key, Utils.roundOff(categoryMap.get(name), PRECISION));
+    		element.put(key, Utils.roundOff(categoryMap.get(name), Constants.PRECISION));
     		output.add(element);
     	}
     	

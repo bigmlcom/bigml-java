@@ -1,6 +1,5 @@
 package org.bigml.binding;
 
-//import org.bigml.binding.localanomaly.AnomalyTree;
 import org.bigml.binding.resources.AbstractResource;
 import org.bigml.binding.utils.Utils;
 import org.bigml.binding.timeseries.Forecasts;
@@ -8,8 +7,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-//import java.io.Serializable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -57,9 +54,12 @@ import java.util.Comparator;
  * localTimeSeries.forecast(inputData);
  *
  */
-public class LocalTimeseries extends ModelFields /* implements Serializable */ {
-
+public class LocalTimeseries extends ModelFields {
+	
+	private static final long serialVersionUID = 1L;
+	
     private static final String RequiredInput = "horizon";
+    
     public static final List<String> SubmodelKeys = 
         Collections.unmodifiableList(Arrays.asList("indices",
                                                    "names",
@@ -372,7 +372,6 @@ public class LocalTimeseries extends ModelFields /* implements Serializable */ {
 
         // Raise an error if no horizon is provided
         for (Object k: inputData.keySet()) {
-            String fid = (String)k;
             JSONObject value = this.normalize((JSONObject)inputData.get(k));
             if (!(value instanceof Map)) {
                 logger.error("Bad input data");
@@ -395,7 +394,7 @@ public class LocalTimeseries extends ModelFields /* implements Serializable */ {
                 }
             }
         }
-        //-- it seems that unusedFields are not used anywhere, so igorning them
+        //-- it seems that unusedFields are not used anywhere, so ignoring them
         return newInput;
     }
 }
