@@ -32,7 +32,7 @@ public class SourcesStepdefs {
         args.put("tags", Arrays.asList("unitTest"));
 
         JSONObject resource = BigMLClient.getInstance().createSource(
-        		fileName, "new source", args);
+        		fileName, "new source", null, args);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.source = (JSONObject) resource.get("object");
