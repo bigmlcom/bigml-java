@@ -171,7 +171,10 @@ public abstract class AbstractResource {
     protected String bigmlApiKey;
     protected String bigmlDomain;
     protected String bigmlAuth;
-
+    
+    protected String project;
+    protected String organization;
+    
     protected String resourceRe;
     protected String resourceUrl;
     protected String resourceName;
@@ -184,9 +187,9 @@ public abstract class AbstractResource {
     public CacheManager cacheManager;
 
 
-    protected void init(String apiUser, String apiKey, 
-    		CacheManager cacheManager, String resourceRe, 
-    		String resourcePath) {
+    protected void init(String apiUser, String apiKey, String project,
+    		String organization, CacheManager cacheManager, 
+    		String resourceRe, String resourcePath) {
 
         try {
         	this.bigmlUser = apiUser != null ? apiUser : System
@@ -195,6 +198,15 @@ public abstract class AbstractResource {
                     .getProperty("BIGML_API_KEY");
             bigmlAuth = "?username=" + this.bigmlUser + ";api_key="
                     + this.bigmlApiKey + ";";
+            
+            if (project != null) {
+            	this.project = project;
+            	bigmlAuth += ";project=" + this.project;
+            }
+            if (organization != null) {
+            	this.organization = organization;
+            	bigmlAuth += ";organization=" + this.organization;
+            }
             
             BIGML_URL = BigMLClient.getInstance().getBigMLUrl();
             

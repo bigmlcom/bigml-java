@@ -17,33 +17,47 @@ public class BatchPrediction extends AbstractResource {
 
     // Logging
     Logger logger = LoggerFactory.getLogger(BatchPrediction.class);
-
+    
     /**
      * Constructor
      *
+     * @deprecated
      */
-    public BatchPrediction() {
-    		super.init(null, null, null, 
-    			BATCH_PREDICTION_RE, BATCH_PREDICTION_PATH);
-    }
+	public BatchPrediction() {
+		super.init(null, null, null, null, null, 
+				BATCH_PREDICTION_RE, BATCH_PREDICTION_PATH);
+	}
 
-    /**
-     * Constructor
-     *
-     */
-    public BatchPrediction(final String apiUser, final String apiKey) {
-    		super.init(apiUser, apiKey, null, 
-    			BATCH_PREDICTION_RE, BATCH_PREDICTION_PATH);
-    }
-
+	/**
+	 * Constructor
+	 *
+	 * @deprecated
+	 */
+	public BatchPrediction(final String apiUser, final String apiKey) {
+		super.init(apiUser, apiKey, null, null, null, 
+				BATCH_PREDICTION_RE, BATCH_PREDICTION_PATH);
+	}
+	
+	/**
+	 * Constructor
+	 *
+	 * @deprecated
+	 */
+	public BatchPrediction(final String apiUser, final String apiKey,
+			final CacheManager cacheManager) {
+		super.init(apiUser, apiKey, null, null, null, 
+				BATCH_PREDICTION_RE, BATCH_PREDICTION_PATH);
+	}
+	
     /**
      * Constructor
      *
      */
     public BatchPrediction(final String apiUser, final String apiKey, 
-    			final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, cacheManager, 
-    			BATCH_PREDICTION_RE, BATCH_PREDICTION_PATH);
+    					   final String project, final String organization,
+    					   final CacheManager cacheManager) {
+    		super.init(apiUser, apiKey, project, organization,
+    				   cacheManager, BATCH_PREDICTION_RE, BATCH_PREDICTION_PATH);
     }
 
     /**

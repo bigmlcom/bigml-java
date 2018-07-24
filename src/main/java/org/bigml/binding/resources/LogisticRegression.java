@@ -16,33 +16,48 @@ public class LogisticRegression extends AbstractModelResource {
 
     // Logging
     Logger logger = LoggerFactory.getLogger(LogisticRegression.class);
-
+    
     /**
      * Constructor
      *
+     * @deprecated
      */
-    public LogisticRegression() {
-    		super.init(null, null, null, 
-    			LOGISTICREGRESSION_RE, LOGISTICREGRESSION_PATH);
-    }
+	public LogisticRegression() {
+		super.init(null, null, null, null, null, 
+				LOGISTICREGRESSION_RE, LOGISTICREGRESSION_PATH);
+	}
 
-    /**
-     * Constructor
-     *
-     */
-    public LogisticRegression(final String apiUser, final String apiKey) {
-    	super.init(apiUser, apiKey, null, 
-    			LOGISTICREGRESSION_RE, LOGISTICREGRESSION_PATH);
-    }
-
+	/**
+	 * Constructor
+	 *
+	 * @deprecated
+	 */
+	public LogisticRegression(final String apiUser, final String apiKey) {
+		super.init(apiUser, apiKey, null, null, null, 
+				LOGISTICREGRESSION_RE, LOGISTICREGRESSION_PATH);
+	}
+	
+	/**
+	 * Constructor
+	 *
+	 * @deprecated
+	 */
+	public LogisticRegression(final String apiUser, final String apiKey,
+			final CacheManager cacheManager) {
+		super.init(apiUser, apiKey, null, null, null, 
+				LOGISTICREGRESSION_RE, LOGISTICREGRESSION_PATH);
+	}
+	
     /**
      * Constructor
      *
      */
     public LogisticRegression(final String apiUser, final String apiKey, 
-    			final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, cacheManager, 
-    			LOGISTICREGRESSION_RE, LOGISTICREGRESSION_PATH);
+    						 final String project, final String organization,
+    						 final CacheManager cacheManager) {
+    		super.init(apiUser, apiKey, project, organization,
+    				   cacheManager, LOGISTICREGRESSION_RE, 
+    				   LOGISTICREGRESSION_PATH);
     }
 
 }

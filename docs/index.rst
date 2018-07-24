@@ -85,6 +85,42 @@ the BigMLClient class as follows:
     BigMLClient api = BigMLClient.getInstance("myusername",
         "ae579e7e53fb9abd646a6ff8aa99d4afe83ac291", false);
 
+These credentials will allow you to manage any resource in your user
+environment.
+
+
+In BigML a user can also work for an ``organization``.
+In this case, the organization administrator should previously assign
+permissions for the user to access one or several particular projects
+in the organization.
+Once permissions are granted, the user can work with resources in a project
+according to his permission level by creating a special constructor for
+each project. The connection constructor in this case
+should include the ``project ID``:
+
+.. code-block:: java
+	
+	BigMLClient api = BigMLClient.getInstance("myusername",
+        "ae579e7e53fb9abd646a6ff8aa99d4afe83ac291", 
+        project/53739b98d994972da7001d4a, null, null);
+
+	
+If the project used in a connection object
+does not belong to an existing organization but is one of the
+projects under the user's account, all the resources
+created or updated with that connection will also be assigned to the
+specified project.
+
+When the resource to be managed is a ``project`` itself, the connection
+needs to include the corresponding``organization ID``:
+
+.. code-block:: java
+	
+	BigMLClient api = BigMLClient.getInstance("myusername",
+        "ae579e7e53fb9abd646a6ff8aa99d4afe83ac291", 
+        null, organization/53739b98d994972da7025d4a, null);
+        
+
 For `Virtual Private Cloud <https://bigml.com/pricing/vpc>`_ setups, you can 
 change the remote server URL to the VPC particular one by either setting the 
 ``BIGML_URL`` in ``binding.properties`` or in the JVM environment.

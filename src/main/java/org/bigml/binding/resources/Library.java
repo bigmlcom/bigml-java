@@ -22,33 +22,47 @@ public class Library extends AbstractResource {
 
     // Logging
     Logger logger = LoggerFactory.getLogger(Library.class);
-
+    
     /**
      * Constructor
      *
+     * @deprecated
      */
-    public Library() {
-    		super.init(null, null, null, 
-    			LIBRARY_RE, LIBRARY_PATH);
-    }
+	public Library() {
+		super.init(null, null, null, null, null, 
+				LIBRARY_RE, LIBRARY_PATH);
+	}
 
-    /**
-     * Constructor
-     *
-     */
-    public Library(final String apiUser, final String apiKey) {
-    		super.init(apiUser, apiKey, null, 
-    			LIBRARY_RE, LIBRARY_PATH);
-    }
-
+	/**
+	 * Constructor
+	 *
+	 * @deprecated
+	 */
+	public Library(final String apiUser, final String apiKey) {
+		super.init(apiUser, apiKey, null, null, null, 
+				LIBRARY_RE, LIBRARY_PATH);
+	}
+	
+	/**
+	 * Constructor
+	 *
+	 * @deprecated
+	 */
+	public Library(final String apiUser, final String apiKey,
+			final CacheManager cacheManager) {
+		super.init(apiUser, apiKey, null, null, null, 
+				LIBRARY_RE, LIBRARY_PATH);
+	}
+	
     /**
      * Constructor
      *
      */
     public Library(final String apiUser, final String apiKey, 
-    			final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, cacheManager, 
-    			LIBRARY_RE, LIBRARY_PATH);
+    			   final String project, final String organization,
+    			   final CacheManager cacheManager) {
+    		super.init(apiUser, apiKey, project, organization,
+    				   cacheManager, LIBRARY_RE, LIBRARY_PATH);
     }
 
     /**

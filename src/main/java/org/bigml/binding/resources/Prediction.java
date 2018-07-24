@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-
 /**
  * Entry point to create, retrieve, list, update, and delete predictions.
  *
@@ -22,33 +21,47 @@ public class Prediction extends AbstractResource {
 
     // Logging
     Logger logger = LoggerFactory.getLogger(Prediction.class);
-
+    
     /**
      * Constructor
      *
+     * @deprecated
      */
-    public Prediction() {
-    		super.init(null, null, null, 
-    			PREDICTION_RE, PREDICTION_PATH);
-    }
+	public Prediction() {
+		super.init(null, null, null, null, null, 
+				PREDICTION_RE, PREDICTION_PATH);
+	}
 
-    /**
-     * Constructor
-     *
-     */
-    public Prediction(final String apiUser, final String apiKey) {
-    		super.init(apiUser, apiKey, null, 
-    			PREDICTION_RE, PREDICTION_PATH);
-    }
-
+	/**
+	 * Constructor
+	 *
+	 * @deprecated
+	 */
+	public Prediction(final String apiUser, final String apiKey) {
+		super.init(apiUser, apiKey, null, null, null, 
+				PREDICTION_RE, PREDICTION_PATH);
+	}
+	
+	/**
+	 * Constructor
+	 *
+	 * @deprecated
+	 */
+	public Prediction(final String apiUser, final String apiKey,
+			final CacheManager cacheManager) {
+		super.init(apiUser, apiKey, null, null, null, 
+				PREDICTION_RE, PREDICTION_PATH);
+	}
+	
     /**
      * Constructor
      *
      */
     public Prediction(final String apiUser, final String apiKey, 
-    			final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, cacheManager, 
-    			PREDICTION_RE, PREDICTION_PATH);
+    				  final String project, final String organization,
+    				  final CacheManager cacheManager) {
+    		super.init(apiUser, apiKey, project, organization,
+    				   cacheManager, PREDICTION_RE, PREDICTION_PATH);
     }
 
     /**

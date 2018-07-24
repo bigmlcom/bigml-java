@@ -18,33 +18,44 @@ public class Anomaly extends AbstractModelResource {
 
     // Logging
     Logger logger = LoggerFactory.getLogger(Anomaly.class);
-
+    
     /**
      * Constructor
      *
+     * @deprecated
      */
-    public Anomaly() {
-        super.init(null, null, null, 
-        		ANOMALY_RE, ANOMALY_PATH);
-    }
+	public Anomaly() {
+		super.init(null, null, null, null, null, ANOMALY_RE, ANOMALY_PATH);
+	}
 
-    /**
-     * Constructor
-     *
-     */
-    public Anomaly(final String apiUser, final String apiKey) {
-    		super.init(apiUser, apiKey, null, 
-    			ANOMALY_RE, ANOMALY_PATH);
-    }
-
+	/**
+	 * Constructor
+	 *
+	 * @deprecated
+	 */
+	public Anomaly(final String apiUser, final String apiKey) {
+		super.init(apiUser, apiKey, null, null, null, ANOMALY_RE, ANOMALY_PATH);
+	}
+	
+	/**
+	 * Constructor
+	 *
+	 * @deprecated
+	 */
+	public Anomaly(final String apiUser, final String apiKey,
+			final CacheManager cacheManager) {
+		super.init(apiUser, apiKey, null, null, null, ANOMALY_RE, ANOMALY_PATH);
+	}
+	
     /**
      * Constructor
      *
      */
     public Anomaly(final String apiUser, final String apiKey, 
-    			final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, cacheManager, 
-        		ANOMALY_RE, ANOMALY_PATH);
+    		       final String project, final String organization,
+    			   final CacheManager cacheManager) {
+    		super.init(apiUser, apiKey, project, organization, 
+    				   cacheManager, ANOMALY_RE, ANOMALY_PATH);
     }
 
 

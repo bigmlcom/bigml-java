@@ -19,35 +19,47 @@ public class Fusion extends AbstractResource {
 
     // Logging
     Logger logger = LoggerFactory.getLogger(Fusion.class);
-
-
+    
     /**
      * Constructor
      *
+     * @deprecated
      */
-    public Fusion() {
-        super.init(null, null, null, 
-        		FUSION_RE, FUSION_PATH);
-    }
+	public Fusion() {
+		super.init(null, null, null, null, null, 
+				FUSION_RE, FUSION_PATH);
+	}
 
-    /**
-     * Constructor
-     *
-     */
-    public Fusion(final String apiUser, final String apiKey) {
-        super.init(apiUser, apiKey, null, 
-        		FUSION_RE, FUSION_PATH);
-    }
-
-
+	/**
+	 * Constructor
+	 *
+	 * @deprecated
+	 */
+	public Fusion(final String apiUser, final String apiKey) {
+		super.init(apiUser, apiKey, null, null, null, 
+				FUSION_RE, FUSION_PATH);
+	}
+	
+	/**
+	 * Constructor
+	 *
+	 * @deprecated
+	 */
+	public Fusion(final String apiUser, final String apiKey,
+			final CacheManager cacheManager) {
+		super.init(apiUser, apiKey, null, null, null, 
+				FUSION_RE, FUSION_PATH);
+	}
+	
     /**
      * Constructor
      *
      */
     public Fusion(final String apiUser, final String apiKey, 
-    			final CacheManager cacheManager) {
-        super.init(apiUser, apiKey, cacheManager, 
-        		FUSION_RE, FUSION_PATH);
+    			  final String project, final String organization,
+    			  final CacheManager cacheManager) {
+        super.init(apiUser, apiKey, project, organization, 
+        		   cacheManager, FUSION_RE, FUSION_PATH);
     }
     
     

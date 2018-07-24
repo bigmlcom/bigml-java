@@ -16,33 +16,47 @@ public class Ensemble extends AbstractModelResource {
 
     // Logging
     Logger logger = LoggerFactory.getLogger(Ensemble.class);
-
+    
     /**
      * Constructor
      *
+     * @deprecated
      */
-    public Ensemble() {
-    		super.init(null, null, null, 
-    			ENSEMBLE_RE, ENSEMBLE_PATH);
-    }
+	public Ensemble() {
+		super.init(null, null, null, null, null, 
+				ENSEMBLE_RE, ENSEMBLE_PATH);
+	}
 
-    /**
-     * Constructor
-     *
-     */
-    public Ensemble(final String apiUser, final String apiKey) {
-    		super.init(apiUser, apiKey, null, 
-    			ENSEMBLE_RE, ENSEMBLE_PATH);
-    }
-
+	/**
+	 * Constructor
+	 *
+	 * @deprecated
+	 */
+	public Ensemble(final String apiUser, final String apiKey) {
+		super.init(apiUser, apiKey, null, null, null, 
+				ENSEMBLE_RE, ENSEMBLE_PATH);
+	}
+	
+	/**
+	 * Constructor
+	 *
+	 * @deprecated
+	 */
+	public Ensemble(final String apiUser, final String apiKey,
+			final CacheManager cacheManager) {
+		super.init(apiUser, apiKey, null, null, null, 
+				ENSEMBLE_RE, ENSEMBLE_PATH);
+	}
+	
     /**
      * Constructor
      *
      */
     public Ensemble(final String apiUser, final String apiKey, 
-    			final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, cacheManager, 
-    			ENSEMBLE_RE, ENSEMBLE_PATH);
+    			    final String project, final String organization,
+    			    final CacheManager cacheManager) {
+    		super.init(apiUser, apiKey, project, organization, 
+    				   cacheManager, ENSEMBLE_RE, ENSEMBLE_PATH);
     }
 
 }

@@ -21,33 +21,47 @@ public class AnomalyScore extends AbstractResource {
 
     // Logging
     Logger logger = LoggerFactory.getLogger(AnomalyScore.class);
-
+    
     /**
      * Constructor
      *
+     * @deprecated
      */
-    public AnomalyScore() {
-    		super.init(null, null, null, 
-    			ANOMALYSCORE_RE, ANOMALYSCORE_PATH);
-    }
+	public AnomalyScore() {
+		super.init(null, null, null, null, null, 
+				   ANOMALYSCORE_RE, ANOMALYSCORE_PATH);
+	}
 
-    /**
-     * Constructor
-     *
-     */
-    public AnomalyScore(final String apiUser, final String apiKey) {
-    		super.init(apiUser, apiKey, null, 
-    			ANOMALYSCORE_RE, ANOMALYSCORE_PATH);
-    }
-
+	/**
+	 * Constructor
+	 *
+	 * @deprecated
+	 */
+	public AnomalyScore(final String apiUser, final String apiKey) {
+		super.init(apiUser, apiKey, null, null, null, 
+				   ANOMALYSCORE_RE, ANOMALYSCORE_PATH);
+	}
+	
+	/**
+	 * Constructor
+	 *
+	 * @deprecated
+	 */
+	public AnomalyScore(final String apiUser, final String apiKey,
+			final CacheManager cacheManager) {
+		super.init(apiUser, apiKey, null, null, null, 
+				   ANOMALYSCORE_RE, ANOMALYSCORE_PATH);
+	}
+	
     /**
      * Constructor
      *
      */
     public AnomalyScore(final String apiUser, final String apiKey, 
-    			final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, cacheManager, 
-    			ANOMALYSCORE_RE, ANOMALYSCORE_PATH);
+    					final String project, final String organization,
+    					final CacheManager cacheManager) {
+    		super.init(apiUser, apiKey, project, organization, 
+    				   cacheManager, ANOMALYSCORE_RE, ANOMALYSCORE_PATH);
     }
 
     /**

@@ -18,34 +18,47 @@ public class Forecast extends AbstractResource {
 
     // Logging
     Logger logger = LoggerFactory.getLogger(Forecast.class);
-
+    
     /**
      * Constructor
      *
+     * @deprecated
      */
-    public Forecast() {
-    		super.init(null, null, null, 
-    			FORECAST_RE, FORECAST_PATH);
-    }
+	public Forecast() {
+		super.init(null, null, null, null, null, 
+				FORECAST_RE, FORECAST_PATH);
+	}
 
-    /**
-     * Constructor
-     *
-     */
-    public Forecast(final String apiUser, final String apiKey) {
-    		super.init(apiUser, apiKey, null, 
-    			FORECAST_RE, FORECAST_PATH);
-    }
-
-
+	/**
+	 * Constructor
+	 *
+	 * @deprecated
+	 */
+	public Forecast(final String apiUser, final String apiKey) {
+		super.init(apiUser, apiKey, null, null, null, 
+				FORECAST_RE, FORECAST_PATH);
+	}
+	
+	/**
+	 * Constructor
+	 *
+	 * @deprecated
+	 */
+	public Forecast(final String apiUser, final String apiKey,
+			final CacheManager cacheManager) {
+		super.init(apiUser, apiKey, null, null, null, 
+				FORECAST_RE, FORECAST_PATH);
+	}
+	
     /**
      * Constructor
      *
      */
     public Forecast(final String apiUser, final String apiKey, 
-    			final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, cacheManager, 
-    			FORECAST_RE, FORECAST_PATH);
+    				final String project, final String organization,
+    				final CacheManager cacheManager) {
+    		super.init(apiUser, apiKey, project, organization,
+    				   cacheManager, FORECAST_RE, FORECAST_PATH);
     }
 
     /**
@@ -81,16 +94,8 @@ public class Forecast extends AbstractResource {
         }
 
         try {
-        		waitForResource(timeSeriesId, "timeSeriesIsReady", waitTime, retries);
-        		
-            // Input data
-            JSONObject inputDataJSON = null;
-            if (inputData == null) {
-                inputDataJSON = new JSONObject();
-            } else {
-                inputDataJSON = inputData;
-            }
-
+        	waitForResource(timeSeriesId, "timeSeriesIsReady", waitTime, retries);
+        	
             JSONObject requestObject = new JSONObject();
             if (args != null) {
                 requestObject = args;

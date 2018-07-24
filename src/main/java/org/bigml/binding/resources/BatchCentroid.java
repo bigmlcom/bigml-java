@@ -20,33 +20,47 @@ public class BatchCentroid extends AbstractResource {
     Logger logger = LoggerFactory.getLogger(BatchCentroid.class);
 
     public final static String DOWNLOAD_DIR = "/download";
-
+    
     /**
      * Constructor
      *
+     * @deprecated
      */
-    public BatchCentroid() {
-    		super.init(null, null, null, 
-    			BATCH_CENTROID_RE, BATCH_CENTROID_PATH);
-    }
+	public BatchCentroid() {
+		super.init(null, null, null, null, null, 
+				BATCH_CENTROID_RE, BATCH_CENTROID_PATH);
+	}
 
-    /**
-     * Constructor
-     *
-     */
-    public BatchCentroid(final String apiUser, final String apiKey) {
-    		super.init(apiUser, apiKey, null, 
-			BATCH_CENTROID_RE, BATCH_CENTROID_PATH);
-    }
-
+	/**
+	 * Constructor
+	 *
+	 * @deprecated
+	 */
+	public BatchCentroid(final String apiUser, final String apiKey) {
+		super.init(apiUser, apiKey, null, null, null, 
+				BATCH_CENTROID_RE, BATCH_CENTROID_PATH);
+	}
+	
+	/**
+	 * Constructor
+	 *
+	 * @deprecated
+	 */
+	public BatchCentroid(final String apiUser, final String apiKey,
+			final CacheManager cacheManager) {
+		super.init(apiUser, apiKey, null, null, null, 
+				BATCH_CENTROID_RE, BATCH_CENTROID_PATH);
+	}
+    
     /**
      * Constructor
      *
      */
     public BatchCentroid(final String apiUser, final String apiKey, 
-    			final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, cacheManager, 
-			BATCH_CENTROID_RE, BATCH_CENTROID_PATH);
+    					 final String project, final String organization,
+    					 final CacheManager cacheManager) {
+    		super.init(apiUser, apiKey, project, organization, 
+    				   cacheManager, BATCH_CENTROID_RE, BATCH_CENTROID_PATH);
     }
 
     /**

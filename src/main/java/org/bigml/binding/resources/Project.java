@@ -19,33 +19,47 @@ public class Project extends AbstractResource {
 
     // Logging
     Logger logger = LoggerFactory.getLogger(Project.class);
-
+    
     /**
      * Constructor
      *
+     * @deprecated
      */
-    public Project() {
-    		super.init(null, null, null, 
-    			PROJECT_RE, PROJECT_PATH);
-    }
+	public Project() {
+		super.init(null, null, null, null, null, 
+				PROJECT_RE, PROJECT_PATH);
+	}
 
-    /**
-     * Constructor
-     *
-     */
-    public Project(final String apiUser, final String apiKey) {
-    		super.init(apiUser, apiKey, null, 
-    			PROJECT_RE, PROJECT_PATH);
-    }
-
+	/**
+	 * Constructor
+	 *
+	 * @deprecated
+	 */
+	public Project(final String apiUser, final String apiKey) {
+		super.init(apiUser, apiKey, null, null, null, 
+				PROJECT_RE, PROJECT_PATH);
+	}
+	
+	/**
+	 * Constructor
+	 *
+	 * @deprecated
+	 */
+	public Project(final String apiUser, final String apiKey,
+			final CacheManager cacheManager) {
+		super.init(apiUser, apiKey, null, null, null, 
+				PROJECT_RE, PROJECT_PATH);
+	}
+	
     /**
      * Constructor
      *
      */
     public Project(final String apiUser, final String apiKey, 
-    			final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, cacheManager, 
-    			PROJECT_RE, PROJECT_PATH);
+    			   final String project, final String organization,
+    			   final CacheManager cacheManager) {
+    		super.init(apiUser, apiKey, project, organization,
+    				   cacheManager, PROJECT_RE, PROJECT_PATH);
     }
 
     /**

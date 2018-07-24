@@ -23,33 +23,47 @@ public class Sample extends AbstractResource {
 
     // Logging
     Logger logger = LoggerFactory.getLogger(Sample.class);
-
+    
     /**
      * Constructor
      *
+     * @deprecated
      */
-    public Sample() {
-    		super.init(null, null, null, 
-    			SAMPLE_RE, SAMPLE_PATH);
-    }
+	public Sample() {
+		super.init(null, null, null, null, null, 
+				SAMPLE_RE, SAMPLE_PATH);
+	}
 
-    /**
-     * Constructor
-     *
-     */
-    public Sample(final String apiUser, final String apiKey) {
-    	super.init(apiUser, apiKey, null, 
-    			SAMPLE_RE, SAMPLE_PATH);
-    }
-
+	/**
+	 * Constructor
+	 *
+	 * @deprecated
+	 */
+	public Sample(final String apiUser, final String apiKey) {
+		super.init(apiUser, apiKey, null, null, null, 
+				SAMPLE_RE, SAMPLE_PATH);
+	}
+	
+	/**
+	 * Constructor
+	 *
+	 * @deprecated
+	 */
+	public Sample(final String apiUser, final String apiKey,
+			final CacheManager cacheManager) {
+		super.init(apiUser, apiKey, null, null, null, 
+				SAMPLE_RE, SAMPLE_PATH);
+	}
+	
     /**
      * Constructor
      *
      */
     public Sample(final String apiUser, final String apiKey, 
-    			final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, cacheManager, 
-    			SAMPLE_RE, SAMPLE_PATH);
+    			  final String project, final String organization,
+    			  final CacheManager cacheManager) {
+    		super.init(apiUser, apiKey, project, organization, 
+    				   cacheManager, SAMPLE_RE, SAMPLE_PATH);
     }
 
     /**

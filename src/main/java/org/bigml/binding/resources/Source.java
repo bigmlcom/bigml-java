@@ -5,7 +5,6 @@ import java.net.HttpURLConnection;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
 import org.bigml.binding.utils.CacheManager;
 import org.bigml.binding.utils.MultipartUtility;
 import org.bigml.binding.utils.Utils;
@@ -26,30 +25,47 @@ public class Source extends AbstractResource {
 
 	// Logging
 	Logger logger = LoggerFactory.getLogger(Source.class);
-
+	
 	/**
-	 * Constructor
-	 *
-	 */
+     * Constructor
+     *
+     * @deprecated
+     */
 	public Source() {
-		super.init(null, null, null, SOURCE_RE, SOURCE_PATH);
+		super.init(null, null, null, null, null, 
+				SOURCE_RE, SOURCE_PATH);
 	}
 
 	/**
 	 * Constructor
 	 *
+	 * @deprecated
 	 */
 	public Source(final String apiUser, final String apiKey) {
-		super.init(apiUser, apiKey, null, SOURCE_RE, SOURCE_PATH);
+		super.init(apiUser, apiKey, null, null, null, 
+				SOURCE_RE, SOURCE_PATH);
 	}
-
+	
+	/**
+	 * Constructor
+	 *
+	 * @deprecated
+	 */
+	public Source(final String apiUser, final String apiKey,
+			final CacheManager cacheManager) {
+		super.init(apiUser, apiKey, null, null, null, 
+				SOURCE_RE, SOURCE_PATH);
+	}
+	
 	/**
 	 * Constructor
 	 *
 	 */
 	public Source(final String apiUser, final String apiKey,
-			final CacheManager cacheManager) {
-		super.init(apiUser, apiKey, cacheManager, SOURCE_RE, SOURCE_PATH);
+				  final String project, final String organization,
+				  final CacheManager cacheManager) {
+		super.init(apiUser, apiKey, project, organization,
+				   cacheManager, SOURCE_RE, SOURCE_PATH);
 	}
 
 	/**
@@ -107,7 +123,7 @@ public class Source extends AbstractResource {
 		try {
 			MultipartUtility multipartUtility = new MultipartUtility(
 					resourceUrl + bigmlAuth, "UTF-8");
-
+			
 			multipartUtility.addFilePart("bin", new File(fileName));
 
 			if (name != null) {

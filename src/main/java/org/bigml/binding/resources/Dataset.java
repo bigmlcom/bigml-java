@@ -4,7 +4,6 @@ import org.bigml.binding.BigMLClient;
 import org.bigml.binding.utils.CacheManager;
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,33 +26,47 @@ public class Dataset extends AbstractResource {
     Logger logger = LoggerFactory.getLogger(Dataset.class);
 
     public final static String DOWNLOAD_DIR = "/download";
-
+    
     /**
      * Constructor
      *
+     * @deprecated
      */
-    public Dataset() {
-    		super.init(null, null, null, 
-    			DATASET_RE, DATASET_PATH);
-    }
+	public Dataset() {
+		super.init(null, null, null, null, null, 
+				DATASET_RE, DATASET_PATH);
+	}
 
-    /**
-     * Constructor
-     *
-     */
-    public Dataset(final String apiUser, final String apiKey) {
-    		super.init(apiUser, apiKey, null, 
-    			DATASET_RE, DATASET_PATH);
-    }
-
+	/**
+	 * Constructor
+	 *
+	 * @deprecated
+	 */
+	public Dataset(final String apiUser, final String apiKey) {
+		super.init(apiUser, apiKey, null, null, null, 
+				DATASET_RE, DATASET_PATH);
+	}
+	
+	/**
+	 * Constructor
+	 *
+	 * @deprecated
+	 */
+	public Dataset(final String apiUser, final String apiKey,
+			final CacheManager cacheManager) {
+		super.init(apiUser, apiKey, null, null, null, 
+				DATASET_RE, DATASET_PATH);
+	}
+	
     /**
      * Constructor
      *
      */
     public Dataset(final String apiUser, final String apiKey, 
-    			final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, cacheManager, 
-    			DATASET_RE, DATASET_PATH);
+    			   final String project, final String organization,
+    			   final CacheManager cacheManager) {
+    		super.init(apiUser, apiKey, project, organization,
+    				  cacheManager, DATASET_RE, DATASET_PATH);
     }
 
     /**

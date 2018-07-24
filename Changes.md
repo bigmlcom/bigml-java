@@ -34,6 +34,7 @@
 * LocalPredictiveModel: support for operating_point, operating_kind
 * LocalEnsemble: support for operating_point, operating_kind
 * Added support for Local Fusions
+* Adding organizations support for all the API calls.
 
 ### Bugs
 

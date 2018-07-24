@@ -17,33 +17,47 @@ public class Cluster extends AbstractModelResource {
 
     // Logging
     Logger logger = LoggerFactory.getLogger(Cluster.class);
-
+    
     /**
      * Constructor
      *
+     * @deprecated
      */
-    public Cluster() {
-    		super.init(null, null, null, 
-    			CLUSTER_RE, CLUSTER_PATH);
-    }
+	public Cluster() {
+		super.init(null, null, null, null, null, 
+				CLUSTER_RE, CLUSTER_PATH);
+	}
 
-    /**
-     * Constructor
-     *
-     */
-    public Cluster(final String apiUser, final String apiKey) {
-    		super.init(apiUser, apiKey, null, 
-    			CLUSTER_RE, CLUSTER_PATH);
-    }
-
+	/**
+	 * Constructor
+	 *
+	 * @deprecated
+	 */
+	public Cluster(final String apiUser, final String apiKey) {
+		super.init(apiUser, apiKey, null, null, null, 
+				CLUSTER_RE, CLUSTER_PATH);
+	}
+	
+	/**
+	 * Constructor
+	 *
+	 * @deprecated
+	 */
+	public Cluster(final String apiUser, final String apiKey,
+			final CacheManager cacheManager) {
+		super.init(apiUser, apiKey, null, null, null, 
+				CLUSTER_RE, CLUSTER_PATH);
+	}
+	
     /**
      * Constructor
      *
      */
     public Cluster(final String apiUser, final String apiKey, 
-    			final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, cacheManager, 
-    			CLUSTER_RE, CLUSTER_PATH);
+    			   final String project, final String organization,
+    			   final CacheManager cacheManager) {
+    		super.init(apiUser, apiKey, project, organization,
+    				   cacheManager, CLUSTER_RE, CLUSTER_PATH);
     }
 
     /**

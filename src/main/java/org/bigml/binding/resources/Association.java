@@ -16,35 +16,47 @@ public class Association extends AbstractModelResource {
 
     // Logging
     Logger logger = LoggerFactory.getLogger(Association.class);
-
-
+    
     /**
      * Constructor
      *
+     * @deprecated
      */
-    public Association() {
-        super.init(null, null, null, 
-        		ASSOCIATION_RE, ASSOCIATION_PATH);
-    }
+	public Association() {
+		super.init(null, null, null, null, null, 
+				ASSOCIATION_RE, ASSOCIATION_PATH);
+	}
 
-    /**
-     * Constructor
-     *
-     */
-    public Association(final String apiUser, final String apiKey) {
-        super.init(apiUser, apiKey, null, 
-        		ASSOCIATION_RE, ASSOCIATION_PATH);
-    }
-
-
+	/**
+	 * Constructor
+	 *
+	 * @deprecated
+	 */
+	public Association(final String apiUser, final String apiKey) {
+		super.init(apiUser, apiKey, null, null, null, 
+				ASSOCIATION_RE, ASSOCIATION_PATH);
+	}
+	
+	/**
+	 * Constructor
+	 *
+	 * @deprecated
+	 */
+	public Association(final String apiUser, final String apiKey,
+			final CacheManager cacheManager) {
+		super.init(apiUser, apiKey, null, null, null, 
+				ASSOCIATION_RE, ASSOCIATION_PATH);
+	}
+	
     /**
      * Constructor
      *
      */
     public Association(final String apiUser, final String apiKey,
-    			final CacheManager cacheManager) {
-        super.init(apiUser, apiKey, cacheManager, 
-        		ASSOCIATION_RE, ASSOCIATION_PATH);
+    				   final String project, final String organization,
+    				   final CacheManager cacheManager) {
+        super.init(apiUser, apiKey, project, organization, 
+        		  cacheManager, ASSOCIATION_RE, ASSOCIATION_PATH);
     }
 
 }

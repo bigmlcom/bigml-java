@@ -18,34 +18,47 @@ public class TopicDistribution extends AbstractResource {
 
     // Logging
     Logger logger = LoggerFactory.getLogger(TopicDistribution.class);
-
+    
     /**
      * Constructor
      *
+     * @deprecated
      */
-    public TopicDistribution() {
-    		super.init(null, null, null, 
-    			TOPICDISTRIBUTION_RE, TOPICDISTRIBUTION_PATH);
-    }
+	public TopicDistribution() {
+		super.init(null, null, null, null, null, 
+				TOPICDISTRIBUTION_RE, TOPICDISTRIBUTION_PATH);
+	}
 
-    /**
-     * Constructor
-     *
-     */
-    public TopicDistribution(final String apiUser, final String apiKey) {
-    		super.init(apiUser, apiKey, null, 
-    			TOPICDISTRIBUTION_RE, TOPICDISTRIBUTION_PATH);
-    }
-
-
+	/**
+	 * Constructor
+	 *
+	 * @deprecated
+	 */
+	public TopicDistribution(final String apiUser, final String apiKey) {
+		super.init(apiUser, apiKey, null, null, null, 
+				TOPICDISTRIBUTION_RE, TOPICDISTRIBUTION_PATH);
+	}
+	
+	/**
+	 * Constructor
+	 *
+	 * @deprecated
+	 */
+	public TopicDistribution(final String apiUser, final String apiKey,
+			final CacheManager cacheManager) {
+		super.init(apiUser, apiKey, null, null, null, 
+				TOPICDISTRIBUTION_RE, TOPICDISTRIBUTION_PATH);
+	}
+	
     /**
      * Constructor
      *
      */
     public TopicDistribution(final String apiUser, final String apiKey, 
-    			final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, cacheManager, 
-    			TOPICDISTRIBUTION_RE, TOPICDISTRIBUTION_PATH);
+    						 final String project, final String organization,
+    						 final CacheManager cacheManager) {
+    		super.init(apiUser, apiKey, project, organization, 
+    				   cacheManager, TOPICDISTRIBUTION_RE, TOPICDISTRIBUTION_PATH);
     }
 
     /**

@@ -4,7 +4,6 @@ import org.bigml.binding.BigMLClient;
 import org.bigml.binding.utils.CacheManager;
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,33 +20,47 @@ public class Model extends AbstractModelResource {
 
     // Logging
     Logger logger = LoggerFactory.getLogger(Model.class);
-
+    
     /**
      * Constructor
      *
+     * @deprecated
      */
-    public Model() {
-    		super.init(null, null, null, 
-    			MODEL_RE, MODEL_PATH);
-    }
+	public Model() {
+		super.init(null, null, null, null, null, 
+				MODEL_RE, MODEL_PATH);
+	}
 
-    /**
-     * Constructor
-     *
-     */
-    public Model(final String apiUser, final String apiKey) {
-    		super.init(apiUser, apiKey, null, 
-    			MODEL_RE, MODEL_PATH);
-    }
-
+	/**
+	 * Constructor
+	 *
+	 * @deprecated
+	 */
+	public Model(final String apiUser, final String apiKey) {
+		super.init(apiUser, apiKey, null, null, null, 
+				MODEL_RE, MODEL_PATH);
+	}
+	
+	/**
+	 * Constructor
+	 *
+	 * @deprecated
+	 */
+	public Model(final String apiUser, final String apiKey,
+			final CacheManager cacheManager) {
+		super.init(apiUser, apiKey, null, null, null, 
+				MODEL_RE, MODEL_PATH);
+	}
+	
     /**
      * Constructor
      *
      */
     public Model(final String apiUser, final String apiKey, 
-    			final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, cacheManager, 
-    			MODEL_RE, MODEL_PATH);
+    			 final String project, final String organization,
+    			 final CacheManager cacheManager) {
+    		super.init(apiUser, apiKey, project, organization,
+    				   cacheManager, MODEL_RE, MODEL_PATH);
     }
 
     /**

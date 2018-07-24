@@ -22,33 +22,47 @@ public class Script extends AbstractResource {
 
     // Logging
     Logger logger = LoggerFactory.getLogger(Script.class);
-
+    
     /**
      * Constructor
      *
+     * @deprecated
      */
-    public Script() {
-    		super.init(null, null, null, 
-    			SCRIPT_RE, SCRIPT_PATH);
-    }
+	public Script() {
+		super.init(null, null, null, null, null, 
+				SCRIPT_RE, SCRIPT_PATH);
+	}
 
-    /**
-     * Constructor
-     *
-     */
-    public Script(final String apiUser, final String apiKey) {
-    		super.init(apiUser, apiKey, null, 
-    			SCRIPT_RE, SCRIPT_PATH);
-    }
-
+	/**
+	 * Constructor
+	 *
+	 * @deprecated
+	 */
+	public Script(final String apiUser, final String apiKey) {
+		super.init(apiUser, apiKey, null, null, null, 
+				SCRIPT_RE, SCRIPT_PATH);
+	}
+	
+	/**
+	 * Constructor
+	 *
+	 * @deprecated
+	 */
+	public Script(final String apiUser, final String apiKey,
+			final CacheManager cacheManager) {
+		super.init(apiUser, apiKey, null, null, null, 
+				SCRIPT_RE, SCRIPT_PATH);
+	}
+	
     /**
      * Constructor
      *
      */
     public Script(final String apiUser, final String apiKey, 
-    			final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, cacheManager, 
-    			SCRIPT_RE, SCRIPT_PATH);
+    			  final String project, final String organization,
+    			  final CacheManager cacheManager) {
+    		super.init(apiUser, apiKey, project, organization,
+    				   cacheManager, SCRIPT_RE, SCRIPT_PATH);
     }
 
     /**
