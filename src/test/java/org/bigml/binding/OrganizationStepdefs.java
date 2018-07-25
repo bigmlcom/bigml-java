@@ -29,6 +29,8 @@ public class OrganizationStepdefs {
         			"an organization ID in your environment variables " +
         			"to run this test.");
         
+        
+        /*
         BigMLClient.getInstance(null, null, null, organizationId, null);
         
         commonSteps.I_create_a_resource_with_("project", "{\"name\": \"my new project\"}");
@@ -36,6 +38,7 @@ public class OrganizationStepdefs {
         
         BigMLClient.resetInstance();
         BigMLClient.getInstance(null, null, projectId, organizationId, null);
+        */
     }
 
     @After("@afterOganizationScenario")

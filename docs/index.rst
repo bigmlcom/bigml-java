@@ -75,15 +75,15 @@ then:
 
 .. code-block:: java
 
-    BigMLClient api = BigMLClient.getInstance();
+    BigMLClient api = new BigMLClient();
 
 Otherwise, you can initialize directly when instantiating
 the BigMLClient class as follows:
 
 .. code-block:: java
 
-    BigMLClient api = BigMLClient.getInstance("myusername",
-        "ae579e7e53fb9abd646a6ff8aa99d4afe83ac291", false);
+    BigMLClient api = new BigMLClient("myusername", 
+    "ae579e7e53fb9abd646a6ff8aa99d4afe83ac291", null);
 
 These credentials will allow you to manage any resource in your user
 environment.
@@ -100,10 +100,9 @@ should include the ``project ID``:
 
 .. code-block:: java
 	
-	BigMLClient api = BigMLClient.getInstance("myusername",
-        "ae579e7e53fb9abd646a6ff8aa99d4afe83ac291", 
-        project/53739b98d994972da7001d4a, null, null);
-
+	BigMLClient api = new BigMLClient("myusername", 
+		"ae579e7e53fb9abd646a6ff8aa99d4afe83ac291",
+		"project/53739b98d994972da7001d4a", null, null);
 	
 If the project used in a connection object
 does not belong to an existing organization but is one of the
@@ -116,11 +115,11 @@ needs to include the corresponding``organization ID``:
 
 .. code-block:: java
 	
-	BigMLClient api = BigMLClient.getInstance("myusername",
-        "ae579e7e53fb9abd646a6ff8aa99d4afe83ac291", 
-        null, organization/53739b98d994972da7025d4a, null);
+	BigMLClient api = new BigMLClient("myusername", 
+		"ae579e7e53fb9abd646a6ff8aa99d4afe83ac291",
+		"project/53739b98d994972da7001d4a", 
+		"organization/53739b98d994972da7025d4a", null);
         
-
 For `Virtual Private Cloud <https://bigml.com/pricing/vpc>`_ setups, you can 
 change the remote server URL to the VPC particular one by either setting the 
 ``BIGML_URL`` in ``binding.properties`` or in the JVM environment.
@@ -173,7 +172,7 @@ You can easily generate a prediction following these steps:
 .. code-block:: java
 
     // Create BigMLClient with the properties in binding.properties
-    BigMLClient api = BigMLClient.getInstance();
+    BigMLClient api = new BigMLClient();
 
     JSONObject args = null;
 
@@ -240,14 +239,8 @@ Setting the ``storage`` argument in the api client instantiation:
 
 .. code-block:: java
 
-    BigMLClient api = BigMLClient.getInstance("./storage");
-
-or:
-
-.. code-block:: java
-
-    BigMLClient api = BigMLClient.getInstance("myusername",
-        "ae579e7e53fb9abd646a6ff8aa99d4afe83ac291", true, "./storage");
+    BigMLClient api = new BigMLClient(
+    	"myusername", "ae579e7e53fb9abd646a6ff8aa99d4afe83ac291", "./storage");
 
 all the generated, updated or retrieved resources will be automatically
 saved to the chosen directory.

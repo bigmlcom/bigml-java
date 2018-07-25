@@ -95,19 +95,63 @@ public class BigMLClient {
 
     protected BigMLClient() {
     }
-
+    
+    /**
+     * Constructor
+     */
+    public BigMLClient(final String apiUser, final String apiKey, 
+    		final String storage) throws AuthenticationException {
+    	this.init(null, apiUser, apiKey, storage);
+    }
+    
+    /**
+     * Constructor
+     */
+    public BigMLClient(final String bigmlDomain, 
+    		final String apiUser, final String apiKey, 
+    		final String storage) throws AuthenticationException {
+    	this.init(bigmlDomain, apiUser, apiKey, storage);
+    }
+    
+    /**
+     * Constructor
+     */
+    public BigMLClient(final String apiUser, final String apiKey, 
+    		final String projectId, final String organizationId, 
+    		final String storage) throws AuthenticationException {
+    	this.init(null, apiUser, apiKey, projectId, 
+  			  organizationId, storage);
+    }
+    
+    /**
+     * Constructor
+     */
+    public BigMLClient(final String bigmlDomain, 
+    		final String apiUser, final String apiKey, 
+    		final String projectId, final String organizationId, 
+    		final String storage) throws AuthenticationException {
+    	this.init(bigmlDomain, apiUser, apiKey, projectId, 
+  			  organizationId, storage);
+    }
+    
+    
+    
+    @Deprecated
     public static BigMLClient getInstance() 
     		throws AuthenticationException {
-        if (instance == null) {
+    	
+    	if (instance == null) {
             instance = new BigMLClient();
             instance.init(null, null, null, null);
         }
         return instance;
     }
-
+    
+    @Deprecated
     public static BigMLClient getInstance(final String storage)
             throws AuthenticationException {
-        if (instance == null) {
+    	
+    	if (instance == null) {
             instance = new BigMLClient();
             instance.init(null, null, null, storage);
         }
@@ -191,44 +235,17 @@ public class BigMLClient {
         return instance;
     }
     
+    @Deprecated
     public static BigMLClient getInstance(final String bigmlDomain, 
     		final String apiUser, final String apiKey, 
     		final String storage)
             throws AuthenticationException {
-        if (instance == null) {
+    	if (instance == null) {
             instance = new BigMLClient();
             instance.init(bigmlDomain, apiUser, apiKey, storage);
         }
         return instance;
     }
-    
-    
-    public static BigMLClient getInstance(final String apiUser, 
-    		final String apiKey, final String projectId, 
-    		final String organizationId, final String storage)
-            throws AuthenticationException {
-        if (instance == null) {
-            instance = new BigMLClient();
-            instance.init(null, apiUser, apiKey, projectId, 
-            			  organizationId, storage);
-        }
-        return instance;
-    }
-    
-    public static BigMLClient getInstance(final String bigmlDomain, 
-    		final String apiUser, final String apiKey, 
-    		final String projectId, final String organizationId, 
-    		final String storage)
-            throws AuthenticationException {
-        if (instance == null) {
-            instance = new BigMLClient();
-            instance.init(bigmlDomain, apiUser, apiKey, projectId, 
-            			  organizationId, storage);
-        }
-        return instance;
-    }
-    
-    
 
     public static void resetInstance() {
         instance = null;
