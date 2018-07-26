@@ -59,7 +59,7 @@ public class BigMLSampleClient {
             // BIGML_API_KEY that should previously be set the
             // binding.properties file
 
-            api = BigMLClient.getInstance();
+            api = new BigMLClient();
         } catch (AuthenticationException e) {
             e.printStackTrace();
             return;

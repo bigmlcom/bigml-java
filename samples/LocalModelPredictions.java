@@ -12,8 +12,9 @@ public class LocalModelPredictions {
         throws Exception {
         // Use here the identifier of an model you own
         String mid = "model/52df49b60c0b5e589b00014b";
+        BigMLClient api = new BigMLClient();
         LocalPredictiveModel m =
-            new LocalPredictiveModel(BigMLClient.getInstance().getModel(mid));
+            new LocalPredictiveModel(api.getModel(mid));
 
         // Here, the inputFile must contain a header line with either
         // the names or the identifiers of the fields.  If it doesn't,

@@ -28,7 +28,7 @@ public class ScriptsStepdefs {
         JSONObject args = new JSONObject();
         args.put("tags", Arrays.asList("unitTest"));
 
-        JSONObject resource = BigMLClient.getInstance().createScript(source, args, 5, null);
+        JSONObject resource = context.api.createScript(source, args, 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.script = (JSONObject) resource.get("object");

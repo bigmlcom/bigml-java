@@ -31,7 +31,7 @@ public class SourcesStepdefs {
     	JSONObject args = new JSONObject();
         args.put("tags", Arrays.asList("unitTest"));
 
-        JSONObject resource = BigMLClient.getInstance().createSource(
+        JSONObject resource = context.api.createSource(
         		fileName, "new source", null, args);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
@@ -46,7 +46,7 @@ public class SourcesStepdefs {
     	JSONObject args = new JSONObject();
         args.put("tags", Arrays.asList("unitTest"));
         
-        JSONObject resource = BigMLClient.getInstance().createRemoteSource(
+        JSONObject resource = context.api.createRemoteSource(
         		url, args);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
@@ -70,7 +70,7 @@ public class SourcesStepdefs {
         JSONObject args = new JSONObject();
         args.put("tags", Arrays.asList("unitTest"));
 
-        JSONObject resource = BigMLClient.getInstance().createInlineSource(
+        JSONObject resource = context.api.createInlineSource(
         		inlineData, args);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");

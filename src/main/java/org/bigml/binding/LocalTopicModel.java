@@ -28,13 +28,14 @@ import org.bigml.binding.utils.Utils;
  * and BIGML_API_KEY environment variables and that you own the topicmodel/id
  * below):
  *
- * // API client BigMLClient api = BigMLClient.getInstance();
+ * // API client BigMLClient api = new BigMLClient();
  *
- * // Retrieve a remote topicmodel by id JSONObject association = topicmodel =
- * api.getTopicModel( "topicmodel/5026965515526876630001b2");
+ * // Retrieve a remote topicmodel by id 
+ * JSONObject topicmodel = api.
+ * 		getTopicModel( "topicmodel/5026965515526876630001b2");
  *
- * // A lightweight wrapper around a TopicModel resource localTopicModel = new
- * localTopicModel(topicmodel);
+ * // A lightweight wrapper around a TopicModel resource 
+ * localTopicModel localTopicModel = new localTopicModel(topicmodel);
  *
  */
 public class LocalTopicModel extends ModelFields implements Serializable {

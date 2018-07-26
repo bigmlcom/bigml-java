@@ -32,7 +32,7 @@ public class SamplesStepdefs {
     public void I_download_the_sample_content_to(String fileTo, Long numOfRows, String seed)
             throws Throwable {
         String sampleId = (String) context.getSample().get("resource");
-        JSONObject sample = BigMLClient.getInstance().getSample(sampleId,
+        JSONObject sample = context.api.getSample(sampleId,
                 String.format("rows=%d&seed=%s", numOfRows, seed) );
 
         JSONArray fields = (JSONArray) Utils.getJSONObject(sample, "object.sample.fields", new JSONArray());

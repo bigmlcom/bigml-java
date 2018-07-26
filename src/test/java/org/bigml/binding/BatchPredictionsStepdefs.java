@@ -67,7 +67,7 @@ public class BatchPredictionsStepdefs {
         JSONObject args = new JSONObject();
         args.put("tags", Arrays.asList("unitTest"));
 
-        JSONObject resource = BigMLClient.getInstance().createBatchPrediction(
+        JSONObject resource = context.api.createBatchPrediction(
         		resourceId, datasetId, args, 5, 3);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
@@ -80,7 +80,7 @@ public class BatchPredictionsStepdefs {
     @When("^I download the created predictions file to \"([^\"]*)\"$")
     public void I_download_the_created_predictions_file_to(String fileTo)
             throws Throwable {
-        BigMLClient.getInstance().downloadBatchPrediction(
+    	context.api.downloadBatchPrediction(
                 context.batchPrediction, fileTo);
     }
 
@@ -113,7 +113,7 @@ public class BatchPredictionsStepdefs {
         JSONObject args = new JSONObject();
         args.put("tags", Arrays.asList("unitTest"));
 
-        JSONObject resource = BigMLClient.getInstance().createBatchAnomalyScore(
+        JSONObject resource = context.api.createBatchAnomalyScore(
                 anomalyId, datasetId, args, 5, null);
 
         context.status = (Integer) resource.get("code");
@@ -143,8 +143,8 @@ public class BatchPredictionsStepdefs {
         String batchPredictionId = (String) context.batchPrediction.get("resource");
         assertNotNull("A batch prediction id is needed.", batchPredictionId);
 
-        JSONObject source = BigMLClient.getInstance().createSourceFromBatchPrediction(batchPredictionId,
-                new JSONObject());
+        JSONObject source = context.api.createSourceFromBatchPrediction(
+        		batchPredictionId, new JSONObject());
 
         Integer code = (Integer) source.get("code");
         assertEquals(AbstractResource.HTTP_CREATED, code.intValue());

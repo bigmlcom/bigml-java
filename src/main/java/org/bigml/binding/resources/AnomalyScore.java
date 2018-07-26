@@ -57,10 +57,11 @@ public class AnomalyScore extends AbstractResource {
      * Constructor
      *
      */
-    public AnomalyScore(final String apiUser, final String apiKey, 
+    public AnomalyScore(final BigMLClient bigmlClient,
+    					final String apiUser, final String apiKey, 
     					final String project, final String organization,
     					final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, project, organization, 
+    		super.init(bigmlClient, apiUser, apiKey, project, organization, 
     				   cacheManager, ANOMALYSCORE_RE, ANOMALYSCORE_PATH);
     }
 
@@ -96,7 +97,7 @@ public class AnomalyScore extends AbstractResource {
         JSONObject anomaly = null;
         
         try {
-            anomaly = BigMLClient.getInstance().getAnomaly(anomalyId);
+            anomaly = this.bigmlClient.getAnomaly(anomalyId);
             waitForResource(anomalyId, "anomalyIsReady",  waitTime, retries);
         } catch (Throwable e) {}
 

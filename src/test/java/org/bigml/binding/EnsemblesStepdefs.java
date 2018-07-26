@@ -39,7 +39,7 @@ public class EnsemblesStepdefs {
         args.put("tags", Arrays.asList("unitTest"));
 
         String datasetId = (String) context.dataset.get("resource");
-        JSONObject resource = BigMLClient.getInstance().createEnsemble(
+        JSONObject resource = context.api.createEnsemble(
                 datasetId, args, 20, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
@@ -60,7 +60,7 @@ public class EnsemblesStepdefs {
         args.put("tags", Arrays.asList("unitTest"));
         
         String datasetId = (String) context.dataset.get("resource");
-        JSONObject resource = BigMLClient.getInstance().createEnsemble(
+        JSONObject resource = context.api.createEnsemble(
                 datasetId, args, 20, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");

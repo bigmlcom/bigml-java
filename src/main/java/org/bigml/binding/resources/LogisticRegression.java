@@ -1,5 +1,6 @@
 package org.bigml.binding.resources;
 
+import org.bigml.binding.BigMLClient;
 import org.bigml.binding.utils.CacheManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,10 +53,11 @@ public class LogisticRegression extends AbstractModelResource {
      * Constructor
      *
      */
-    public LogisticRegression(final String apiUser, final String apiKey, 
-    						 final String project, final String organization,
-    						 final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, project, organization,
+    public LogisticRegression(final BigMLClient bigmlClient,
+    						  final String apiUser, final String apiKey, 
+    						  final String project, final String organization,
+    						  final CacheManager cacheManager) {
+    		super.init(bigmlClient, apiUser, apiKey, project, organization,
     				   cacheManager, LOGISTICREGRESSION_RE, 
     				   LOGISTICREGRESSION_PATH);
     }

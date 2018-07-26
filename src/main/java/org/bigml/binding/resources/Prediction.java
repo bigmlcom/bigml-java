@@ -2,6 +2,7 @@ package org.bigml.binding.resources;
 
 import java.util.Iterator;
 
+import org.bigml.binding.BigMLClient;
 import org.bigml.binding.utils.CacheManager;
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONObject;
@@ -57,10 +58,11 @@ public class Prediction extends AbstractResource {
      * Constructor
      *
      */
-    public Prediction(final String apiUser, final String apiKey, 
+    public Prediction(final BigMLClient bigmlClient,
+    				  final String apiUser, final String apiKey, 
     				  final String project, final String organization,
     				  final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, project, organization,
+    		super.init(bigmlClient, apiUser, apiKey, project, organization,
     				   cacheManager, PREDICTION_RE, PREDICTION_PATH);
     }
 

@@ -12,8 +12,8 @@ public class LocalEnsemblePredictions {
         throws Exception {
         // Use here the identifier of an ensemble you own
         String eid = "ensemble/52df49b60c0b5e589b00014b";
-        LocalEnsemble e =
-            new LocalEnsemble(BigMLClient.getInstance().getEnsemble(eid));
+        BigMLClient api = new BigMLClient();
+        LocalEnsemble e = new LocalEnsemble(api.getEnsemble(eid));
 
         // Here, the inputFile must contain a header line with either
         // the names or the identifiers of the fields.  If it doesn't,

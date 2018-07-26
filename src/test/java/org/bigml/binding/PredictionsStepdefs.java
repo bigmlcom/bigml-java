@@ -37,7 +37,7 @@ public class PredictionsStepdefs {
         args.put("tags", Arrays.asList("unitTest"));
         args.put("missing_strategy", 1);
 
-        JSONObject resource = BigMLClient.getInstance().createPrediction(
+        JSONObject resource = context.api.createPrediction(
             modelId, (JSONObject) JSONValue.parse(inputData), args, 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
@@ -54,7 +54,7 @@ public class PredictionsStepdefs {
         args.put("tags", Arrays.asList("unitTest"));
         args.put("missing_strategy", 1);
         
-        JSONObject resource = BigMLClient.getInstance().createPrediction(
+        JSONObject resource = context.api.createPrediction(
         		ensembleId, (JSONObject) JSONValue.parse(inputData), args, 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
@@ -70,7 +70,7 @@ public class PredictionsStepdefs {
         JSONObject args = new JSONObject();
         args.put("tags", Arrays.asList("unitTest"));
 
-        JSONObject resource = BigMLClient.getInstance().createPrediction(
+        JSONObject resource = context.api.createPrediction(
             modelId, (JSONObject) JSONValue.parse(inputData), args, 5, null);
 
         context.status = (Integer) resource.get("code");
@@ -133,7 +133,7 @@ public class PredictionsStepdefs {
         args.put("tags", Arrays.asList("unitTest"));
         args.put("operating_point", (JSONObject) JSONValue.parse(operatingPoint));
 
-        JSONObject resource = BigMLClient.getInstance().createPrediction(
+        JSONObject resource = context.api.createPrediction(
         		modelId, (JSONObject) JSONValue.parse(inputData), args, 5, null);
 
         context.status = (Integer) resource.get("code");
@@ -170,7 +170,7 @@ public class PredictionsStepdefs {
         args.put("tags", Arrays.asList("unitTest"));
         args.put("operating_kind", kind);
 
-        JSONObject resource = BigMLClient.getInstance().createPrediction(
+        JSONObject resource = context.api.createPrediction(
         		modelId, (JSONObject) JSONValue.parse(inputData), args, 5, null);
 
         context.status = (Integer) resource.get("code");
@@ -216,7 +216,7 @@ public class PredictionsStepdefs {
         JSONObject args = new JSONObject();
         args.put("tags", Arrays.asList("unitTest"));
 
-        JSONObject resource = BigMLClient.getInstance().createPrediction(
+        JSONObject resource = context.api.createPrediction(
             ensembleId, (JSONObject) JSONValue.parse(inputData), args, 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
@@ -242,7 +242,7 @@ public class PredictionsStepdefs {
         args.put("tags", Arrays.asList("unitTest"));
         args.put("operating_point", (JSONObject) JSONValue.parse(operatingPoint));
 
-        JSONObject resource = BigMLClient.getInstance().createPrediction(
+        JSONObject resource = context.api.createPrediction(
         		ensembleId, (JSONObject) JSONValue.parse(inputData), args, 5, null);
 
         context.status = (Integer) resource.get("code");
@@ -282,7 +282,7 @@ public class PredictionsStepdefs {
         args.put("tags", Arrays.asList("unitTest"));
         args.put("operating_kind", kind);
 
-        JSONObject resource = BigMLClient.getInstance().createPrediction(
+        JSONObject resource = context.api.createPrediction(
         		ensembleId, (JSONObject) JSONValue.parse(inputData), args, 5, null);
         
         context.status = (Integer) resource.get("code");
@@ -344,7 +344,7 @@ public class PredictionsStepdefs {
         args.put("tags", Arrays.asList("unitTest"));
         args.put("operating_kind", kind);
 
-        JSONObject resource = BigMLClient.getInstance().createPrediction(
+        JSONObject resource = context.api.createPrediction(
         		logisticId, (JSONObject) JSONValue.parse(inputData), args, 5, null);
 
         context.status = (Integer) resource.get("code");
@@ -374,7 +374,7 @@ public class PredictionsStepdefs {
     	JSONObject args = new JSONObject();
     	args.put("tags", Arrays.asList("unitTest"));
         
-        JSONObject resource = BigMLClient.getInstance().createPrediction(
+        JSONObject resource = context.api.createPrediction(
         		logisticId, (JSONObject) JSONValue.parse(inputData), args, 5, null);
 
         context.status = (Integer) resource.get("code");
@@ -435,7 +435,7 @@ public class PredictionsStepdefs {
         args.put("tags", Arrays.asList("unitTest"));
         args.put("operating_point", (JSONObject) JSONValue.parse(operatingPoint));
 
-        JSONObject resource = BigMLClient.getInstance().createPrediction(
+        JSONObject resource = context.api.createPrediction(
         		deepnetId, (JSONObject) JSONValue.parse(inputData), args, 5, null);
 
         context.status = (Integer) resource.get("code");
@@ -467,7 +467,7 @@ public class PredictionsStepdefs {
         args.put("tags", Arrays.asList("unitTest"));
         args.put("operating_kind", kind);
 
-        JSONObject resource = BigMLClient.getInstance().createPrediction(
+        JSONObject resource = context.api.createPrediction(
         		deepnetId, (JSONObject) JSONValue.parse(inputData), args, 5, null);
 
         context.status = (Integer) resource.get("code");
@@ -497,7 +497,7 @@ public class PredictionsStepdefs {
     	JSONObject args = new JSONObject();
     	args.put("tags", Arrays.asList("unitTest"));
         
-        JSONObject resource = BigMLClient.getInstance().createPrediction(
+        JSONObject resource = context.api.createPrediction(
         		deepnetId, (JSONObject) JSONValue.parse(inputData), args, 5, null);
         
         context.status = (Integer) resource.get("code");
@@ -606,7 +606,7 @@ public class PredictionsStepdefs {
         JSONObject args = new JSONObject();
         args.put("tags", Arrays.asList("unitTest"));
 
-        JSONObject resource = BigMLClient.getInstance().createPrediction(
+        JSONObject resource = context.api.createPrediction(
         		fusionId, (JSONObject) JSONValue.parse(inputData), args, 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");

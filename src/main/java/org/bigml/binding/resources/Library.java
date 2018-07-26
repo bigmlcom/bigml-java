@@ -1,5 +1,6 @@
 package org.bigml.binding.resources;
 
+import org.bigml.binding.BigMLClient;
 import org.bigml.binding.utils.CacheManager;
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONObject;
@@ -58,10 +59,11 @@ public class Library extends AbstractResource {
      * Constructor
      *
      */
-    public Library(final String apiUser, final String apiKey, 
+    public Library(final BigMLClient bigmlClient,
+    			   final String apiUser, final String apiKey, 
     			   final String project, final String organization,
     			   final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, project, organization,
+    		super.init(bigmlClient, apiUser, apiKey, project, organization,
     				   cacheManager, LIBRARY_RE, LIBRARY_PATH);
     }
 

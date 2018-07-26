@@ -40,7 +40,7 @@ public class ModelsStepdefs {
         args.put("tags", Arrays.asList("unitTest"));
         args.put("missing_splits", true);
 
-        JSONObject resource = BigMLClient.getInstance().createModel(datasetId,
+        JSONObject resource = context.api.createModel(datasetId,
                 args, 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
@@ -61,7 +61,7 @@ public class ModelsStepdefs {
         args.put("tags", Arrays.asList("unitTest"));
         args.put("missing_splits", false);
 
-        JSONObject resource = BigMLClient.getInstance().createModel(context.datasets,
+        JSONObject resource = context.api.createModel(context.datasets,
                 args, 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
@@ -94,7 +94,7 @@ public class ModelsStepdefs {
             argsJSON.put("missing_splits", false);
         }
 
-        JSONObject resource = BigMLClient.getInstance().createModel(datasetId,
+        JSONObject resource = context.api.createModel(datasetId,
                 argsJSON, 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
@@ -117,7 +117,7 @@ public class ModelsStepdefs {
         args.put("tags", Arrays.asList("unitTest"));
         args.put("missing_splits", false);
 
-        JSONObject resource = BigMLClient.getInstance().createModel(datasetId,
+        JSONObject resource = context.api.createModel(datasetId,
                 args, 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
@@ -143,11 +143,11 @@ public class ModelsStepdefs {
     public void I_retrieve_a_list_of_remote_models_tagged_with(String tag)
             throws Throwable {
         context.models = new JSONArray();
-        JSONArray models = (JSONArray) BigMLClient.getInstance()
+        JSONArray models = (JSONArray) context.api
                 .listModels("tags__in=" + tag).get("objects");
         for (int i = 0; i < models.size(); i++) {
             JSONObject modelResource = (JSONObject) models.get(i);
-            JSONObject resource = BigMLClient.getInstance().getModel(
+            JSONObject resource = context.api.getModel(
                     (String) modelResource.get("resource"));
             context.models.add(resource);
         }
@@ -159,7 +159,7 @@ public class ModelsStepdefs {
             JSONArray models = new JSONArray();
             for (Object model : context.models) {
                 String modelId = (String) ((JSONObject) model).get("resource");
-                JSONObject resource = BigMLClient.getInstance().getModel(modelId);
+                JSONObject resource = context.api.getModel(modelId);
                 Integer code = (Integer) resource.get("code");
                 assertEquals(AbstractResource.HTTP_OK, code.intValue());
                 models.add(resource.get("object"));
@@ -219,7 +219,7 @@ public class ModelsStepdefs {
         changes.put("private", new Boolean(false));
         changes.put("white_box", new Boolean(true));
 
-        JSONObject resource = BigMLClient.getInstance().updateModel(
+        JSONObject resource = context.api.updateModel(
                 context.model, changes);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
@@ -231,7 +231,7 @@ public class ModelsStepdefs {
     public void I_check_the_model_status_using_the_model_s_public_url()
             throws Throwable {
         String modelId = (String) context.model.get("resource");
-        JSONObject resource = BigMLClient.getInstance().getModel(
+        JSONObject resource = context.api.getModel(
                 "public/" + modelId);
 
         context.status = (Integer) resource.get("code");
@@ -265,7 +265,7 @@ public class ModelsStepdefs {
         JSONObject changes = new JSONObject();
         changes.put("shared", new Boolean(true));
 
-        JSONObject resource = BigMLClient.getInstance().updateModel(
+        JSONObject resource = context.api.updateModel(
                 context.model, changes);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
@@ -281,7 +281,7 @@ public class ModelsStepdefs {
 
     @Given("^I check the model status using the model's shared url$")
     public void model_from_shared_url() throws Throwable {
-        JSONObject resource = BigMLClient.getInstance().getModel(
+        JSONObject resource = context.api.getModel(
                 "shared/model/" + this.sharedHash);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
@@ -293,7 +293,7 @@ public class ModelsStepdefs {
     @Given("^I check the model status using the model's shared key$")
     public void model_from_shared_key() throws Throwable {
         String apiUser = System.getProperty("BIGML_USERNAME");
-        JSONObject resource = BigMLClient.getInstance().getModel(
+        JSONObject resource = context.api.getModel(
                 "shared/model/" + this.sharedHash, apiUser, this.sharedKey);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
@@ -313,7 +313,7 @@ public class ModelsStepdefs {
         args.put("tags", Arrays.asList("unitTest"));
         args.put("centroid", centroidId);
 
-        JSONObject resource = BigMLClient.getInstance().createModel(
+        JSONObject resource = context.api.createModel(
         		clusterId, args, 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
@@ -325,8 +325,8 @@ public class ModelsStepdefs {
     public void the_model_is_associated_to_the_centroid_of_the_cluster(String centroid) 
     		throws Throwable {
         
-    	BigMLClient.getInstance().getCacheManager().cleanCache();
-    	JSONObject resource = BigMLClient.getInstance().getCluster(
+    	context.api.getCacheManager().cleanCache();
+    	JSONObject resource = context.api.getCluster(
             (String) context.cluster.get("resource"));
 
         context.status = (Integer) resource.get("code");

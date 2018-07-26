@@ -42,7 +42,7 @@ public class AnomaliesStepdefs {
             datasetsIds.add(datasetId);
         }
 
-        JSONObject resource = BigMLClient.getInstance().createAnomaly(datasetsIds,
+        JSONObject resource = context.api.createAnomaly(datasetsIds,
                 args, 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
@@ -61,7 +61,7 @@ public class AnomaliesStepdefs {
         args.put("tags", Arrays.asList("unitTest"));
         args.put("top_n", topN);
 
-        JSONObject resource = BigMLClient.getInstance().createAnomaly(datasetId,
+        JSONObject resource = context.api.createAnomaly(datasetId,
                 args, 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
@@ -126,7 +126,7 @@ public class AnomaliesStepdefs {
 //            argsJSON.put("missing_splits", false);
         }
 
-        JSONObject resource = BigMLClient.getInstance().createAnomaly(datasetId,
+        JSONObject resource = context.api.createAnomaly(datasetId,
                 argsJSON, 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
@@ -137,7 +137,7 @@ public class AnomaliesStepdefs {
     @When("^I download the created batch anomaly score file to \"([^\"]*)\"$")
     public void I_download_the_created_batch_anomaly_score_file_to(String fileTo)
             throws Throwable {
-        BigMLClient.getInstance().downloadBatchAnomalyScore(
+    	context.api.downloadBatchAnomalyScore(
                 context.batchAnomalyScore, fileTo);
 
     }
@@ -155,7 +155,7 @@ public class AnomaliesStepdefs {
         JSONObject argsJSON = new JSONObject();
         argsJSON.put("tags", Arrays.asList("unitTest"));
 
-        JSONObject resource = BigMLClient.getInstance().createAnomalyScore(
+        JSONObject resource = context.api.createAnomalyScore(
             anomaly, dataObj, argsJSON, 5, null);
 
         context.status = (Integer) resource.get("code");

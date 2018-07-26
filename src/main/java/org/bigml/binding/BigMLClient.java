@@ -92,8 +92,16 @@ public class BigMLClient {
     private String storage;
 
     private CacheManager cacheManager;
-
-    protected BigMLClient() {
+    
+    /**
+     * Constructor
+     */
+    protected BigMLClient()  {
+    	try {
+    		this.init(null, null, null, null);
+    	} catch (AuthenticationException ae) {
+    		logger.error(ae.getLocalizedMessage());
+    	}
     }
     
     /**
@@ -141,8 +149,7 @@ public class BigMLClient {
     		throws AuthenticationException {
     	
     	if (instance == null) {
-            instance = new BigMLClient();
-            instance.init(null, null, null, null);
+            instance = new BigMLClient(null, null, null, null);
         }
         return instance;
     }
@@ -152,8 +159,7 @@ public class BigMLClient {
             throws AuthenticationException {
     	
     	if (instance == null) {
-            instance = new BigMLClient();
-            instance.init(null, null, null, storage);
+            instance = new BigMLClient(null, null, null, storage);
         }
         return instance;
     }
@@ -162,8 +168,7 @@ public class BigMLClient {
     public static BigMLClient getInstance(final boolean devMode)
             throws AuthenticationException {
         if (instance == null) {
-            instance = new BigMLClient();
-            instance.init(null, null, null, null);
+            instance = new BigMLClient(null, null, null, null);
         }
         return instance;
     }
@@ -173,8 +178,7 @@ public class BigMLClient {
     		final boolean devMode)
             throws AuthenticationException {
         if (instance == null) {
-            instance = new BigMLClient();
-            instance.init(null, null, null, null);
+            instance = new BigMLClient(null, null, null, null);
         }
         return instance;
     }
@@ -184,8 +188,7 @@ public class BigMLClient {
             final String apiKey, final boolean devMode)
             throws AuthenticationException {
         if (instance == null) {
-            instance = new BigMLClient();
-            instance.init(null, apiUser, apiKey, null);
+            instance = new BigMLClient(null, apiUser, apiKey, null);
         }
         return instance;
     }
@@ -195,8 +198,7 @@ public class BigMLClient {
             final String apiKey, final String seed, final boolean devMode)
             throws AuthenticationException {
         if (instance == null) {
-            instance = new BigMLClient();
-            instance.init(apiUser, apiKey, seed, null);
+            instance = new BigMLClient(apiUser, apiKey, seed, null);
         }
         return instance;
     }
@@ -206,8 +208,7 @@ public class BigMLClient {
             final String apiKey, final boolean devMode, final String storage)
             throws AuthenticationException {
         if (instance == null) {
-            instance = new BigMLClient();
-            instance.init(apiUser, apiKey, null, storage);
+            instance = new BigMLClient(apiUser, apiKey, null, storage);
         }
         return instance;
     }
@@ -218,8 +219,7 @@ public class BigMLClient {
             final boolean devMode, final String storage)
             throws AuthenticationException {
         if (instance == null) {
-            instance = new BigMLClient();
-            instance.init(null, apiUser, apiKey, storage);
+            instance = new BigMLClient(null, apiUser, apiKey, storage);
         }
         return instance;
     }
@@ -229,8 +229,7 @@ public class BigMLClient {
             final String apiKey, final String seed, final boolean devMode, final String storage)
             throws AuthenticationException {
         if (instance == null) {
-            instance = new BigMLClient();
-            instance.init(bigmlDomain, apiUser, apiKey, storage);
+            instance = new BigMLClient(bigmlDomain, apiUser, apiKey, storage);
         }
         return instance;
     }
@@ -241,8 +240,7 @@ public class BigMLClient {
     		final String storage)
             throws AuthenticationException {
     	if (instance == null) {
-            instance = new BigMLClient();
-            instance.init(bigmlDomain, apiUser, apiKey, storage);
+            instance = new BigMLClient(bigmlDomain, apiUser, apiKey, storage);
         }
         return instance;
     }
@@ -333,69 +331,69 @@ public class BigMLClient {
         // Lets create the storage folder in it was informed
         this.cacheManager = new CacheManager(storage);
         
-        source = new Source(this.bigmlUser, this.bigmlApiKey, 
+        source = new Source(this, this.bigmlUser, this.bigmlApiKey, 
         		this.projectId, this.organizationId, cacheManager);
-        dataset = new Dataset(this.bigmlUser, this.bigmlApiKey, 
+        dataset = new Dataset(this, this.bigmlUser, this.bigmlApiKey, 
         		this.projectId, this.organizationId, cacheManager);
-        model = new Model(this.bigmlUser, this.bigmlApiKey, 
+        model = new Model(this, this.bigmlUser, this.bigmlApiKey, 
         		this.projectId, this.organizationId, cacheManager);
-        prediction = new Prediction(this.bigmlUser, this.bigmlApiKey, 
+        prediction = new Prediction(this, this.bigmlUser, this.bigmlApiKey, 
         		this.projectId, this.organizationId, cacheManager);
-        evaluation = new Evaluation(this.bigmlUser, this.bigmlApiKey, 
+        evaluation = new Evaluation(this, this.bigmlUser, this.bigmlApiKey, 
         		this.projectId, this.organizationId, cacheManager);
-        ensemble = new Ensemble(this.bigmlUser, this.bigmlApiKey, 
+        ensemble = new Ensemble(this, this.bigmlUser, this.bigmlApiKey, 
         		this.projectId, this.organizationId, cacheManager);
-        anomaly = new Anomaly(this.bigmlUser, this.bigmlApiKey, 
+        anomaly = new Anomaly(this, this.bigmlUser, this.bigmlApiKey, 
         		this.projectId, this.organizationId, cacheManager);
-        anomalyScore = new AnomalyScore(this.bigmlUser, this.bigmlApiKey, 
+        anomalyScore = new AnomalyScore(this, this.bigmlUser, this.bigmlApiKey, 
         		this.projectId, this.organizationId, cacheManager);
-        batchAnomalyScore = new BatchAnomalyScore(this.bigmlUser, this.bigmlApiKey, 
+        batchAnomalyScore = new BatchAnomalyScore(this, this.bigmlUser, this.bigmlApiKey, 
         		this.projectId, this.organizationId, cacheManager);
-        batchPrediction = new BatchPrediction(this.bigmlUser, this.bigmlApiKey, 
+        batchPrediction = new BatchPrediction(this, this.bigmlUser, this.bigmlApiKey, 
         		this.projectId, this.organizationId, cacheManager);
-        cluster = new Cluster(this.bigmlUser, this.bigmlApiKey, 
+        cluster = new Cluster(this, this.bigmlUser, this.bigmlApiKey, 
         		this.projectId, this.organizationId, cacheManager);
-        centroid = new Centroid(this.bigmlUser, this.bigmlApiKey, 
+        centroid = new Centroid(this, this.bigmlUser, this.bigmlApiKey, 
         		this.projectId, this.organizationId, cacheManager);
-        batchCentroid = new BatchCentroid(this.bigmlUser, this.bigmlApiKey, 
+        batchCentroid = new BatchCentroid(this, this.bigmlUser, this.bigmlApiKey, 
         		this.projectId, this.organizationId, cacheManager);
-        project = new Project(this.bigmlUser, this.bigmlApiKey, 
+        project = new Project(this, this.bigmlUser, this.bigmlApiKey, 
         		this.projectId, this.organizationId, cacheManager);
-        sample = new Sample(this.bigmlUser, this.bigmlApiKey, 
+        sample = new Sample(this, this.bigmlUser, this.bigmlApiKey, 
         		this.projectId, this.organizationId, cacheManager);
-        correlation = new Correlation(this.bigmlUser, this.bigmlApiKey, 
+        correlation = new Correlation(this, this.bigmlUser, this.bigmlApiKey, 
         		this.projectId, this.organizationId, cacheManager);
-        statisticalTest = new StatisticalTest(this.bigmlUser, this.bigmlApiKey, 
+        statisticalTest = new StatisticalTest(this, this.bigmlUser, this.bigmlApiKey, 
         		this.projectId, this.organizationId, cacheManager);
-        logisticRegression = new LogisticRegression(this.bigmlUser, this.bigmlApiKey, 
+        logisticRegression = new LogisticRegression(this, this.bigmlUser, this.bigmlApiKey, 
         		this.projectId, this.organizationId, cacheManager);
-        script = new Script(this.bigmlUser, this.bigmlApiKey, 
+        script = new Script(this, this.bigmlUser, this.bigmlApiKey, 
         		this.projectId, this.organizationId, cacheManager);
-        execution = new Execution(this.bigmlUser, this.bigmlApiKey, 
+        execution = new Execution(this, this.bigmlUser, this.bigmlApiKey, 
         		this.projectId, this.organizationId, cacheManager);
-        library = new Library(this.bigmlUser, this.bigmlApiKey, 
+        library = new Library(this, this.bigmlUser, this.bigmlApiKey, 
         		this.projectId, this.organizationId, cacheManager);
-        association = new Association(this.bigmlUser, this.bigmlApiKey, 
+        association = new Association(this, this.bigmlUser, this.bigmlApiKey, 
         		this.projectId, this.organizationId, cacheManager);
-        associationSet = new AssociationSet(this.bigmlUser, this.bigmlApiKey, 
+        associationSet = new AssociationSet(this, this.bigmlUser, this.bigmlApiKey, 
         		this.projectId, this.organizationId, cacheManager);
-        topicModel = new TopicModel(this.bigmlUser, this.bigmlApiKey, 
+        topicModel = new TopicModel(this, this.bigmlUser, this.bigmlApiKey, 
         		this.projectId, this.organizationId, cacheManager);
-        topicDistribution = new TopicDistribution(this.bigmlUser, this.bigmlApiKey, 
+        topicDistribution = new TopicDistribution(this, this.bigmlUser, this.bigmlApiKey, 
         		this.projectId, this.organizationId, cacheManager);
-        batchTopicDistribution = new BatchTopicDistribution(this.bigmlUser, this.bigmlApiKey, 
+        batchTopicDistribution = new BatchTopicDistribution(this, this.bigmlUser, this.bigmlApiKey, 
         		this.projectId, this.organizationId, cacheManager);
-        configuration = new Configuration(this.bigmlUser, this.bigmlApiKey, 
+        configuration = new Configuration(this, this.bigmlUser, this.bigmlApiKey, 
         		this.projectId, this.organizationId, cacheManager);
-        timeSeries = new TimeSeries(this.bigmlUser, this.bigmlApiKey, 
+        timeSeries = new TimeSeries(this, this.bigmlUser, this.bigmlApiKey, 
         		this.projectId, this.organizationId, cacheManager);
-        forecast = new Forecast(this.bigmlUser, this.bigmlApiKey, 
+        forecast = new Forecast(this, this.bigmlUser, this.bigmlApiKey, 
         		this.projectId, this.organizationId, cacheManager);
-        deepnet = new Deepnet(this.bigmlUser, this.bigmlApiKey, 
+        deepnet = new Deepnet(this, this.bigmlUser, this.bigmlApiKey, 
         		this.projectId, this.organizationId, cacheManager);
-        optiml = new OptiML(this.bigmlUser, this.bigmlApiKey, 
+        optiml = new OptiML(this, this.bigmlUser, this.bigmlApiKey, 
         		this.projectId, this.organizationId, cacheManager);
-        fusion = new Fusion(this.bigmlUser, this.bigmlApiKey, 
+        fusion = new Fusion(this, this.bigmlUser, this.bigmlApiKey, 
         		this.projectId, this.organizationId, cacheManager);
     }
 

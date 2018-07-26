@@ -11,7 +11,7 @@ offline.
 import org.bigml.binding.BigMLClient;
 import org.bigml.binding.MultiModel;
 
-BigMLClient bigmlClient = BigMLCliente.getInstance();
+BigMLClient bigmlClient = new BigMLClient();
 JSONObject models = bigmlClient.listModels("my_tag");
 MultiModel model = new MultiModel(models);
 model.predict({"petal length": 3, "petal width": 1})

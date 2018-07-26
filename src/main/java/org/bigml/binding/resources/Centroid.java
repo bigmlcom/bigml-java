@@ -1,5 +1,6 @@
 package org.bigml.binding.resources;
 
+import org.bigml.binding.BigMLClient;
 import org.bigml.binding.utils.CacheManager;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
@@ -53,10 +54,11 @@ public class Centroid extends AbstractResource {
      * Constructor
      *
      */
-    public Centroid(final String apiUser, final String apiKey, 
+    public Centroid(final BigMLClient bigmlClient,
+    				final String apiUser, final String apiKey, 
     				final String project, final String organization,
     				final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, project, organization, 
+    		super.init(bigmlClient, apiUser, apiKey, project, organization, 
     				   cacheManager, CENTROID_RE, CENTROID_PATH);
     }
 

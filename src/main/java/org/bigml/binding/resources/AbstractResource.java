@@ -166,7 +166,9 @@ public abstract class AbstractResource {
         STATUSES.put(UNKNOWN, "UNKNOWN");
         STATUSES.put(RUNNABLE, "RUNNABLE");
     }
-
+    
+    protected BigMLClient bigmlClient;
+    
     protected String bigmlUser;
     protected String bigmlApiKey;
     protected String bigmlDomain;
@@ -185,38 +187,54 @@ public abstract class AbstractResource {
     public final static String DOWNLOAD_DIR = "/download";
 
     public CacheManager cacheManager;
-
-
-    protected void init(String apiUser, String apiKey, String project,
-    		String organization, CacheManager cacheManager, 
-    		String resourceRe, String resourcePath) {
-
-        try {
-        	this.bigmlUser = apiUser != null ? apiUser : System
-                    .getProperty("BIGML_USERNAME");
-            this.bigmlApiKey = apiKey != null ? apiKey : System
-                    .getProperty("BIGML_API_KEY");
-            bigmlAuth = "?username=" + this.bigmlUser + ";api_key="
-                    + this.bigmlApiKey + ";";
-            
-            if (project != null) {
-            	this.project = project;
-            	bigmlAuth += ";project=" + this.project;
-            }
-            if (organization != null) {
-            	this.organization = organization;
-            	bigmlAuth += ";organization=" + this.organization;
-            }
-            
-            BIGML_URL = BigMLClient.getInstance().getBigMLUrl();
-            
-            this.cacheManager = cacheManager;
-            this.resourceRe = resourceRe;
-            this.resourceUrl = BIGML_URL + resourcePath;
-            this.resourceName = resourcePath;
-        } catch (AuthenticationException ae) {
-
-        }
+    
+    
+    protected void init(String apiUser, 
+						String apiKey, 
+						String project,
+						String organization, 
+						CacheManager cacheManager, 
+						String resourceRe, 
+						String resourcePath) {
+			
+		init(null, apiUser, apiKey, project, organization, cacheManager, 
+			resourceRe, resourcePath);
+	}
+    
+    protected void init(BigMLClient bigmlClient, 
+    					String apiUser, 
+    					String apiKey, 
+    					String project,
+    					String organization, 
+    					CacheManager cacheManager, 
+    					String resourceRe, 
+    					String resourcePath) {
+    	try {
+	    	this.bigmlClient = bigmlClient != null ? bigmlClient :
+	    		new BigMLClient(apiUser, apiKey, project, organization, null);
+	    	this.bigmlUser = apiUser != null ? apiUser : System
+	                .getProperty("BIGML_USERNAME");
+	        this.bigmlApiKey = apiKey != null ? apiKey : System
+	                .getProperty("BIGML_API_KEY");
+	        bigmlAuth = "?username=" + this.bigmlUser + ";api_key="
+	                + this.bigmlApiKey + ";";
+	        
+	        if (project != null) {
+	        	this.project = project;
+	        	bigmlAuth += ";project=" + this.project;
+	        }
+	        if (organization != null) {
+	        	this.organization = organization;
+	        	bigmlAuth += ";organization=" + this.organization;
+	        }
+	        
+	        BIGML_URL = this.bigmlClient.getBigMLUrl();
+	        
+	        this.cacheManager = cacheManager;
+	        this.resourceRe = resourceRe;
+	        this.resourceUrl = BIGML_URL + resourcePath;
+	        this.resourceName = resourcePath;
+    	} catch (AuthenticationException ae) {}
     }
 
     /**
@@ -245,7 +263,8 @@ public abstract class AbstractResource {
         error.put("status", status);
 
         try {
-            HttpURLConnection connection = Utils.processPOST(urlString + bigmlAuth, json);
+            HttpURLConnection connection = Utils.processPOST(
+            		urlString + bigmlAuth, json);
 
             code = connection.getResponseCode();
             if (code == HTTP_CREATED) {
@@ -990,13 +1009,13 @@ public abstract class AbstractResource {
         retries = retries != null ? retries : 10;
         java.lang.reflect.Method method;
         try {
-        		method = BigMLClient.getInstance().getClass().getMethod(
+        		method = this.bigmlClient.getClass().getMethod(
         				isReadyMethod, String.class);
         		
 	        if (waitTime > 0) {
 	            int count = 0;
 	            Boolean isReady = (Boolean) 
-	            		method.invoke(BigMLClient.getInstance(), resourceId);
+	            		method.invoke(this.bigmlClient, resourceId);
 	            while (count < retries && !isReady) {
 	                Thread.sleep(waitTime);
 	                count++;

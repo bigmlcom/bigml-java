@@ -25,7 +25,8 @@ import org.bigml.binding.utils.Utils;
  * and BIGML_API_KEY environment variables and that you own the association/id
  * below):
  *
- * // API client BigMLClient api = BigMLClient.getInstance();
+ * // API client
+ * BigMLClient api = new BigMLClient();
  *
  * // Retrieve a remote association by id JSONObject association =
  * api.getAssociation( "association/551aa203af447f5484000ec0");

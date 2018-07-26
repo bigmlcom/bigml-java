@@ -1,5 +1,6 @@
 package org.bigml.binding.resources;
 
+import org.bigml.binding.BigMLClient;
 import org.bigml.binding.utils.CacheManager;
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONObject;
@@ -58,10 +59,11 @@ public class Script extends AbstractResource {
      * Constructor
      *
      */
-    public Script(final String apiUser, final String apiKey, 
+    public Script(final BigMLClient bigmlClient,
+    			  final String apiUser, final String apiKey, 
     			  final String project, final String organization,
     			  final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, project, organization,
+    		super.init(bigmlClient, apiUser, apiKey, project, organization,
     				   cacheManager, SCRIPT_RE, SCRIPT_PATH);
     }
 

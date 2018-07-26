@@ -29,20 +29,17 @@ public class OrganizationStepdefs {
         			"an organization ID in your environment variables " +
         			"to run this test.");
         
-        
-        /*
-        BigMLClient.getInstance(null, null, null, organizationId, null);
+        context.api = new BigMLClient(null, null, null, organizationId, null);
         
         commonSteps.I_create_a_resource_with_("project", "{\"name\": \"my new project\"}");
         String projectId = (String) context.project.get("resource");
         
-        BigMLClient.resetInstance();
-        BigMLClient.getInstance(null, null, projectId, organizationId, null);
-        */
+        context.api = new BigMLClient(null, null, projectId, organizationId, null);
     }
 
     @After("@afterOganizationScenario")
     public void afterOrganizationTest() throws Throwable {
     	BigMLClient.resetInstance();
+    	context.api = new BigMLClient();
     }
 }

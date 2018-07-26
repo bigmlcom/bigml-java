@@ -30,8 +30,11 @@ import org.bigml.binding.resources.AbstractResource;
  *
  *
  * import org.bigml.binding.LocalLogisticRegression;
+ * 
+ *  // API client
+ * BigMLClient api = new BigMLClient();
  *
- * JSONObject logisticRegression = BigMLClient.getInstance().
+ * JSONObject logisticRegression = api.
  * 		getLogisticRegression("logisticregression/5026965515526876630001b2");
  * LocalLogisticRegression logistic =
  * 		LocalLogisticRegression(logisticRegression)
@@ -104,7 +107,7 @@ public class LocalLogisticRegression extends ModelFields implements SupervisedMo
 		
 		if (!(logistic.containsKey("resource")
 				&& logistic.get("resource") != null)) {
-			BigMLClient client = BigMLClient.getInstance(
+			BigMLClient client = new BigMLClient(null, null,
 					BigMLClient.STORAGE);
 			logistic = client.getLogisticRegression(logisticRegressionId);
 			

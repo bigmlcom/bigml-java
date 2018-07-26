@@ -30,7 +30,7 @@ public class LibrariesStepdefs {
         JSONObject args = new JSONObject();
         args.put("tags", Arrays.asList("unitTest"));
 
-        JSONObject resource = BigMLClient.getInstance().createLibrary(source, args, 5, null);
+        JSONObject resource = context.api.createLibrary(source, args, 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.library = (JSONObject) resource.get("object");

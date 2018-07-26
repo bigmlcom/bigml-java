@@ -38,7 +38,7 @@ public class CompositesStepdefs {
         args.put("metric", "max_phi");
         args.put("number_of_model_candidates", 4);
 
-        JSONObject resource = BigMLClient.getInstance().createOptiML(
+        JSONObject resource = context.api.createOptiML(
                 datasetId, args, 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
@@ -57,7 +57,7 @@ public class CompositesStepdefs {
         JSONObject args = new JSONObject();
         args.put("tags", Arrays.asList("unitTest"));
         
-        JSONObject resource = BigMLClient.getInstance().createFusion(
+        JSONObject resource = context.api.createFusion(
         		models, args, 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
@@ -82,7 +82,7 @@ public class CompositesStepdefs {
         JSONObject args = new JSONObject();
         args.put("tags", Arrays.asList("unitTest"));
         
-        JSONObject resource = BigMLClient.getInstance().createFusionWithModels(
+        JSONObject resource = context.api.createFusionWithModels(
         		models, args, 5, null);
         
         context.status = (Integer) resource.get("code");

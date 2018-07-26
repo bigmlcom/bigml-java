@@ -44,7 +44,7 @@ public class TopicModelsStepdefs {
 		args.put("tags", Arrays.asList("unitTest"));
 		args.put("seed", "BigML");
 		args.put("topicmodel_seed", "BigML");
-		JSONObject resource = BigMLClient.getInstance()
+		JSONObject resource = context.api
 				.createTopicModel(datasetId, args, 5, null);
 		context.status = (Integer) resource.get("code");
 		context.location = (String) resource.get("location");
@@ -61,7 +61,7 @@ public class TopicModelsStepdefs {
 		JSONObject args = new JSONObject();
 		args.put("tags", Arrays.asList("unitTest"));
 
-		JSONObject resource = BigMLClient.getInstance().createTopicDistribution(
+		JSONObject resource = context.api.createTopicDistribution(
 				topicModelId, (JSONObject) JSONValue.parse(inputData), args, 5,
 				null);
 		context.status = (Integer) resource.get("code");

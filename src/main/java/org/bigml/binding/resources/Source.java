@@ -5,6 +5,7 @@ import java.net.HttpURLConnection;
 import java.util.List;
 import java.util.Set;
 
+import org.bigml.binding.BigMLClient;
 import org.bigml.binding.utils.CacheManager;
 import org.bigml.binding.utils.MultipartUtility;
 import org.bigml.binding.utils.Utils;
@@ -61,10 +62,11 @@ public class Source extends AbstractResource {
 	 * Constructor
 	 *
 	 */
-	public Source(final String apiUser, final String apiKey,
+	public Source(final BigMLClient bigmlClient,
+				  final String apiUser, final String apiKey,
 				  final String project, final String organization,
 				  final CacheManager cacheManager) {
-		super.init(apiUser, apiKey, project, organization,
+		super.init(bigmlClient, apiUser, apiKey, project, organization,
 				   cacheManager, SOURCE_RE, SOURCE_PATH);
 	}
 

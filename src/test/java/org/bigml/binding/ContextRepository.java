@@ -10,7 +10,9 @@ import java.util.Map;
 
 @org.springframework.stereotype.Repository
 public class ContextRepository {
-
+	
+	BigMLClient api = new BigMLClient();
+	
     int status;
     String location = null;
     
@@ -69,9 +71,6 @@ public class ContextRepository {
     
     Map<String, Long> datasetErrorCounts;
     Map<String, Long> datasetMissingCounts;
-
-    Map<String, Long> sampleErrorCounts;
-    Map<String, Long> sampleMissingCounts;
 
     ArrayList<String> scriptsIds = new ArrayList<String>();
 
@@ -249,22 +248,6 @@ public class ContextRepository {
 
     public void setDatasetMissingCounts(Map<String, Long> datasetMissingCounts) {
         this.datasetMissingCounts = datasetMissingCounts;
-    }
-
-    public Map<String, Long> getSampleErrorCounts() {
-        return sampleErrorCounts;
-    }
-
-    public void setSampleErrorCounts(Map<String, Long> sampleErrorCounts) {
-        this.sampleErrorCounts = sampleErrorCounts;
-    }
-
-    public Map<String, Long> getSampleMissingCounts() {
-        return sampleMissingCounts;
-    }
-
-    public void setSampleMissingCounts(Map<String, Long> sampleMissingCounts) {
-        this.sampleMissingCounts = sampleMissingCounts;
     }
 
     public MultiModel getMultiModel() {

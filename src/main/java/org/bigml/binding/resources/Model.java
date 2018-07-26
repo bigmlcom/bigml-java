@@ -56,10 +56,11 @@ public class Model extends AbstractModelResource {
      * Constructor
      *
      */
-    public Model(final String apiUser, final String apiKey, 
+    public Model(final BigMLClient bigmlClient,
+    			 final String apiUser, final String apiKey, 
     			 final String project, final String organization,
     			 final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, project, organization,
+    		super.init(bigmlClient, apiUser, apiKey, project, organization,
     				   cacheManager, MODEL_RE, MODEL_PATH);
     }
 
@@ -110,7 +111,7 @@ public class Model extends AbstractModelResource {
 
                 if( !requestObject.containsKey("centroid") ) {
                     try {
-                        JSONObject cluster = BigMLClient.getInstance().getCluster(resourceId);
+                        JSONObject cluster = this.bigmlClient.getCluster(resourceId);
                         JSONObject clusterModelsIds = (JSONObject) Utils.
                                 getJSONObject(cluster, "object.cluster_models", null);
                         Object centroidId = clusterModelsIds.keySet().toArray()[0];

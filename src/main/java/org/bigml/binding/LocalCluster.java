@@ -30,8 +30,10 @@ import java.util.regex.Pattern;
  * and BIGML_API_KEY environment variables and that you own the model/id below):
  *
  * import org.bigml.binding.LocalCluster;
- *
- * JSONObject clusterData = BigMLClient.getInstance().
+ * // API client
+ * BigMLClient api = new BigMLClient();
+ * 
+ * JSONObject clusterData = api.
  * 		getCluster("cluster/5026965515526876630001b2");
  * 
  * LocalCluster cluster = LocalCluster(clusterData)
@@ -494,7 +496,7 @@ public class LocalCluster extends ModelFields {
     	
     	String centroidDataset = (String) datasets.get(centroidId);
     	
-    	BigMLClient api = BigMLClient.getInstance();
+    	BigMLClient api = new BigMLClient();
     	JSONObject dataset = null;
     	
     	if (centroidDataset == null || centroidDataset.length() == 0) {

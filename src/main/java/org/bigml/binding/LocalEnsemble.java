@@ -14,8 +14,11 @@
  *
  *
  * import org.bigml.binding.LocalEnsemble;
- *
- * JSONObject ensemble = BigMLClient.getInstance().
+ * 
+ * // API client
+ * BigMLClient api = new BigMLClient();
+ * 
+ * JSONObject ensemble = api.
  * 		getEnsemble("ensemble/5b39e6b9c7736e583400214c");
  * LocalEnsemble localEnsemble = new LocalEnsemble(ensemble)
  *
@@ -103,7 +106,8 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
 
 		if (!(ensemble.containsKey("resource")
 				&& ensemble.get("resource") != null)) {
-			BigMLClient client = BigMLClient.getInstance(BigMLClient.STORAGE);
+			BigMLClient client = new BigMLClient(null, null,
+					BigMLClient.STORAGE);
 			ensemble = client.getEnsemble(ensembleId);
 
 			if ((String) ensemble.get("resource") == null) {
@@ -187,7 +191,7 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
 
 	protected void init(JSONObject ensemble, Integer maxModels)
 			throws Exception {
-		BigMLClient bigmlClient = BigMLClient.getInstance();
+		BigMLClient bigmlClient = new BigMLClient();
 		models = new JSONArray();
 		for (String id : modelsIds) {
 			models.add(bigmlClient.getModel(id));

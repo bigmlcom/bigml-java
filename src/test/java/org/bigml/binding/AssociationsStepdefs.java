@@ -42,7 +42,7 @@ public class AssociationsStepdefs {
         args.put("tags", Arrays.asList("unitTest"));
         args.put("search_strategy", strategy);
 
-        JSONObject resource = BigMLClient.getInstance().createAssociation(
+        JSONObject resource = context.api.createAssociation(
                 datasetId, args, 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");

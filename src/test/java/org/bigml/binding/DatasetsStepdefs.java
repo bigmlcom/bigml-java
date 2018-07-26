@@ -43,7 +43,7 @@ public class DatasetsStepdefs {
 
         argsJSON.put("tags", Arrays.asList("unitTest"));
 
-        JSONObject resource = BigMLClient.getInstance().createDataset(sourceId,
+        JSONObject resource = context.api.createDataset(sourceId,
                 argsJSON, 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
@@ -66,7 +66,7 @@ public class DatasetsStepdefs {
         args.put("tags", Arrays.asList("unitTest"));
         args.put("centroid", centroidId);
 
-        JSONObject resource = BigMLClient.getInstance().createDataset(clusterId,
+        JSONObject resource = context.api.createDataset(clusterId,
                 args, 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
@@ -97,7 +97,7 @@ public class DatasetsStepdefs {
     public void I_ask_for_the_error_counts_in_the_fields()
             throws AuthenticationException {
         String datasetId = (String) context.dataset.get("resource");
-        context.datasetErrorCounts = BigMLClient.getInstance().getErrorCounts(datasetId);
+        context.datasetErrorCounts = context.api.getErrorCounts(datasetId);
     }
 
     @Given("^the (missing values counts|error counts) dict is \"(.*)\"$")
@@ -132,7 +132,7 @@ public class DatasetsStepdefs {
         args.put("tags", Arrays.asList("unitTest"));
         args.put("lisp_filter", localAnomaly.filter(true));
 
-        JSONObject resource = BigMLClient.getInstance().createDataset(datasetId,
+        JSONObject resource = context.api.createDataset(datasetId,
                 args, 5, null);
 
         context.dataset = (JSONObject) resource.get("object");
@@ -164,7 +164,7 @@ public class DatasetsStepdefs {
 
         datasetOrigRows = (Long) context.dataset.get("rows");
 
-        JSONObject resource = BigMLClient.getInstance().createDataset(datasetId,
+        JSONObject resource = context.api.createDataset(datasetId,
                 args, 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
@@ -195,7 +195,7 @@ public class DatasetsStepdefs {
         JSONObject changes = new JSONObject();
         changes.put("private", new Boolean(false));
 
-        JSONObject resource = BigMLClient.getInstance().updateDataset(
+        JSONObject resource = context.api.updateDataset(
                 context.dataset, changes);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
@@ -207,7 +207,7 @@ public class DatasetsStepdefs {
     public void I_get_the_dataset_status_using_the_dataset_s_public_url()
             throws Throwable {
         String datasetId = (String) context.dataset.get("resource");
-        JSONObject resource = BigMLClient.getInstance().getDataset(
+        JSONObject resource = context.api.getDataset(
                 "public/" + datasetId);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
@@ -226,8 +226,8 @@ public class DatasetsStepdefs {
         JSONObject changes = new JSONObject();
         changes.put("private", new Boolean(false));
         
-        BigMLClient.getInstance().getCacheManager().cleanCache();
-        JSONObject resource = BigMLClient.getInstance().getCluster(
+        context.api.getCacheManager().cleanCache();
+        JSONObject resource = context.api.getCluster(
             (String) context.cluster.get("resource"));
 
         context.status = (Integer) resource.get("code");
@@ -241,7 +241,7 @@ public class DatasetsStepdefs {
     @When("^I download the dataset file to \"([^\"]*)\"$")
     public void I_download_the_dataset_file_to(String fileTo)
             throws Throwable {
-        BigMLClient.getInstance().downloadDataset((String) context.getDataset().get("resource"),
+    	context.api.downloadDataset((String) context.getDataset().get("resource"),
                 fileTo);
     }
 
@@ -272,7 +272,7 @@ public class DatasetsStepdefs {
         args.put("tags", Arrays.asList("unitTest"));
         args.put("centroid", centroidId);
 
-        JSONObject resource = BigMLClient.getInstance().createDataset(
+        JSONObject resource = context.api.createDataset(
         		clusterId, args, 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
@@ -284,8 +284,8 @@ public class DatasetsStepdefs {
     public void the_dataset_is_associated_to_the_centroid_of_the_cluster(String centroid) 
     		throws Throwable {
         
-    	BigMLClient.getInstance().getCacheManager().cleanCache();
-    	JSONObject resource = BigMLClient.getInstance().getCluster(
+    	context.api.getCacheManager().cleanCache();
+    	JSONObject resource = context.api.getCluster(
             (String) context.cluster.get("resource"));
 
         context.status = (Integer) resource.get("code");

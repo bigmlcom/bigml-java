@@ -1,5 +1,6 @@
 package org.bigml.binding.resources;
 
+import org.bigml.binding.BigMLClient;
 import org.bigml.binding.utils.CacheManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,10 +53,11 @@ public class Association extends AbstractModelResource {
      * Constructor
      *
      */
-    public Association(final String apiUser, final String apiKey,
+    public Association(final BigMLClient bigmlClient,
+    				   final String apiUser, final String apiKey,
     				   final String project, final String organization,
     				   final CacheManager cacheManager) {
-        super.init(apiUser, apiKey, project, organization, 
+        super.init(bigmlClient, apiUser, apiKey, project, organization, 
         		  cacheManager, ASSOCIATION_RE, ASSOCIATION_PATH);
     }
 

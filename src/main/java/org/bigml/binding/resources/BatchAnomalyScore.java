@@ -1,5 +1,6 @@
 package org.bigml.binding.resources;
 
+import org.bigml.binding.BigMLClient;
 import org.bigml.binding.utils.CacheManager;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
@@ -54,10 +55,11 @@ public class BatchAnomalyScore extends AbstractResource {
      * Constructor
      *
      */
-    public BatchAnomalyScore(final String apiUser, final String apiKey, 
+    public BatchAnomalyScore(final BigMLClient bigmlClient,
+    						 final String apiUser, final String apiKey, 
     						 final String project, final String organization, 
     						 final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, project, organization, 
+    		super.init(bigmlClient, apiUser, apiKey, project, organization, 
     				   cacheManager, BATCH_ANOMALYSCORE_RE, 
     				   BATCHANOMALYSCORE_PATH);
     }

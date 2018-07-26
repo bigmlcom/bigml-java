@@ -34,7 +34,7 @@ public class EvaluationsStepdefs {
         JSONObject args = new JSONObject();
         args.put("tags", Arrays.asList("unitTest"));
 
-        JSONObject resource = BigMLClient.getInstance().createEvaluation(
+        JSONObject resource = context.api.createEvaluation(
                 modelId, datasetId, args, 5, 3);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
@@ -57,7 +57,7 @@ public class EvaluationsStepdefs {
         JSONObject args = new JSONObject();
         args.put("tags", Arrays.asList("unitTest"));
 
-        JSONObject resource = BigMLClient.getInstance().createEvaluation(
+        JSONObject resource = context.api.createEvaluation(
                 ensembleId, datasetId, args, 5, 3);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
@@ -76,7 +76,7 @@ public class EvaluationsStepdefs {
         JSONObject args = new JSONObject();
         args.put("tags", Arrays.asList("unitTest"));
 
-        JSONObject resource = BigMLClient.getInstance().createEvaluation(
+        JSONObject resource = context.api.createEvaluation(
                 logisticRegressionId, datasetId, args, 5, 3);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
@@ -94,7 +94,7 @@ public class EvaluationsStepdefs {
         JSONObject args = new JSONObject();
         args.put("tags", Arrays.asList("unitTest"));
 
-        JSONObject resource = BigMLClient.getInstance().createEvaluation(
+        JSONObject resource = context.api.createEvaluation(
         		fusionId, datasetId, args, 5, 3);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");

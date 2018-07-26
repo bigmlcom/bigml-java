@@ -5,7 +5,6 @@ import cucumber.annotation.en.Then;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,11 +57,11 @@ public class TimeSeriesStepdefs {
         args.put("tags", Arrays.asList("unitTest"));
 
         JSONObject resource =
-            BigMLClient.getInstance().createForecast(timeseries,
-                                                     (JSONObject)JSONValue.parse(inputData), 
-                                                     args, 
-                                                     5, 
-                                                     null);
+        		context.api.createForecast(timeseries,
+                                           (JSONObject)JSONValue.parse(inputData), 
+                                           args, 
+                                           5, 
+                                           null);
 
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");

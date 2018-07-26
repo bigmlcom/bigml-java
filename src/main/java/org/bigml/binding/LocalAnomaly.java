@@ -26,7 +26,7 @@ import java.util.Map;
  * and BIGML_API_KEY environment variables and that you own the model/id below):
  *
  * // API client
- * BigMLClient api = BigMLClient.getInstance();
+ * BigMLClient api = new BigMLClient();
  *
  * // Retrieve a remote anomaly by id
  * JSONObject jsonAnomaly = api.getAnomaly("anomaly/551aa203af447f5484000ec0");

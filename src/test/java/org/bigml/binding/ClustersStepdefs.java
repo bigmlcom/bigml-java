@@ -49,7 +49,7 @@ public class ClustersStepdefs {
         args.put("tags", Arrays.asList("unitTest"));
 
 
-        JSONObject resource = BigMLClient.getInstance().createCluster(
+        JSONObject resource = context.api.createCluster(
                 datasetId, args, 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
@@ -67,7 +67,7 @@ public class ClustersStepdefs {
         args.put("cluster_seed", "BigML");
         args.put("tags", Arrays.asList("unitTest"));
 
-        JSONObject resource = BigMLClient.getInstance().createCluster(
+        JSONObject resource = context.api.createCluster(
                 datasetId, args, 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
@@ -93,7 +93,7 @@ public class ClustersStepdefs {
     @Given("^I get the cluster \"(.*)\"")
     public void I_get_the_cluster(String clusterId)
             throws AuthenticationException {
-        JSONObject resource = BigMLClient.getInstance().getCluster(clusterId);
+        JSONObject resource = context.api.getCluster(clusterId);
         
         Integer code = (Integer) resource.get("code");
         assertEquals(code.intValue(), AbstractResource.HTTP_OK);
@@ -108,7 +108,7 @@ public class ClustersStepdefs {
         JSONObject args = new JSONObject();
         args.put("tags", Arrays.asList("unitTest"));
 
-        JSONObject resource = BigMLClient.getInstance().createCentroid(
+        JSONObject resource = context.api.createCentroid(
                 clusterId, (JSONObject) JSONValue.parse(inputData),
                 args, 5, null);
         context.status = (Integer) resource.get("code");
@@ -189,7 +189,7 @@ public class ClustersStepdefs {
         JSONObject args = new JSONObject();
         args.put("tags", Arrays.asList("unitTest"));
 
-        JSONObject resource = BigMLClient.getInstance().createBatchCentroid(
+        JSONObject resource = context.api.createBatchCentroid(
                 clusterId, datasetId, args, 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
@@ -202,7 +202,7 @@ public class ClustersStepdefs {
             throws Throwable {
         downloadedFile = fileTo;
 
-        BigMLClient.getInstance().downloadBatchCentroid(context.batchCentroid,
+        context.api.downloadBatchCentroid(context.batchCentroid,
                 fileTo);
     }
 

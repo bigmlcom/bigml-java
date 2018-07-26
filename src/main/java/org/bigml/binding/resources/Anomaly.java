@@ -1,5 +1,6 @@
 package org.bigml.binding.resources;
 
+import org.bigml.binding.BigMLClient;
 import org.bigml.binding.utils.CacheManager;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
@@ -51,10 +52,11 @@ public class Anomaly extends AbstractModelResource {
      * Constructor
      *
      */
-    public Anomaly(final String apiUser, final String apiKey, 
+    public Anomaly(final BigMLClient bigmlClient,
+    			   final String apiUser, final String apiKey, 
     		       final String project, final String organization,
     			   final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, project, organization, 
+    		super.init(bigmlClient, apiUser, apiKey, project, organization, 
     				   cacheManager, ANOMALY_RE, ANOMALY_PATH);
     }
 

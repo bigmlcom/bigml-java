@@ -32,7 +32,7 @@ public class ExecutionsStepdefs {
         args.put("tags", Arrays.asList("unitTest"));
 
         String scriptId = (String) context.script.get("resource");
-        JSONObject resource = BigMLClient.getInstance().createExecution(scriptId, args, 5, null);
+        JSONObject resource = context.api.createExecution(scriptId, args, 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.execution = (JSONObject) resource.get("object");
@@ -43,7 +43,7 @@ public class ExecutionsStepdefs {
     public void I_create_a_whizzml_script_execution_from_the_last_two_scripts() throws Throwable {
         JSONObject args = new JSONObject();
         args.put("tags", Arrays.asList("unitTest"));
-        JSONObject resource = BigMLClient.getInstance().createExecution(context.scriptsIds, args, 5, null);
+        JSONObject resource = context.api.createExecution(context.scriptsIds, args, 5, null);
 
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");

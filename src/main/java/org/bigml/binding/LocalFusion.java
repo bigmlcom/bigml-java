@@ -28,7 +28,10 @@ import org.slf4j.LoggerFactory;
  *
  * import org.bigml.binding.LocalFusion;
  *
- * JSONObject fusion = BigMLClient.getInstance().
+ * // API client
+ * BigMLClient api = new BigMLClient();
+ *
+ * JSONObject fusion = api.
  * 		getFusion("fusion/5026965515526876630001b2");
  * LocalFusion localFusion = new LocalFusion(fusion)
  *
@@ -92,7 +95,7 @@ public class LocalFusion extends ModelFields implements SupervisedModelInterface
 		
 		if (!(fusion.containsKey("resource")
 				&& fusion.get("resource") != null)) {
-			BigMLClient client = BigMLClient.getInstance(
+			BigMLClient client = new BigMLClient(null, null, 
 					BigMLClient.STORAGE);
 			fusion = client.getFusion(fusionId);
 			
@@ -241,7 +244,7 @@ public class LocalFusion extends ModelFields implements SupervisedModelInterface
 			Utils.checkNoMissingNumerics(inputData, this.fields, null);
 		}
 		
-		BigMLClient bigmlClient = BigMLClient.getInstance();
+		BigMLClient bigmlClient = new BigMLClient();
 		
 		for (Object modelSplit: modelsSplit) {
 			MultiVoteList votesSplit = new MultiVoteList(null);

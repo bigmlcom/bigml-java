@@ -31,7 +31,7 @@ public class DeepnetsStepdefs {
         args.put("tags", Arrays.asList("unitTest"));
         args.put("objective_field", objective);
         
-        JSONObject resource = BigMLClient.getInstance().createDeepnet(datasetId,
+        JSONObject resource = context.api.createDeepnet(datasetId,
                 args, 5, null);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");

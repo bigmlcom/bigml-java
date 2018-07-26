@@ -1,5 +1,6 @@
 package org.bigml.binding.resources;
 
+import org.bigml.binding.BigMLClient;
 import org.bigml.binding.utils.CacheManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,10 +55,11 @@ public class StatisticalTest extends AbstractModelResource {
      * Constructor
      *
      */
-    public StatisticalTest(final String apiUser, final String apiKey, 
+    public StatisticalTest(final BigMLClient bigmlClient,
+    					   final String apiUser, final String apiKey, 
     					   final String project, final String organization,
     					   final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, project, organization,
+    		super.init(bigmlClient, apiUser, apiKey, project, organization,
     				   cacheManager, STATISTICALTEST_RE, STATISTICALTEST_PATH);
     }
 

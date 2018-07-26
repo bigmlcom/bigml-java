@@ -32,8 +32,11 @@ import org.slf4j.LoggerFactory;
  *
  *
  * import org.bigml.binding.LocalDeepnet;
+ * 
+ * // API client
+ * BigMLClient api = new BigMLClient();
  *
- * JSONObject deepnet = BigMLClient.getInstance().
+ * JSONObject deepnet = api.
  * 		getDeepnet("deepnet/5026965515526876630001b2");
  * LocalDeepnet localDeepnet = new LocalDeepnet(deepnet)
  *
@@ -87,7 +90,7 @@ public class LocalDeepnet extends ModelFields implements SupervisedModelInterfac
 		
 		if (!(deepnet.containsKey("resource")
 				&& deepnet.get("resource") != null)) {
-			BigMLClient client = BigMLClient.getInstance(
+			BigMLClient client = new BigMLClient(null, null, 
 					BigMLClient.STORAGE);
 			deepnet = client.getLogisticRegression(deepnetId);
 			

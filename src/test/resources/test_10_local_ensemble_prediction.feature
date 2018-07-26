@@ -16,7 +16,7 @@ Feature: Create Predictions locally from Ensembles
 
     Examples:
       | data             |  time_1  | time_2 | time_3 | number_of_models |  data_input    |prediction  | confidence |
-      | data/iris.csv |  10      | 10     | 50     | 5               | {"petal width": 0.5} | Iris-versicolor | 0.3687 | ["0.3403","0.4150","0.2447"]  |
+      | data/iris.csv |  50      | 50     | 50     | 5               | {"petal width": 0.5} | Iris-versicolor | 0.3687 | ["0.3403","0.4150","0.2447"]  |
 
 
   Scenario Outline: Successfully obtaining field importance from an Ensemble:
@@ -36,7 +36,7 @@ Feature: Create Predictions locally from Ensembles
 
     Examples:
       | data             |  time_1  | time_2 |parms1 | time_3 |parms2 | time_4 |parms3| time_5 |number_of_models |field_importance |
-      | data/iris.csv |  10      | 10     |{"input_fields": ["000000", "000001","000003", "000004"]} |20      |{"input_fields": ["000000", "000001","000002", "000004"]} | 20     |{"input_fields": ["000000", "000001","000002", "000003", "000004"]} | 20   | 3 |[["000002", 0.5269933333333333], ["000003", 0.38936], ["000000", 0.04662333333333333], ["000001", 0.037026666666666666]] |
+      | data/iris.csv |  50      | 50     |{"input_fields": ["000000", "000001","000003", "000004"]} |20      |{"input_fields": ["000000", "000001","000002", "000004"]} | 20     |{"input_fields": ["000000", "000001","000002", "000003", "000004"]} | 20   | 3 |[["000002", 0.5269933333333333], ["000003", 0.38936], ["000000", 0.04662333333333333], ["000001", 0.037026666666666666]] |
 
 
   Scenario Outline: Successfully creating a local prediction from an Ensemble adding confidence:
@@ -53,7 +53,7 @@ Feature: Create Predictions locally from Ensembles
 
     Examples:
       | data            |  time_1  | time_2 | time_3 | number_of_models |  data_input           |prediction       | confidence  |
-      | data/iris.csv   |  10      | 10     | 50     | 5                | {"petal width": 0.5}  | Iris-versicolor |  0.3687     |
+      | data/iris.csv   |  50      | 50     | 50     | 5                | {"petal width": 0.5}  | Iris-versicolor |  0.3687     |
 
 
   # THIS SCENARIO IS NOT NECESSARY IN THE JAVA BINDING BECAUSE WE ONLY CAN CREATE LOCALENSEMBLES
@@ -76,7 +76,7 @@ Feature: Create Predictions locally from Ensembles
   #
   #    Examples:
   #      | data             |  time_1  | time_2 |parms1 | time_3 |parms2 | time_4 |parms3| time_5 |number_of_models |field_importance |
-  #      | data/iris.csv |  10      | 10     |{"input_fields": ["000000", "000001","000003", "000004"]} |20      |{"input_fields": ["000000", "000001","000002", "000004"]} | 20     |{"input_fields": ["000000", "000001","000002", "000003", "000004"]} | 20   | 3 |[["000002", 0.5269933333333333], ["000003", 0.38936], ["000000", 0.04662333333333333], ["000001", 0.037026666666666666]] |
+  #      | data/iris.csv |  50      | 50     |{"input_fields": ["000000", "000001","000003", "000004"]} |20      |{"input_fields": ["000000", "000001","000002", "000004"]} | 20     |{"input_fields": ["000000", "000001","000002", "000003", "000004"]} | 20   | 3 |[["000002", 0.5269933333333333], ["000003", 0.38936], ["000000", 0.04662333333333333], ["000001", 0.037026666666666666]] |
 
 
   Scenario Outline: Successfully creating a local prediction from an Ensemble:
@@ -92,7 +92,7 @@ Feature: Create Predictions locally from Ensembles
 
     Examples:
       | data            |  time_1  | time_2 | time_3 | number_of_models |  data_input    |prediction  |
-      | data/grades.csv   |  10      | 10     | 50     | 2              | {}             | 69.0934    |
+      | data/grades.csv   |  50      | 50     | 50     | 2              | {}             | 69.0934    |
 
 
   Scenario Outline: Successfully creating a local prediction from an Ensemble with max models:
@@ -107,4 +107,4 @@ Feature: Create Predictions locally from Ensembles
 
     Examples:
       | data            |  time_1  | time_2 | time_3 | time_4 | number_of_models | max_models |  data_input    |prediction  |
-      | data/iris.csv   |  10      | 10     | 50     | 20     | 5                | 2          | {"petal width": 0.5} | Iris-versicolor |
+      | data/iris.csv   |  50      | 50     | 50     | 20     | 5                | 2          | {"petal width": 0.5} | Iris-versicolor |

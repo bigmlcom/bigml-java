@@ -62,10 +62,11 @@ public class Dataset extends AbstractResource {
      * Constructor
      *
      */
-    public Dataset(final String apiUser, final String apiKey, 
+    public Dataset(final BigMLClient bigmlClient,
+    			   final String apiUser, final String apiKey, 
     			   final String project, final String organization,
     			   final CacheManager cacheManager) {
-    		super.init(apiUser, apiKey, project, organization,
+    		super.init(bigmlClient, apiUser, apiKey, project, organization,
     				  cacheManager, DATASET_RE, DATASET_PATH);
     }
 
@@ -129,7 +130,7 @@ public class Dataset extends AbstractResource {
 
                 if( !requestObject.containsKey("centroid") ) {
                     try {
-                        JSONObject cluster = BigMLClient.getInstance().getCluster(resourceId);
+                        JSONObject cluster = this.bigmlClient.getCluster(resourceId);
                         JSONObject clusterDSIds = (JSONObject) Utils.
                                 getJSONObject(cluster, "object.cluster_datasets_ids", null);
                         Object centroidId = clusterDSIds.keySet().toArray()[0];

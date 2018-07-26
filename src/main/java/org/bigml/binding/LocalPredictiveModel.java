@@ -18,7 +18,7 @@
   import org.bigml.binding.BigMLClient;
   import org.bigml.binding.resources.Model;
 
-  BigMLClient bigmlClient = BigMLClient.getInstance();
+  BigMLClient bigmlClient = new BigMLClient();
 
   Model model = new Model(bigmlClient.getModel('model/5026965515526876630001b2'));
   model.predict("{\"petal length\": 3, \"petal width\": 1}");

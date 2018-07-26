@@ -30,10 +30,11 @@ import java.util.Comparator;
  * and BIGML_API_KEY environment variables and that you own the model/id below):
  *
  * // API client
- * BigMLClient api = BigMLClient.getInstance();
+ * BigMLClient api = new BigMLClient();
  *
  * // Retrieve a remote timeseries by id
- * JSONObject jsonTimeSeries = api.getAnomaly("timeseries/551aa203af447f5484000ec0");
+ * JSONObject jsonTimeSeries = api.
+ * 		getTimeSeries("timeseries/551aa203af447f5484000ec0");
  *
  * // A lightweight wrapper around a Time Series
  * LocalTimeSeries localTimeSeries = new LocalTimeSeries(jsonTimeSeries);
@@ -103,7 +104,7 @@ public class LocalTimeseries extends ModelFields {
 		
 		if (!(jsonData.containsKey("resource")
 				&& jsonData.get("resource") != null)) {
-			BigMLClient client = BigMLClient.getInstance(
+			BigMLClient client = new BigMLClient(null, null,
 					BigMLClient.STORAGE);
 			jsonData = client.getTimeSeries(timeseriesId);
 			

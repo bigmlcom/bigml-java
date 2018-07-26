@@ -90,7 +90,7 @@ public class CommonStepdefs {
 
 		Method method = null;
 		try {
-			BigMLClient client = BigMLClient.getInstance();
+			BigMLClient client = context.api;
 			if ("create-args".equals(operation)) {
 				method = client.getClass().getMethod(name, JSONObject.class);
 			}
@@ -138,7 +138,7 @@ public class CommonStepdefs {
 			Method method = getClientMethod("create-args", resourceName);
 			
 			JSONObject resource = (JSONObject) method.invoke(
-					BigMLClient.getInstance(), argsJSON);
+					context.api, argsJSON);
 
 			context.status = (Integer) resource.get("code");
 			context.location = (String) resource.get("location");
@@ -167,7 +167,7 @@ public class CommonStepdefs {
 		try {
 			Method method = getClientMethod("create", resourceName);
 			JSONObject resource = (JSONObject) method.invoke(
-					BigMLClient.getInstance(), datasetId, argsJSON, 5, null);
+					context.api, datasetId, argsJSON, 5, null);
 			context.status = (Integer) resource.get("code");
 			context.location = (String) resource.get("location");
 
@@ -228,7 +228,7 @@ public class CommonStepdefs {
 		try {
 			Method method = getClientMethod("update", resourceName);
 			JSONObject resource = (JSONObject) method.invoke(
-					BigMLClient.getInstance(), getResource(resourceName),
+					context.api, getResource(resourceName),
 					changes);
 			context.status = (Integer) resource.get("code");
 			context.location = (String) resource.get("location");
@@ -252,7 +252,7 @@ public class CommonStepdefs {
 
 				Method method = getClientMethod("update", resourceName);
 				JSONObject resource = (JSONObject) method.invoke(
-						BigMLClient.getInstance(), getResource(resourceName),
+						context.api, getResource(resourceName),
 						changes);
 				context.status = (Integer) resource.get("code");
 				context.location = (String) resource.get("location");
@@ -275,7 +275,7 @@ public class CommonStepdefs {
 
 				Method method = getClientMethod("update", resourceName);
 				JSONObject resource = (JSONObject) method.invoke(
-						BigMLClient.getInstance(), getResource(resourceName),
+						context.api, getResource(resourceName),
 						changes);
 				context.status = (Integer) resource.get("code");
 				context.location = (String) resource.get("location");
@@ -308,7 +308,7 @@ public class CommonStepdefs {
 		try {
 			Method method = getClientMethod("get", resourceName);
 			JSONObject resource = (JSONObject) method
-					.invoke(BigMLClient.getInstance(), resourceId);
+					.invoke(context.api, resourceId);
 
 			Integer code = (Integer) resource.get("code");
 			assertEquals(AbstractResource.HTTP_OK, code.intValue());
@@ -325,7 +325,7 @@ public class CommonStepdefs {
 		try {
 			Method method = getClientMethod("delete", resourceName);
 			JSONObject resource = (JSONObject) method.invoke(
-					BigMLClient.getInstance(), getResource(resourceName));
+					context.api, getResource(resourceName));
 			context.status = (Integer) resource.get("code");
 			assertTrue(context.status == AbstractResource.HTTP_NO_CONTENT);
 			setResource(resourceName, (JSONObject) null);
@@ -334,45 +334,7 @@ public class CommonStepdefs {
 		}
 
 	}
-
-	@Then("^test listing$")
-	public void test_listing() throws AuthenticationException {
-		JSONObject listing = BigMLClient.getInstance().listSources("");
-		assertEquals(AbstractResource.HTTP_OK,
-				((Integer) listing.get("code")).intValue());
-		listing = BigMLClient.getInstance().listDatasets("");
-		assertEquals(AbstractResource.HTTP_OK,
-				((Integer) listing.get("code")).intValue());
-		listing = BigMLClient.getInstance().listModels("");
-		assertEquals(AbstractResource.HTTP_OK,
-				((Integer) listing.get("code")).intValue());
-		listing = BigMLClient.getInstance().listClusters("");
-		assertEquals(AbstractResource.HTTP_OK,
-				((Integer) listing.get("code")).intValue());
-		listing = BigMLClient.getInstance().listEnsembles("");
-		assertEquals(AbstractResource.HTTP_OK,
-				((Integer) listing.get("code")).intValue());
-		listing = BigMLClient.getInstance().listEvaluations("");
-		assertEquals(AbstractResource.HTTP_OK,
-				((Integer) listing.get("code")).intValue());
-		listing = BigMLClient.getInstance().listPredictions("");
-		assertEquals(AbstractResource.HTTP_OK,
-				((Integer) listing.get("code")).intValue());
-		listing = BigMLClient.getInstance().listBatchPredictions("");
-		assertEquals(AbstractResource.HTTP_OK,
-				((Integer) listing.get("code")).intValue());
-		listing = BigMLClient.getInstance().listCentroids("");
-		assertEquals(AbstractResource.HTTP_OK,
-				((Integer) listing.get("code")).intValue());
-		listing = BigMLClient.getInstance().listBatchCentroids("");
-		assertEquals(AbstractResource.HTTP_OK,
-				((Integer) listing.get("code")).intValue());
-		listing = BigMLClient.getInstance().listAnomalies("");
-		assertEquals(AbstractResource.HTTP_OK,
-				((Integer) listing.get("code")).intValue());
-
-	}
-
+	
 	@Then("^delete test data$")
 	public void delete_test_data() throws AuthenticationException {
 		if (context.models != null) {
@@ -414,61 +376,61 @@ public class CommonStepdefs {
 		
 		
 		if (context.fusion != null) {
-			BigMLClient.getInstance().deleteFusion(
+			context.api.deleteFusion(
 					(String) context.fusion.get("resource"));
 			context.fusion = null;
 		}
 		if (context.optiML != null) {
-			BigMLClient.getInstance().deleteOptiML(
+			context.api.deleteOptiML(
 					(String) context.optiML.get("resource"));
 			context.optiML = null;
 		}
 		if (context.deepnet != null) {
-			BigMLClient.getInstance()
+			context.api
 					.deleteDeepnet((String) context.deepnet.get("resource"));
 			context.deepnet = null;
 		}
 		if (context.forecast != null) {
-			BigMLClient.getInstance()
+			context.api
 					.deleteForecast((String) context.forecast.get("resource"));
 			context.forecast = null;
 		}
 		if (context.timeSeries != null) {
-			BigMLClient.getInstance()
+			context.api
 					.deleteTimeSeries((String) context.timeSeries.get("resource"));
 			context.timeSeries = null;
 		}
 		if (context.configuration != null) {
-			BigMLClient.getInstance()
+			context.api
 					.deleteConfiguration((String) context.configuration.get("resource"));
 			context.configuration = null;
 		}
 		if (context.batchTopicDistribution != null) {
-			BigMLClient.getInstance()
+			context.api
 					.deleteBatchTopicDistribution((String) context.batchTopicDistribution.get("resource"));
 			context.batchTopicDistribution = null;
 		}
 		if (context.topicDistribution != null) {
-			BigMLClient.getInstance()
+			context.api
 					.deleteTopicDistribution((String) context.topicDistribution.get("resource"));
 			context.topicDistribution = null;
 		}
 		if (context.topicModel != null) {
-			BigMLClient.getInstance()
+			context.api
 					.deleteTopicModel((String) context.topicModel.get("resource"));
 			context.topicModel = null;
 		}
 		if (context.association != null) {
-			BigMLClient.getInstance()
+			context.api
 					.deleteAssociation((String) context.association.get("resource"));
 			context.association = null;
 		}if (context.execution != null) {
-			BigMLClient.getInstance()
+			context.api
 					.deleteExecution((String) context.execution.get("resource"));
 			context.execution = null;
 		}
 		if (context.library != null) {
-			BigMLClient.getInstance()
+			context.api
 					.deleteLibrary((String) context.library.get("resource"));
 			context.library = null;
 		}
@@ -491,68 +453,68 @@ public class CommonStepdefs {
 				}
 			}
 
-			BigMLClient.getInstance()
+			context.api
 					.deleteScript((String) context.script.get("resource"));
 			context.script = null;
 		}
 		if (context.scripts != null) {
 			for (Object script : context.scripts) {
-				BigMLClient.getInstance().deleteScript((String) script);
+				context.api.deleteScript((String) script);
 			}
 			context.script = null;
 		}
 		if (context.logisticRegression != null) {
-			BigMLClient.getInstance()
+			context.api
 					.deleteLogisticRegression((String) context.logisticRegression.get("resource"));
 			context.logisticRegression = null;
 		}
 		if (context.statisticalTest != null) {
-			BigMLClient.getInstance()
+			context.api
 					.deleteStatisticalTest((String) context.statisticalTest.get("resource"));
 			context.statisticalTest = null;
 		}
 		if (context.correlation != null) {
-			BigMLClient.getInstance()
+			context.api
 					.deleteCorrelation((String) context.correlation.get("resource"));
 			context.correlation = null;
 		}
 		if (context.batchCentroid != null) {
-			BigMLClient.getInstance().deleteBatchCentroid(
+			context.api.deleteBatchCentroid(
 					(String) context.batchCentroid.get("resource"));
 			context.batchCentroid = null;
 		}
 		if (context.centroid != null) {
-			BigMLClient.getInstance()
+			context.api
 					.deleteCentroid((String) context.centroid.get("resource"));
 			context.centroid = null;
 		}
 		if (context.batchPrediction != null) {
-			BigMLClient.getInstance().deleteBatchPrediction(
+			context.api.deleteBatchPrediction(
 					(String) context.batchPrediction.get("resource"));
 			context.batchPrediction = null;
 		}
 		if (context.prediction != null) {
-			BigMLClient.getInstance().deletePrediction(
+			context.api.deletePrediction(
 					(String) context.prediction.get("resource"));
 			context.prediction = null;
 		}
 		if (context.evaluation != null) {
-			BigMLClient.getInstance().deleteEvaluation(
+			context.api.deleteEvaluation(
 					(String) context.evaluation.get("resource"));
 			context.evaluation = null;
 		}
 		if (context.cluster != null) {
-			BigMLClient.getInstance()
+			context.api
 					.deleteCluster((String) context.cluster.get("resource"));
 			context.cluster = null;
 		}
 		if (context.project != null) {
-			BigMLClient.getInstance()
+			context.api
 					.deleteProject((String) context.project.get("resource"));
 			context.project = null;
 		}
 		if (context.sample != null) {
-			BigMLClient.getInstance()
+			context.api
 					.deleteSample((String) context.sample.get("resource"));
 			context.sample = null;
 		}
@@ -575,65 +537,54 @@ public class CommonStepdefs {
 				}
 			}
 
-			BigMLClient.getInstance()
+			context.api
 					.deleteAnomaly((String) context.anomaly.get("resource"));
 			context.anomaly = null;
 		}
 		if (context.anomalies != null) {
 			for (Object anomaly : context.anomalies) {
-
-				BigMLClient.getInstance().deleteAnomaly((String) anomaly);
+				context.api.deleteAnomaly((String) anomaly);
 			}
 			context.anomalies = null;
 		}
 		if (context.anomalyScore != null) {
-			BigMLClient.getInstance().deleteAnomalyScore(
+			context.api.deleteAnomalyScore(
 					(String) context.anomalyScore.get("resource"));
 			context.anomalyScore = null;
 		}
 		if (context.batchAnomalyScore != null) {
-			BigMLClient.getInstance().deleteBatchAnomalyScore(
+			context.api.deleteBatchAnomalyScore(
 					(String) context.batchAnomalyScore.get("resource"));
 			context.batchAnomalyScore = null;
 		}
-		
-		
-		
-
-		
-		
 		if (context.model != null) {
 			deleteModel((String) context.model.get("resource"));
 			context.model = null;
 		}
-		
-		
 		if (context.models != null) {
 			for (Object model : context.models) {
 				deleteModel((String) ((JSONObject) model).get("resource"));
 			}
 			context.models = null;
 		}
-		
-		
 		if (context.ensemble != null) {
-			BigMLClient.getInstance()
+			context.api
 					.deleteEnsemble((String) context.ensemble.get("resource"));
 			context.ensemble = null;
 		}
 		if (context.dataset != null) {
-			BigMLClient.getInstance()
+			context.api
 					.deleteDataset((String) context.dataset.get("resource"));
 			context.dataset = null;
 		}
 		if (context.datasets != null) {
 			for (Object dataset : context.datasets) {
-				BigMLClient.getInstance().deleteDataset((String) dataset);
+				context.api.deleteDataset((String) dataset);
 			}
 			context.datasets = null;
 		}
 		if (context.source != null) {
-			BigMLClient.getInstance()
+			context.api
 					.deleteSource((String) context.source.get("resource"));
 			context.source = null;
 		}
@@ -643,19 +594,19 @@ public class CommonStepdefs {
 	private void deleteModel(String modelId) {
 		try {
 			if (modelId.startsWith("model/")) {
-	            BigMLClient.getInstance().deleteModel(modelId);
+				context.api.deleteModel(modelId);
 			}
 			if (modelId.startsWith("ensemble/")) {
-	            BigMLClient.getInstance().deleteEnsemble(modelId);
+				context.api.deleteEnsemble(modelId);
 			}
 			if (modelId.startsWith("deepnet/")) {
-	            BigMLClient.getInstance().deleteDeepnet(modelId);
+				context.api.deleteDeepnet(modelId);
 			}
 			if (modelId.startsWith("logisticregression/")) {
-	            BigMLClient.getInstance().deleteLogisticRegression(modelId);
+				context.api.deleteLogisticRegression(modelId);
 			}
 			if (modelId.startsWith("fusion/")) {
-	            BigMLClient.getInstance().deleteFusion(modelId);
+				context.api.deleteFusion(modelId);
 			}
 		} catch (Exception e) {}
 	}
@@ -664,288 +615,288 @@ public class CommonStepdefs {
 	@Then("^delete all test data$")
 	public void delete_all_test_data() throws Exception {
 
-		BigMLClient.getInstance().getCacheManager().cleanCache();
+		context.api.getCacheManager().cleanCache();
 
 		// Projects
-		JSONArray projects = (JSONArray) BigMLClient.getInstance()
+		JSONArray projects = (JSONArray) context.api
 				.listProjects(";tags__in=unitTest").get("objects");
 		for (int i = 0; i < projects.size(); i++) {
 			JSONObject project = (JSONObject) projects.get(i);
-			BigMLClient.getInstance()
+			context.api
 					.deleteProject((String) project.get("resource"));
 		}
 		
 		// Samples
-		JSONArray samples = (JSONArray) BigMLClient.getInstance()
+		JSONArray samples = (JSONArray) context.api
 				.listSamples(";tags__in=unitTest").get("objects");
 		for (int i = 0; i < samples.size(); i++) {
 			JSONObject sample = (JSONObject) samples.get(i);
-			BigMLClient.getInstance()
+			context.api
 					.deleteSample((String) sample.get("resource"));
 		}
 		
 		// Fusions
-		JSONArray fusions = (JSONArray) BigMLClient.getInstance()
+		JSONArray fusions = (JSONArray) context.api
 				.listFusions(";tags__in=unitTest").get("objects");
 		for (int i = 0; i < fusions.size(); i++) {
 			JSONObject fusion = (JSONObject) fusions.get(i);
-			BigMLClient.getInstance()
+			context.api
 					.deleteFusion((String) fusion.get("resource"));
 		}
 
 		// OptiMLs
-		JSONArray optimls = (JSONArray) BigMLClient.getInstance()
+		JSONArray optimls = (JSONArray) context.api
 				.listOptiMLs(";tags__in=unitTest").get("objects");
 		for (int i = 0; i < optimls.size(); i++) {
 			JSONObject optiml = (JSONObject) optimls.get(i);
-			BigMLClient.getInstance()
+			context.api
 					.deleteOptiML((String) optiml.get("resource"));
 		}
 
 		// Deepnets
-		JSONArray deepnets = (JSONArray) BigMLClient.getInstance()
+		JSONArray deepnets = (JSONArray) context.api
 				.listDeepnets(";tags__in=unitTest").get("objects");
 		for (int i = 0; i < deepnets.size(); i++) {
 			JSONObject deepnet = (JSONObject) deepnets.get(i);
-			BigMLClient.getInstance()
+			context.api
 					.deleteDeepnet((String) deepnet.get("resource"));
 		}
 
 		// Forecasts
-		JSONArray forecasts = (JSONArray) BigMLClient.getInstance()
+		JSONArray forecasts = (JSONArray) context.api
 				.listForecasts(";tags__in=unitTest").get("objects");
 		for (int i = 0; i < forecasts.size(); i++) {
 			JSONObject forecast = (JSONObject) forecasts.get(i);
-			BigMLClient.getInstance()
+			context.api
 					.deleteForecast((String) forecast.get("resource"));
 		}
 
 		// TimeSeries
-		JSONArray timeSeries = (JSONArray) BigMLClient.getInstance()
+		JSONArray timeSeries = (JSONArray) context.api
 				.listTimeSeries(";tags__in=unitTest").get("objects");
 		for (int i = 0; i < timeSeries.size(); i++) {
 			JSONObject timeSeries_ = (JSONObject) timeSeries.get(i);
-			BigMLClient.getInstance()
+			context.api
 					.deleteTimeSeries((String) timeSeries_.get("resource"));
 		}
 
 		// Configurations
-		JSONArray configurations = (JSONArray) BigMLClient.getInstance()
+		JSONArray configurations = (JSONArray) context.api
 				.listConfigurations(";tags__in=unitTest").get("objects");
 		for (int i = 0; i < configurations.size(); i++) {
 			JSONObject configuration = (JSONObject) configurations.get(i);
-			BigMLClient.getInstance().deleteConfiguration(
+			context.api.deleteConfiguration(
 					(String) configuration.get("resource"));
 		}
 
 		// BatchTopicDistributions
-		JSONArray batchTopicDistributions = (JSONArray) BigMLClient
-				.getInstance().listBatchTopicDistributions(";tags__in=unitTest")
+		JSONArray batchTopicDistributions = (JSONArray) context.api
+				.listBatchTopicDistributions(";tags__in=unitTest")
 				.get("objects");
 		for (int i = 0; i < batchTopicDistributions.size(); i++) {
 			JSONObject batchTopicDistribution = (JSONObject) batchTopicDistributions
 					.get(i);
-			BigMLClient.getInstance().deleteTopicDistribution(
+			context.api.deleteTopicDistribution(
 					(String) batchTopicDistribution.get("resource"));
 		}
 
 		// TopicDistributions
-		JSONArray topicDistributions = (JSONArray) BigMLClient.getInstance()
+		JSONArray topicDistributions = (JSONArray) context.api
 				.listTopicDistributions(";tags__in=unitTest").get("objects");
 		for (int i = 0; i < topicDistributions.size(); i++) {
 			JSONObject topicDistribution = (JSONObject) topicDistributions
 					.get(i);
-			BigMLClient.getInstance().deleteTopicDistribution(
+			context.api.deleteTopicDistribution(
 					(String) topicDistribution.get("resource"));
 		}
 
 		// TopicModels
-		JSONArray topicModels = (JSONArray) BigMLClient.getInstance()
+		JSONArray topicModels = (JSONArray) context.api
 				.listTopicModels(";tags__in=unitTest").get("objects");
 		for (int i = 0; i < topicModels.size(); i++) {
 			JSONObject topicModel = (JSONObject) topicModels.get(i);
-			BigMLClient.getInstance()
+			context.api
 					.deleteTopicModel((String) topicModel.get("resource"));
 		}
 
 		// Associations
-		JSONArray associations = (JSONArray) BigMLClient.getInstance()
+		JSONArray associations = (JSONArray) context.api
 				.listAssociations(";tags__in=unitTest").get("objects");
 		for (int i = 0; i < associations.size(); i++) {
 			JSONObject association = (JSONObject) associations.get(i);
-			BigMLClient.getInstance()
+			context.api
 					.deleteAssociation((String) association.get("resource"));
 		}
 
 		// Whizzml Libraries
-		JSONArray libraries = (JSONArray) BigMLClient.getInstance()
+		JSONArray libraries = (JSONArray) context.api
 				.listLibraries(";tags__in=unitTest").get("objects");
 		for (int i = 0; i < libraries.size(); i++) {
 			JSONObject library = (JSONObject) libraries.get(i);
-			BigMLClient.getInstance()
+			context.api
 					.deleteLibrary((String) library.get("resource"));
 		}
 
 		// Whizzml Scripts
-		JSONArray scripts = (JSONArray) BigMLClient.getInstance()
+		JSONArray scripts = (JSONArray) context.api
 				.listScripts(";tags__in=unitTest").get("objects");
 		for (int i = 0; i < scripts.size(); i++) {
 			JSONObject script = (JSONObject) scripts.get(i);
-			BigMLClient.getInstance()
+			context.api
 					.deleteScript((String) script.get("resource"));
 		}
 
 		// Whizzml Executions
-		JSONArray executions = (JSONArray) BigMLClient.getInstance()
+		JSONArray executions = (JSONArray) context.api
 				.listExecutions(";tags__in=unitTest").get("objects");
 		for (int i = 0; i < executions.size(); i++) {
 			JSONObject execution = (JSONObject) executions.get(i);
-			BigMLClient.getInstance()
+			context.api
 					.deleteExecution((String) execution.get("resource"));
 		}
 
 		// LogisticRegression
-		JSONArray logisticRegressions = (JSONArray) BigMLClient.getInstance()
+		JSONArray logisticRegressions = (JSONArray) context.api
 				.listLogisticRegressions(";tags__in=unitTest").get("objects");
 		for (int i = 0; i < logisticRegressions.size(); i++) {
 			JSONObject logisticRegression = (JSONObject) logisticRegressions
 					.get(i);
-			BigMLClient.getInstance().deleteLogisticRegression(
+			context.api.deleteLogisticRegression(
 					(String) logisticRegression.get("resource"));
 		}
 
 		// StatisticalTest
-		JSONArray statisticalTests = (JSONArray) BigMLClient.getInstance()
+		JSONArray statisticalTests = (JSONArray) context.api
 				.listStatisticalTests(";tags__in=unitTest").get("objects");
 		for (int i = 0; i < statisticalTests.size(); i++) {
 			JSONObject statisticalTest = (JSONObject) statisticalTests.get(i);
-			BigMLClient.getInstance().deleteStatisticalTest(
+			context.api.deleteStatisticalTest(
 					(String) statisticalTest.get("resource"));
 		}
 
 		// Correlations
-		JSONArray correlations = (JSONArray) BigMLClient.getInstance()
+		JSONArray correlations = (JSONArray) context.api
 				.listCorrelations(";tags__in=unitTest").get("objects");
 		for (int i = 0; i < correlations.size(); i++) {
 			JSONObject correlation = (JSONObject) correlations.get(i);
-			BigMLClient.getInstance()
+			context.api
 					.deleteCorrelation((String) correlation.get("resource"));
 		}
 
 		// BatchCentroids
-		JSONArray batchCentroids = (JSONArray) BigMLClient.getInstance()
+		JSONArray batchCentroids = (JSONArray) context.api
 				.listBatchCentroids(";tags__in=unitTest").get("objects");
 		for (int i = 0; i < batchCentroids.size(); i++) {
 			JSONObject batchCentroid = (JSONObject) batchCentroids.get(i);
-			BigMLClient.getInstance().deleteBatchCentroid(
+			context.api.deleteBatchCentroid(
 					(String) batchCentroid.get("resource"));
 		}
 
 		// Centroids
-		JSONArray centroids = (JSONArray) BigMLClient.getInstance()
+		JSONArray centroids = (JSONArray) context.api
 				.listCentroids(";tags__in=unitTest").get("objects");
 		for (int i = 0; i < centroids.size(); i++) {
 			JSONObject centroid = (JSONObject) centroids.get(i);
-			BigMLClient.getInstance()
+			context.api
 					.deleteCentroid((String) centroid.get("resource"));
 		}
 
 		// BatchPredictions
-		JSONArray batchPredictions = (JSONArray) BigMLClient.getInstance()
+		JSONArray batchPredictions = (JSONArray) context.api
 				.listBatchPredictions(";tags__in=unitTest").get("objects");
 		for (int i = 0; i < batchPredictions.size(); i++) {
 			JSONObject batchPrediction = (JSONObject) batchPredictions.get(i);
-			BigMLClient.getInstance().deleteBatchPrediction(
+			context.api.deleteBatchPrediction(
 					(String) batchPrediction.get("resource"));
 		}
 
 		// Predictions
-		JSONArray predictions = (JSONArray) BigMLClient.getInstance()
+		JSONArray predictions = (JSONArray) context.api
 				.listPredictions(";tags__in=unitTest").get("objects");
 		for (int i = 0; i < predictions.size(); i++) {
 			JSONObject prediction = (JSONObject) predictions.get(i);
-			BigMLClient.getInstance()
+			context.api
 					.deletePrediction((String) prediction.get("resource"));
 		}
 
 		// Clusters
-		JSONArray clusters = (JSONArray) BigMLClient.getInstance()
+		JSONArray clusters = (JSONArray) context.api
 				.listClusters(";tags__in=unitTest").get("objects");
 		for (int i = 0; i < clusters.size(); i++) {
 			JSONObject cluster = (JSONObject) clusters.get(i);
-			BigMLClient.getInstance()
+			context.api
 					.deleteCluster((String) cluster.get("resource"));
 		}
 
 		// Evaluations
-		JSONArray evaluations = (JSONArray) BigMLClient.getInstance()
+		JSONArray evaluations = (JSONArray) context.api
 				.listEvaluations(";tags__in=unitTest").get("objects");
 		for (int i = 0; i < evaluations.size(); i++) {
 			JSONObject evaluation = (JSONObject) evaluations.get(i);
-			BigMLClient.getInstance()
+			context.api
 					.deleteEvaluation((String) evaluation.get("resource"));
 		}
 
 		// Ensembles
-		JSONArray ensembles = (JSONArray) BigMLClient.getInstance()
+		JSONArray ensembles = (JSONArray) context.api
 				.listEnsembles(";tags__in=unitTest").get("objects");
 		for (int i = 0; i < ensembles.size(); i++) {
 			JSONObject ensemble = (JSONObject) ensembles.get(i);
-			BigMLClient.getInstance()
+			context.api
 					.deleteEnsemble((String) ensemble.get("resource"));
 		}
 
 		// Anomalies
-		JSONArray anomalies = (JSONArray) BigMLClient.getInstance()
+		JSONArray anomalies = (JSONArray) context.api
 				.listAnomalies(";tags__in=unitTest").get("objects");
 		for (int i = 0; i < anomalies.size(); i++) {
 			JSONObject model = (JSONObject) anomalies.get(i);
-			BigMLClient.getInstance()
+			context.api
 					.deleteAnomaly((String) model.get("resource"));
 		}
 
 		// AnomalyScores
-		JSONArray anomalyScores = (JSONArray) BigMLClient.getInstance()
+		JSONArray anomalyScores = (JSONArray) context.api
 				.listAnomalyScores(";tags__in=unitTest").get("objects");
 		for (int i = 0; i < anomalyScores.size(); i++) {
 			JSONObject model = (JSONObject) anomalyScores.get(i);
-			BigMLClient.getInstance()
+			context.api
 					.deleteAnomalyScore((String) model.get("resource"));
 		}
 
 		// BatchAnomalyScores
-		JSONArray batchAnomalyScores = (JSONArray) BigMLClient.getInstance()
+		JSONArray batchAnomalyScores = (JSONArray) context.api
 				.listBatchAnomalyScores(";tags__in=unitTest").get("objects");
 		for (int i = 0; i < batchAnomalyScores.size(); i++) {
 			JSONObject model = (JSONObject) batchAnomalyScores.get(i);
-			BigMLClient.getInstance()
+			context.api
 					.deleteBatchAnomalyScore((String) model.get("resource"));
 		}
 
 		// Models
-		JSONArray models = (JSONArray) BigMLClient.getInstance()
+		JSONArray models = (JSONArray) context.api
 				.listModels(";tags__in=unitTest").get("objects");
 		for (int i = 0; i < models.size(); i++) {
 			JSONObject model = (JSONObject) models.get(i);
-			BigMLClient.getInstance()
+			context.api
 					.deleteModel((String) model.get("resource"));
 		}
 
 		// Datasets
-		JSONArray datasets = (JSONArray) BigMLClient.getInstance()
+		JSONArray datasets = (JSONArray) context.api
 				.listDatasets(";tags__in=unitTest").get("objects");
 		for (int i = 0; i < datasets.size(); i++) {
 			JSONObject dataset = (JSONObject) datasets.get(i);
-			BigMLClient.getInstance()
+			context.api
 					.deleteDataset((String) dataset.get("resource"));
 		}
 
 		// Sources
-		JSONArray sources = (JSONArray) BigMLClient.getInstance()
+		JSONArray sources = (JSONArray) context.api
 				.listSources(";tags__in=unitTest").get("objects");
 		for (int i = 0; i < sources.size(); i++) {
 			JSONObject source = (JSONObject) sources.get(i);
-			BigMLClient.getInstance()
+			context.api
 					.deleteSource((String) source.get("resource"));
 		}
 
