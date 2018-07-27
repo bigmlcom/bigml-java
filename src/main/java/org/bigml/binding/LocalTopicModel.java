@@ -173,19 +173,12 @@ public class LocalTopicModel extends ModelFields implements Serializable {
      *             "petal width": 1.3,
      *             "sepal width": 2.1,
      *             "species": "Iris-versicolor"}
-     * @param by_name
-     *          If True, input_data is keyed by field name, field_id is used
-     *          otherwise.
      */
-    public JSONArray distribution(JSONObject inputData, Boolean byName) 
+    public JSONArray distribution(JSONObject inputData) 
     		throws Exception {
     	
-    	if (byName == null) {
-            byName = true;
-        }
-    	
     	// Checks and cleans input_data leaving the fields used in the model
-        inputData = filterInputData(inputData, byName);
+        inputData = filterInputData(inputData);
         
         StringBuilder text = new StringBuilder();
         for (Object entry: inputData.keySet()) {

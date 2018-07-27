@@ -463,7 +463,7 @@ public class LocalFusion extends ModelFields implements SupervisedModelInterface
 	 */
 	public JSONObject predict(
 			JSONObject inputData, MissingStrategy missingStrategy, 
-			JSONObject operatingPoint, Boolean full, boolean byName) 
+			JSONObject operatingPoint, Boolean full) 
 			throws Exception {
 		
 		if (missingStrategy == null) {
@@ -475,7 +475,7 @@ public class LocalFusion extends ModelFields implements SupervisedModelInterface
 		}
 		
 		// Checks and cleans inputData leaving the fields used in the model
-        inputData = filterInputData(inputData, full, byName);
+        inputData = filterInputData(inputData, full);
         
         List<String> unusedFields = (List<String>) 
         		inputData.get("unusedFields");

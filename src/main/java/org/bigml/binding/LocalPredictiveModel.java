@@ -335,17 +335,42 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
      */
     public Prediction predict(final String args)
             throws InputDataParseException {
-        return predict(args, false);
+        return predict(args);
     }
+    
+    /**
+     * Makes a prediction based on a number of field values.
+     *
+     * The input fields must be keyed by field name.
+     */
+    public Prediction predict(final JSONObject args)
+            throws Exception {
+        
+        return (Prediction) predict(args, MissingStrategy.LAST_PREDICTION, null, null, true);
+    }
+    
+    /**
+     * Makes a prediction based on a number of field values using the 
+     * specified Missing Strategy
+     *
+     * The input fields must be keyed by field name.
+     */
+    public Prediction predict(final JSONObject args, MissingStrategy strategy)
+            throws Exception {
+        return predict(args, strategy, null, null, true, null);
+    }
+    
+    
 
     /**
      * Makes a prediction based on a number of field values using a 
      * Last Prediction Strategy
      *
      * By default the input fields must be keyed by field name but you 
-     * can use `by_name` to input them directly keyed by id.
+     * can use `byName` to input them directly keyed by id.
      *
      */
+    @Deprecated
     public Prediction predict(final String args, Boolean byName) 
     		throws InputDataParseException {
     	
@@ -362,21 +387,12 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
     }
 
     /**
-     * Makes a prediction based on a number of field values.
-     *
-     * The input fields must be keyed by field name.
-     */
-    public Prediction predict(final JSONObject args)
-            throws InputDataParseException {
-        return predict(args, false, MissingStrategy.LAST_PREDICTION, null).get(0);
-    }
-
-    /**
      * Makes a prediction based on a number of field values using a 
      * Last Prediction Strategy
      *
      * The input fields must be keyed by field name.
      */
+    @Deprecated
     public Prediction predict(final JSONObject args, Boolean byName)
             throws InputDataParseException {
         return predict(args, byName, MissingStrategy.LAST_PREDICTION, null).get(0);
@@ -388,9 +404,10 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
      *
      * The input fields must be keyed by field name.
      */
+    @Deprecated
     public Prediction predict(final JSONObject args, Boolean byName, MissingStrategy strategy)
             throws Exception {
-        return predict(args, strategy, null, null, true, null, byName);
+        return predict(args, strategy, null, null, true, null);
     }
     
     /**
@@ -406,41 +423,66 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
     }
     
     /**
+     * Makes a multiple predictions based on a number of field values using the Last Prediction strategy
+     *
+     * The input fields must be keyed by field name.
+     */
+    public List<Prediction> predict(final JSONObject args, Object multiple)
+            throws InputDataParseException {
+        return predict(args, MissingStrategy.LAST_PREDICTION, multiple);
+    }
+    
+    /**
      * Convenience version of predict that take as inputs a map from field ids
      * or names to their values as Java objects. See also predict(String,
      * Boolean, Integer, Boolean).
      */
+    @Deprecated
     public Prediction predictWithMap(
             final Map<String, Object> inputs, Boolean byName, Boolean withConfidence)
             throws Exception {
 
         JSONObject inputObj = (JSONObject) JSONValue.parse(JSONValue
                 .toJSONString(inputs));
-        return predict(inputObj, MissingStrategy.LAST_PREDICTION, null, null, true, byName);
+        return predict(inputObj, MissingStrategy.LAST_PREDICTION, null, null, true);
     }
-
+    
+    @Deprecated
     public Prediction predictWithMap(
             final Map<String, Object> inputs, Boolean byName, MissingStrategy missingStrategy)
             throws Exception {
 
         JSONObject inputObj = (JSONObject) JSONValue.parse(JSONValue
                 .toJSONString(inputs));
-        return predict(inputObj, missingStrategy, null, null, true, null, byName);
+        return predict(inputObj, missingStrategy, null, null, true, null);
     }
+    
+    public Prediction predictWithMap(
+            final Map<String, Object> inputs, MissingStrategy missingStrategy)
+            throws Exception {
 
+        JSONObject inputObj = (JSONObject) JSONValue.parse(JSONValue
+                .toJSONString(inputs));
+        return predict(inputObj, missingStrategy, null, null, true, null);
+    }
+    
+    @Deprecated
     public Prediction predictWithMap(
             final Map<String, Object> inputs, Boolean byName)
             throws Exception {
     	
         return predictWithMap(inputs, byName, MissingStrategy.LAST_PREDICTION);
     }
-
+    
     public Prediction predictWithMap(
             final Map<String, Object> inputs) throws Exception {
-        return predictWithMap(inputs, false, MissingStrategy.LAST_PREDICTION);
+        
+        JSONObject inputObj = (JSONObject) JSONValue.parse(JSONValue
+                .toJSONString(inputs));
+        return predict(inputObj, MissingStrategy.LAST_PREDICTION, null, null, true);
     }
     
-
+    
     /**
      * Makes a prediction based on a number of field values.
      *
@@ -475,12 +517,42 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
      */
     public List<Prediction> predict(final JSONObject args, Boolean byName, MissingStrategy strategy, Object multiple)
             throws InputDataParseException {
+    	return predict(args, strategy, multiple);
+    }
+    
+
+    /**
+     * Makes a prediction based on a number of field values.
+     *
+     * By default the input fields must be keyed by field name but you can use
+     *  `byName` to input them directly keyed by id.
+     *
+     * inputData: Input data to be predicted
+     *
+     * missingStrategy: LAST_PREDICTION|PROPORTIONAL missing strategy for
+     *                  missing fields
+     *
+     * multiple: For categorical fields, it will return the categories
+     *           in the distribution of the predicted node as a
+     *      list of dicts:
+     *          [{'prediction': 'Iris-setosa',
+     *              'confidence': 0.9154
+     *              'probability': 0.97
+     *              'count': 97},
+     *           {'prediction': 'Iris-virginica',
+     *              'confidence': 0.0103
+     *              'probability': 0.03,
+     *              'count': 3}]
+     *
+     * The value of this argument can either be an integer
+     *  (maximum number of categories to be returned), or the
+     *  literal 'all', that will cause the entire distribution
+     *  in the node to be returned.
+     */
+    public List<Prediction> predict(final JSONObject args, MissingStrategy strategy, Object multiple)
+            throws InputDataParseException {
 
         List<Prediction> outputs = new ArrayList<Prediction>();
-
-        if (byName == null) {
-            byName = true;
-        }
 
         if (strategy == null) {
             strategy = MissingStrategy.LAST_PREDICTION;
@@ -493,7 +565,7 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
 
 
         // Checks and cleans inputData leaving the fields used in the model
-        inputData = filterInputData(inputData, byName);
+        inputData = filterInputData(inputData);
 
         Integer multipleNum = Integer.MAX_VALUE;
         Boolean multipleAll = false;
@@ -559,13 +631,12 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
         }
     }
     
-    
     public Prediction predict(
 			JSONObject inputData, MissingStrategy missingStrategy, 
-			JSONObject operatingPoint, String operatingKind, Boolean full, 
-			Boolean byName) throws Exception {
+			JSONObject operatingPoint, String operatingKind, Boolean full) 
+			throws Exception {
     	return predict(inputData, missingStrategy, operatingPoint, 
-    				  operatingKind, full, null, byName);
+    				  operatingKind, full, null);
     }
     
     /**
@@ -619,7 +690,7 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
     public Prediction predict(
 			JSONObject inputData, MissingStrategy missingStrategy, 
 			JSONObject operatingPoint, String operatingKind, Boolean full, 
-			List<String> unusedFields, Boolean byName) throws Exception {
+			List<String> unusedFields) throws Exception {
 		
     	if (missingStrategy == null) {
     		missingStrategy = MissingStrategy.LAST_PREDICTION;
@@ -629,12 +700,8 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
 			full = false;
 		}
     	
-    	if (byName == null) {
-            byName = true;
-        }
-    	
     	// Checks and cleans inputData leaving the fields used in the model
-        inputData = filterInputData(inputData, full, byName);
+        inputData = filterInputData(inputData, full);
         
         if (unusedFields == null) {
         	unusedFields = (List<String>) inputData.get("unusedFields");
@@ -772,11 +839,11 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
 		Prediction prediction = null;
 		if (isBoosting() || isRegression()) {
 			prediction = predict(inputData, missingStrategy, 
-								 null, null, true, false);
+								 null, null, true);
 			output.add(prediction);
 		} else {
 			prediction = predict(inputData, missingStrategy, 
-					 			 null, null, true, false);
+					 			 null, null, true);
 			HashMap<String, Double> categoryMap = probabilities(
         			(JSONArray) prediction.get("distribution"));
 			output = toOutput(categoryMap, "probability");
@@ -806,7 +873,7 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
 		Prediction prediction = null;
 		if (isRegression()) {
 			prediction = predict(inputData, missingStrategy, 
-								 null, null, true, false);
+								 null, null, true);
 			output.add(prediction);
 		} else {
 			if (isBoosting()) {
@@ -824,7 +891,7 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
 		}
 		
 		prediction = predict(inputData, missingStrategy, 
-				 null, null, true, false);
+				 null, null, true);
 		distribution = (JSONArray) prediction.get("distribution");
 		
 		for (Object item : distribution) {

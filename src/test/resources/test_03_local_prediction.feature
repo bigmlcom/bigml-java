@@ -33,7 +33,7 @@ Feature: Create Predictions
         And I wait until the model is ready less than <time_3> secs
         And I create a local model
         Then the local prediction for "<objective1>" is "<prediction1>"
-        Then the local prediction by name for "<objective2>" is "<prediction2>"
+        Then the local prediction for "<objective2>" is "<prediction2>"
         Then delete test data
 
         Examples:

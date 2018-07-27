@@ -28,8 +28,9 @@ import org.bigml.binding.utils.Utils;
  * // API client
  * BigMLClient api = new BigMLClient();
  *
- * // Retrieve a remote association by id JSONObject association =
- * api.getAssociation( "association/551aa203af447f5484000ec0");
+ * // Retrieve a remote association by id 
+ * JSONObject association 
+ * 		= api.getAssociation("association/551aa203af447f5484000ec0");
  *
  * // A lightweight wrapper around an Association resurce LocalAssociation
  * localAssociation = new LocalAssociation(association);
@@ -145,7 +146,38 @@ public class LocalAssociation extends ModelFields implements Serializable {
 					((JSONObject) association.get("model")).keySet()));
 		}
 	}
-
+	
+	/**
+     * Returns the Consequents for the rules whose LHS best match the provided
+     * items. Cosine similarity is used to score the match.
+     *
+     * @param inputData
+     *            an object with field's id/value pairs representing the
+     *            instance you want to create an associationset for.
+     *
+     *            {"petal length": 4.4,
+     *             "sepal length": 5.1,
+     *             "petal width": 1.3,
+     *             "sepal width": 2.1,
+     *             "species": "Iris-versicolor"}
+     * @param k
+     *           maximum number of item predictions to return (Default 100)
+     * @param scoreBy
+     *          Code for the metric used in scoring (default search_strategy)
+     *              leverage
+     *              confidence
+     *              support
+     *              lhs-cover
+     *              lift
+     * @param byName
+     *          If True, input_data is keyed by field name, field_id is used
+     *          otherwise.
+     */
+	@Deprecated
+    public List associationSet(JSONObject inputData, Integer k, 
+    		String scoreBy, Boolean byName) throws Exception {
+    	return associationSet(inputData, k, scoreBy);
+    }
 
 
     /**
@@ -170,19 +202,12 @@ public class LocalAssociation extends ModelFields implements Serializable {
      *              support
      *              lhs-cover
      *              lift
-     * @param by_name
-     *          If True, input_data is keyed by field name, field_id is used
-     *          otherwise.
      */
-    public List associationSet(JSONObject inputData, Integer k, String scoreBy,
-        Boolean byName) throws Exception {
+    public List associationSet(JSONObject inputData, Integer k, 
+    						   String scoreBy) throws Exception {
 
         if (k == null) {
             k = DEFAULT_K;
-        }
-
-        if (byName == null) {
-            byName = true;
         }
 
         if (scoreBy != null && !SCORES.contains(scoreBy)) {
@@ -191,7 +216,7 @@ public class LocalAssociation extends ModelFields implements Serializable {
                               SCORES_AVAILABLE));
         }
 
-        inputData = filterInputData(inputData, byName);
+        inputData = filterInputData(inputData);
 
         List<Integer> itemsIndexes = new ArrayList<Integer>();
 

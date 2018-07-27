@@ -68,7 +68,7 @@ public class LocalDeepnet extends ModelFields implements SupervisedModelInterfac
 	private JSONObject network = null;
 	private JSONArray networks = null;
 	private JSONArray preprocess = null;
-	private JSONObject optimizer = null;
+	//private JSONObject optimizer = null;
 	
 	
 	public LocalDeepnet(JSONObject deepnet) throws Exception {
@@ -162,8 +162,8 @@ public class LocalDeepnet extends ModelFields implements SupervisedModelInterfac
 							network, "networks", new JSONArray());
 					preprocess = (JSONArray) Utils.getJSONObject(
 							network, "preprocess", new JSONArray());
-					optimizer = (JSONObject) Utils.getJSONObject(
-							network, "optimizer", new JSONObject());
+					//optimizer = (JSONObject) Utils.getJSONObject(
+					//		network, "optimizer", new JSONObject());
 				}
 			} else {
 				throw new Exception(
@@ -228,14 +228,14 @@ public class LocalDeepnet extends ModelFields implements SupervisedModelInterfac
 	 */
 	public JSONObject predict(
 			JSONObject inputData, JSONObject operatingPoint, 
-			String operatingKind, Boolean full, boolean byName) {
+			String operatingKind, Boolean full) {
 		
 		if (full == null) {
 			full = false;
 		}
 		
 		// Checks and cleans inputData leaving the fields used in the model
-        inputData = filterInputData(inputData, full, byName);
+        inputData = filterInputData(inputData, full);
         
         List<String> unusedFields = (List<String>) 
         		inputData.get("unusedFields");
@@ -317,9 +317,9 @@ public class LocalDeepnet extends ModelFields implements SupervisedModelInterfac
 		
 		JSONObject prediction = null;
 		if (regression) {
-			prediction = predict(inputData, null, null, true, false);
+			prediction = predict(inputData, null, null, true);
 		} else {
-			prediction = predict(inputData, null, null, true, false);
+			prediction = predict(inputData, null, null, true);
 		}
 		
 		JSONArray distribution = (JSONArray) prediction.get("distribution");

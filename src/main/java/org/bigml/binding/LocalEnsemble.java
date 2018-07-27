@@ -692,7 +692,7 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
 	public JSONObject predict(JSONObject inputData, PredictionMethod method,
 			Map options, MissingStrategy missingStrategy,
 			JSONObject operatingPoint, String operatingKind, Boolean median,
-			Boolean full, Boolean byName) throws Exception {
+			Boolean full) throws Exception {
 		
 		if (missingStrategy == null) {
 			missingStrategy = MissingStrategy.LAST_PREDICTION;
@@ -706,12 +706,8 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
 			full = false;
 		}
 
-		if (byName == null) {
-			byName = true;
-		}
-
 		// Checks and cleans inputData leaving the fields used in the model
-		inputData = filterInputData(inputData, full, byName);
+		inputData = filterInputData(inputData, full);
 
 		List<String> unusedFields = (List<String>) inputData
 				.get("unusedFields");
@@ -751,7 +747,7 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
 						: PredictionMethod.PLURALITY;
 				
 				return predict(inputData, method, options, missingStrategy,
-						null, null, null, full, false);
+						null, null, null, full);
 			} else {
 				// predict operating point
 				return predictOperatingKind(inputData, missingStrategy,
@@ -924,12 +920,12 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
 		JSONObject prediction = null;
 		if (regression) {
 			prediction = predict(inputData, PredictionMethod.PROBABILITY, null,
-					missingStrategy, null, null, null, true, false);
+					missingStrategy, null, null, null, true);
 			predictions.add(prediction);
 		} else {
 			if (boosting != null) {
 				prediction = predict(inputData, PredictionMethod.PLURALITY,
-						null, missingStrategy, null, null, null, true, false);
+						null, missingStrategy, null, null, null, true);
 				JSONArray probabilities = (JSONArray) prediction
 						.get("probabilities");
 				predictions.add(probabilities);
@@ -977,7 +973,7 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
 		JSONObject prediction = null;
 		if (regression) {
 			prediction = predict(inputData, PredictionMethod.CONFIDENCE, null,
-					missingStrategy, null, null, null, true, false);
+					missingStrategy, null, null, null, true);
 			predictions.add(prediction);
 		} else {
 			List<Double> output = combineDistributions(inputData,
@@ -1016,7 +1012,7 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
 		JSONObject prediction = null;
 		if (regression) {
 			prediction = predict(inputData, PredictionMethod.PLURALITY, null,
-					missingStrategy, null, null, null, true, false);
+					missingStrategy, null, null, null, true);
 			predictions.add(prediction);
 		} else {
 			if (boosting != null) {

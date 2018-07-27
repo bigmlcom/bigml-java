@@ -56,11 +56,11 @@ public class LocalEnsembleStepdefs {
     }
 
     @Then("^the local ensemble prediction for \"(.*)\" is \"([^\"]*)\" with confidence ([\\d,.]+)$")
-    public void the_local_prediction_by_name_for_is_with_confidence(String args, String pred, Double expectedConfidence) {
+    public void the_local_prediction_for_is_with_confidence(String args, String pred, Double expectedConfidence) {
         try {
             JSONObject inputObj = (JSONObject) JSONValue.parse(args);
             Map<Object, Object> p = context.localEnsemble
-                    .predict(inputObj, PredictionMethod.PLURALITY, null, null, null, null, null, true, true);
+                    .predict(inputObj, PredictionMethod.PLURALITY, null, null, null, null, null, true);
             
             String prediction = (String) p.get("prediction");
             Double actualConfidence = (Double) p.get("confidence");
@@ -78,7 +78,7 @@ public class LocalEnsembleStepdefs {
             JSONObject inputObj = (JSONObject) JSONValue.parse(args);
             Map<Object, Object> p = context.localEnsemble
                     .predict(inputObj, PredictionMethod.PLURALITY, null, MissingStrategy.LAST_PREDICTION,
-                            null, null, true, true, true);
+                            null, null, true, true);
             
             Object prediction = p.get("prediction");
             if( prediction instanceof Number ) { // Regression
@@ -93,11 +93,11 @@ public class LocalEnsembleStepdefs {
     }
 
     @Then("^the local ensemble prediction for \"(.*)\" is \"([^\"]*)\"$")
-    public void the_local_prediction_for_is(String args, String pred) {
+    public void the_local_ensemble_prediction_for_is(String args, String pred) {
         try {
             JSONObject inputObj = (JSONObject) JSONValue.parse(args);
             Map<Object, Object> p = context.localEnsemble
-                    .predict(inputObj, PredictionMethod.PLURALITY, null, null, null, null, null, true, true);
+                    .predict(inputObj, PredictionMethod.PLURALITY, null, null, null, null, null, true);
             
             Object prediction = p.get("prediction");
             if( prediction instanceof Number ) { // Regression
@@ -159,7 +159,7 @@ public class LocalEnsembleStepdefs {
             
             JSONObject prediction = context.localEnsemble
                     .predict(inputData, null, null, MissingStrategy.PROPORTIONAL, null, 
-                    		operatingKind, true, true, true);
+                    		operatingKind, true, true);
             
             context.localPrediction = prediction;
         } catch (Exception e) {

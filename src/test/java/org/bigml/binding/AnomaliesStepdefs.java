@@ -164,15 +164,15 @@ public class AnomaliesStepdefs {
         commonSteps.the_resource_has_been_created_with_status(context.status);
     }
 
-    @When("^I create a local anomaly score for \"(.*)\" by name=(true|false)$")
-    public void I_create_a_local_anomaly_score(String data, String byName)
+    @When("^I create a local anomaly score for \"(.*)\"$")
+    public void I_create_a_local_anomaly_score(String data)
             throws Throwable {
         if( data == null || data.trim().length() == 0 ) {
             data = "{}";
         }
 
         JSONObject inputData = (JSONObject) JSONValue.parse(data);
-        localScore = localAnomaly.score(inputData, new Boolean(byName));
+        localScore = localAnomaly.score(inputData);
     }
 
     @Then("^the anomaly score is \"(.*)\"$")

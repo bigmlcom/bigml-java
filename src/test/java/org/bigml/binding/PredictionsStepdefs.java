@@ -150,7 +150,7 @@ public class PredictionsStepdefs {
     	JSONObject data = (JSONObject) JSONValue.parse(inputData);  	
     	try {
     		Prediction prediction = context.localModel.predict(
-	    			data, null, (JSONObject) JSONValue.parse(operatingPoint), null, true, null, true);
+	    			data, null, (JSONObject) JSONValue.parse(operatingPoint), null, true, null);
 	    	
 	        context.localModelPrediction = prediction;
     	} catch (Exception e) {
@@ -187,7 +187,7 @@ public class PredictionsStepdefs {
 
     	JSONObject data = (JSONObject) JSONValue.parse(inputData);
     	Prediction prediction = context.localModel.predict(
-    			data, null, null, kind, true, true);
+    			data, null, null, kind, true);
     	
         context.localModelPrediction = prediction;
     }
@@ -262,7 +262,7 @@ public class PredictionsStepdefs {
 	    	JSONObject prediction = context.localEnsemble
 	                .predict(data, null, null, null,
 	                		(JSONObject) JSONValue.parse(operatingPoint), 
-	                		null, true, true, true);
+	                		null, true, true);
 	    	
 	        context.localPrediction = prediction;
     	} catch (Exception e) {
@@ -300,7 +300,7 @@ public class PredictionsStepdefs {
     	JSONObject data = (JSONObject) JSONValue.parse(inputData);
     	JSONObject prediction = context.localEnsemble
                 .predict(data, null, null, null,
-                        null, kind, true, true, true);
+                        null, kind, true, true);
     	
         context.localPrediction = prediction;
     }
@@ -361,7 +361,7 @@ public class PredictionsStepdefs {
 
     	JSONObject data = (JSONObject) JSONValue.parse(inputData);
     	JSONObject prediction = context.localLogisticRegression.predict(
-    			data, null, kind, true, true);
+    			data, null, kind, true);
         context.localPrediction = prediction;
     }
     
@@ -390,7 +390,7 @@ public class PredictionsStepdefs {
     	
     	JSONObject data = (JSONObject) JSONValue.parse(inputData);
     	JSONObject prediction = context.localLogisticRegression.predict(
-    			data, null, null, true, true);
+    			data, null, null, true);
     	context.localPrediction = prediction;
     }
     
@@ -452,7 +452,7 @@ public class PredictionsStepdefs {
     	JSONObject data = (JSONObject) JSONValue.parse(inputData);
     	
     	JSONObject prediction = context.localDeepnet.predict(
-    			data, (JSONObject) JSONValue.parse(operatingPoint), null, true, true);
+    			data, (JSONObject) JSONValue.parse(operatingPoint), null, true);
         context.localPrediction = prediction;
     }
     
@@ -484,7 +484,7 @@ public class PredictionsStepdefs {
 
     	JSONObject data = (JSONObject) JSONValue.parse(inputData);
     	JSONObject prediction = context.localDeepnet.predict(
-    			data, null, kind, true, true);
+    			data, null, kind, true);
         context.localPrediction = prediction;
     }
     
@@ -512,7 +512,7 @@ public class PredictionsStepdefs {
     	
     	JSONObject data = (JSONObject) JSONValue.parse(inputData);
     	JSONObject prediction = context.localDeepnet.predict(
-    			data, null, null, true, true);
+    			data, null, null, true);
     	context.localPrediction = prediction;
     }
     
@@ -588,7 +588,8 @@ public class PredictionsStepdefs {
         JSONObject inputData = (JSONObject) JSONValue.parse(args);
         JSONArray inputDataList = new JSONArray();
         inputDataList.add(inputData);
-        List<MultiVote> votes = context.multiModel.batchPredict(inputDataList, null, true, false, MissingStrategy.LAST_PREDICTION,
+        List<MultiVote> votes = context.multiModel.batchPredict(
+        		inputDataList, null, false, MissingStrategy.LAST_PREDICTION,
                 null, false, true);
 
         Double prediction = (Double) votes.get(0).getPredictions()[0].get("prediction");
@@ -621,7 +622,7 @@ public class PredictionsStepdefs {
     	JSONObject data = (JSONObject) JSONValue.parse(inputData);  	
     	try {
 	        context.localPrediction = context.localFusion.predict(
-	        		data, null, null, true, true);
+	        		data, null, null, true);
     	} catch (Exception e) {
 			e.printStackTrace();
 		}

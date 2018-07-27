@@ -45,13 +45,13 @@ public class LocalModelsStepdefs {
     }
 
     @Then("^the local prediction by name for \"(.*)\" is \"([^\"]*)\"$")
-    public void the_local_prediction_by_name_for_is(String args, String pred) {
+    public void the_local_prediction_for_is(String args, String pred) {
         try {
             JSONObject inputObj = (JSONObject) JSONValue.parse(args);
             Prediction p = context.localModel.predict(inputObj);
             String prediction = (String) p.getPrediction();
             assertTrue("", prediction != null && prediction.equals(pred));
-        } catch (InputDataParseException parseException) {
+        } catch (Exception e) {
             assertTrue("", false);
         }
     }
@@ -96,23 +96,23 @@ public class LocalModelsStepdefs {
     public void the_confidence_of_the_local_prediction_for_is(String args, double expectedConfidence) {
         try {
             JSONObject inputObj = (JSONObject) JSONValue.parse(args);
-            Prediction p = context.localModel.predict(inputObj, true);
+            Prediction p = context.localModel.predict(inputObj);
             Double actualConfidence = p.getConfidence();
             assertEquals(String.format("%.4g%n", expectedConfidence), String.format("%.4g%n", actualConfidence));
-        } catch (InputDataParseException parseException) {
+        } catch (Exception e) {
             assertTrue("", false);
         }
     }
 
     @Then("^the local prediction for \"(.*)\" is \"([^\"]*)\"$")
-    public void the_local_prediction_for_is(String args, String pred) {
+    public void the_local_model_prediction_for_is(String args, String pred) {
         try {
             JSONObject inputObj = (JSONObject) JSONValue.parse(args);
-            Prediction p = context.localModel.predict(inputObj, true);
+            Prediction p = context.localModel.predict(inputObj);
             String prediction = (String) p.getPrediction();
             assertEquals(pred, prediction);
-        } catch (InputDataParseException parseException) {
-            assertTrue("", false);
+        } catch (Exception e) {
+        	assertTrue("", false);
         }
     }
 
@@ -120,27 +120,14 @@ public class LocalModelsStepdefs {
     public void the_multiple_local_prediction_for_is(String args, String pred) {
         try {
             JSONObject inputObj = (JSONObject) JSONValue.parse(args);
-            List<Prediction> predictions = context.localModel.predict(inputObj, true, "all");
+            List<Prediction> predictions = context.localModel.predict(inputObj, "all");
             String predictionsStr = JSONValue.toJSONString(predictions);
             
             JSONArray expected = (JSONArray) JSONValue.parse(pred);
             JSONArray was = (JSONArray) JSONValue.parse(predictionsStr);
             assertEquals(expected, was);
         } catch (InputDataParseException parseException) {
-            assertTrue("", false);
-        }
-    }
-
-    @Then("^the local prediction by name=(true|false) for \"(.*)\" is \"([^\"]*)\"$")
-    public void the_local_prediction_byname_for_is(String by_name, String args,
-            String pred) {
-        try {
-            Boolean byName = new Boolean(by_name);
-            Prediction p = context.localModel.predict( (JSONObject) JSONValue.parse(args),
-                    byName);
-            String prediction = (String) p.getPrediction();
-            assertEquals(pred, prediction);
-        } catch (InputDataParseException parseException) {
+        	parseException.printStackTrace();
             assertTrue("", false);
         }
     }

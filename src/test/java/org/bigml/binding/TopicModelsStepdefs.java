@@ -90,7 +90,7 @@ public class TopicModelsStepdefs {
 			throws Throwable {
 
 		localTopicDistribution = localTopicModel
-				.distribution((JSONObject) JSONValue.parse(inputData), null);
+				.distribution((JSONObject) JSONValue.parse(inputData));
 	}
 
 	@Then("^the local topic distribution is \"([^\"]*)\"$")

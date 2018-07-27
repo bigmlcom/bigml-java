@@ -173,25 +173,23 @@ public class ModelsStepdefs {
         assertTrue("", context.multiModel != null);
     }
 
-    @Then("^the local multi prediction by name=(true|false) for \"(.*)\" is \"([^\"]*)\"$")
-    public void the_local_multi_prediction_byname_for_is(String by_name,
+    @Then("^the local multi prediction for \"(.*)\" is \"([^\"]*)\"$")
+    public void the_local_multi_prediction_for_is(
             String args, String pred) throws Exception {
-        Boolean byName = new Boolean(by_name);
         JSONObject inputObj = (JSONObject) JSONValue.parse(args);
-        HashMap<Object, Object> prediction = context.multiModel.predict(inputObj,
-                byName, null, true);
+        HashMap<Object, Object> prediction = context.multiModel.predict(
+        		inputObj, null, true);
         assertTrue(
                 "",
                 prediction != null
                         && ((String) prediction.get("prediction")).equals(pred));
     }
-    @Then("^I create a batch multimodel prediction for by name=(true|false) for \"(.*)\" and predictions \"(.*)\"$")
-    public void i_create_a_batch_multimodel_prediction_byname_for_and_predictions(String by_name,
+    @Then("^I create a batch multimodel prediction for \"(.*)\" and predictions \"(.*)\"$")
+    public void i_create_a_batch_multimodel_prediction_for_and_predictions(
             String args, String expectedPredictions) throws Exception {
-        Boolean byName = new Boolean(by_name);
         JSONArray inputObjArr = (JSONArray) JSONValue.parse(args);
         List<MultiVote> votes = context.multiModel.batchPredict(inputObjArr, null,
-                byName, null, null, null, false, false);
+                null, null, null, false, false);
 
         JSONArray expectedPredictionsArr = new JSONArray();
         if( expectedPredictions != null && expectedPredictions.trim().length() > 0 ) {

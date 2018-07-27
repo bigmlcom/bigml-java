@@ -77,11 +77,11 @@ public class LocalLogisticRegression extends ModelFields implements SupervisedMo
 
 	private JSONObject coefficients = null;
 	private Boolean bias;
-	private Double c;
-	private Double eps;
+	//private Double c;
+	//private Double eps;
 	private Boolean normalize;
 	private Boolean balanceFields;
-	private String regularization;
+	//private String regularization;
 	private JSONObject fieldCodings;
 	private List<String> classNames = new ArrayList<String>();
 	private String weightField;
@@ -186,14 +186,14 @@ public class LocalLogisticRegression extends ModelFields implements SupervisedMo
 				}
 				
 				bias = (Boolean) Utils.getJSONObject(logisticInfo, "bias", true);
-				c = ((Number) Utils.getJSONObject(logisticInfo, "c")).doubleValue();
-				eps = ((Number) Utils.getJSONObject(logisticInfo, "eps")).doubleValue();
+				//c = ((Number) Utils.getJSONObject(logisticInfo, "c")).doubleValue();
+				//eps = ((Number) Utils.getJSONObject(logisticInfo, "eps")).doubleValue();
 				
 				normalize = (Boolean) Utils.getJSONObject(logisticInfo, "normalize");
 				balanceFields = (Boolean) Utils.getJSONObject(
 						logisticInfo, "balance_fields");
-				regularization = (String) Utils.getJSONObject(
-						logisticInfo, "regularization");
+				//regularization = (String) Utils.getJSONObject(
+				//		logisticInfo, "regularization");
 				
 				// old models have no such attribute, so we set it to 
 				// False in this case
@@ -288,7 +288,7 @@ public class LocalLogisticRegression extends ModelFields implements SupervisedMo
 	 */
 	public JSONArray predictProbability(JSONObject inputData,
 			MissingStrategy missingStrategy) throws Exception {
-		JSONObject prediction = predict(inputData, null, null, true, false);
+		JSONObject prediction = predict(inputData, null, null, true);
 		JSONArray distribution = (JSONArray) prediction.get("distribution");
 		Utils.sortPredictions(distribution, "probability", "prediction");
 		return distribution;
@@ -377,14 +377,14 @@ public class LocalLogisticRegression extends ModelFields implements SupervisedMo
 	 */
 	public JSONObject predict(
 			JSONObject inputData, JSONObject operatingPoint, 
-			String operatingKind, Boolean full, boolean byName) {
+			String operatingKind, Boolean full) {
 		
 		if (full == null) {
 			full = false;
 		}
 		
 		// Checks and cleans inputData leaving the fields used in the model
-        inputData = filterInputData(inputData, full, byName);
+        inputData = filterInputData(inputData, full);
         
         List<String> unusedFields = (List<String>) 
         		inputData.get("unusedFields");
