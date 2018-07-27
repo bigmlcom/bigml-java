@@ -36,6 +36,7 @@
 * Added support for Local Fusions
 * Adding organizations support for all the API calls.
 * Deprecating param byName in Local objects
+* Support for shared/public remote resources
 
 ### Bugs
 
