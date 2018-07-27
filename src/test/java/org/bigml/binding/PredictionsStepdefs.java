@@ -259,7 +259,7 @@ public class PredictionsStepdefs {
     	JSONObject data = (JSONObject) JSONValue.parse(inputData);
     	
     	try {
-	    	JSONObject prediction = context.localEnsemble
+    		HashMap<String, Object> prediction = context.localEnsemble
 	                .predict(data, null, null, null,
 	                		(JSONObject) JSONValue.parse(operatingPoint), 
 	                		null, true, true);
@@ -298,7 +298,7 @@ public class PredictionsStepdefs {
             throws Exception {
 
     	JSONObject data = (JSONObject) JSONValue.parse(inputData);
-    	JSONObject prediction = context.localEnsemble
+    	HashMap<String, Object> prediction = context.localEnsemble
                 .predict(data, null, null, null,
                         null, kind, true, true);
     	
@@ -360,8 +360,8 @@ public class PredictionsStepdefs {
             throws AuthenticationException {
 
     	JSONObject data = (JSONObject) JSONValue.parse(inputData);
-    	JSONObject prediction = context.localLogisticRegression.predict(
-    			data, null, kind, true);
+    	HashMap<String, Object> prediction 
+    		= context.localLogisticRegression.predict(data, null, kind, true);
         context.localPrediction = prediction;
     }
     
@@ -389,8 +389,8 @@ public class PredictionsStepdefs {
     		throws Throwable {
     	
     	JSONObject data = (JSONObject) JSONValue.parse(inputData);
-    	JSONObject prediction = context.localLogisticRegression.predict(
-    			data, null, null, true);
+    	HashMap<String, Object> prediction 
+    		= context.localLogisticRegression.predict(data, null, null, true);
     	context.localPrediction = prediction;
     }
     
@@ -451,7 +451,7 @@ public class PredictionsStepdefs {
     	
     	JSONObject data = (JSONObject) JSONValue.parse(inputData);
     	
-    	JSONObject prediction = context.localDeepnet.predict(
+    	HashMap<String, Object> prediction = context.localDeepnet.predict(
     			data, (JSONObject) JSONValue.parse(operatingPoint), null, true);
         context.localPrediction = prediction;
     }
@@ -483,7 +483,7 @@ public class PredictionsStepdefs {
             throws AuthenticationException {
 
     	JSONObject data = (JSONObject) JSONValue.parse(inputData);
-    	JSONObject prediction = context.localDeepnet.predict(
+    	HashMap<String, Object> prediction = context.localDeepnet.predict(
     			data, null, kind, true);
         context.localPrediction = prediction;
     }
@@ -511,7 +511,7 @@ public class PredictionsStepdefs {
     		throws Throwable {
     	
     	JSONObject data = (JSONObject) JSONValue.parse(inputData);
-    	JSONObject prediction = context.localDeepnet.predict(
+    	HashMap<String, Object> prediction = context.localDeepnet.predict(
     			data, null, null, true);
     	context.localPrediction = prediction;
     }

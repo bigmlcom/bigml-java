@@ -59,7 +59,7 @@ public class LocalEnsembleStepdefs {
     public void the_local_prediction_for_is_with_confidence(String args, String pred, Double expectedConfidence) {
         try {
             JSONObject inputObj = (JSONObject) JSONValue.parse(args);
-            Map<Object, Object> p = context.localEnsemble
+            HashMap<String, Object> p = context.localEnsemble
                     .predict(inputObj, PredictionMethod.PLURALITY, null, null, null, null, null, true);
             
             String prediction = (String) p.get("prediction");
@@ -76,7 +76,7 @@ public class LocalEnsembleStepdefs {
     public void the_local_prediction_using_median_with_confidence_for_is(String args, String expectedPrediction) {
         try {
             JSONObject inputObj = (JSONObject) JSONValue.parse(args);
-            Map<Object, Object> p = context.localEnsemble
+            HashMap<String, Object> p = context.localEnsemble
                     .predict(inputObj, PredictionMethod.PLURALITY, null, MissingStrategy.LAST_PREDICTION,
                             null, null, true, true);
             
@@ -96,7 +96,7 @@ public class LocalEnsembleStepdefs {
     public void the_local_ensemble_prediction_for_is(String args, String pred) {
         try {
             JSONObject inputObj = (JSONObject) JSONValue.parse(args);
-            Map<Object, Object> p = context.localEnsemble
+            HashMap<String, Object> p = context.localEnsemble
                     .predict(inputObj, PredictionMethod.PLURALITY, null, null, null, null, null, true);
             
             Object prediction = p.get("prediction");
@@ -157,7 +157,7 @@ public class LocalEnsembleStepdefs {
             	operatingKind = (String) opts.get("operating_kind");
             }
             
-            JSONObject prediction = context.localEnsemble
+            HashMap<String, Object> prediction = context.localEnsemble
                     .predict(inputData, null, null, MissingStrategy.PROPORTIONAL, null, 
                     		operatingKind, true, true);
             

@@ -33,7 +33,7 @@ public class TopicModelsStepdefs {
 	private ContextRepository context;
 
 	LocalTopicModel localTopicModel;
-	JSONArray localTopicDistribution;
+	ArrayList<HashMap<String, Object>> localTopicDistribution;
 
 	@Given("^I create topic model from a dataset$")
 	public void I_create_topic_model_from_a_dataset()
@@ -99,7 +99,8 @@ public class TopicModelsStepdefs {
 
 		JSONArray expected = (JSONArray) JSONValue.parse(topicDistribution);
 		for (int i = 0; i < localTopicDistribution.size(); i++) {
-			JSONObject topicDist = (JSONObject) localTopicDistribution.get(i);
+			HashMap<String, Object> topicDist 
+				= (HashMap<String, Object>) localTopicDistribution.get(i);
 			Double expectedValue = (Double) expected.get(i);
 			BigDecimal wasValue = BigDecimal.valueOf(
 					(Double) topicDist.get("probability")).setScale(5, RoundingMode.HALF_EVEN);
