@@ -77,11 +77,11 @@ public class LocalLogisticRegression extends ModelFields implements SupervisedMo
 
 	private JSONObject coefficients = null;
 	private Boolean bias;
-	private Double c;
-	private Double eps;
+	//private Double c;
+	//private Double eps;
 	private Boolean normalize;
 	private Boolean balanceFields;
-	private String regularization;
+	//private String regularization;
 	private JSONObject fieldCodings;
 	private List<String> classNames = new ArrayList<String>();
 	private String weightField;
@@ -186,14 +186,14 @@ public class LocalLogisticRegression extends ModelFields implements SupervisedMo
 				}
 				
 				bias = (Boolean) Utils.getJSONObject(logisticInfo, "bias", true);
-				c = ((Number) Utils.getJSONObject(logisticInfo, "c")).doubleValue();
-				eps = ((Number) Utils.getJSONObject(logisticInfo, "eps")).doubleValue();
+				//c = ((Number) Utils.getJSONObject(logisticInfo, "c")).doubleValue();
+				//eps = ((Number) Utils.getJSONObject(logisticInfo, "eps")).doubleValue();
 				
 				normalize = (Boolean) Utils.getJSONObject(logisticInfo, "normalize");
 				balanceFields = (Boolean) Utils.getJSONObject(
 						logisticInfo, "balance_fields");
-				regularization = (String) Utils.getJSONObject(
-						logisticInfo, "regularization");
+				//regularization = (String) Utils.getJSONObject(
+				//		logisticInfo, "regularization");
 				
 				// old models have no such attribute, so we set it to 
 				// False in this case
@@ -288,7 +288,7 @@ public class LocalLogisticRegression extends ModelFields implements SupervisedMo
 	 */
 	public JSONArray predictProbability(JSONObject inputData,
 			MissingStrategy missingStrategy) throws Exception {
-		JSONObject prediction = predict(inputData, null, null, true, false);
+		HashMap<String, Object> prediction = predict(inputData, null, null, true);
 		JSONArray distribution = (JSONArray) prediction.get("distribution");
 		Utils.sortPredictions(distribution, "probability", "prediction");
 		return distribution;
@@ -298,7 +298,7 @@ public class LocalLogisticRegression extends ModelFields implements SupervisedMo
 	/**
 	 * Computes the prediction based on a user-given operating point.
 	 */
-	private JSONObject predictOperating(
+	private HashMap<String, Object> predictOperating(
 			JSONObject inputData, JSONObject operatingPoint) {
 		
 		String[] operatingKinds = {"probability"};
@@ -311,21 +311,22 @@ public class LocalLogisticRegression extends ModelFields implements SupervisedMo
 		
 		JSONArray predictions = predictProbability(inputData);
 		for (Object pred: predictions) {
-			JSONObject prediction = (JSONObject) pred;
+			HashMap<String, Object> prediction 
+				= (HashMap<String, Object>) pred;
 			String category = (String) prediction.get("prediction");		
 			if (category.equals(positiveClass) &&
 					(Double) prediction.get(kind) > threshold) {
 				return prediction;
 			}
 		}
-		return  (JSONObject) predictions.get(0);
+		return (HashMap<String, Object>) predictions.get(0);
 	}
 	
 	
 	/**
 	 * Computes the prediction based on a user-given operating kind.
 	 */
-	private JSONObject predictOperatingKind(
+	private HashMap<String, Object> predictOperatingKind(
 			JSONObject inputData, String operatingKind) {
 		
 		JSONArray predictions = null;
@@ -338,7 +339,7 @@ public class LocalLogisticRegression extends ModelFields implements SupervisedMo
                     "for logistic regressions.");
 		}
 		
-		return (JSONObject) predictions.get(0);
+		return (HashMap<String, Object>) predictions.get(0);
 	}
 	
 	/**
@@ -375,16 +376,16 @@ public class LocalLogisticRegression extends ModelFields implements SupervisedMo
      *             - unused_fields: list of fields in the input data that
      *    
 	 */
-	public JSONObject predict(
+	public HashMap<String, Object> predict(
 			JSONObject inputData, JSONObject operatingPoint, 
-			String operatingKind, Boolean full, boolean byName) {
+			String operatingKind, Boolean full) {
 		
 		if (full == null) {
 			full = false;
 		}
 		
 		// Checks and cleans inputData leaving the fields used in the model
-        inputData = filterInputData(inputData, full, byName);
+        inputData = filterInputData(inputData, full);
         
         List<String> unusedFields = (List<String>) 
         		inputData.get("unusedFields");
@@ -467,7 +468,7 @@ public class LocalLogisticRegression extends ModelFields implements SupervisedMo
         Utils.sortPredictions(distribution, "probability", "prediction");
         JSONObject prediction = (JSONObject) distribution.get(0);
         
-        JSONObject result = new JSONObject();
+        HashMap<String, Object> result = new HashMap<String, Object>();
         result.put("prediction", (String) prediction.get("prediction"));
         result.put("probability", (Double) prediction.get("probability"));
         result.put("distribution", distribution);

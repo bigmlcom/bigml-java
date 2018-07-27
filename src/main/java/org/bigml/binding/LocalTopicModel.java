@@ -28,7 +28,8 @@ import org.bigml.binding.utils.Utils;
  * and BIGML_API_KEY environment variables and that you own the topicmodel/id
  * below):
  *
- * // API client BigMLClient api = new BigMLClient();
+ * // API client 
+ * BigMLClient api = new BigMLClient();
  *
  * // Retrieve a remote topicmodel by id 
  * JSONObject topicmodel = api.
@@ -173,19 +174,12 @@ public class LocalTopicModel extends ModelFields implements Serializable {
      *             "petal width": 1.3,
      *             "sepal width": 2.1,
      *             "species": "Iris-versicolor"}
-     * @param by_name
-     *          If True, input_data is keyed by field name, field_id is used
-     *          otherwise.
      */
-    public JSONArray distribution(JSONObject inputData, Boolean byName) 
+    public ArrayList<HashMap<String, Object>> distribution(JSONObject inputData) 
     		throws Exception {
     	
-    	if (byName == null) {
-            byName = true;
-        }
-    	
     	// Checks and cleans input_data leaving the fields used in the model
-        inputData = filterInputData(inputData, byName);
+        inputData = filterInputData(inputData);
         
         StringBuilder text = new StringBuilder();
         for (Object entry: inputData.keySet()) {
@@ -200,17 +194,19 @@ public class LocalTopicModel extends ModelFields implements Serializable {
      *
      * @param text
      */
-    public JSONArray distributionForText(String text) throws Exception {
+    public ArrayList<HashMap<String, Object>> distributionForText(
+    		String text) throws Exception {
     	ArrayList<Integer> doc = tokenize(text);
     	Double[] topicsProbability = infer(doc);
     	
-    	JSONArray distribution = new JSONArray();
+    	ArrayList<HashMap<String, Object>> distribution 
+    		= new ArrayList<HashMap<String, Object>>();
     	for (int i=0; i<topicsProbability.length; i++) {
-    		JSONObject jsonObject = new JSONObject();
+    		HashMap<String, Object> entry = new HashMap<String, Object>();
     		String name = (String) ((JSONObject) this.topics.get(i)).get("name");
-    		jsonObject.put("name", name);
-    		jsonObject.put("probability", topicsProbability[i]);
-    		distribution.add(jsonObject);
+    		entry.put("name", name);
+    		entry.put("probability", topicsProbability[i]);
+    		distribution.add(entry);
     	}
     	return distribution;
     }

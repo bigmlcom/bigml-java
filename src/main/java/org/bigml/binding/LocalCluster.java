@@ -30,6 +30,7 @@ import java.util.regex.Pattern;
  * and BIGML_API_KEY environment variables and that you own the model/id below):
  *
  * import org.bigml.binding.LocalCluster;
+ * 
  * // API client
  * BigMLClient api = new BigMLClient();
  * 
@@ -70,7 +71,7 @@ public class LocalCluster extends ModelFields {
     private Double betweenSS = null; 
     private Double ratioSS = null; 
     private Integer criticalValue = null;
-    private String defaultNumericValue;
+    //private String defaultNumericValue;
     private Integer k;
     private JSONArray summaryFields;
     private JSONObject scales;
@@ -101,7 +102,7 @@ public class LocalCluster extends ModelFields {
                     status.containsKey("code") &&
                     AbstractResource.FINISHED == ((Number) status.get("code")).intValue() ) {
 
-            	defaultNumericValue = (String) cluster.get("total_ss");
+            	//defaultNumericValue = (String) cluster.get("total_ss");
             	summaryFields = (JSONArray) cluster.get("summary_fields");
             	datasets = (JSONObject) cluster.get("cluster_datasets");
             	clusters = (JSONArray) Utils.getJSONObject(cluster, "clusters.clusters");
@@ -198,9 +199,9 @@ public class LocalCluster extends ModelFields {
     /**
      * Prepares the fields to be able to compute the distance2
      */
-    private JSONObject prepareForDistance(JSONObject inputData, Boolean byName) {
+    private JSONObject prepareForDistance(JSONObject inputData) {
     	// Checks and cleans input_data leaving the fields used in the model
-        inputData = filterInputData(inputData, byName);
+        inputData = filterInputData(inputData);
         
         // Checks that all numeric fields are present in input data
         for (Object fieldId : fields.keySet()) {
@@ -227,12 +228,21 @@ public class LocalCluster extends ModelFields {
      *   distance
      *
      */
+    @Deprecated
     public JSONObject centroid(JSONObject inputData, Boolean byName) {
-        if(byName == null) {
-            byName = true;
-        }
-		
-        inputData = prepareForDistance(inputData, byName);
+    	return centroid(inputData);
+    }
+    
+    /**
+     * Returns the nearest centroid as a JSONObject with the following properties:
+     *
+     *   centroid_id
+     *   centroid_name
+     *   distance
+     *
+     */
+    public JSONObject centroid(JSONObject inputData) {
+        inputData = prepareForDistance(inputData);
         Map<String, Object> uniqueTerms = getUniqueTerms(inputData);
         
         JSONObject nearest = new JSONObject();
@@ -428,10 +438,10 @@ public class LocalCluster extends ModelFields {
      *                                   which contains these values
      */
     private List<JSONObject> distances2ToPoint(JSONObject referencePoint,
-    		List<LocalCentroid> listPoints, Boolean byName) {
+    										   List<LocalCentroid> listPoints) {
     	
     	// Checks and cleans input_data leaving the fields used in the model
-    	referencePoint = prepareForDistance(referencePoint, byName);
+    	referencePoint = prepareForDistance(referencePoint);
     	
     	// mimic centroid structure to use it in distance computation
     	JSONObject pointInfo = new JSONObject();
@@ -447,10 +457,10 @@ public class LocalCluster extends ModelFields {
     			LocalCentroid localCentroid = (LocalCentroid) pointObj;
     			centroidId = localCentroid.getCentroidId();
     			point = localCentroid.getCenter();
-    			cleanPoint = prepareForDistance(point, false);
+    			cleanPoint = prepareForDistance(point);
     		} else {
     			point = (JSONObject) pointObj;
-    			cleanPoint = prepareForDistance(point, byName);
+    			cleanPoint = prepareForDistance(point);
     		}
     		
     		Map<String, Object> uniqueTerms = getUniqueTerms(cleanPoint);
@@ -464,7 +474,7 @@ public class LocalCluster extends ModelFields {
                 	Map.Entry fieldId = (Map.Entry) it.next();
                 	
                 	String field = (String) fieldId.getKey();
-                	if( byName ) {
+                	if( fieldsNameById.containsKey(fieldId.getKey()) ) {
                 		field = fieldsNameById.get(fieldId.getKey());
                     }
                 	
@@ -548,6 +558,25 @@ public class LocalCluster extends ModelFields {
     	}
     	return points;
     }
+
+    /**
+     * Computes the list of data points closer to a reference point.
+     * If no centroid_id information is provided, the points are chosen
+     * from the same cluster as the reference point.
+     * The points are returned in a list, sorted according
+     * to their distance to the reference point. The number_of_points
+     * parameter can be set to truncate the list to a maximum number of
+     * results. The response is a dictionary that contains the
+     * centroid id of the cluster plus the list of points
+     * 
+     */
+    @Deprecated
+    public JSONObject closestInCluster(JSONObject referencePoint, 
+    		Integer numberOfPoints, String centroidId, Boolean byName) 
+    		throws Exception {
+    	return closestInCluster(referencePoint, numberOfPoints, centroidId);
+    }
+    
     
     /**
      * Computes the list of data points closer to a reference point.
@@ -561,7 +590,7 @@ public class LocalCluster extends ModelFields {
      * 
      */
     public JSONObject closestInCluster(JSONObject referencePoint, 
-    		Integer numberOfPoints, String centroidId, Boolean byName) 
+    		Integer numberOfPoints, String centroidId) 
     		throws Exception {
     	
     	JSONObject closest = new JSONObject();
@@ -582,7 +611,7 @@ public class LocalCluster extends ModelFields {
     	
     	if (centroidId == null) {
     		// finding the reference point cluster's centroid
-    		JSONObject centroidInfo = centroid(referencePoint, byName);
+    		JSONObject centroidInfo = centroid(referencePoint);
     		centroidId = (String) centroidInfo.get("centroid_id");
     	}
     	
@@ -591,7 +620,7 @@ public class LocalCluster extends ModelFields {
     	
         // computing distance to reference point
  		List<JSONObject> points = distances2ToPoint(
-     			referencePoint, pointsInCluster, byName);
+     			referencePoint, pointsInCluster);
         
 	    Collections.sort(points, new Comparator<JSONObject>() {
             @Override
@@ -627,11 +656,20 @@ public class LocalCluster extends ModelFields {
      *  Gives the list of centroids sorted according to its distance to
      *  an arbitrary reference point.
      */
+    @Deprecated
     public JSONObject sortedCentroids(JSONObject referencePoint, Boolean byName) {
+    	return sortedCentroids(referencePoint);
+    }
+    
+    /**
+     *  Gives the list of centroids sorted according to its distance to
+     *  an arbitrary reference point.
+     */
+    public JSONObject sortedCentroids(JSONObject referencePoint) {
     	JSONObject sortedCentroids = new JSONObject();
     	
     	List<JSONObject> closeCentroids = distances2ToPoint(
-    			referencePoint, centroids, byName);
+    			referencePoint, centroids);
     	
     	for (JSONObject centroid: closeCentroids) {
     		centroid.put("distance", Math.sqrt((Double) centroid.get("distance")));

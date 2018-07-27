@@ -46,19 +46,12 @@ public class LocalAnomaly extends ModelFields implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private JSONObject anomaly;
-
-    private String anomalyId;
-
+    //private String anomalyId;
     private JSONArray inputFields;
-
     private Integer sampleSize = null;
-
     private Double meanDepth = null;
-
     private Double expectedMeanDepth = null;
-
     private List<JSONObject> topAnomalies;
-
     private List<AnomalyTree> iforest;
 
     public LocalAnomaly(JSONObject anomalyData) throws Exception {
@@ -66,10 +59,11 @@ public class LocalAnomaly extends ModelFields implements Serializable {
 
         if (anomalyData.get("resource") == null) {
             throw new Exception(
-                    "Cannot create the Anomaly instance. Could not find the 'resource' key in the resource");
+                    "Cannot create the Anomaly instance. Could not " +
+            		"find the 'resource' key in the resource");
         }
 
-        anomalyId = (String) anomalyData.get("resource");
+        //anomalyId = (String) anomalyData.get("resource");
 
         anomaly = anomalyData;
 
@@ -127,7 +121,7 @@ public class LocalAnomaly extends ModelFields implements Serializable {
 
         }
     }
-
+    
     /**
      * Returns the anomaly score given by the iforest
      *
@@ -140,9 +134,26 @@ public class LocalAnomaly extends ModelFields implements Serializable {
      * We combine those values as seen below, which should result in a
      * value between 0 and 1.
      */
+    @Deprecated
     public double score(JSONObject inputData, boolean byName) {
+    	return score(inputData);
+    }
+    
+    /**
+     * Returns the anomaly score given by the iforest
+     *
+     * To produce an anomaly score, we evaluate each tree in the iforest
+     * for its depth result (see the depth method in the AnomalyTree
+     * object for details). We find the average of these depths
+     * to produce an `observed_mean_depth`. We calculate an
+     * `expected_mean_depth` using the `sample_size` and `mean_depth`
+     * parameters which come as part of the forest message.
+     * We combine those values as seen below, which should result in a
+     * value between 0 and 1.
+     */
+    public double score(JSONObject inputData) {
         // Checks and cleans input_data leaving the fields used in the model
-        inputData = filterInputData(inputData, byName);
+        inputData = filterInputData(inputData);
 
         // Strips affixes for numeric values and casts to the final field type
         Utils.cast(inputData, fields);

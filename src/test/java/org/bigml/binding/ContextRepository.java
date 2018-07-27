@@ -5,6 +5,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -54,7 +55,7 @@ public class ContextRepository {
     JSONArray datasets = null;
     JSONArray scripts = null;
     
-    JSONObject localPrediction = null;
+    HashMap<String, Object> localPrediction = null;
     Prediction localModelPrediction = null;
     JSONObject localForecast = null;
     

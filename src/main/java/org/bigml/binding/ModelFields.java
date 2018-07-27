@@ -21,8 +21,6 @@ import java.util.regex.Pattern;
  * local predictions.
  * 
  */
-
-
 public class ModelFields implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -296,12 +294,10 @@ public class ModelFields implements Serializable {
      * Filters the keys given in input_data checking against model fields.
      *
      * @param inputData
-     * @param byName
      * @return
      */
-    protected JSONObject filterInputData(JSONObject inputData, boolean byName) {
-    	JSONObject filteredInputData = filterInputData(
-    			inputData, false, byName);
+    protected JSONObject filterInputData(JSONObject inputData) {
+    	JSONObject filteredInputData = filterInputData(inputData, false);
     	return (JSONObject) filteredInputData.get("newInputData");
     }
     
@@ -314,11 +310,10 @@ public class ModelFields implements Serializable {
      *
      * @param inputData
      * @param addUnusedFields
-     * @param byName
      * @return
      */
     protected JSONObject filterInputData(JSONObject inputData, 
-    		Boolean addUnusedFields, boolean byName) {
+    									 Boolean addUnusedFields) {
     	
     	if (addUnusedFields == null) {
     		addUnusedFields = false;
@@ -340,7 +335,7 @@ public class ModelFields implements Serializable {
         for (Object fieldId : inputData.keySet()) {
             Object value = inputData.get(fieldId);
 
-            if( byName ) {
+            if( fieldsIdByName.containsKey(fieldId) ) {
                 fieldId = fieldsIdByName.get(fieldId.toString());
             }
             
@@ -623,7 +618,6 @@ public class ModelFields implements Serializable {
     	}
     	return null;
     }
-    
     
     
     public List<String> getMissingTokens() {

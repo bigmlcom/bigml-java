@@ -3,6 +3,7 @@ package org.bigml.binding;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -68,7 +69,7 @@ public class LocalDeepnet extends ModelFields implements SupervisedModelInterfac
 	private JSONObject network = null;
 	private JSONArray networks = null;
 	private JSONArray preprocess = null;
-	private JSONObject optimizer = null;
+	//private JSONObject optimizer = null;
 	
 	
 	public LocalDeepnet(JSONObject deepnet) throws Exception {
@@ -162,8 +163,8 @@ public class LocalDeepnet extends ModelFields implements SupervisedModelInterfac
 							network, "networks", new JSONArray());
 					preprocess = (JSONArray) Utils.getJSONObject(
 							network, "preprocess", new JSONArray());
-					optimizer = (JSONObject) Utils.getJSONObject(
-							network, "optimizer", new JSONObject());
+					//optimizer = (JSONObject) Utils.getJSONObject(
+					//		network, "optimizer", new JSONObject());
 				}
 			} else {
 				throw new Exception(
@@ -226,16 +227,16 @@ public class LocalDeepnet extends ModelFields implements SupervisedModelInterfac
      *             - unused_fields: list of fields in the input data that
      *    
 	 */
-	public JSONObject predict(
+	public HashMap<String, Object> predict(
 			JSONObject inputData, JSONObject operatingPoint, 
-			String operatingKind, Boolean full, boolean byName) {
+			String operatingKind, Boolean full) {
 		
 		if (full == null) {
 			full = false;
 		}
 		
 		// Checks and cleans inputData leaving the fields used in the model
-        inputData = filterInputData(inputData, full, byName);
+        inputData = filterInputData(inputData, full);
         
         List<String> unusedFields = (List<String>) 
         		inputData.get("unusedFields");
@@ -274,7 +275,7 @@ public class LocalDeepnet extends ModelFields implements SupervisedModelInterfac
         ArrayList<List<Double>> inputArray =
         		fillArray(inputData, uniqueTerms);
 
-        JSONObject prediction = null;
+        HashMap<String, Object> prediction = null;
         if (networks != null && networks.size() > 0) {
         	prediction = predictList(inputArray);
         } else {
@@ -315,11 +316,11 @@ public class LocalDeepnet extends ModelFields implements SupervisedModelInterfac
 			JSONObject inputData, MissingStrategy missingStrategy) 
 			throws Exception {
 		
-		JSONObject prediction = null;
+		HashMap<String, Object> prediction = null;
 		if (regression) {
-			prediction = predict(inputData, null, null, true, false);
+			prediction = predict(inputData, null, null, true);
 		} else {
-			prediction = predict(inputData, null, null, true, false);
+			prediction = predict(inputData, null, null, true);
 		}
 		
 		JSONArray distribution = (JSONArray) prediction.get("distribution");
@@ -331,7 +332,7 @@ public class LocalDeepnet extends ModelFields implements SupervisedModelInterfac
 	/**
 	 * Computes the prediction based on a user-given operating point.
 	 */
-	private JSONObject predictOperating(
+	private HashMap<String, Object> predictOperating(
 			JSONObject inputData, JSONObject operatingPoint) {
 
 		String[] operatingKinds = {"probability"};
@@ -353,22 +354,23 @@ public class LocalDeepnet extends ModelFields implements SupervisedModelInterfac
 			}
 		}
 		
-		JSONObject prediction = (JSONObject) predictions.get(0);
+		HashMap<String, Object> prediction 
+			= (HashMap<String, Object>) predictions.get(0);
 		String category = (String) prediction.get("category");
 		if (category.equals(positiveClass)) {
-			prediction = (JSONObject) predictions.get(1);
+			prediction = (HashMap<String, Object>) predictions.get(1);
 		}
 		
 		prediction.put("prediction", prediction.get("category"));
 		prediction.remove("category");
-		return  (JSONObject) prediction;
+		return prediction;
 	}
 
 	
 	/**
 	 * Computes the prediction based on a user-given operating kind.
 	 */
-	private JSONObject predictOperatingKind(
+	private HashMap<String, Object> predictOperatingKind(
 			JSONObject inputData, String operatingKind) {
 
 		JSONArray predictions = null;
@@ -380,7 +382,8 @@ public class LocalDeepnet extends ModelFields implements SupervisedModelInterfac
            		 	"Only probability is allowed as operating kind " +
                     "for deepnets.");
 		}
-		JSONObject prediction = (JSONObject) predictions.get(0);
+		HashMap<String, Object> prediction 
+			= (HashMap<String, Object>) predictions.get(0);
 		prediction.put("prediction", prediction.get("category"));
 		prediction.remove("category");
 		return prediction;
@@ -481,7 +484,7 @@ public class LocalDeepnet extends ModelFields implements SupervisedModelInterfac
 	/**
 	 * Makes a prediction with a single network
 	 */
-	private JSONObject predictSingle(ArrayList<List<Double>> inputArray) {
+	private HashMap<String, Object> predictSingle(ArrayList<List<Double>> inputArray) {
 		JSONArray trees = (JSONArray) network.get("trees");
 		if (trees != null && trees.size() > 0) {
 			inputArray = Preprocess.treeTransform(inputArray, trees);
@@ -494,7 +497,7 @@ public class LocalDeepnet extends ModelFields implements SupervisedModelInterfac
 	/**
 	 * Makes a prediction with multiple network
 	 */
-	private JSONObject predictList(ArrayList<List<Double>> inputArray) {
+	private HashMap<String, Object> predictList(ArrayList<List<Double>> inputArray) {
 		ArrayList<List<Double>> inputArrayTrees =
 				new ArrayList<List<Double>>();
 		JSONArray trees = (JSONArray) network.get("trees");
@@ -544,12 +547,12 @@ public class LocalDeepnet extends ModelFields implements SupervisedModelInterfac
 	/**
 	 * Structuring prediction in a dictionary output
 	 */
-	private JSONObject toPrediction(ArrayList<List<Double>> pred) {
+	private HashMap<String, Object> toPrediction(ArrayList<List<Double>> pred) {
 
 		Double probability = Collections.max(pred.get(0));
 		int index = pred.get(0).indexOf(probability);
 		
-		JSONObject result = new JSONObject();
+		HashMap<String, Object> result = new HashMap<String, Object>();
 		result.put("probability", probability);
 		
 		if (classNames != null && classNames.size() > 0) {

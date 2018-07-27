@@ -208,7 +208,7 @@ public class Fields {
         }
 
         if( LOGGER.isDebugEnabled() ) {
-            LOGGER.debug(String.format("fields_by_name: %s", Arrays.toString(fieldsColumns.toArray())));
+            LOGGER.debug(String.format("fields: %s", Arrays.toString(fieldsColumns.toArray())));
             LOGGER.debug(String.format("fields_by_column_number: %s", JSONObject.toJSONString(fieldsByColumnNumber)));
             LOGGER.debug(String.format("missing_tokens: %s", Arrays.toString(missingTokens.toArray())));
             LOGGER.debug(String.format("data_locale: %s", dataLocale.toString()));

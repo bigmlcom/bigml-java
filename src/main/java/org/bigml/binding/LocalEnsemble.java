@@ -689,10 +689,11 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
 	 *            input data that
 	 * 
 	 */
-	public JSONObject predict(JSONObject inputData, PredictionMethod method,
-			Map options, MissingStrategy missingStrategy,
-			JSONObject operatingPoint, String operatingKind, Boolean median,
-			Boolean full, Boolean byName) throws Exception {
+	public HashMap<String, Object> predict(JSONObject inputData, 
+			PredictionMethod method, Map options, 
+			MissingStrategy missingStrategy,
+			JSONObject operatingPoint, String operatingKind, 
+			Boolean median, Boolean full) throws Exception {
 		
 		if (missingStrategy == null) {
 			missingStrategy = MissingStrategy.LAST_PREDICTION;
@@ -706,12 +707,8 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
 			full = false;
 		}
 
-		if (byName == null) {
-			byName = true;
-		}
-
 		// Checks and cleans inputData leaving the fields used in the model
-		inputData = filterInputData(inputData, full, byName);
+		inputData = filterInputData(inputData, full);
 
 		List<String> unusedFields = (List<String>) inputData
 				.get("unusedFields");
@@ -751,7 +748,7 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
 						: PredictionMethod.PLURALITY;
 				
 				return predict(inputData, method, options, missingStrategy,
-						null, null, null, full, false);
+						null, null, null, full);
 			} else {
 				// predict operating point
 				return predictOperatingKind(inputData, missingStrategy,
@@ -791,9 +788,9 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
 
 		HashMap<Object, Object> results = votes.combine(method, options);
 		
-		JSONObject prediction = new JSONObject();
+		HashMap<String, Object> prediction = new HashMap<String, Object>();
 		for (Object key : results.keySet()) {
-			prediction.put(key, results.get(key));
+			prediction.put((String) key, results.get(key));
 		}
 
 		if (full) {
@@ -806,7 +803,7 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
 	/**
 	 * Computes the prediction based on a user-given operating point.
 	 */
-	private JSONObject predictOperating(JSONObject inputData,
+	private HashMap<String, Object> predictOperating(JSONObject inputData,
 			MissingStrategy missingStrategy, JSONObject operatingPoint)
 			throws Exception {
 
@@ -838,7 +835,8 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
 		}
 
 		for (Object pred : predictions) {
-			JSONObject prediction = (JSONObject) pred;
+			HashMap<String, Object> prediction 
+				= (HashMap<String, Object>) pred;
 			String category = (String) prediction.get("category");
 
 			prediction.put("prediction", prediction.get("category"));
@@ -850,20 +848,21 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
 			}
 		}
 
-		JSONObject prediction = (JSONObject) predictions.get(0);
+		HashMap<String, Object> prediction 
+			= (HashMap<String, Object>) predictions.get(0);
 		String category = (String) prediction.get("prediction");
 		if (category.equals(positiveClass)) {
-			prediction = (JSONObject) predictions.get(1);
+			prediction = (HashMap<String, Object>) predictions.get(1);
 		}
 
-		return (JSONObject) prediction;
+		return prediction;
 	}
 
 	/**
 	 * Computes the prediction based on a user-given operating kind, i.e,
 	 * confidence, probability or votes.
 	 */
-	private JSONObject predictOperatingKind(JSONObject inputData,
+	private HashMap<String, Object> predictOperatingKind(JSONObject inputData,
 			MissingStrategy missingStrategy, String operatingKind)
 			throws Exception {
 
@@ -895,7 +894,8 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
 			predictions = predictVotes(inputData, missingStrategy);
 		}
 
-		JSONObject prediction = (JSONObject) predictions.get(0);
+		HashMap<String, Object> prediction 
+			= (HashMap<String, Object>) predictions.get(0);
 		prediction.put("prediction", prediction.get("category"));
 		prediction.remove("category");
 
@@ -921,15 +921,15 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
 			MissingStrategy missingStrategy) throws Exception {
 
 		JSONArray predictions = new JSONArray();
-		JSONObject prediction = null;
+		HashMap<String, Object> prediction = null;
 		if (regression) {
 			prediction = predict(inputData, PredictionMethod.PROBABILITY, null,
-					missingStrategy, null, null, null, true, false);
+					missingStrategy, null, null, null, true);
 			predictions.add(prediction);
 		} else {
 			if (boosting != null) {
 				prediction = predict(inputData, PredictionMethod.PLURALITY,
-						null, missingStrategy, null, null, null, true, false);
+						null, missingStrategy, null, null, null, true);
 				JSONArray probabilities = (JSONArray) prediction
 						.get("probabilities");
 				predictions.add(probabilities);
@@ -974,10 +974,10 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
 		}
 
 		JSONArray predictions = new JSONArray();
-		JSONObject prediction = null;
+		HashMap<String, Object> prediction = null;
 		if (regression) {
 			prediction = predict(inputData, PredictionMethod.CONFIDENCE, null,
-					missingStrategy, null, null, null, true, false);
+					missingStrategy, null, null, null, true);
 			predictions.add(prediction);
 		} else {
 			List<Double> output = combineDistributions(inputData,
@@ -1013,10 +1013,10 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
 			MissingStrategy missingStrategy) throws Exception {
 
 		JSONArray predictions = new JSONArray();
-		JSONObject prediction = null;
+		HashMap<String, Object> prediction = null;
 		if (regression) {
 			prediction = predict(inputData, PredictionMethod.PLURALITY, null,
-					missingStrategy, null, null, null, true, false);
+					missingStrategy, null, null, null, true);
 			predictions.add(prediction);
 		} else {
 			if (boosting != null) {

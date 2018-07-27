@@ -119,7 +119,7 @@ public class MultiModel implements Serializable {
             LocalPredictiveModel localModel = (LocalPredictiveModel) localModels.get(i);
             
             Prediction predictionInfo = localModel.predict(
-            		inputData, strategy, null, null, true, unusedFields, false);
+            		inputData, strategy, null, null, true, unusedFields);
             
             
             if (localModel.isBoosting()) {
@@ -258,13 +258,10 @@ public class MultiModel implements Serializable {
      * average: PROBABILITY_CODE
      */
     public HashMap<Object, Object> predict(final JSONObject inputData,
-            Boolean byName, PredictionMethod method, Boolean withConfidence)
+            PredictionMethod method, Boolean withConfidence)
             throws Exception {
         if (method == null) {
             method = PredictionMethod.PLURALITY;
-        }
-        if (byName == null) {
-            byName = true;
         }
         if (withConfidence == null) {
             withConfidence = false;
@@ -288,16 +285,13 @@ public class MultiModel implements Serializable {
      *              THRESHOLD_COD
      */
     public HashMap<Object, Object> predict(final JSONObject inputData,
-            Boolean byName, PredictionMethod method, Boolean withConfidence,
+            PredictionMethod method, Boolean withConfidence,
             Map options, MissingStrategy strategy, Boolean addConfidence,
             Boolean addDistribution, Boolean addCount, Boolean addMedian)
             throws Exception {
 
         if (method == null) {
             method = PredictionMethod.PLURALITY;
-        }
-        if (byName == null) {
-            byName = true;
         }
         if (withConfidence == null) {
             withConfidence = false;
@@ -307,21 +301,6 @@ public class MultiModel implements Serializable {
 
         return votes.combine(method, options);
     }
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     /**
      * Makes predictions for a list of input data.
@@ -347,7 +326,7 @@ public class MultiModel implements Serializable {
 
             throws Exception {
 
-        batchPredict(inputDataList, outputFilePath, null, null, null, null, null, null);
+        batchPredict(inputDataList, outputFilePath, null, null, null, null, null);
     }
 
     /**
@@ -370,16 +349,13 @@ public class MultiModel implements Serializable {
      * average: PROBABILITY_CODE
      */
     public List<MultiVote> batchPredict(final JSONArray inputDataList,
-            String outputFilePath, Boolean byName, Boolean reuse,
+            String outputFilePath, Boolean reuse,
             MissingStrategy strategy, Set<String> headers, Boolean toFile,
                              Boolean useMedian)
 
             throws Exception {
         if (strategy == null) {
             strategy = MissingStrategy.LAST_PREDICTION;
-        }
-        if (byName == null) {
-            byName = true;
         }
         if (reuse == null) {
             reuse = false;
@@ -412,7 +388,7 @@ public class MultiModel implements Serializable {
                     LocalPredictiveModel localModel = new LocalPredictiveModel(modelObj);
 
                     Prediction prediction =
-                            localModel.predict((JSONObject) inputData, byName, strategy);
+                            localModel.predict((JSONObject) inputData, strategy);
 
                     // if median is to be used, we just place it as prediction
                     //  starting the list

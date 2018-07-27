@@ -3,6 +3,7 @@ package org.bigml.binding;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import org.bigml.binding.resources.AbstractResource;
@@ -384,7 +385,7 @@ public class LocalFusion extends ModelFields implements SupervisedModelInterface
 	/**
 	 * Computes the prediction based on a user-given operating point.
 	 */
-	private JSONObject predictOperating(
+	private HashMap<String, Object> predictOperating(
 			JSONObject inputData, MissingStrategy missingStrategy, 
 			JSONObject operatingPoint) throws Exception {
 
@@ -409,7 +410,7 @@ public class LocalFusion extends ModelFields implements SupervisedModelInterface
 				inputData, missingStrategy);
 		
 		for (Object pred: predictions) {
-			JSONObject prediction = (JSONObject) pred;
+			HashMap<String, Object> prediction = (HashMap<String, Object>) pred;
 			String category = (String) prediction.get("category");
 			
 			if (category.equals(positiveClass) &&
@@ -418,7 +419,8 @@ public class LocalFusion extends ModelFields implements SupervisedModelInterface
 			}
 		}
 		
-		JSONObject prediction = (JSONObject) predictions.get(0);
+		HashMap<String, Object> prediction 
+			= (HashMap<String, Object>) predictions.get(0);
 		String category = (String) prediction.get("category");
 		if (category.equals(positiveClass)) {
 			prediction = (JSONObject) predictions.get(1);
@@ -426,7 +428,7 @@ public class LocalFusion extends ModelFields implements SupervisedModelInterface
 		
 		prediction.put("prediction", prediction.get("category"));
 		prediction.remove("category");
-		return  (JSONObject) prediction;
+		return  prediction;
 	}
 	
 	
@@ -461,9 +463,9 @@ public class LocalFusion extends ModelFields implements SupervisedModelInterface
      *                              are not being used in the model
      *    
 	 */
-	public JSONObject predict(
+	public HashMap<String, Object> predict(
 			JSONObject inputData, MissingStrategy missingStrategy, 
-			JSONObject operatingPoint, Boolean full, boolean byName) 
+			JSONObject operatingPoint, Boolean full) 
 			throws Exception {
 		
 		if (missingStrategy == null) {
@@ -475,7 +477,7 @@ public class LocalFusion extends ModelFields implements SupervisedModelInterface
 		}
 		
 		// Checks and cleans inputData leaving the fields used in the model
-        inputData = filterInputData(inputData, full, byName);
+        inputData = filterInputData(inputData, full);
         
         List<String> unusedFields = (List<String>) 
         		inputData.get("unusedFields");
@@ -498,7 +500,7 @@ public class LocalFusion extends ModelFields implements SupervisedModelInterface
                         " used in classifications.");
         	}
         	
-        	JSONObject prediction = predictOperating(
+        	HashMap<String, Object> prediction = predictOperating(
         			inputData, missingStrategy, operatingPoint);
         	return prediction;
         }
@@ -510,7 +512,8 @@ public class LocalFusion extends ModelFields implements SupervisedModelInterface
         	Utils.sortPredictions(predictions, "probability", "prediction");
         }
         
-        JSONObject prediction = (JSONObject) predictions.get(0);
+        HashMap<String, Object> prediction 
+        	= (HashMap<String, Object>) predictions.get(0);
         
         // adding unused fields, if any
         if (full) {
