@@ -1,11 +1,21 @@
 # BigML.io Java bindings
 
-In this repository you'll find an open source Java client that gives
-you a simple binding to interact with [BigML](https://bigml.io). You
-can use it to easily create, retrieve, list, update, and delete BigML
-resources.
+`BigML <https://bigml.com>`_ makes machine learning easy by taking care
+of the details required to add data-driven decisions and predictive
+power to your company. Unlike other machine learning services, BigML
+creates
+`beautiful predictive models <https://bigml.com/gallery/models>`_ that
+can be easily understood and interacted with.
 
-This client is licensed under the
+These BigML Java bindings allow you to interact with
+`BigML.io <https://bigml.io/>`_, the API
+for BigML. You can use it to easily create, retrieve, list, update, and
+delete BigML resources (i.e., sources, datasets, models and,
+predictions). For additional information, see
+the `full documentation for the Java
+bindings on Read the Docs <http://bigml-java.readthedocs.org>`_.
+
+This module is licensed under the
 [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html).
 
 See all the changes history [here](Changes.md).
