@@ -141,7 +141,6 @@ public class BoostedTree extends AbstractTree {
      * @param inputData
      * @param path
      * @param missingFound
-     * @return
      */
     protected Map<Object, Object> predictProportional(
     		final JSONObject inputData, final TreeHolder lastNode, 

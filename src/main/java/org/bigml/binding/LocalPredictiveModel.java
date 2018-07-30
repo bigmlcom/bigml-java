@@ -643,7 +643,7 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
 	 * Makes a prediction based on a number of field values.
 	 * 
 	 * @param inputData			Input data to be predicted
-	 * @param missingStrategy:  LAST_PREDICTION|PROPORTIONAL missing strategy for
+	 * @param missingStrategy  LAST_PREDICTION|PROPORTIONAL missing strategy for
      *                     		missing fields
 	 * @param operatingPoint
 	 * 			In classification models, this is the point of the
@@ -1053,7 +1053,6 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
      * Given a prediction string, returns its value in the required type
      *
      * @param valueAsString the prediction value as string
-     * @return
      */
     @Override
     public Object toPrediction(String valueAsString, Locale locale) {
@@ -1410,7 +1409,6 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
     /**
      * Prints summary grouping distribution as class header and details
      *
-     * @param out
      */
     public String summarize(Boolean addFieldImportance) throws IOException {
     	

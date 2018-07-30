@@ -34,7 +34,7 @@ public class MultiVoteList implements Serializable {
      *   [0.2, 0.34, 0.48] which might correspond to confidences of
      *   three different classes in the objective field.
      *
-     * @param predictionsArr {array|object} predictions Array of model's predictions
+     * @param predictions {array|object} predictions Array of model's predictions
      */
     public MultiVoteList(ArrayList<List<Double>> predictions) {
     	if (predictions == null) {

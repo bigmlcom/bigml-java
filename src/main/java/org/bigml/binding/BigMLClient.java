@@ -5047,12 +5047,11 @@ public class BigMLClient {
      * /andromeda/library/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1
      *
-     * @param library
-     *            a library JSONObject
+     * @param libraryJSON	a library JSONObject
      *
      */
-    public JSONObject deleteLibrary(final JSONObject executionJSON) {
-        return library.delete(executionJSON);
+    public JSONObject deleteLibrary(final JSONObject libraryJSON) {
+        return library.delete(libraryJSON);
     }
 
 
@@ -5246,7 +5245,7 @@ public class BigMLClient {
      * POST /andromeda/associationset?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
-     * @param datasetId
+     * @param associationId
      *            a unique identifier in the form association/id where id is a
      *            string of 24 alpha-numeric chars for the dataset to attach the
      *            association set.

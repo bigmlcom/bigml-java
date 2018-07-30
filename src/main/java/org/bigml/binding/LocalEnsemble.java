@@ -658,8 +658,8 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
 	 *            / error weighted: CONFIDENCE_CODE 2 - probability weighted
 	 *            majority vote / average: PROBABILITY_CODE 3 - threshold
 	 *            filtered vote / doesn't apply: THRESHOLD_CODE
-	 * @params options Options to be used in threshold filtered votes.
-	 * @params missingStrategy numeric key for the individual model's prediction
+	 * @param options Options to be used in threshold filtered votes.
+	 * @param missingStrategy numeric key for the individual model's prediction
 	 *         method. See the model predict method.
 	 * @param operatingPoint
 	 *            In classification models, this is the point of the ROC curve

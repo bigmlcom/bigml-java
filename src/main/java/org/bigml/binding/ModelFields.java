@@ -294,7 +294,6 @@ public class ModelFields implements Serializable {
      * Filters the keys given in input_data checking against model fields.
      *
      * @param inputData
-     * @return
      */
     protected JSONObject filterInputData(JSONObject inputData) {
     	JSONObject filteredInputData = filterInputData(inputData, false);
@@ -310,7 +309,6 @@ public class ModelFields implements Serializable {
      *
      * @param inputData
      * @param addUnusedFields
-     * @return
      */
     protected JSONObject filterInputData(JSONObject inputData, 
     									 Boolean addUnusedFields) {

@@ -1,13 +1,11 @@
 package org.bigml.binding.localanomaly;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.bigml.binding.localmodel.Predicate;
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -104,7 +102,6 @@ public class AnomalyTree {
      * If the node has no children or no children with all valid predicates,
      * then it outputs the depth of the node.
      *
-     * @return
      */
     public AnomalyDepth depth(JSONObject inputData) {
         return depth(inputData, null, 0);

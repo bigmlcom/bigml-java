@@ -359,9 +359,6 @@ public class Tree extends AbstractTree {
     /**
      * Returns the gini impurity score associated to the distribution in the node
      *
-     * @param distribution
-     * @param count
-     * @return
      */
     protected Double calculateGiniImpurity() {
         double purity = 0.0;
@@ -383,7 +380,6 @@ public class Tree extends AbstractTree {
      * @param distributionVariance
      * @param population
      * @param rz
-     * @return
      */
     protected double regressionError(double distributionVariance, long population, double rz) {
         if( population > 0 ) {
@@ -405,7 +401,6 @@ public class Tree extends AbstractTree {
      *
      * @param distribution
      * @param distributionMean
-     * @return
      */
     protected double unbiasedSampleVariance(List<JSONArray> distribution, Double distributionMean) {
         double addition = 0.0f;
@@ -779,8 +774,6 @@ public class Tree extends AbstractTree {
     /**
      * Translate the model into a set of "if" java statements.
      * 
-     * @param depth
-     *            controls the size of indentation
      */
     public String getJavaBody(final List<String> idsPath, final boolean subtree) {
         return getJavaBody(0, "", null, null, idsPath, subtree);
@@ -1021,7 +1014,6 @@ public class Tree extends AbstractTree {
      * @param inputData
      * @param path
      * @param missingFound
-     * @return
      */
     protected Map<Object, Number> predictProportional(
     		final JSONObject inputData, final TreeHolder lastNode, List<String> path,

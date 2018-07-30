@@ -362,7 +362,7 @@ public class LocalAssociation extends ModelFields implements Serializable {
 	 *
 	 * @param minLeverage
 	 *            Minum leverage value
-     * @param Confidence
+     * @param minConfidence
      *            Minum confidence value
 	 * @param minPvalue
 	 *            Minum p_value value

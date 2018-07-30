@@ -108,7 +108,6 @@ public abstract class AbstractTree {
      * Returns the field that is used by the node to make a decision.
      *
      * @param children
-     * @return
      */
     public static String split(List children) {
         Set<String> fields = new HashSet<String>();
@@ -127,7 +126,6 @@ public abstract class AbstractTree {
      *
      * @param children
      * @param inputData
-     * @return
      */
     protected boolean isOneBranch(List children, JSONObject inputData) {
         boolean missing = inputData.containsKey(split(children));
@@ -138,7 +136,6 @@ public abstract class AbstractTree {
      * Checks if the missing values are assigned to a special branch
      *
      * @param children
-     * @return
      */
     protected boolean missingBranch(final List children) {
         for (AbstractTree child : (List<AbstractTree>) children) {

@@ -450,7 +450,6 @@ public class Utils {
      * Returns the field that is used by the node to make a decision.
      *
      * @param children
-     * @return
      */
     public static String split(List<Tree> children) {
         Set<String> fields = new HashSet<String>();
@@ -496,7 +495,6 @@ public class Utils {
      *
      * @param value
      * @param field
-     * @return
      */
     public static String stripAffixes(String value, JSONObject field) {
 
@@ -516,7 +514,6 @@ public class Utils {
      *
      * @param inputData
      * @param fields
-     * @return
      */
     public static void cast(JSONObject inputData, JSONObject fields) {
 
@@ -580,7 +577,6 @@ public class Utils {
      *
      * @param dataLocale
      * @param verbose
-     * @return
      */
     public static Locale findLocale(String dataLocale, Boolean verbose) {
         Locale newLocale = null;
@@ -709,7 +705,6 @@ public class Utils {
      *
      * @param list
      * @param conjunction
-     * @return
      */
     public static String join(List<String> list, String conjunction) {
         StringBuilder sb = new StringBuilder();
@@ -736,7 +731,6 @@ public class Utils {
      * Computes the mean of a distribution in the [[point, instances]] syntax
      *
      * @param distribution
-     * @return
      */
     public static double meanOfDistribution(List<JSONArray> distribution) {
         double addition = 0.0f;
@@ -803,7 +797,6 @@ public class Utils {
      *
      * @param distribution
      * @param newDistribution
-     * @return
      */
     public static Map<Object, Number> mergeDistributions(Map<Object, Number> distribution, Map<Object, Number> newDistribution) {
         for (Object value : newDistribution.keySet()) {
@@ -1029,7 +1022,6 @@ public class Utils {
      * @param text
      * @param fullTerm
      * @param caseSensitive
-     * @return
      */
     public static int fullTermMatch(String text, String fullTerm, boolean caseSensitive) {
         return (caseSensitive ? (text.equals(fullTerm) ? 1 : 0) : (text.equalsIgnoreCase(fullTerm) ? 1 : 0));
@@ -1041,7 +1033,6 @@ public class Utils {
      * @param text
      * @param formsList
      * @param caseSensitive
-     * @return
      */
     public static int termMatchesTokens(String text, List<String> formsList, boolean caseSensitive) {
         String expression = String.format("(\\b|_)%s(\\b|_)", Utils.join(formsList, "(\\b|_)|(\\b|_)"));

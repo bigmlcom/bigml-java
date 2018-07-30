@@ -432,9 +432,9 @@ public class LocalCluster extends ModelFields {
      * Computes the cluster square of the distance to an arbitrary
      * reference point for a list of points.
      * 
-     * @param referencePoint: (dict) The field values for the point used as
+     * @param referencePoint (dict) The field values for the point used as
      *                           reference
-     * @param listPoints: Centroid The field values or a Centroid object
+     * @param listPoints Centroid The field values or a Centroid object
      *                                   which contains these values
      */
     private List<JSONObject> distances2ToPoint(JSONObject referencePoint,
