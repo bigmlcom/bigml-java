@@ -208,7 +208,7 @@ public class LocalTimeseries extends ModelFields {
         // union with filtered by names
         String pattern = "";
         if (names.size() > 0) {
-            pattern = String.join("|", names);
+            pattern = Utils.join(names, "|");
             // only adding the submodels if they have not been included by using
             // indices
             for (JSONObject o: fieldSubmodels) {
