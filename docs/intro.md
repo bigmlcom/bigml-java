@@ -24,7 +24,7 @@ Requirements
 JVM 1.6 and above are currently supported by these bindings.
 
 You will also need `maven` to build the package. If you are new to
-`maven, please refer to [Maven Getting Started Guide](https://maven.apache.org/guides/getting-started/index.html>).
+`maven`, please refer to [Maven Getting Started Guide](https://maven.apache.org/guides/getting-started/index.html>).
 
 
 
