@@ -1,5 +1,11 @@
 # Changes in the BigML.io Java bindings
 
+## 1.8.1 version
+
+### Improvements
+
+* Updated dependency with lucene-core to 7.1.0
+
 ## 1.8.0 version
 
 ### Improvements
