@@ -1,10 +1,19 @@
 # Changes in the BigML.io Java bindings
 
+## 1.8.2 version
+
+### Improvements
+
+* Upgraded dependencies due to potential security vulnerabilities:
+	spring-core, spring-context, sprint-tx: 4.3.20
+
 ## 1.8.1 version
 
 ### Improvements
 
-* Updated dependency with lucene-core to 7.1.0
+* Upgraded dependencies due to potential security vulnerabilities:
+	lucene-core: 7.1.0
+
 
 ## 1.8.0 version
 
