@@ -104,7 +104,7 @@ public class Tree extends AbstractTree {
     private String weightedDistributionUnit;
     private Double median;
     private double impurity = 0.0;
-    private JSONObject weight;
+    private long weight;
     private boolean weighted = false;
     private Integer max;
     private Integer min;
@@ -177,7 +177,7 @@ public class Tree extends AbstractTree {
                     this.weightedDistributionUnit = "categories";
                 }
             	
-            	this.weight = (JSONObject) tree.get("weight");
+            	this.weight = (Long) tree.get("weight");
             	this.weighted = true;
             }
         } else {
