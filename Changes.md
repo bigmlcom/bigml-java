@@ -1,5 +1,11 @@
 # Changes in the BigML.io Java bindings
 
+## 1.8.4 version
+
+### Bugs
+
+* Fixed bug in LocalPredictiveModel predicting with model using weights.
+
 ## 1.8.3 version
 
 ### Bugs
