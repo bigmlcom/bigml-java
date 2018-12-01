@@ -87,6 +87,9 @@ public class BigMLClient {
     private Deepnet deepnet;
     private OptiML optiml;
     private Fusion fusion;
+    private Pca pca;
+    private Projection projection;
+    private BatchProjection batchProjection;
 
     private Properties props;
     private String storage;
@@ -394,6 +397,12 @@ public class BigMLClient {
         optiml = new OptiML(this, this.bigmlUser, this.bigmlApiKey, 
         		this.projectId, this.organizationId, cacheManager);
         fusion = new Fusion(this, this.bigmlUser, this.bigmlApiKey, 
+        		this.projectId, this.organizationId, cacheManager);
+        pca = new Pca(this, this.bigmlUser, this.bigmlApiKey, 
+        		this.projectId, this.organizationId, cacheManager);
+        projection = new Projection(this, this.bigmlUser, this.bigmlApiKey, 
+        		this.projectId, this.organizationId, cacheManager);
+        batchProjection = new BatchProjection(this, this.bigmlUser, this.bigmlApiKey, 
         		this.projectId, this.organizationId, cacheManager);
     }
 
@@ -6931,7 +6940,7 @@ public class BigMLClient {
     }
     
     
- // ################################################################
+    // ################################################################
     // #
     // # Fusion
     // # https://bigml.com/api/fusions
@@ -7132,4 +7141,630 @@ public class BigMLClient {
     public JSONObject deleteFusion(final JSONObject fusionJSON) {
         return fusion.delete(fusionJSON);
     }
+    
+    
+    // ################################################################
+    // #
+    // # Pca
+    // # https://bigml.com/api/pca
+    // #
+    // ################################################################
+
+    /**
+     * Creates a new pca.
+     *
+     * POST /andromeda/pca?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param datasetId
+     *            a unique identifier in the form dataset/id where id is a
+     *            string of 24 alpha-numeric chars for the dataset to 
+     *            attach the pca.
+     * @param args
+     *            set of parameters for the new pca. Optional
+     * @param waitTime
+     *            time to wait for next check of FINISHED status for dataset
+     *            before to start to create the pca. Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     *
+     */
+    public JSONObject createPca(final String datasetId, 
+    		JSONObject args, Integer waitTime, Integer retries) {
+
+        return pca.create(datasetId, args, waitTime, retries);
+    }
+
+    /**
+     * Creates a from a list of `datasets`.
+     *
+     * POST /andromeda/pca?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param datasetsIds
+     *            list of identifiers in the form dataset/id where id is a
+     *            string of 24 alpha-numeric chars for the dataset to 
+     *            attach the pca.
+     * @param args
+     *            set of parameters for the new pca. Optional
+     * @param waitTime
+     *            time (milliseconds) to wait for next check of FINISHED 
+     *            status for source before to start to create the pca.
+     *            Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     *
+     */
+    public JSONObject createPca(final List datasetsIds, 
+    		JSONObject args, Integer waitTime, Integer retries) {
+
+        return pca.create(datasetsIds, args, waitTime, retries);
+    }
+
+    /**
+     * Retrieves a pca.
+     *
+     * A pca is an evolving object that is processed until it reaches 
+     * the FINISHED or FAULTY state, the method will return a JSONObject
+     * that encloses the pca values and state info  available at the 
+     * time it is called.
+     *
+     * GET
+     * /andromeda/pca/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io
+     *
+     * @param pcaId
+     *            a unique identifier in the form pca/id where id
+     *            is a string of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject getPca(final String pcaId) {
+        return pca.get(pcaId);
+    }
+
+    /**
+     * Retrieves a pca.
+     *
+     * A pca is an evolving object that is processed until it reaches
+     * the FINISHED or FAULTY state, the method will return a JSONObject
+     * that encloses the pca values and state info available at the time 
+     * it is called.
+     *
+     * GET
+     * /andromeda/pca/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io
+     *
+     * @param pcaJSON
+     *            a pca JSONObject.
+     *
+     */
+    public JSONObject getPca(final JSONObject pcaJSON) {
+        return pca.get(pcaJSON);
+    }
+
+    /**
+     * Check whether a pca's status is FINISHED.
+     *
+     * @param pcaId
+     *            a unique identifier in the form pca/id where id is a
+     *            string of 24 alpha-numeric chars.
+     *
+     */
+    public boolean pcaIsReady(final String pcaId) {
+        return pca.isReady(pcaId);
+    }
+
+    /**
+     * Check whether a pca's status is FINISHED.
+     *
+     * @param pcaJSON
+     *            a pca JSONObject.
+     *
+     */
+    public boolean pcaIsReady(final JSONObject pcaJSON) {
+        return pca.isReady(pcaJSON);
+    }
+
+    /**
+     * Lists all your pca.
+     *
+     * GET /andromeda/pca?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param queryString
+     *            query filtering the listing.
+     *
+     */
+    public JSONObject listPcas(final String queryString) {
+        return pca.list(queryString);
+    }
+
+    /**
+     * Updates a pca.
+     *
+     * PUT
+     * /andromeda/pca/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param pcaId
+     *            a unique identifier in the form pca/id where id is a
+     *            string of 24 alpha-numeric chars.
+     * @param changes
+     *            set of parameters to update the pca. Optional
+     *
+     */
+    public JSONObject updatPca(final String pcaId,
+            final String changes) {
+        return pca.update(pcaId, changes);
+    }
+
+    /**
+     * Updates a pca.
+     *
+     * PUT
+     * /andromeda/pca/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param pcaJSON
+     *            a pca JSONObject
+     * @param changes
+     *            set of parameters to update the pca. Optional
+     */
+    public JSONObject updatePca(final JSONObject pcaJSON,
+            final JSONObject changes) {
+        return pca.update(pcaJSON, changes);
+    }
+
+    /**
+     * Deletes a pca.
+     *
+     * DELETE
+     * /andromeda/pca/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1
+     *
+     * @param pcaId
+     *            a unique identifier in the form pca/id where id is a
+     *            string of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject deletePca(final String pcaId) {
+        return pca.delete(pcaId);
+    }
+
+    /**
+     * Deletes a pca.
+     *
+     * DELETE
+     * /andromeda/pca/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1
+     *
+     * @param pcaJSON
+     *            a pca JSONObject.
+     *
+     */
+    public JSONObject deletePca(final JSONObject pcaJSON) {
+        return pca.delete(pcaJSON);
+    }
+    
+    
+    // ################################################################
+    // #
+    // # Projections
+    // # https://bigml.com/api/projections
+    // #
+    // ################################################################
+
+    /**
+     * Creates a new projection.
+     *
+     * POST
+     * /andromeda/projection?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param pcaId
+     *            a unique identifier in the form pca/id where
+     *            id is a string of 24 alpha-numeric chars for the 
+     *            projection to attach the projection.
+     * @param inputData
+     *            an object with field's id/value pairs representing the
+     *            instance you want to create a projection for.
+     * @param args
+     *            set of parameters for the new projection. Required
+     * @param waitTime
+     *            time to wait for next check of FINISHED status for 
+     *            projection before to start to create the projection. 
+     *            Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     *
+     */
+    public JSONObject createProjection(final String pcaId,
+            JSONObject inputData, JSONObject args, Integer waitTime,
+            Integer retries) {
+        return projection.create(pcaId, inputData, args,
+        	waitTime, retries);
+    }
+
+    /**
+     * Creates a new projection.
+     *
+     * POST
+     * /andromeda/projection?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param pca
+     *            a pca JSONObject
+     * @param inputData
+     *            an object with field's id/value pairs representing the
+     *            instance you want to create a projection for.
+     * @param args
+     *            set of parameters for the new projection. Required
+     * @param waitTime
+     *            time to wait for next check of FINISHED status for 
+     *            projection before to start to create the projection. 
+     *            Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     *
+     */
+    public JSONObject createProjection(final JSONObject pca,
+            JSONObject inputData, JSONObject args,
+            Integer waitTime, Integer retries) {
+        String pcaId = (String) pca.get("resource");
+        return  createProjection(pcaId, inputData, args, 
+        		waitTime, retries);
+    }
+
+    /**
+     * Retrieves a projection.
+     *
+     * GET /andromeda/projection/id?username=$BIGML_USERNAME;api_key=
+     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
+     *
+     * @param projectionId
+     *            a unique identifier in the form projection/id where id 
+     *            is a string of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject getProjection(final String projectionId) {
+        return projection.get(projectionId);
+    }
+
+    /**
+     * Retrieves a projection.
+     *
+     * GET /andromeda/projection/id?username=$BIGML_USERNAME;api_key=
+     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
+     *
+     * @param projectionJSON
+     *            a projection JSONObject
+     *
+     */
+    public JSONObject getProjection(final JSONObject projectionJSON) {
+        return projection.get(projectionJSON);
+    }
+
+    /**
+     * Checks whether a projection's status is FINISHED.
+     *
+     * @param projectionId
+     *            a unique identifier in the form projection/id where id 
+     *            is a string of 24 alpha-numeric chars.
+     *
+     */
+    public boolean projectionIsReady(final String projectionId) {
+        return projection.isReady(projectionId);
+    }
+
+    /**
+     * Checks whether a projection's status is FINISHED.
+     *
+     * @param projectionJSON
+     *            a projection JSONObject
+     *
+     */
+    public boolean projectionIsReady(final JSONObject projectionJSON) {
+        return projection.isReady(projectionJSON);
+    }
+
+    /**
+     * Lists all your projections.
+     *
+     * GET
+     * /andromeda/projection?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param queryString
+     *            query filtering the listing.
+     *
+     */
+    public JSONObject listProjections(final String queryString) {
+        return projection.list(queryString);
+    }
+
+    /**
+     * Updates a projection.
+     *
+     * PUT /andromeda/projection/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param projectionId
+     *            a unique identifier in the form projection/id where id 
+     *            is a string of 24 alpha-numeric chars.
+     * @param changes
+     *            set of parameters to update the projection. Optional
+     *
+     */
+    public JSONObject updateProjection(final String projectionId,
+            final String changes) {
+        return projection.update(projectionId, changes);
+    }
+
+    /**
+     * Updates a projection.
+     *
+     * PUT /andromeda/projection/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param projectionJSON
+     *            a projection JSONObject
+     * @param changes
+     *            set of parameters to update the projection. Optional
+     *
+     */
+    public JSONObject updateProjection(final JSONObject projectionJSON,
+            final JSONObject changes) {
+        return projection.update(projectionJSON, changes);
+    }
+
+    /**
+     * Deletes a projection.
+     *
+     * DELETE /andromeda/projection/id?username=$BIGML_USERNAME;api_key=
+     * $BIGML_API_KEY; HTTP/1.1
+     *
+     * @param projectionId
+     *            a unique identifier in the form projection/id where id 
+     *            is a string of 24 alpha-numeric chars
+     *
+     */
+    public JSONObject deleteProjection(final String projectionId) {
+        return projection.delete(projectionId);
+    }
+
+    /**
+     * Deletes a projection.
+     *
+     * DELETE /andromeda/projection/id?username=$BIGML_USERNAME;api_key=
+     * $BIGML_API_KEY; HTTP/1.1
+     *
+     * @param projectionJSON
+     *            a projection JSONObject
+     *
+     */
+    public JSONObject deleteProjection(final JSONObject projectionJSON) {
+        return projection.delete(projectionJSON);
+    }
+    
+    
+    // ################################################################
+    // #
+    // # Batch projections
+    // # https://bigml.com/api/batchprojections
+    // #
+    // ################################################################
+
+    /**
+     * Creates a new batch projection.
+     *
+     * POST /andromeda/batchprojection?username=$BIGML_USERNAME;api_key=
+     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param pcaId
+     *            a unique identifier in the form pca/id where
+     *            id is a string of 24 alpha-numeric chars for the
+     *            pca to attach the batch projection.
+     * @param datasetId
+     *            a unique identifier in the form dataset/id where id is a
+     *            string of 24 alpha-numeric chars for the dataset to attach 
+     *            the batch projection.
+     * @param args
+     *            set of parameters for the new batch projection. Optional
+     * @param waitTime
+     *            time (milliseconds) to wait for next check of FINISHED status
+     *            for model before to start to create the batch projection.
+     *            Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     *
+     */
+    public JSONObject createBatchProjection(final String pcaId,
+            final String datasetId, JSONObject args, Integer waitTime,
+            Integer retries) {
+        return batchProjection.create(pcaId, datasetId, args,
+                waitTime, retries);
+    }
+
+    /**
+     * Retrieves a batch projection.
+     *
+     * The batch projection parameter should be a string containing the
+     * batch projection id or the dict returned by create_batch_projection. As
+     * batch projection is an evolving object that is processed until it reaches
+     * the FINISHED or FAULTY state, the function will return a dict that
+     * encloses the batch projection values and state info available at the time
+     * it is called.
+     *
+     * GET /andromeda/batchprojection/id?username=$BIGML_USERNAME;api_key=
+     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
+     *
+     * @param batchProjectionId
+     *            a unique identifier in the form batchprojection/id where id is
+     *            a string of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject getBatchProjection(final String batchProjectionId) {
+        return batchProjection.get(batchProjectionId);
+    }
+
+    /**
+     * Retrieves a batch projection.
+     *
+     * The batch projection parameter should be a string containing the
+     * batch projection id or the dict returned by create_batch_projection. As
+     * batch projection is an evolving object that is processed until it reaches
+     * the FINISHED or FAULTY state, the function will return a dict that
+     * encloses the batch projection values and state info available at the time
+     * it is called.
+     *
+     * GET /andromeda/batchprojection/id?username=$BIGML_USERNAME;api_key=
+     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
+     *
+     * @param batchProjectionJSON
+     *            a batch projection JSONObject.
+     *
+     */
+    public JSONObject getBatchProjection(final JSONObject batchProjectionJSON) {
+        return batchProjection.get(batchProjectionJSON);
+    }
+
+    /**
+     * Retrieves the batch projection file.
+     *
+     * Downloads a remote CSV file. If a path is
+     * given in filename, the contents of the file are downloaded and saved
+     * locally. A file-like object is returned otherwise.
+     *
+     * @param batchProjectionId
+     *            a unique identifier in the form batchprojection/id where id is
+     *            a string of 24 alpha-numeric chars.
+     * @param filename
+     *            Path to save file locally
+     *
+     */
+    public JSONObject downloadBatchProjection(final String batchProjectionId,
+            final String filename) {
+        return batchProjection.downloadBatchProjection(batchProjectionId,
+                filename);
+    }
+
+    /**
+    * Retrieves the batch projection file.
+     *
+     * Downloads a remote CSV file. If a path is
+     * given in filename, the contents of the file are downloaded and saved
+     * locally. A file-like object is returned otherwise.
+     *
+     * @param batchProjectionJSON
+     *            a batch projection JSONObject.
+     * @param filename
+     *            Path to save file locally
+     *
+     */
+    public JSONObject downloadBatchProjection(
+            final JSONObject batchProjectionJSON, final String filename) {
+        return batchProjection.downloadBatchProjection(batchProjectionJSON,
+                filename);
+    }
+
+    /**
+     * Check whether a batch tprojection's status is FINISHED.
+     *
+     * @param batchProjectionId
+     *            a unique identifier in the form batchprojection/id where id is
+     *            a string of 24 alpha-numeric chars.
+     *
+     */
+    public boolean batchProjectionIsReady(final String batchProjectionId) {
+        return batchProjection.isReady(batchProjectionId);
+    }
+
+    /**
+     * Check whether a batch projection's status is FINISHED.
+     *
+     * @param batchProjectionSON
+     *            a batch projection JSONObject.
+     *
+     */
+    public boolean batchProjectionIsReady(final JSONObject batchProjectionJSON) {
+        return batchProjection.isReady(batchProjectionJSON);
+    }
+
+    /**
+     * Lists all your batch projections.
+     *
+     * GET /andromeda/projection?username=$BIGML_USERNAME;api_key=
+     * $BIGML_API_KEY; Host: bigml.io
+     *
+     * @param queryString
+     *            query filtering the listing.
+     *
+     */
+    public JSONObject listBatchProjections(final String queryString) {
+        return batchProjection.list(queryString);
+    }
+
+    /**
+     * Updates a batch projection.
+     *
+     * PUT /andromeda/projection/id?username=$BIGML_USERNAME;api_key=
+     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param batchProjectionId
+     *            a unique identifier in the form batchtoprojection/id where id is
+     *            a string of 24 alpha-numeric chars.
+     * @param changes
+     *            set of parameters to update the batch projection. Optional
+     *
+     */
+    public JSONObject updateBatchProjection(final String batchProjectionId,
+            final String changes) {
+        return batchProjection.update(batchProjectionId, changes);
+    }
+
+    /**
+     * Updates a batch projection.
+     *
+     * PUT /andromeda/projection/id?username=$BIGML_USERNAME;api_key=
+     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param batchProjectionJSON
+     *            a batch projection JSONObject
+     * @param changes
+     *            set of parameters to update the batch projection. Optional
+     */
+    public JSONObject updateBatchProjection(
+            final JSONObject batchProjectionJSON, final JSONObject changes) {
+        return batchProjection.update(batchProjectionJSON, changes);
+    }
+
+    /**
+     * Deletes a batch projection.
+     *
+     * DELETE /andromeda/projection/id?username=$BIGML_USERNAME;api_key=
+     * $BIGML_API_KEY; HTTP/1.1
+     *
+     * @param batchprojectionId
+     *            a unique identifier in the form batchprojection/id where id is
+     *            a string of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject deleteBatchProjection(final String batchProjectionId) {
+        return batchProjection.delete(batchProjectionId);
+    }
+
+    /**
+     * Deletes a batch projection.
+     *
+     * DELETE /andromeda/projection/id?username=$BIGML_USERNAME;api_key=
+     * $BIGML_API_KEY; HTTP/1.1
+     *
+     * @param batchProjectionJSON
+     *            a batch projection JSONObject.
+     *
+     */
+    public JSONObject deleteBatchProjection(final JSONObject batchProjectionJSON) {
+        return batchProjection.delete(batchProjectionJSON);
+    }
+    
 }

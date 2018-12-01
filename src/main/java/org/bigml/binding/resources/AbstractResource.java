@@ -62,6 +62,9 @@ public abstract class AbstractResource {
     public final static String DEEPNET_PATH = "deepnet";
     public final static String OPTIML_PATH = "optiml";
     public final static String FUSION_PATH = "fusion";
+    public final static String PCA_PATH = "pca";
+    public final static String PROJECTION_PATH = "projection";
+    public final static String BATCH_PROJECTION_PATH = "batchprojection";
     
     // Base Resource regular expressions
     static String SOURCE_RE = "^" + SOURCE_PATH + "/[a-f,0-9]{24}$";
@@ -153,6 +156,17 @@ public abstract class AbstractResource {
     static String OPTIML_RE = "^" + OPTIML_PATH + "/[a-f,0-9]{24}$";
     static String FUSION_RE = "^" + FUSION_PATH 
     		+ "/[a-f,0-9]{24}$|^shared/" + FUSION_PATH 
+    		+ "/[a-zA-Z0-9]{26,27}$";
+    static String PCA_RE = "^" + PCA_PATH
+            + "/[a-f,0-9]{24}$|^shared/" + PCA_PATH 
+    		+ "/[a-zA-Z0-9]{26,27}$";
+    static String PROJECTION_RE = "^" 
+            + PROJECTION_PATH
+            + "/[a-f,0-9]{24}$|^shared/" + PROJECTION_PATH 
+    		+ "/[a-zA-Z0-9]{26,27}$";
+    static String BATCH_PROJECTION_RE = "^" 
+            + BATCH_PROJECTION_PATH
+            + "/[a-f,0-9]{24}$|^shared/" + BATCH_PROJECTION_PATH 
     		+ "/[a-zA-Z0-9]{26,27}$";
 
     // HTTP Status Codes from https://bigml.com/api/status_codes
