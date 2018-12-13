@@ -3,7 +3,7 @@
 ## 1.8.5 version
 
 * Adding PCA REST call methods.
-
+* Adding local PCAs and Projections.
 
 ## 1.8.4 version
 

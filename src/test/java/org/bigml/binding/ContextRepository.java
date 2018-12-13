@@ -61,6 +61,7 @@ public class ContextRepository {
     HashMap<String, Object> localPrediction = null;
     Prediction localModelPrediction = null;
     JSONObject localForecast = null;
+    JSONObject localProjection = null;
     
     LocalPredictiveModel localModel = null;
     LocalEnsemble localEnsemble = null;
