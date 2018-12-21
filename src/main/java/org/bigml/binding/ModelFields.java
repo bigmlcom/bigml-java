@@ -25,8 +25,8 @@ public class ModelFields implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	// Logging
-	Logger LOGGER = LoggerFactory.getLogger(ModelFields.class);
-
+	static Logger LOGGER = LoggerFactory.getLogger(ModelFields.class);
+	
 	private static String DEFAULT_LOCALE = "en_US.UTF-8";
 
 	public static String[] DEFAULT_MISSING_TOKENS = Fields.DEFAULT_MISSING_TOKENS;
