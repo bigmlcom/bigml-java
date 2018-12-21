@@ -1,5 +1,15 @@
 # Changes in the BigML.io Java bindings
 
+## 1.8.5 version
+
+* Adding PCA REST call methods.
+* Adding local PCAs and Projections.
+
+### Bugs
+
+* Changed ModelFields to use static logger
+
+
 ## 1.8.4 version
 
 ### Bugs

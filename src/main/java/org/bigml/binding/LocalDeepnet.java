@@ -93,7 +93,7 @@ public class LocalDeepnet extends ModelFields implements SupervisedModelInterfac
 				&& deepnet.get("resource") != null)) {
 			BigMLClient client = new BigMLClient(null, null, 
 					BigMLClient.STORAGE);
-			deepnet = client.getLogisticRegression(deepnetId);
+			deepnet = client.getDeepnet(deepnetId);
 			
 			if ((String) deepnet.get("resource") == null) {
 				throw new Exception(

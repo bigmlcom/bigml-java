@@ -49,6 +49,9 @@ public class ContextRepository {
     JSONObject deepnet = null;
     JSONObject optiML = null;
     JSONObject fusion = null;
+    JSONObject pca = null;
+    JSONObject projection = null;
+    JSONObject batchProjection = null;
     
     JSONArray models = null;
     JSONArray anomalies = null;
@@ -58,6 +61,7 @@ public class ContextRepository {
     HashMap<String, Object> localPrediction = null;
     Prediction localModelPrediction = null;
     JSONObject localForecast = null;
+    JSONObject localProjection = null;
     
     LocalPredictiveModel localModel = null;
     LocalEnsemble localEnsemble = null;
@@ -393,5 +397,29 @@ public class ContextRepository {
 
     public void setFusion(JSONObject fusion) {
         this.fusion = fusion;
+    }
+    
+    public JSONObject getPca() {
+        return pca;
+    }
+
+    public void setPca(JSONObject pca) {
+        this.pca = pca;
+    }
+
+    public JSONObject getProjection() {
+        return projection;
+    }
+
+    public void setProjection(JSONObject projection) {
+        this.projection = projection;
+    }
+
+    public JSONObject getBatchProjection() {
+        return batchProjection;
+    }
+
+    public void setBatchProjection(JSONObject batchProjection) {
+        this.batchProjection = batchProjection;
     }
 }

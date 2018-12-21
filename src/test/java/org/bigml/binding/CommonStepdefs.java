@@ -39,7 +39,7 @@ public class CommonStepdefs {
 		RES_NAMES.put("time series", "timeSeries");
 		RES_NAMES.put("topic model", "topicModel");
 		RES_NAMES.put("statisticaltest", "statisticalTest");
-
+		RES_NAMES.put("batch projection", "batchProjection");
 	}
 
 	// Logging
@@ -125,8 +125,7 @@ public class CommonStepdefs {
 		getField(resourceName).set(context, resource);
 	}
 
-	
-	
+
 	@Given("^I create a (configuration|project) with \"(.*)\"$")
     public void I_create_a_resource_with_(String resourceName, String args)
         throws AuthenticationException, Exception {
@@ -151,7 +150,7 @@ public class CommonStepdefs {
     }
 	
 	
-	@Given("^I create a[n]* (anomaly detector|association|correlation|deepnet|logisticregression|sample|statisticaltest|time series) from a dataset with \"(.*)\"$")
+	@Given("^I create a[n]* (anomaly detector|association|correlation|deepnet|logisticregression|sample|statisticaltest|time series|pca) from a dataset with \"(.*)\"$")
 	public void I_create_a_resource_from_a_dataset_with(String resourceName, String args)
 			throws Throwable {
 
@@ -179,7 +178,7 @@ public class CommonStepdefs {
 		}
 	}
 
-	@Given("^I create a[n]* (anomaly detector|association|correlation|deepnet|logisticregression|sample|statisticaltest|time series) from a dataset$")
+	@Given("^I create a[n]* (anomaly detector|association|correlation|deepnet|logisticregression|sample|statisticaltest|time series|pca) from a dataset$")
 	public void I_create_a_resource_from_a_dataset(String resourceName)
 			throws Throwable {
 
@@ -367,6 +366,11 @@ public class CommonStepdefs {
 					modelToRemove = iModel;
 					break;
 				}
+				if (context.pca != null && 
+						modelInList.get("resource").equals(context.pca.get("resource"))) {
+					modelToRemove = iModel;
+					break;
+				}
 			}
 
 			if (modelToRemove >= 0) {
@@ -374,7 +378,21 @@ public class CommonStepdefs {
 			}
 		}
 		
-		
+		if (context.pca != null) {
+			context.api.deletePca(
+					(String) context.pca.get("resource"));
+			context.pca = null;
+		}
+		if (context.projection != null) {
+			context.api.deleteProjection(
+					(String) context.projection.get("resource"));
+			context.projection = null;
+		}
+		if (context.batchProjection != null) {
+			context.api.deleteBatchProjection(
+					(String) context.batchProjection.get("resource"));
+			context.batchProjection = null;
+		}
 		if (context.fusion != null) {
 			context.api.deleteFusion(
 					(String) context.fusion.get("resource"));
@@ -424,7 +442,8 @@ public class CommonStepdefs {
 			context.api
 					.deleteAssociation((String) context.association.get("resource"));
 			context.association = null;
-		}if (context.execution != null) {
+		}
+		if (context.execution != null) {
 			context.api
 					.deleteExecution((String) context.execution.get("resource"));
 			context.execution = null;
@@ -608,6 +627,9 @@ public class CommonStepdefs {
 			if (modelId.startsWith("fusion/")) {
 				context.api.deleteFusion(modelId);
 			}
+			if (modelId.startsWith("pca/")) {
+				context.api.deletePca(modelId);
+			}
 		} catch (Exception e) {}
 	}
 	
@@ -633,6 +655,36 @@ public class CommonStepdefs {
 			JSONObject sample = (JSONObject) samples.get(i);
 			context.api
 					.deleteSample((String) sample.get("resource"));
+		}
+		
+		// BatchProjections
+		JSONArray batchProjections = (JSONArray) context.api
+				.listBatchProjections(";tags__in=unitTest")
+				.get("objects");
+		for (int i = 0; i < batchProjections.size(); i++) {
+			JSONObject batchProjection = (JSONObject) batchProjections
+					.get(i);
+			context.api.deleteBatchProjection(
+					(String) batchProjection.get("resource"));
+		}
+
+		// Projections
+		JSONArray projections = (JSONArray) context.api
+				.listProjections(";tags__in=unitTest").get("objects");
+		for (int i = 0; i < projections.size(); i++) {
+			JSONObject projection = (JSONObject) projections
+					.get(i);
+			context.api.deleteProjection(
+					(String) projection.get("resource"));
+		}
+
+		// Pcas
+		JSONArray pcas = (JSONArray) context.api
+				.listPcas(";tags__in=unitTest").get("objects");
+		for (int i = 0; i < pcas.size(); i++) {
+			JSONObject pca = (JSONObject) pcas.get(i);
+			context.api
+					.deletePca((String) pca.get("resource"));
 		}
 		
 		// Fusions
