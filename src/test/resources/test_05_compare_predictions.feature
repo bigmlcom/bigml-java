@@ -128,6 +128,7 @@ Feature: Create Predictions
         Then the logisticregression prediction is "<prediction>"
         And I create a local logisticregression prediction for "<data_input>"
         Then the local logisticregression prediction is "<prediction>"
+        Then delete test data
         
         Examples:
         | data  | time_1  | time_2 | time_3 | data_input | prediction |
@@ -152,7 +153,8 @@ Feature: Create Predictions
         Then the logisticregression prediction is "<prediction>"
         And I create a local logisticregression prediction for "<data_input>"
         Then the local logisticregression prediction is "<prediction>"
-
+		Then delete test data
+		
         Examples:
         | data  | time_1  | time_2 | time_3 | options | data_input | prediction |
         | data/spam.csv | 50      | 50     | 50 | {"fields": {"000001": {"optype": "text", "term_analysis": {"case_sensitive": true, "stem_words": true, "use_stopwords": false, "language": "en"}}}}  | {"Message": "Mobile call"}  |  ham |
@@ -179,8 +181,8 @@ Feature: Create Predictions
       	And the logisticregression probability for the prediction is "<probability>"
         And I create a local logisticregression prediction for "<data_input>"
         Then the local logisticregression prediction is "<prediction>"       
-        And the local logisticregression probability for the prediction is "<probability>"
-
+        Then delete test data
+        
         Examples:
         | data  | time_1  | time_2 | time_3 | options | data_input | prediction | probability | objective |
         | data/spam.csv | 50      | 50     | 180  | {"fields": {"000001": {"optype": "text", "term_analysis": {"token_mode": "full_terms_only", "language": "en"}}}}  | {"Message": "A normal message"}  |  ham | 0.9169  | 000000  |
@@ -202,7 +204,8 @@ Feature: Create Predictions
         And I create a local logisticregression prediction for "<data_input>"
         Then the local logisticregression prediction is "<prediction>"       
         And the local logisticregression probability for the prediction is "<probability>"
-
+		Then delete test data
+		
         Examples:
         | data  | time_1  | time_2 | time_3 | params | data_input | prediction | probability | objective |
         | data/iris.csv | 50      | 50     | 180  | {"weight_field": "000000", "missing_numerics": false}  | {"petal width": 1.5, "petal length": 2, "sepal width":1}  |  Iris-versicolor | 0.9547  | 000004  |     
@@ -222,7 +225,8 @@ Feature: Create Predictions
         And I create a local logisticregression prediction for "<data_input>"
         Then the local logisticregression prediction is "<prediction>"       
         And the local logisticregression probability for the prediction is "<probability>"
-
+		Then delete test data
+		
         Examples:
         | data  | time_1  | time_2 | time_3 | options | data_input | prediction | probability | objective | params  |
         | data/iris.csv | 50      | 50     | 180  | {"fields": {"000000": {"optype": "categorical"}}}  | {"species": "Iris-setosa"}  |  5.0 | 0.0394  | 000000  | {"field_codings": [{"field": "species", "coding": "dummy", "dummy_class": "Iris-setosa"}]}  |
@@ -246,7 +250,8 @@ Feature: Create Predictions
         And I create a local logisticregression prediction for "<data_input>"
         Then the local logisticregression prediction is "<prediction>"       
         And the local logisticregression probability for the prediction is "<probability>"
-
+		Then delete test data
+		
         Examples:
         | data  | time_1  | time_2 | time_3 | options | data_input | prediction | probability | objective | params  |
         | data/movies.csv | 50      | 50     | 180  | {"fields": {"000000": {"name": "user_id", "optype": "numeric"}, "000001": {"name": "gender", "optype": "categorical"}, "000002": {"name": "age_range", "optype": "categorical"}, "000003": {"name": "occupation", "optype": "categorical"}, "000004": {"name": "zipcode", "optype": "numeric"}, "000005": {"name": "movie_id", "optype": "numeric"}, "000006": {"name": "title", "optype": "text"}, "000007": {"name": "genres", "optype": "items", "item_analysis": {"separator": "$"}}, "000008": {"name": "timestamp", "optype": "numeric"}, "000009": {"name": "rating", "optype": "categorical"}}, "source_parser": {"separator": ";"}}  | {"timestamp": 999999999}  |  4  | 0.4052  | 000009  | {"balance_fields": false} |
@@ -267,7 +272,8 @@ Feature: Create Predictions
 		Then the logisticregression prediction is "<prediction>"
 		And I create a local logisticregression prediction for "<data_input>"
         Then the local logisticregression prediction is "<prediction>"       
-
+		Then delete test data
+		
         Examples:
         | data	| time_1  | time_2 | time_3 | data_input	| prediction | options	|
         | data/constant_field.csv | 50      | 50     | 50	| {"a": 1, "b": 1, "c": 1}	| a	| {"fields": {"000000": {"preferred": true}}}	|
