@@ -446,114 +446,6 @@ public class ModelFields implements Serializable {
 		// return null;
 	}
 
-	// /**
-	// * Strips prefixes and suffixes if present
-	// */
-	// public Object stripAffixes(String value, JSONObject field) {
-	//
-	// if( field.containsKey("prefix") &&
-	// value.startsWith(field.get("prefix").toString()) ) {
-	// value = value.substring(field.get("prefix").toString().length(),
-	// value.length());
-	// }
-	//
-	// if( field.containsKey("suffix") &&
-	// value.endsWith(field.get("suffix").toString()) ) {
-	// value = value.substring(0,
-	// value.length() - field.get("suffix").toString().length());
-	// }
-	//
-	// return value;
-	// }
-
-	/**
-	 * Parses the input data to find the list of unique terms in the tag cloud
-	 *
-	protected Map<String, Object> uniqueTerms(Map<String, Object> inputData) {
-		Map<String, Object> uniqueTerms = new HashMap<String, Object>();
-		for (Object fieldId : termForms.keySet()) {
-			if (inputData.containsKey(fieldId.toString())) {
-				Object inputDataField = inputData.get(fieldId.toString());
-				inputDataField = (inputDataField != null ? inputDataField : "");
-
-				if (inputDataField instanceof String) {
-					boolean caseSensitive = (Boolean) Utils.getJSONObject(
-							termAnalysis, fieldId + ".case_sensitive",
-							Boolean.TRUE);
-					String tokenMode = (String) Utils.getJSONObject(
-							termAnalysis, fieldId + ".token_mode", "all");
-
-					List<String> terms = new ArrayList<String>();
-					if (!Utils.TM_FULL_TERM.equals(tokenMode)) {
-						terms = parseTerms(inputDataField.toString(),
-								caseSensitive);
-					}
-
-					if (!Utils.TM_TOKENS.equals(tokenMode)) {
-						terms.add((caseSensitive ? inputDataField.toString()
-								: ((String) inputDataField).toLowerCase()));
-					}
-					uniqueTerms.put(fieldId.toString(),
-							uniqueTerms(terms,
-									(JSONObject) termForms.get(fieldId),
-									tagClouds.get(fieldId.toString())));
-				} else {
-					uniqueTerms.put(fieldId.toString(), inputDataField);
-				}
-
-				inputData.remove(fieldId.toString());
-			}
-		}
-
-		// the same for items fields
-		for (Object fieldId : itemAnalysis.keySet()) {
-
-			if (inputData.containsKey(fieldId.toString())) {
-				Object inputDataField = inputData.get(fieldId.toString());
-				inputDataField = (inputDataField != null ? inputDataField : "");
-
-				if (inputDataField instanceof String) {
-					String separator = (String) Utils.getJSONObject(
-							itemAnalysis, fieldId + ".separator", " ");
-					String regexp = (String) Utils.getJSONObject(itemAnalysis,
-							fieldId + ".separator_regexp", "");
-
-					if (regexp == null) {
-						regexp = StringEscapeUtils.escapeJava(separator);
-					}
-					if ("$".equals(regexp)) {
-						regexp = "\\$";
-					}
-
-					List<String> terms = parseItems(inputDataField.toString(),
-							regexp);
-
-					uniqueTerms.put(fieldId.toString(), uniqueTerms(terms,
-							new JSONObject(), items.get(fieldId.toString())));
-
-				} else {
-					uniqueTerms.put(fieldId.toString(), inputDataField);
-				}
-
-				inputData.remove(fieldId.toString());
-			}
-		}
-
-		for (Object fieldId : categories.keySet()) {
-			if (inputData.containsKey(fieldId.toString())) {
-				Object inputDataField = inputData.get(fieldId.toString());
-				inputDataField = (inputDataField != null ? inputDataField : "");
-				JSONObject data = new JSONObject();
-				data.put(inputDataField, 1);
-				uniqueTerms.put(fieldId.toString(), data);
-				inputData.remove(fieldId.toString());
-			}
-
-		}
-
-		return uniqueTerms;
-	}
-	*/
 	protected Map<String, Object> uniqueTerms(Map<String, Object> inputData) {
 		Map<String, Object> uniqueTerms = new HashMap<String, Object>();
 		
@@ -584,6 +476,7 @@ public class ModelFields implements Serializable {
                     // equal. Then fullTerm will not be added to avoid
                     // duplicated counters for the term.
 					if (Utils.TM_FULL_TERM.equals(tokenMode) || 
+						terms.size() == 0 ||
 						(Utils.TM_ALL.equals(tokenMode) && 
 						!terms.get(0).equals(fullTerm))) {
 						terms.add(fullTerm);

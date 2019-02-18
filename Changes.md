@@ -1,5 +1,12 @@
 # Changes in the BigML.io Java bindings
 
+## 1.8.6 version
+
+### Bugs
+
+* Fixed bug in computing text and categorical field expansion.
+* Fixed test.
+
 ## 1.8.5 version
 
 * Adding PCA REST call methods.
