@@ -316,15 +316,11 @@ public class LocalDeepnet extends ModelFields implements SupervisedModelInterfac
 			JSONObject inputData, MissingStrategy missingStrategy) 
 			throws Exception {
 		
-		HashMap<String, Object> prediction = null;
-		if (regression) {
-			prediction = predict(inputData, null, null, true);
-		} else {
-			prediction = predict(inputData, null, null, true);
-		}
+		HashMap<String, Object> prediction = 
+				predict(inputData, null, null, true);
 		
 		JSONArray distribution = (JSONArray) prediction.get("distribution");
-		Utils.sortPredictions(distribution, "probability", "prediction");
+		Utils.sortPredictions(distribution, "probability", "category");
 		return distribution;
 		
 	}

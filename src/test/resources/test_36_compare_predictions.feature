@@ -65,7 +65,7 @@ Feature: Testing Deepnet REST api calls
         | data/iris.csv | 50      | 50     | 30000  | {"petal width": 4} | 000004   | Iris-virginica    | {}    |
         | data/iris.csv | 50      | 50     | 30000  | {"sepal length": 4.1, "sepal width": 2.4} | 000004    | Iris-setosa   | {}    |
         | data/iris_missing2.csv | 50      | 50     | 30000 | {} | 000004   | Iris-setosa   | {}    |
-        | data/grades.csv | 50      | 50     | 30000    | {} | 000005   | 42.15474  | {}    |
+        | data/grades.csv | 50      | 50     | 30000    | {} | 000005   | 42.15473  | {}    |
         | data/spam.csv | 50      | 50     | 30000  | {} | 000000   | ham   | {}    |
         | data/diabetes.csv | 50      | 50     | 30000  | {} | 000008   | false | {"search": true, "number_of_model_candidates": 10, "max_training_time": 600}  |
         | data/diabetes.csv | 50      | 50     | 30000  | {} | 000008   | false | {"learn_residuals": true, "number_of_model_candidates": 10, "max_training_time": 600} |

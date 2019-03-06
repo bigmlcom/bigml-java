@@ -1,5 +1,11 @@
 # Changes in the BigML.io Java bindings
 
+## 1.8.7 version
+
+### Bugs
+
+* Fixed bug in LocalDeepnet predict probability.
+
 ## 1.8.6 version
 
 ### Bugs

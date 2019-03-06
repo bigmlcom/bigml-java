@@ -526,7 +526,7 @@ public class PredictionsStepdefs {
     	} else {
     		double result = (Double) pred.get(objective);
     		double expected = Double.parseDouble(prediction);
-    		assertTrue(Utils.roundOff(expected,5) == Utils.roundOff(result,5));
+    		assertTrue(Utils.roundOff(expected,4) == Utils.roundOff(result,4));
     	}
     	
     }
@@ -540,7 +540,7 @@ public class PredictionsStepdefs {
     	} else {
     		double result = (Double) context.localPrediction.get("probability");
     		double expected = Double.parseDouble(prediction);
-    		assertTrue(expected == Utils.roundOff(result, 5));
+    		assertTrue(Utils.roundOff(expected,4) == Utils.roundOff(result, 4));
     	}
     	
     }
