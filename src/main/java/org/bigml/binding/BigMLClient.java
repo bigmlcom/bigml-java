@@ -90,6 +90,7 @@ public class BigMLClient {
     private Pca pca;
     private Projection projection;
     private BatchProjection batchProjection;
+    private LinearRegression linearRegression;
 
     private Properties props;
     private String storage;
@@ -403,6 +404,8 @@ public class BigMLClient {
         projection = new Projection(this, this.bigmlUser, this.bigmlApiKey, 
         		this.projectId, this.organizationId, cacheManager);
         batchProjection = new BatchProjection(this, this.bigmlUser, this.bigmlApiKey, 
+        		this.projectId, this.organizationId, cacheManager);
+        linearRegression = new LinearRegression(this, this.bigmlUser, this.bigmlApiKey, 
         		this.projectId, this.organizationId, cacheManager);
     }
 
@@ -1753,10 +1756,11 @@ public class BigMLClient {
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param modelId
-     *            a unique identifier in the form model/id, ensemble/id or
-     *            logisticregression/id where id is a string of 24 alpha-numeric
-     *            chars for the nodel, nsemble or logisticregression to attach
-     *            the prediction.
+     *            a unique identifier in the form model/id, ensemble/id,
+     *            logisticregression/id or linearregression/id where id 
+     *            is a string of 24 alpha-numeric chars for the model, 
+     *            ensemble, logisticregression or linearregression to 
+     *            attach the prediction.
      * @param inputData
      *            an object with field's id/value pairs representing the
      *            instance you want to create a prediction for.
@@ -1785,10 +1789,11 @@ public class BigMLClient {
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param modelId
-     *            a unique identifier in the form model/id, ensemble/id or
-     *            logisticregression/id where id is a string of 24 alpha-numeric
-     *            chars for the nodel, nsemble or logisticregression to attach
-     *            the prediction.
+     *            a unique identifier in the form model/id, ensemble/id,
+     *            logisticregression/id or linearregression/id where id 
+     *            is a string of 24 alpha-numeric chars for the model, 
+     *            ensemble, logisticregression or linearregression to 
+     *            attach the prediction.
      * @param inputData
      *            an object with field's id/value pairs representing the
      *            instance you want to create a prediction for.
@@ -2151,14 +2156,15 @@ public class BigMLClient {
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param modelId
-     *            a unique identifier in the form model/id, ensemble/id or
-     *            logisticregression/id where id is a string of 24 alpha-numeric
-     *            chars for the nodel, nsemble or logisticregression to attach
-     *            the prediction.
+     *            a unique identifier in the form model/id, ensemble/id,
+     *            logisticregression/id or linearregression/id where id 
+     *            is a string of 24 alpha-numeric chars for the model, 
+     *            ensemble, logisticregression or linearregression to 
+     *            attach the evaluation.
      * @param datasetId
-     *            a unique identifier in the form dataset/id where id is a
-     *            string of 24 alpha-numeric chars for the dataset to attach the
-     *            evaluation.
+     *            a unique identifier in the form dataset/id where id is 
+     *            a string of 24 alpha-numeric chars for the dataset to 
+     *            attach the evaluation.
      * @param args
      *            set of parameters for the new evaluation. Optional
      * @param waitTime
@@ -2531,14 +2537,15 @@ public class BigMLClient {
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param modelId
-     *            a unique identifier in the form model/id, ensemble/id or
-     *            logisticregression/id where id is a string of 24 alpha-numeric
-     *            chars for the nodel, nsemble or logisticregression to attach
-     *            the prediction.
+     *            a unique identifier in the form model/id, ensemble/id,
+     *            logisticregression/id or linearregression/id where id 
+     *            is a string of 24 alpha-numeric chars for the model, 
+     *            ensemble, logisticregression or linearregression to 
+     *            attach the batchprediction.
      * @param datasetId
      *            a unique identifier in the form dataset/id where id is a
-     *            string of 24 alpha-numeric chars for the dataset to attach the
-     *            evaluation.
+     *            string of 24 alpha-numeric chars for the dataset to 
+     *            attach the batchprediction.
      * @param args
      *            set of parameters for the new batch prediction. Optional
      * @param waitTime
@@ -4349,7 +4356,7 @@ public class BigMLClient {
      * @param datasetId
      *            a unique identifier in the form dataset/id where id is a
      *            string of 24 alpha-numeric chars for the dataset to attach the
-     *            logisticr egression.
+     *            logistic regression.
      * @param args
      *            set of parameters for the new logistic regression. Optional
      * @param waitTime
@@ -4366,7 +4373,7 @@ public class BigMLClient {
     }
 
     /**
-     * Creates an logistic regression from a list of `datasets`.
+     * Creates a new logistic regression from a list of `datasets`.
      *
      * POST /andromeda/logisticregression?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
@@ -4535,7 +4542,210 @@ public class BigMLClient {
     public JSONObject deleteLogisticRegression(final JSONObject logisticRegressionJSON) {
         return logisticRegression.delete(logisticRegressionJSON);
     }
+    
+    
+ // ################################################################
+    // #
+    // # LinearRegression
+    // # https://bigml.com/api/linearregressions
+    // #
+    // ################################################################
 
+    /**
+     * Creates a new linear regression.
+     *
+     * POST /andromeda/linearregression?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param datasetId
+     *            a unique identifier in the form dataset/id where id is a
+     *            string of 24 alpha-numeric chars for the dataset to attach the
+     *            linear regression.
+     * @param args
+     *            set of parameters for the new linear regression. Optional
+     * @param waitTime
+     *            time to wait for next check of FINISHED status for dataset
+     *            before to start to create the linear regression. Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     *
+     */
+    public JSONObject createLinearRegression(final String datasetId, 
+    		JSONObject args, Integer waitTime, Integer retries) {
+
+        return linearRegression.create(datasetId, args, waitTime, retries);
+    }
+
+    /**
+     * Creates a new linear regression from a list of `datasets`.
+     *
+     * POST /andromeda/linearregression?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param datasetsIds
+     *            list of identifiers in the form dataset/id where id is a
+     *            string of 24 alpha-numeric chars for the dataset to attach the
+     *            linear regression.
+     * @param args
+     *            set of parameters for the new linear regression. Optional
+     * @param waitTime
+     *            time (milliseconds) to wait for next check of FINISHED status
+     *            for source before to start to create the linear regression.
+     *            Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     *
+     */
+    public JSONObject createLinearRegression(final List datasetsIds, 
+    		JSONObject args, Integer waitTime, Integer retries) {
+
+        return linearRegression.create(datasetsIds, args, waitTime, retries);
+    }
+
+    /**
+     * Retrieves a linear regression.
+     *
+     * A linear regression is an evolving object that is processed until it
+     * reaches the FINISHED or FAULTY state, the method will return a JSONObject
+     * that encloses the linear Regression values and state info available at
+     * the time it is called.
+     *
+     * GET
+     * /andromeda/linearregression/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io
+     *
+     * @param linearRegressionId
+     *            a unique identifier in the form linearregression/id where id
+     *            is a string of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject getLinearRegression(final String linearRegressionId) {
+        return linearRegression.get(linearRegressionId);
+    }
+
+    /**
+     * Retrieves a linearRegression.
+     *
+     * A linearRegression is an evolving object that is processed until it
+     * reaches the FINISHED or FAULTY state, the method will return a JSONObject
+     * that encloses the linear Regression values and state info available at
+     * the time it is called.
+     *
+     * GET
+     * /andromeda/linearRegression/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io
+     *
+     * @param linearRegressionJSON
+     *            a linearRegression JSONObject.
+     *
+     */
+    public JSONObject getLinearRegression(final JSONObject linearRegressionJSON) {
+        return linearRegression.get(linearRegressionJSON);
+    }
+
+    /**
+     * Check whether a linearRegression's status is FINISHED.
+     *
+     * @param linearRegressionId
+     *            a unique identifier in the form linearregression/id where id is a
+     *            string of 24 alpha-numeric chars.
+     *
+     */
+    public boolean linearRegressionIsReady(final String linearRegressionId) {
+        return linearRegression.isReady(linearRegressionId);
+    }
+
+    /**
+     * Check whether a linearRegression's status is FINISHED.
+     *
+     * @param linearRegressionJSON
+     *            a linearRegression JSONObject.
+     *
+     */
+    public boolean linearRegressionIsReady(final JSONObject linearRegressionJSON) {
+        return linearRegression.isReady(linearRegressionJSON);
+    }
+
+    /**
+     * Lists all your linearRegressions.
+     *
+     * GET /andromeda/linearRegression?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param queryString
+     *            query filtering the listing.
+     *
+     */
+    public JSONObject listLinearRegressions(final String queryString) {
+        return linearRegression.list(queryString);
+    }
+
+    /**
+     * Updates a linearRegression.
+     *
+     * PUT
+     * /andromeda/linearRegression/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param linearRegressionId
+     *            a unique identifier in the form linearregression/id where id is a
+     *            string of 24 alpha-numeric chars.
+     * @param changes
+     *            set of parameters to update the linear regression. Optional
+     *
+     */
+    public JSONObject updateLinearRegression(final String linearRegressionId,
+            final String changes) {
+        return linearRegression.update(linearRegressionId, changes);
+    }
+
+    /**
+     * Updates a linearRegression.
+     *
+     * PUT
+     * /andromeda/linearRegression/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param linearRegressionJSON
+     *            a linearRegression JSONObject
+     * @param changes
+     *            set of parameters to update the linearRegression. Optional
+     */
+    public JSONObject updateLinearRegression(final JSONObject linearRegressionJSON,
+            final JSONObject changes) {
+        return linearRegression.update(linearRegressionJSON, changes);
+    }
+
+    /**
+     * Deletes a linearRegression.
+     *
+     * DELETE
+     * /andromeda/linearRegression/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1
+     *
+     * @param linearRegressionId
+     *            a unique identifier in the form linearregression/id where id is a
+     *            string of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject deleteLinearRegression(final String linearRegressionId) {
+        return linearRegression.delete(linearRegressionId);
+    }
+
+    /**
+     * Deletes a linearRegression.
+     *
+     * DELETE
+     * /andromeda/linearRegression/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1
+     *
+     * @param linearRegressionJSON
+     *            a linearRegression JSONObject.
+     *
+     */
+    public JSONObject deleteLinearRegression(final JSONObject linearRegressionJSON) {
+        return linearRegression.delete(linearRegressionJSON);
+    }
 
     // ################################################################
     // #

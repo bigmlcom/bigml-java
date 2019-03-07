@@ -36,18 +36,18 @@ Feature: Create Evaluations
         | data/iris.csv | 50      | 50     | 5                | 80     | 80     | average_phi   | 0.97064   |
 
 
-    Scenario Outline: Successfully creating an evaluation for a logistic regression:
+    Scenario Outline: Successfully creating an evaluation for a linear regression:
         Given I create a data source uploading a "<data>" file
         And I wait until the source is ready less than <time_1> secs
         And I create a dataset
         And I wait until the dataset is ready less than <time_2> secs
-        And I create a logisticregression from a dataset
-        And I wait until the logisticregression is ready less than <time_3> secs
-        When I create an evaluation for the logistic regression with the dataset
+        And I create a linearregression from a dataset
+        And I wait until the linearregression is ready less than <time_3> secs
+        When I create an evaluation for the linear regression with the dataset
         And I wait until the evaluation is ready less than <time_4> secs
         Then the measured "<measure>" is equals to <value>
         Then delete test data
 
         Examples:
         | data             | time_1  | time_2 | tlp | time_3 | time_4 | measure       | value  |
-        | data/iris.csv | 50      | 50     | 5                | 800     | 80     | average_phi   | 0.89054   |
+        | data/iris.csv | 50      | 50     | 5                | 800     | 80     | r_squared   | 0.95382   |

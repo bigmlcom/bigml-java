@@ -70,10 +70,11 @@ public class Evaluation extends AbstractResource {
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param model
-     *            a unique identifier in the form model/id, ensemble/id or
-     *            logisticregression/id where id is a string of 24 alpha-numeric
-     *            chars for the nodel, nsemble or logisticregression to attach
-     *            the prediction.
+     *            a unique identifier in the form model/id, ensemble/id,
+     *            logisticregression/id, fusion/id or linearregression/id 
+     *            where id is a string of 24 alpha-numeric chars for the 
+     *            model, ensemble, logisticregression, fusion or
+     *            linearregression to attach the evaluation.
      * @param datasetId
      *            a unique identifier in the form dataset/id where id is a
      *            string of 24 alpha-numeric chars for the dataset to attach the
@@ -91,9 +92,13 @@ public class Evaluation extends AbstractResource {
             JSONObject args, Integer waitTime, Integer retries) {
 
         if (model == null || model.length() == 0 ||
-            !(model.matches(MODEL_RE) || model.matches(ENSEMBLE_RE) || 
-            	  model.matches(LOGISTICREGRESSION_RE)  || model.matches(FUSION_RE))) {
-            logger.info("Wrong model, ensemble, logisticregression or fusion id");
+    		!(model.matches(MODEL_RE) || 
+              	  model.matches(ENSEMBLE_RE) || 
+              	  model.matches(LOGISTICREGRESSION_RE)  || 
+              	  model.matches(LINEARREGRESSION_RE) ||
+              	  model.matches(FUSION_RE))) {
+              logger.info("Wrong model, ensemble, logisticregression, fusion "
+              		+ "or linearregression id");
             return null;
         }
 
@@ -116,6 +121,10 @@ public class Evaluation extends AbstractResource {
             	waitForResource(model, "logisticRegressionIsReady", waitTime, retries);
             }
             
+            if (model.matches(LINEARREGRESSION_RE)) {
+            	waitForResource(model, "linearRegressionIsReady", waitTime, retries);
+            }
+            
             if (model.matches(FUSION_RE)) {
             	waitForResource(model, "fusionIsReady", waitTime, retries);
             }
@@ -135,6 +144,9 @@ public class Evaluation extends AbstractResource {
             }
             if (model.matches(LOGISTICREGRESSION_RE)) {
                 requestObject.put("logisticregression", model);
+            }
+            if (model.matches(LINEARREGRESSION_RE)) {
+                requestObject.put("linearregression", model);
             }
             if (model.matches(FUSION_RE)) {
                 requestObject.put("fusion", model);

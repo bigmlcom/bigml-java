@@ -652,4 +652,52 @@ public class PredictionsStepdefs {
     	assertEquals(String.format("%.4g", expected), String.format("%.4g",actual));
     	
     }
+    
+    
+    // Linear Regressions
+    
+    @When("^I create a linearregression prediction for \"(.*)\"$")
+    public void I_create_a_linearregression_prediction_for(String inputData)
+            throws AuthenticationException {
+
+    	String linearId = (String) context.linearRegression.get("resource");
+
+    	JSONObject args = new JSONObject();
+    	args.put("tags", Arrays.asList("unitTest"));
+
+        JSONObject resource = context.api.createPrediction(
+        		linearId, (JSONObject) JSONValue.parse(inputData), args, 5, null);
+
+        context.status = (Integer) resource.get("code");
+        context.location = (String) resource.get("location");
+        context.prediction = (JSONObject) resource.get("object");
+        commonSteps.the_resource_has_been_created_with_status(context.status);
+    }
+    
+    @Then("^the linearregression prediction is \"(.*)\"$")
+    public void the_linearregression_prediction_is(double prediction) 
+    		throws Throwable {
+    	Double output =  (Double) context.prediction.get("output");
+    	assert(Utils.roundOff(output, 4) == Utils.roundOff(prediction, 4));
+    }
+
+
+    @Then("^I create a local linearregression prediction for \"(.*)\"$")
+    public void I_create_a_local_linearregression_prediction_for(String inputData) 
+    		throws Throwable {
+
+    	JSONObject data = (JSONObject) JSONValue.parse(inputData);
+    	HashMap<String, Object> prediction 
+    		= context.localLinearRegression.predict(data, true);
+    	context.localPrediction = prediction;
+    }
+    
+    @Then("^the local linearregression prediction is \"([^\"]*)\"$")
+    public void the_local_linearregression_prediction_is(double prediction) 
+    		throws Throwable {
+    	
+    	Double pred =  (Double) context.localPrediction.get("prediction");
+    	assert(Utils.roundOff(pred, 4) == Utils.roundOff(prediction, 4));
+    }
+    
 }

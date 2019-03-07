@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Entry point to create, retrieve, list, update, and delete Fusionss.
+ * Entry point to create, retrieve, list, update, and delete Fusions.
  *
  * Full API documentation on the API can be found from BigML at:
  * https://bigml.com/api/fusions
@@ -67,8 +67,8 @@ public class Fusion extends AbstractResource {
     
     /**
      * Creates a fusion from a list of models.
-     * Available models types: deppnet, ensemble, fusion, model and
-     * logisticregression.
+     * Available models types: deepnet, ensemble, fusion, model,
+     * logisticregression and linearregression.
      *
      * POST /andromeda/fusion?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
@@ -186,7 +186,8 @@ public class Fusion extends AbstractResource {
                 		modelId.matches(MODEL_RE) || 
                 		modelId.matches(ENSEMBLE_RE) || 
                 		modelId.matches(FUSION_RE) || 
-                		modelId.matches(LOGISTICREGRESSION_RE))) {
+                		modelId.matches(LOGISTICREGRESSION_RE) ||
+                		modelId.matches(LINEARREGRESSION_RE))) {
             logger.info("Wrong submodel id");
             return false;
         }
@@ -201,6 +202,10 @@ public class Fusion extends AbstractResource {
 
         if (modelId.matches(LOGISTICREGRESSION_RE)) {
         		waitForResource(modelId, "logisticRegressionIsReady", waitTime, retries);
+        }
+        
+        if (modelId.matches(LINEARREGRESSION_RE)) {
+    		waitForResource(modelId, "linearRegressionIsReady", waitTime, retries);
         }
         
         if (modelId.matches(DEEPNET_RE)) {

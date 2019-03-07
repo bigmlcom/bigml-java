@@ -487,6 +487,68 @@ and an example of it would be:
 You can check the [Operating point's predictions](#operating-point's-predictions) section to learn about operating points. For logistic regressions, the only available kind is ``probability``, that sets the threshold of probability to be reached for the prediction to be the positive class.
 
 
+
+
+
+
+
+
+
+
+
+
+Local Linear Regression
+------------
+
+You can also instantiate a local version of a remote linear regression.
+
+```
+    import org.bigml.binding.BigMLClient;
+    import org.bigml.binding.LocalinearRegression;
+
+    BigMLClient api = new BigMLClient();
+
+    // Get remote linear regression
+    JSONObject linear = api.getLinearRegression(
+        "linearregression/502fdbff15526876610042435");
+
+    // Create local linear regression
+    LocalLinearRegression localLinearRegression = 
+        new LocalLinearRegression(linear);
+```
+
+This will retrieve the remote logistic regression information, 
+using an implicitly built ``BigML()`` connection object (see the 
+``Authentication`` section for more details on how to set your credentials) 
+and return a ``LocalLinearRegression`` object that you can use to make 
+local predictions.
+
+
+
+### Local Linear Regression Predictions
+------------
+
+Using the local linear regression object, you can predict the prediction for an input data set:
+
+```
+    JSONObject inputData = JSONValue.parseValue(
+        "{\"petal length\": 2, \"sepal length\": 1.5, 
+          \"petal width\": 0.5, \"sepal width\": 0.7}");
+    localLinearRegression.predict(inputData, true);
+```
+
+that will return:
+
+```
+  {
+  	"prediction": -4.2168344
+  }
+```
+
+To obtain a linear regression prediction, input data can only have missing
+values for fields that had already some missings in training data.
+
+
 Local Deepnet
 ------------
 

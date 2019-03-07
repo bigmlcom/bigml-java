@@ -1504,6 +1504,207 @@ logistic function as well as the configuration parameters described in
 the [developers section](https://bigml.com/api/logisticregressions).
 
 
+Linear Regressions
+------------------
+
+A linear regression is a supervised machine learning method for
+solving regression problems. The implementation is a multiple linear regression
+that models the output as a linear combination of the predictors.
+The coefficients are estimated doing a least-squares fit on the training data.
+
+As a linear combination can only be done using numeric values, non-numeric
+fields need to be transformed to numeric ones following some rules:
+
+- Categorical fields will be encoded and each class appearance in input data
+  will convey a different contribution to the input vector.
+- Text and items fields will be expanded to several numeric predictors,
+  each one indicating the number of occurences for a specific term.
+  Text fields without term analysis are excluded from the model.
+
+Therefore, the initial input data is transformed into an input vector with one
+or may components per field. Also, if a field in the training data contains
+missing data, the components corresponding to that field will include an
+additional 1 or 0 value depending on whether the field is missing in the
+input data or not.
+
+The JSON structure for a linear regression is:
+
+JSONObject linearRegression = 
+    api.getLinearRegression("lineqarregression/5617e71c37203f506a000001");
+    JSONObject object = (JSONObject) Utils.getJSONObject(
+        linearRegression, "object");
+
+linearRegression ``object`` object:
+
+```
+{   
+    'category': 0,
+    'code': 200,
+    'columns': 4,
+    'composites': None,
+    'configuration': None,
+    'configuration_status': False,
+    'created': '2019-02-20T21:02:40.027000',
+    'creator': 'merce',
+    'credits': 0.0,
+    'credits_per_prediction': 0.0,
+    'dataset': 'dataset/5c6dc06a983efc18e2000084',
+    'dataset_field_types': {
+        'categorical': 0,
+        'datetime': 0,
+        'items': 0,
+        'numeric': 6,
+        'preferred': 6,
+        'text': 0,
+        'total': 6
+    },
+    'dataset_status': True,
+    'datasets': [],
+    'default_numeric_value': None,
+    'description': '',
+    'excluded_fields': [],
+    'execution_id': None,
+    'execution_status': None,
+    'fields_maps': None,
+    'fields_meta': {
+        'count': 4,
+        'limit': 1000,
+        'offset': 0,
+        'query_total': 4,
+        'total': 4
+    },
+    'fusions': None,
+    'input_fields': ['000000', '000001', '000002'],
+    'linear_regression': {   
+        'bias': True,
+        'coefficients': [   
+            [-1.88196],
+            [0.475633],
+            [0.122468],
+            [30.9141]
+        ],
+        'fields': {
+            '000000': {
+                'column_number': 0,
+                'datatype': 'int8',
+                'name': 'Prefix',
+                'optype': 'numeric',
+                'order': 0,
+                'preferred': True,
+                'summary': {
+                    'counts': [
+                        [4, 1],
+        ...
+        
+        'stats': {
+            'confidence_intervals': [
+                [5.63628],
+                [0.375062],
+                [0.348577],
+                [44.4112]
+            ],
+            'mean_squared_error': 342.206,
+            'number_of_parameters': 4,
+            'number_of_samples': 77,
+            'p_values': [
+                [0.512831],
+                [0.0129362],
+                [0.491069],
+                [0.172471]
+            ],
+            'r_squared': 0.136672,
+            'standard_errors': [
+                [2.87571],
+                [0.191361],
+                [0.177849],
+                [22.6592]
+            ],
+            'sum_squared_errors': 24981,
+            'xtx_inverse': [   
+                [4242,
+                 48396.9,
+                 51273.97,
+                 568],
+                [48396.9,
+                 570177.6584,
+                 594274.3274,
+                 6550.52],
+                [51273.97,
+                 594274.3274,
+                 635452.7068,
+                 6894.24],
+                [568,
+                 6550.52,
+                 6894.24,
+                 77]
+                ],
+            'z_scores': [
+                [-0.654436],
+                [2.48552],
+                [0.688609],
+                [1.36431]
+            ]
+        }
+    },
+    'locale': 'en_US',
+    'max_columns': 6,
+    'max_rows': 80,
+    'name': 'grades',
+    'name_options': 'bias',
+    'number_of_batchpredictions': 0,
+    'number_of_evaluations': 0,
+    'number_of_predictions': 2,
+    'number_of_public_predictions': 0,
+    'objective_field': '000005',
+    'objective_field_name': 'Final',
+    'objective_field_type': 'numeric',
+    'objective_fields': ['000005'],
+    'operating_point': {   },
+    'optiml': None,
+    'optiml_status': False,
+    'ordering': 0,
+    'out_of_bag': False,
+    'out_of_bags': None,
+    'price': 0.0,
+    'private': True,
+    'project': 'project/5c6dc062983efc18d5000129',
+    'range': None,
+    'ranges': None,
+    'replacement': False,
+    'replacements': None,
+    'resource': 'linearregression/5c6dc070983efc18e00001f1',
+    'rows': 80,
+    'sample_rate': 1.0,
+    'sample_rates': None,
+    'seed': None,
+    'seeds': None,
+    'shared': False,
+    'size': 2691,
+    'source': 'source/5c6dc064983efc18e00001ed',
+    'source_status': True,
+    'status': {
+        'code': 5,
+        'elapsed': 62086,
+        'message': 'The linear regression has been created',
+        'progress': 1
+    },
+    'subscription': True,
+    'tags': [],
+    'type': 0,
+    'updated': '2019-02-27T18:01:18.539000',
+    'user_metadata': {},
+    'webhook': None,
+    'weight_field': None,
+    'white_box': False
+}
+```
+
+Note that the output in the snippet above has been abbreviated. As you see,
+the ``linear_regression`` attribute stores the coefficients used in the
+linear function as well as the configuration parameters described in
+the [developers section](https://bigml.com/api/linearregressions).
+
+
 Associations
 ------------
 
@@ -2538,7 +2739,8 @@ OptiMLs
 -------
 
 An OptiML is the result of an automated optimization process to find the
-best model (type and configuration) to solve a particular classification or regression problem.
+best model (type and configuration) to solve a particular classification 
+or regression problem.
 
 The selection process automates the usual time-consuming task of trying
 different models and parameters and evaluating their results to find the
@@ -2586,6 +2788,7 @@ optiML ``object`` object:
     },
     "input_fields": ["000000", "000001", "000002", "000003"],
     "model_count": {
+    		"linearregression": 1, 
         "logisticregression": 1, 
         "model": 8, 
         "total": 9
@@ -2594,6 +2797,7 @@ optiML ``object`` object:
                 "model/5afde64f8bf7d551fd005134",
                 "model/5afde6518bf7d551fd005137",
                 "model/5afde6538bf7d551fd00513a",
+                "linearregression/5c8f576e1f386f7dc3000048",
                 "logisticregression/5afde6558bf7d551fd00513d",
                 ...
                 "model/5afde65a8bf7d551fd005149"],
@@ -2604,7 +2808,7 @@ optiML ``object`` object:
         "total": 9
     },
     "name": "iris",
-    "name_options": "9 total models (logisticregression: 1, model: 8), metric=max_phi, model candidates=18, max. training time=300",
+    "name_options": "9 total models (linearregression: 1, logisticregression: 1, model: 8), metric=max_phi, model candidates=18, max. training time=300",
     "objective_field": "000004",
     "objective_field_details": {
         "column_number": 4,
@@ -2619,6 +2823,7 @@ optiML ``object`` object:
     "optiml": {   
         "created_resources": {   
             "dataset": 10,
+            "linearregression": 1,
             "logisticregression": 11,
             "logisticregression_evaluation": 11,
             "model": 29,
@@ -2671,7 +2876,7 @@ optiML ``object`` object:
       },
       "max_training_time": 300,
       "metric": "max_phi",
-      "model_types": ["model", "logisticregression"],
+      "model_types": ["model", "linearregression", "logisticregression"],
       "models": [   
         {
             "evaluation": {
@@ -2746,7 +2951,8 @@ constraints that all its submodels are tree models that, moreover,
 have been built from the same base input data, but sampled in particular ways.
 
 The model types allowed to be a submodel of a fusion are:
-deepnet, ensemble, fusion, model, and logistic regression.
+deepnet, ensemble, fusion, model, logistic regression and linear 
+regression.
 
 An example of the fusion resource JSON structure is:
 
@@ -2791,6 +2997,12 @@ fusion ``object`` object:
                 "kind": "logisticregression",
                 "name": "Iris LR",
                 "name_options": "L2 regularized (c=1), bias, auto-scaled, missing values, eps=0.001"
+            },
+            {
+                "id": "linearregression/5c8f576e1f386f7dc3000048",
+                "kind": "linearregression",
+                "name": "Iris Linear Regression",
+                "name_options": "bias"
             }
         ]
     },
@@ -2802,6 +3014,7 @@ fusion ``object`` object:
     },
     "model_count": {
         "ensemble": 1,
+        "linearregression": 1,
         "logisticregression": 1,
         "model": 1,
         "total": 3
@@ -2809,6 +3022,7 @@ fusion ``object`` object:
     "models": [
         "ensemble/5af272eb4e1727d378000050",
         "model/5af272fe4e1727d3780000d6",
+        "linearregression/5c8f576e1f386f7dc3000048",
         "logisticregression/5af272ff4e1727d3780000d9"
     ],
     "models_meta": {
@@ -2818,7 +3032,7 @@ fusion ``object`` object:
         "total": 3
     },
     "name": "iris",
-    "name_options": "3 total models (ensemble: 1, logisticregression: 1, model: 1)",
+    "name_options": "3 total models (ensemble: 1, linearregression: 1, logisticregression: 1, model: 1)",
     "number_of_batchpredictions": 0,
     "number_of_evaluations": 0,
     "number_of_predictions": 0,

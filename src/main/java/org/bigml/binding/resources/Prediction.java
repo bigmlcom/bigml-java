@@ -74,10 +74,11 @@ public class Prediction extends AbstractResource {
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param model
-     *            a unique identifier in the form model/id, ensemble/id or
-     *            logisticregression/id where id is a string of 24 alpha-numeric
-     *            chars for the nodel, nsemble or logisticregression to attach
-     *            the prediction.
+     *            a unique identifier in the form model/id, ensemble/id,
+     *            logisticregression/id or linearregression/id where id 
+     *            is a string of 24 alpha-numeric chars for the model, 
+     *            ensemble, logisticregression or linearregression to 
+     *            attach the prediction.
      * @param inputData
      *            an object with field's id/value pairs representing the
      *            instance you want to create a prediction for.
@@ -100,10 +101,12 @@ public class Prediction extends AbstractResource {
         if (model == null || model.length() == 0 ||
             !(model.matches(MODEL_RE) || 
               model.matches(ENSEMBLE_RE) || 
-              model.matches(LOGISTICREGRESSION_RE) || 
+              model.matches(LOGISTICREGRESSION_RE) ||
+              model.matches(LINEARREGRESSION_RE) ||
               model.matches(DEEPNET_RE) ||
               model.matches(FUSION_RE))) {
-            logger.info("Wrong model, ensemble, logisticregression, deepnet or fusion id");
+            logger.info("Wrong model, ensemble, logisticregression, "
+            		+ "linearregression, deepnet or fusion id");
             return null;
         }
 
@@ -121,6 +124,10 @@ public class Prediction extends AbstractResource {
 
             if (model.matches(LOGISTICREGRESSION_RE)) {
             	waitForResource(model, "logisticRegressionIsReady", waitTime, retries);
+            }
+            
+            if (model.matches(LINEARREGRESSION_RE)) {
+            	waitForResource(model, "linearRegressionIsReady", waitTime, retries);
             }
             
             if (model.matches(DEEPNET_RE)) {
@@ -172,6 +179,9 @@ public class Prediction extends AbstractResource {
             }
             if (model.matches(LOGISTICREGRESSION_RE)) {
                 requestObject.put("logisticregression", model);
+            }
+            if (model.matches(LINEARREGRESSION_RE)) {
+                requestObject.put("linearregression", model);
             }
             if (model.matches(DEEPNET_RE)) {
                 requestObject.put("deepnet", model);

@@ -37,6 +37,7 @@ public class ModelFields implements Serializable {
 		FIELDS_PARENT.put("logisticregression", "logistic_regression");
 		FIELDS_PARENT.put("ensemble", "ensemble");
 		FIELDS_PARENT.put("deepnet", "deepnet");
+		FIELDS_PARENT.put("linearregression", "linear_regression");
 	}
 
 	protected String objectiveFieldId;

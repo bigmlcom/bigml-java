@@ -52,6 +52,13 @@ public class BatchPredictionsStepdefs {
         I_create_a_batch_prediction_for_the_dataset_with(logisticRegresionId);
     }
     
+    @When("^I create a batch prediction for the dataset with the linear regression$")
+    public void I_create_a_batch_prediction_for_the_dataset_with_the_linear_regression()
+            throws Throwable {
+        String linearRegresionId = (String) context.linearRegression.get("resource");
+        I_create_a_batch_prediction_for_the_dataset_with(linearRegresionId);
+    }
+    
     @When("^I create a batch prediction for the dataset with the fusion$")
     public void I_create_a_batch_prediction_for_the_dataset_with_the_fusion()
             throws Throwable {

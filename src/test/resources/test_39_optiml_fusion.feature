@@ -79,6 +79,8 @@ Feature: Testing REST api calls
         And I wait until the logisticregression is ready less than <time_3> secs
         And I create a logisticregression with objective "<objective>" and params "<params>"
         And I wait until the logisticregression is ready less than <time_3> secs
+        And I create a linearregression from a dataset
+        And I wait until the linearregression is ready less than <time_3> secs
         And I create a fusion from models
         And I wait until the fusion is ready less than <time_3> secs
         And I create a local fusion
@@ -104,6 +106,8 @@ Feature: Testing REST api calls
         And I wait until the logisticregression is ready less than <time_3> secs
         And I create a logisticregression with objective "<objective>" and params "<params2>"
         And I wait until the logisticregression is ready less than <time_3> secs
+        And I create a linearregression from a dataset
+        And I wait until the linearregression is ready less than <time_3> secs
         And I create a fusion from models
         And I wait until the fusion is ready less than <time_3> secs
         And I create a local fusion
@@ -129,6 +133,8 @@ Feature: Testing REST api calls
         And I wait until the logisticregression is ready less than <time_3> secs
         And I create a logisticregression with objective "<objective>" and params "<params2>"
         And I wait until the logisticregression is ready less than <time_3> secs
+        And I create a linearregression from a dataset
+        And I wait until the linearregression is ready less than <time_3> secs
         And I create a fusion from models with weights "<weights>"
         And I wait until the fusion is ready less than <time_3> secs
         And I create a local fusion

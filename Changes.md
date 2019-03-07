@@ -1,5 +1,10 @@
 # Changes in the BigML.io Java bindings
 
+## 1.8.9 version
+
+* Adding LinearRegression REST call methods.
+* Adding local LinearRegression.
+
 ## 1.8.8 version
 
 ### Bugs
