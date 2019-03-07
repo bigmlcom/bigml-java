@@ -34,7 +34,7 @@ public class CompositesStepdefs {
         JSONObject args = new JSONObject();
         args.put("tags", Arrays.asList("unitTest"));
         args.put("max_training_time", 1000);
-        args.put("model_types", Arrays.asList("model", "logisticregression"));
+        args.put("model_types", Arrays.asList("model", "logisticregression", "linearregression"));
         args.put("metric", "max_phi");
         args.put("number_of_model_candidates", 4);
 

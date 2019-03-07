@@ -69,14 +69,15 @@ public class BatchPrediction extends AbstractResource {
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param model
-     *            a unique identifier in the form model/id, ensemble/id or
-     *            logisticregression/id where id is a string of 24 alpha-numeric
-     *            chars for the nodel, nsemble or logisticregression to attach
-     *            the prediction.
+     *            a unique identifier in the form model/id, ensemble/id,
+     *            logisticregression/id or linearregression/id where id 
+     *            is a string of 24 alpha-numeric chars for the model, 
+     *            ensemble, logisticregression or linearregression/id to
+     *            attach the batchprediction.
      * @param datasetId
      *            a unique identifier in the form dataset/id where id is a
-     *            string of 24 alpha-numeric chars for the dataset to attach the
-     *            evaluation.
+     *            string of 24 alpha-numeric chars for the dataset to 
+     *            attach the batchprediction.
      * @param args
      *            set of parameters for the new batch prediction. Optional
      * @param waitTime
@@ -95,9 +96,11 @@ public class BatchPrediction extends AbstractResource {
                 !(model.matches(MODEL_RE) || 
                   model.matches(ENSEMBLE_RE) || 
                   model.matches(LOGISTICREGRESSION_RE) || 
+                  model.matches(LINEARREGRESSION_RE) || 
                   model.matches(DEEPNET_RE) ||
                   model.matches(FUSION_RE))) {
-                logger.info("Wrong model, ensemble, logisticregression, deepnet or fusion id");
+                logger.info("Wrong model, ensemble, logisticregression, "
+                		+ "linearregression or deepnet or fusion id");
                 return null;
             }
         
@@ -118,6 +121,10 @@ public class BatchPrediction extends AbstractResource {
         		
         		if (model.matches(LOGISTICREGRESSION_RE)) {
         			waitForResource(model, "logisticRegressionIsReady", waitTime, retries);
+        		}
+        		
+        		if (model.matches(LINEARREGRESSION_RE)) {
+        			waitForResource(model, "linearRegressionIsReady", waitTime, retries);
         		}
         		
         		if (model.matches(DEEPNET_RE)) {
@@ -144,6 +151,9 @@ public class BatchPrediction extends AbstractResource {
             }
             if (model.matches(LOGISTICREGRESSION_RE)) {
                 requestObject.put("logisticregression", model);
+            }
+            if (model.matches(LINEARREGRESSION_RE)) {
+                requestObject.put("linearregression", model);
             }
             if (model.matches(DEEPNET_RE)) {
                 requestObject.put("deepnet", model);

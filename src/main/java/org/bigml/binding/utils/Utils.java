@@ -15,6 +15,7 @@ import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -22,6 +23,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -37,6 +39,8 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.math3.linear.MatrixUtils;
+import org.apache.commons.math3.linear.RealMatrix;
 import org.bigml.binding.BigMLClient;
 import org.bigml.binding.Constants;
 import org.bigml.binding.localmodel.Tree;
@@ -62,62 +66,62 @@ public class Utils {
 
 
     private static final Map<String, String[][]> LOCALE_SYNONYMS = Collections.unmodifiableMap(
-            new HashMap<String, String[][]>() {{
-                put("en", new String[][] {
-                        { "en_US", "en-US", "en_US.UTF8", "en_US.UTF-8", "English_United States.1252",
-                                "en-us", "en_us", "en_US.utf8"},
-                        { "en_GB", "en-GB", "en_GB.UTF8", "en_GB.UTF-8", "English_United Kingdom.1252",
-                                "en-gb", "en_gb", "en_GB.utf8"}
-                });
+        new HashMap<String, String[][]>() {{
+            put("en", new String[][] {
+                    { "en_US", "en-US", "en_US.UTF8", "en_US.UTF-8", "English_United States.1252",
+                            "en-us", "en_us", "en_US.utf8"},
+                    { "en_GB", "en-GB", "en_GB.UTF8", "en_GB.UTF-8", "English_United Kingdom.1252",
+                            "en-gb", "en_gb", "en_GB.utf8"}
+            });
 
-                put("es", new String[][] {
-                        { "es_ES", "es-ES", "es_ES.UTF8", "es_ES.UTF-8",
-                                "Spanish_Spain.1252", "es-es", "es_es",
-                                "es_ES.utf8" }
-                });
+            put("es", new String[][] {
+                    { "es_ES", "es-ES", "es_ES.UTF8", "es_ES.UTF-8",
+                            "Spanish_Spain.1252", "es-es", "es_es",
+                            "es_ES.utf8" }
+            });
 
-                put("es", new String[][] {
-                        { "es_ES", "es-ES", "es_ES.UTF8", "es_ES.UTF-8",
-                                "Spanish_Spain.1252", "es-es", "es_es",
-                                "es_ES.utf8"  }
-                });
+            put("es", new String[][] {
+                    { "es_ES", "es-ES", "es_ES.UTF8", "es_ES.UTF-8",
+                            "Spanish_Spain.1252", "es-es", "es_es",
+                            "es_ES.utf8"  }
+            });
 
-                put("es", new String[][] {
-                        { "fr_FR", "fr-FR", "fr_BE", "fr_CH", "fr-BE",
-                                "fr-CH", "fr_FR.UTF8", "fr_CH.UTF8",
-                                "fr_BE.UTF8", "fr_FR.UTF-8", "fr_CH.UTF-8",
-                                "fr_BE.UTF-8", "French_France.1252", "fr-fr",
-                                "fr_fr", "fr-be", "fr_be", "fr-ch", "fr_ch",
-                                "fr_FR.utf8", "fr_BE.utf8", "fr_CH.utf8" },
-                        {"fr_CA", "fr-CA", "fr_CA.UTF8", "fr_CA.UTF-8",
-                                "French_Canada.1252", "fr-ca", "fr_ca",
-                                "fr_CA.utf8"}
-                });
+            put("es", new String[][] {
+                    { "fr_FR", "fr-FR", "fr_BE", "fr_CH", "fr-BE",
+                            "fr-CH", "fr_FR.UTF8", "fr_CH.UTF8",
+                            "fr_BE.UTF8", "fr_FR.UTF-8", "fr_CH.UTF-8",
+                            "fr_BE.UTF-8", "French_France.1252", "fr-fr",
+                            "fr_fr", "fr-be", "fr_be", "fr-ch", "fr_ch",
+                            "fr_FR.utf8", "fr_BE.utf8", "fr_CH.utf8" },
+                    {"fr_CA", "fr-CA", "fr_CA.UTF8", "fr_CA.UTF-8",
+                            "French_Canada.1252", "fr-ca", "fr_ca",
+                            "fr_CA.utf8"}
+            });
 
-                put("de", new String[][] {
-                        { "de_DE", "de-DE", "de_DE.UTF8", "de_DE.UTF-8",
-                                "German_Germany.1252", "de-de", "de_de",
-                                "de_DE.utf8"  }
-                });
+            put("de", new String[][] {
+                    { "de_DE", "de-DE", "de_DE.UTF8", "de_DE.UTF-8",
+                            "German_Germany.1252", "de-de", "de_de",
+                            "de_DE.utf8"  }
+            });
 
-                put("ge", new String[][] {
-                        { "de_DE", "de-DE", "de_DE.UTF8", "de_DE.UTF-8",
-                                "German_Germany.1252", "de-de", "de_de",
-                                "de_DE.utf8"  }
-                });
+            put("ge", new String[][] {
+                    { "de_DE", "de-DE", "de_DE.UTF8", "de_DE.UTF-8",
+                            "German_Germany.1252", "de-de", "de_de",
+                            "de_DE.utf8"  }
+            });
 
-                put("it", new String[][] {
-                        { "it_IT", "it-IT", "it_IT.UTF8", "it_IT.UTF-8",
-                                "Italian_Italy.1252", "it-it", "it_it",
-                                "it_IT.utf8"  }
-                });
+            put("it", new String[][] {
+                    { "it_IT", "it-IT", "it_IT.UTF8", "it_IT.UTF-8",
+                            "Italian_Italy.1252", "it-it", "it_it",
+                            "it_IT.utf8"  }
+            });
 
-                put("ca", new String[][] {
-                        { "ca_ES", "ca-ES", "ca_ES.UTF8", "ca_ES.UTF-8",
-                                "Catalan_Spain.1252", "ca-es", "ca_es",
-                                "ca_ES.utf8"  }
-                });
-            }});
+            put("ca", new String[][] {
+                    { "ca_ES", "ca-ES", "ca_ES.UTF8", "ca_ES.UTF-8",
+                            "Catalan_Spain.1252", "ca-es", "ca_es",
+                            "ca_ES.utf8"  }
+            });
+        }});
 
     public static HttpURLConnection processPOST(String urlString, String json) throws NoSuchAlgorithmException, KeyManagementException, IOException {
         return processHttpRequest(urlString, "POST", json);
@@ -136,7 +140,8 @@ public class Utils {
         return processHttpRequest(urlString, "DELETE", null);
     }
 
-    protected static HttpURLConnection processHttpRequest(String urlString, String methodName, String body) throws NoSuchAlgorithmException, KeyManagementException, IOException {
+    protected static HttpURLConnection processHttpRequest(String urlString, String methodName, String body) 
+    		throws NoSuchAlgorithmException, KeyManagementException, IOException {
         HttpURLConnection connection = openConnection(new URL(urlString));
 
         if( methodName.equals("GET") ) {
@@ -1114,6 +1119,67 @@ public class Utils {
     
     
     /**
+     * Checks whether some input fields are missing in the input data
+     * while not training data has no missings in that field
+     */
+    public static void checkNoTrainingMissings(
+    		JSONObject inputData, JSONObject fields, String weightField,
+    		String objectiveFieldId) {
+    	
+    	for (Object fieldId : fields.keySet()) {
+            JSONObject field = (JSONObject) fields.get(fieldId);
+            
+            Integer missingCount = ((Number) Utils.getJSONObject(
+					(JSONObject) field, "summary.missing_count", 0)).intValue();
+            
+            if (!inputData.containsKey((String) fieldId) &&
+            		missingCount.intValue() == 0 &&
+            		(weightField == null || !weightField.equals((String) fieldId)) &&
+            		(objectiveFieldId == null || !objectiveFieldId.equals((String) fieldId))) {
+            	throw new IllegalArgumentException(
+               		 	"Failed to predict. Input data must contain values" +
+        				" for field " + field.get("name") + " to get a prediction.");
+            }
+    	}
+    }
+    
+    
+    /**
+     * Calculates matrix inverse
+     */
+    public static JSONArray inverseMatrix(JSONArray matrix) {
+    	int n = matrix.size();
+		int m = ((JSONArray) matrix.get(0)).size();
+		double[][] matrixArray = new double[n][m];
+    	 
+		for(int i = 0; i < n; ++i) {
+			JSONArray row = (JSONArray) matrix.get(i);
+			for(int j = 0; j < m; ++j) {
+				matrixArray[i][j] = ((Number) row.get(j)).doubleValue();
+			}
+		}
+		
+		RealMatrix invMatrix = MatrixUtils.createRealMatrix(matrixArray);
+		invMatrix = MatrixUtils.inverse(invMatrix);
+		//System.out.println(Arrays.toString(invMatrix.getData()));
+		
+		JSONArray result = new JSONArray();
+		
+		double[][] data = invMatrix.getData();
+		for (int i=0; i < data.length; i++) {
+			double[] row = (double[]) data[i];
+			ArrayList<Double> rowlList = new ArrayList<Double>();
+			for (int j=0; j<row.length; j++) {
+				rowlList.add(data[i][j]);
+			}
+			result.add(rowlList);
+	    }
+		
+		return result;
+	}
+    
+    
+    /**
 	  * Sorts list of predictions
 	  * 
 	  */
@@ -1135,4 +1201,21 @@ public class Utils {
            }
        });
 	}
+    
+    
+    public static List flattenList(List inList) {
+    	List newList = new LinkedList();
+    	for (Object i : inList) {
+            // If it's not a list, just add it to the return list.
+            if (!(i instanceof List)) {
+                    newList.add(i);
+            } else {
+                    // It's a list, so add each item to the return list.
+                    newList.addAll(flattenList((List)i));
+            }
+    	}
+
+        return newList;
+    }
+    
 }

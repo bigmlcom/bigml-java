@@ -84,6 +84,26 @@ public class EvaluationsStepdefs {
         commonSteps.the_resource_has_been_created_with_status(context.status);
     }
     
+    
+    @When("^I create an evaluation for the linear regression with the dataset$")
+    public void I_create_an_evaluation_for_the_linear_regression_with_the_dataset()
+            throws Throwable {
+
+        String linearRegressionId = (String) context.linearRegression.get("resource");
+        String datasetId = (String) context.dataset.get("resource");
+
+        JSONObject args = new JSONObject();
+        args.put("tags", Arrays.asList("unitTest"));
+
+        JSONObject resource = context.api.createEvaluation(
+        		linearRegressionId, datasetId, args, 5, 3);
+        context.status = (Integer) resource.get("code");
+        context.location = (String) resource.get("location");
+        context.evaluation = (JSONObject) resource.get("object");
+        commonSteps.the_resource_has_been_created_with_status(context.status);
+    }
+    
+    
     @When("^I create an evaluation for the fusion with the dataset$")
     public void I_create_an_evaluation_for_the_fusion_with_the_dataset()
             throws Throwable {
@@ -112,9 +132,10 @@ public class EvaluationsStepdefs {
     @Then("^the measured \"([^\"]*)\" is equals to ([\\d,.]+)$")
     public void the_measured_is_equals_to(String measure, double value)
             throws Throwable {
-
+    	
         double measureLong = (Double) Utils.getJSONObject(context.evaluation,
                 "result.model." + measure);
+        
         assertEquals(measureLong, value, 0.00001);
     }
 

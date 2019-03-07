@@ -35,6 +35,7 @@ public class CommonStepdefs {
 		RES_NAMES.put("batch prediction", "batchPrediction");
 		RES_NAMES.put("batch centroid", "batchCentroid");
 		RES_NAMES.put("logisticregression", "logisticRegression");
+		RES_NAMES.put("linearregression", "linearRegression");
 		RES_NAMES.put("optiml", "optiML");
 		RES_NAMES.put("time series", "timeSeries");
 		RES_NAMES.put("topic model", "topicModel");
@@ -150,7 +151,7 @@ public class CommonStepdefs {
     }
 	
 	
-	@Given("^I create a[n]* (anomaly detector|association|correlation|deepnet|logisticregression|sample|statisticaltest|time series|pca) from a dataset with \"(.*)\"$")
+	@Given("^I create a[n]* (anomaly detector|association|correlation|deepnet|logisticregression|linearregression|sample|statisticaltest|time series|pca) from a dataset with \"(.*)\"$")
 	public void I_create_a_resource_from_a_dataset_with(String resourceName, String args)
 			throws Throwable {
 
@@ -178,7 +179,7 @@ public class CommonStepdefs {
 		}
 	}
 
-	@Given("^I create a[n]* (anomaly detector|association|correlation|deepnet|logisticregression|sample|statisticaltest|time series|pca) from a dataset$")
+	@Given("^I create a[n]* (anomaly detector|association|correlation|deepnet|logisticregression|linearregression|sample|statisticaltest|time series|pca) from a dataset$")
 	public void I_create_a_resource_from_a_dataset(String resourceName)
 			throws Throwable {
 
@@ -361,6 +362,11 @@ public class CommonStepdefs {
 					modelToRemove = iModel;
 					break;
 				}
+				if (context.linearRegression != null && 
+						modelInList.get("resource").equals(context.linearRegression.get("resource"))) {
+					modelToRemove = iModel;
+					break;
+				}
 				if (context.fusion != null && 
 						modelInList.get("resource").equals(context.fusion.get("resource"))) {
 					modelToRemove = iModel;
@@ -481,6 +487,11 @@ public class CommonStepdefs {
 				context.api.deleteScript((String) script);
 			}
 			context.script = null;
+		}
+		if (context.linearRegression != null) {
+			context.api
+					.deleteLinearRegression((String) context.linearRegression.get("resource"));
+			context.linearRegression = null;
 		}
 		if (context.logisticRegression != null) {
 			context.api
@@ -623,6 +634,9 @@ public class CommonStepdefs {
 			}
 			if (modelId.startsWith("logisticregression/")) {
 				context.api.deleteLogisticRegression(modelId);
+			}
+			if (modelId.startsWith("linearregression/")) {
+				context.api.deleteLinearRegression(modelId);
 			}
 			if (modelId.startsWith("fusion/")) {
 				context.api.deleteFusion(modelId);
@@ -806,7 +820,17 @@ public class CommonStepdefs {
 			context.api
 					.deleteExecution((String) execution.get("resource"));
 		}
-
+		
+		// LinearRegression
+		JSONArray linearRegressions = (JSONArray) context.api
+				.listLinearRegressions(";tags__in=unitTest").get("objects");
+		for (int i = 0; i < linearRegressions.size(); i++) {
+			JSONObject linearRegression = (JSONObject) linearRegressions
+					.get(i);
+			context.api.deleteLinearRegression(
+					(String) linearRegression.get("resource"));
+		}
+				
 		// LogisticRegression
 		JSONArray logisticRegressions = (JSONArray) context.api
 				.listLogisticRegressions(";tags__in=unitTest").get("objects");

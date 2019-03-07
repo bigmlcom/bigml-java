@@ -92,31 +92,6 @@ public class MathOps {
 		return outMat;
 	}
 	
-	/*
-	public static ArrayList<List<Double>> dot(
-			ArrayList<List<Double>> mat1, ArrayList<List<Double>> mat2) {
-		
-		ArrayList<List<Double>> outMat = new ArrayList<List<Double>>();
-		
-		for (int i=0; i<mat1.size(); i++) {
-			List<Double> row1 = (List<Double>) mat1.get(i);
-			List<Double> newRow = new ArrayList<Double>();
-			for (int j=0; j<mat2.size(); j++) {
-				List<Double> row2 = (List<Double>) mat2.get(j);
-				double sum = 0.0;
-				for (int k=0; k<row1.size(); k++) {
-					Double val = ((Number) row2.get(k)).doubleValue();
-					sum += ((Number) row1.get(k)).doubleValue() * val;
-				}
-				
-				newRow.add(sum);
-			}
-			outMat.add(newRow);
-		}
-		
-		return outMat;
-	}
-	*/
 	private static ArrayList<List<Double>> batchNorm(
 			ArrayList<List<Double>> mat, JSONArray mean, 
 			JSONArray stdev, JSONArray shift, JSONArray scale) {

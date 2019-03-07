@@ -94,8 +94,8 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
 		// checks whether the information needed for local predictions
 		// is in the first argument
 		if (!checkModelFields(ensemble)) {
-			// if the fields used by the logistic regression are not
-			// available, use only ID to retrieve it again
+			// if the fields used by the ensemble are not available,
+			// use only ID to retrieve it again
 			ensembleId = (String) ensemble.get("resource");
 			boolean validId = ensembleId.matches(ENSEMBLE_RE);
 			if (!validId) {

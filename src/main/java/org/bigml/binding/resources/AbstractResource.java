@@ -17,7 +17,7 @@ import java.net.HttpURLConnection;
 import java.util.HashMap;
 
 /**
- * Entry point to create, retrieve, list, update, and delete sources, 
+ * Entry point to create, retrieve, list, update, and delete sources,
  * datasets, models, predictions, etc.
  *
  * Full API documentation on the API can be found from BigML at:
@@ -65,6 +65,7 @@ public abstract class AbstractResource {
     public final static String PCA_PATH = "pca";
     public final static String PROJECTION_PATH = "projection";
     public final static String BATCH_PROJECTION_PATH = "batchprojection";
+    public final static String LINEARREGRESSION_PATH = "linearregression";
     
     // Base Resource regular expressions
     static String SOURCE_RE = "^" + SOURCE_PATH + "/[a-f,0-9]{24}$";
@@ -72,101 +73,102 @@ public abstract class AbstractResource {
             + "/[a-f,0-9]{24}$|^shared/" + DATASET_PATH
             + "/[a-zA-Z0-9]{26,27}$";
     static String MODEL_RE = "^(public/|)" + MODEL_PATH
-            + "/[a-f,0-9]{24}$|^shared/" + MODEL_PATH 
+            + "/[a-f,0-9]{24}$|^shared/" + MODEL_PATH
             + "/[a-zA-Z0-9]{26,27}$";
-    static String PREDICTION_RE = "^" + PREDICTION_PATH 
-    		+ "/[a-f,0-9]{24}$|^shared/" + PREDICTION_PATH 
+    static String PREDICTION_RE = "^" + PREDICTION_PATH
+    		+ "/[a-f,0-9]{24}$|^shared/" + PREDICTION_PATH
     		+ "/[a-zA-Z0-9]{26,27}$";
-    static String EVALUATION_RE = "^" + EVALUATION_PATH 
+    static String EVALUATION_RE = "^" + EVALUATION_PATH
     		+ "/[a-f,0-9]{24}$|^shared/" + EVALUATION_PATH
     		+ "/[a-zA-Z0-9]{26,27}$";
-    static String ENSEMBLE_RE = "^" + ENSEMBLE_PATH 
-    		+ "/[a-f,0-9]{24}$$|^shared/" + ENSEMBLE_PATH 
+    static String ENSEMBLE_RE = "^" + ENSEMBLE_PATH
+    		+ "/[a-f,0-9]{24}$$|^shared/" + ENSEMBLE_PATH
     		+ "/[a-zA-Z0-9]{26,27}$";
     static String BATCH_PREDICTION_RE = "^" + BATCH_PREDICTION_PATH
-            + "/[a-f,0-9]{24}$|^shared/" + BATCH_PREDICTION_PATH 
+            + "/[a-f,0-9]{24}$|^shared/" + BATCH_PREDICTION_PATH
             + "/[a-zA-Z0-9]{26,27}$";
     static String CLUSTER_RE = "^" + CLUSTER_PATH
             + "/[a-f,0-9]{24}$|^shared/" + CLUSTER_PATH
             + "/[a-zA-Z0-9]{26,27}$";
-    static String CENTROID_RE = "^" + CENTROID_PATH 
-    		+ "/[a-f,0-9]{24}$|^shared/" + CENTROID_PATH 
+    static String CENTROID_RE = "^" + CENTROID_PATH
+    		+ "/[a-f,0-9]{24}$|^shared/" + CENTROID_PATH
     		+ "/[a-zA-Z0-9]{26,27}$";
     static String BATCH_CENTROID_RE = "^" + BATCH_CENTROID_PATH
-            + "/[a-f,0-9]{24}$|^shared/" + BATCH_CENTROID_PATH 
+            + "/[a-f,0-9]{24}$|^shared/" + BATCH_CENTROID_PATH
     		+ "/[a-zA-Z0-9]{26,27}$";
     static String ANOMALY_RE = "^" + ANOMALY_PATH
-            + "/[a-f,0-9]{24}$|^shared/" + ANOMALY_PATH 
+            + "/[a-f,0-9]{24}$|^shared/" + ANOMALY_PATH
     		+ "/[a-zA-Z0-9]{26,27}$";
     static String ANOMALYSCORE_RE = "^" + ANOMALYSCORE_PATH
-            + "/[a-f,0-9]{24}$|^shared/" + ANOMALYSCORE_PATH 
+            + "/[a-f,0-9]{24}$|^shared/" + ANOMALYSCORE_PATH
     		+ "/[a-zA-Z0-9]{26,27}$";
     static String BATCH_ANOMALYSCORE_RE = "^" + BATCHANOMALYSCORE_PATH
-            + "/[a-f,0-9]{24}$|^shared/" + BATCHANOMALYSCORE_PATH 
+            + "/[a-f,0-9]{24}$|^shared/" + BATCHANOMALYSCORE_PATH
     		+ "/[a-zA-Z0-9]{26,27}$";
     static String PROJECT_RE = "^" + PROJECT_PATH
             + "/[a-f,0-9]{24}$";
     static String SAMPLE_RE = "^" + SAMPLE_PATH
             + "/[a-f,0-9]{24}$";
     static String CORRELATION_RE = "^" + CORRELATION_PATH
-            + "/[a-f,0-9]{24}$|^shared/" + CORRELATION_PATH 
+            + "/[a-f,0-9]{24}$|^shared/" + CORRELATION_PATH
     		+ "/[a-zA-Z0-9]{26,27}$";
     static String STATISTICALTEST_RE = "^" + STATISTICALTEST_PATH
-            + "/[a-f,0-9]{24}$|^shared/" + STATISTICALTEST_PATH 
+            + "/[a-f,0-9]{24}$|^shared/" + STATISTICALTEST_PATH
     		+ "/[a-zA-Z0-9]{26,27}$";
     static String LOGISTICREGRESSION_RE = "^" + LOGISTICREGRESSION_PATH
-            + "/[a-f,0-9]{24}$|^shared/" + LOGISTICREGRESSION_PATH 
+            + "/[a-f,0-9]{24}$|^shared/" + LOGISTICREGRESSION_PATH
     		+ "/[a-zA-Z0-9]{26,27}$";
-    static String SCRIPT_RE = "^(public/|)" + SCRIPT_PATH 
-    		+ "/[a-f,0-9]{24}$|^shared/" + SCRIPT_PATH 
+    static String SCRIPT_RE = "^(public/|)" + SCRIPT_PATH
+    		+ "/[a-f,0-9]{24}$|^shared/" + SCRIPT_PATH
     		+ "/[a-zA-Z0-9]{26,27}$";
-    static String EXECUTION_RE = "^" + EXECUTION_PATH 
-    		+ "/[a-f,0-9]{24}$|^shared/" + EXECUTION_PATH 
+    static String EXECUTION_RE = "^" + EXECUTION_PATH
+    		+ "/[a-f,0-9]{24}$|^shared/" + EXECUTION_PATH
     		+ "/[a-zA-Z0-9]{26,27}$";
-    static String LIBRARY_RE = "^(public/|)" + LIBRARY_PATH 
-    		+ "/[a-f,0-9]{24}$|^shared/" + LIBRARY_PATH 
+    static String LIBRARY_RE = "^(public/|)" + LIBRARY_PATH
+    		+ "/[a-f,0-9]{24}$|^shared/" + LIBRARY_PATH
     		+ "/[a-zA-Z0-9]{26,27}$";
     static String ASSOCIATION_RE = "^" + ASSOCIATION_PATH
-            + "/[a-f,0-9]{24}$|^shared/" + ASSOCIATION_PATH 
+            + "/[a-f,0-9]{24}$|^shared/" + ASSOCIATION_PATH
     		+ "/[a-zA-Z0-9]{26,27}$";
     static String ASSOCIATIONSET_RE = "^" + ASSOCIATIONSET_PATH
-            + "/[a-f,0-9]{24}$|^shared/" + ASSOCIATIONSET_PATH 
+            + "/[a-f,0-9]{24}$|^shared/" + ASSOCIATIONSET_PATH
     		+ "/[a-zA-Z0-9]{26,27}$";
     static String TOPICMODEL_RE = "^" + TOPICMODEL_PATH
-            + "/[a-f,0-9]{24}$|^shared/" + TOPICMODEL_PATH 
+            + "/[a-f,0-9]{24}$|^shared/" + TOPICMODEL_PATH
     		+ "/[a-zA-Z0-9]{26,27}$";
     static String TOPICDISTRIBUTION_RE = "^" + TOPICDISTRIBUTION_PATH
-            + "/[a-f,0-9]{24}$|^shared/" + TOPICDISTRIBUTION_PATH 
+            + "/[a-f,0-9]{24}$|^shared/" + TOPICDISTRIBUTION_PATH
     		+ "/[a-zA-Z0-9]{26,27}$";
-    static String BATCH_TOPICDISTRIBUTION_RE = "^" 
+    static String BATCH_TOPICDISTRIBUTION_RE = "^"
             + BATCH_TOPICDISTRIBUTION_PATH
-            + "/[a-f,0-9]{24}$|^shared/" + BATCH_TOPICDISTRIBUTION_PATH 
+            + "/[a-f,0-9]{24}$|^shared/" + BATCH_TOPICDISTRIBUTION_PATH
     		+ "/[a-zA-Z0-9]{26,27}$";
     static String CONFIGURATION_RE = "^(public/|)" + CONFIGURATION_PATH
             + "/[a-f,0-9]{24}$";
-    static String TIMESERIES_RE = "^" + TIMESERIES_PATH 
-    		+ "/[a-f,0-9]{24}$|^shared/" + TIMESERIES_PATH 
+    static String TIMESERIES_RE = "^" + TIMESERIES_PATH
+    		+ "/[a-f,0-9]{24}$|^shared/" + TIMESERIES_PATH
     		+ "/[a-zA-Z0-9]{26,27}$";
-    static String FORECAST_RE = "^" + FORECAST_PATH 
-    		+ "/[a-f,0-9]{24}$|^shared/" + FORECAST_PATH 
+    static String FORECAST_RE = "^" + FORECAST_PATH
+    		+ "/[a-f,0-9]{24}$|^shared/" + FORECAST_PATH
     		+ "/[a-zA-Z0-9]{26,27}$";
-    static String DEEPNET_RE = "^" + DEEPNET_PATH 
-    		+ "/[a-f,0-9]{24}$|^shared/" + DEEPNET_PATH 
+    static String DEEPNET_RE = "^" + DEEPNET_PATH
+    		+ "/[a-f,0-9]{24}$|^shared/" + DEEPNET_PATH
     		+ "/[a-zA-Z0-9]{26,27}$";
     static String OPTIML_RE = "^" + OPTIML_PATH + "/[a-f,0-9]{24}$";
-    static String FUSION_RE = "^" + FUSION_PATH 
-    		+ "/[a-f,0-9]{24}$|^shared/" + FUSION_PATH 
+    static String FUSION_RE = "^" + FUSION_PATH
+    		+ "/[a-f,0-9]{24}$|^shared/" + FUSION_PATH
     		+ "/[a-zA-Z0-9]{26,27}$";
     static String PCA_RE = "^" + PCA_PATH
-            + "/[a-f,0-9]{24}$|^shared/" + PCA_PATH 
+            + "/[a-f,0-9]{24}$|^shared/" + PCA_PATH
     		+ "/[a-zA-Z0-9]{26,27}$";
-    static String PROJECTION_RE = "^" 
-            + PROJECTION_PATH
-            + "/[a-f,0-9]{24}$|^shared/" + PROJECTION_PATH 
+    static String PROJECTION_RE = "^" + PROJECTION_PATH
+            + "/[a-f,0-9]{24}$|^shared/" + PROJECTION_PATH
     		+ "/[a-zA-Z0-9]{26,27}$";
-    static String BATCH_PROJECTION_RE = "^" 
-            + BATCH_PROJECTION_PATH
-            + "/[a-f,0-9]{24}$|^shared/" + BATCH_PROJECTION_PATH 
+    static String BATCH_PROJECTION_RE = "^" + BATCH_PROJECTION_PATH
+            + "/[a-f,0-9]{24}$|^shared/" + BATCH_PROJECTION_PATH
+    		+ "/[a-zA-Z0-9]{26,27}$";
+    static String LINEARREGRESSION_RE = "^" + LINEARREGRESSION_PATH
+            + "/[a-f,0-9]{24}$|^shared/" + LINEARREGRESSION_PATH
     		+ "/[a-zA-Z0-9]{26,27}$";
 
     // HTTP Status Codes from https://bigml.com/api/status_codes
@@ -235,25 +237,25 @@ public abstract class AbstractResource {
     public CacheManager cacheManager;
     
     
-    protected void init(String apiUser, 
-						String apiKey, 
+    protected void init(String apiUser,
+						String apiKey,
 						String project,
-						String organization, 
-						CacheManager cacheManager, 
-						String resourceRe, 
+						String organization,
+						CacheManager cacheManager,
+						String resourceRe,
 						String resourcePath) {
 			
 		init(null, apiUser, apiKey, project, organization, cacheManager, 
 			resourceRe, resourcePath);
 	}
     
-    protected void init(BigMLClient bigmlClient, 
-    					String apiUser, 
-    					String apiKey, 
+    protected void init(BigMLClient bigmlClient,
+    					String apiUser,
+    					String apiKey,
     					String project,
-    					String organization, 
-    					CacheManager cacheManager, 
-    					String resourceRe, 
+    					String organization,
+    					CacheManager cacheManager,
+    					String resourceRe,
     					String resourcePath) {
     	try {
 	    	this.bigmlClient = bigmlClient != null ? bigmlClient :

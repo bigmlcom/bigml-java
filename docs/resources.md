@@ -537,7 +537,7 @@ You can now use the model resource identifier together with some input parameter
 ```
 
 Predictions can be created using any supervised model (model, ensemble,
-logistic regression, deepnet and fusion) as first argument.
+logistic regression, linear regression, deepnet and fusion) as first argument.
 
 
 ### Centroids
@@ -706,6 +706,36 @@ In order to build an ensemble of ``Boosted Trees`` you need to provide the ``boo
     JSONObject ensemble = api.createEnsemble(
         "dataset/5143a51a37203f2cf7000972", args);
 ```
+
+
+### Linear regressions
+------------
+
+For regression problems, you can choose also linear regressions to model
+your data. Linear regressions expect the predicted value for the objective
+field to be computable as a linear combination of the predictions.
+
+As the rest of models, linear regressions can be created from a dataset by
+calling the corresponding create method:
+
+```
+    JSONObject args = JSONValue.parseValue(
+        "{\"name\": \"my linear regression\",
+          \"objective_field\": \"my_objective_field\"}");
+    JSONObject linearRegression = api.createLinearRegression(
+        "dataset/5143a51a37203f2cf7000972", args);
+```
+
+In this example, we created a linear regression named
+``my linear regression`` and set the objective field to be
+``my_objective_field``. Other arguments, like ``bias``,
+can also be specified as attributes in arguments dictionary at
+creation time.
+Particularly for categorical fields, there are three different available
+`field_codings`` options (``contrast``, ``other`` or the ``dummy``
+default coding). For a more detailed description of the
+``field_codings`` attribute and its syntax, please see the 
+[Developers API Documentation](https://bigml.com/api/linearregressions#lr_linear_regression_arguments).
 
 
 ### Logistic regressions
@@ -879,6 +909,7 @@ You can list resources with the appropriate api method:
     api.listCorrelations(null);
     api.listStatisticalTests(null);
     api.listLogisticRegressions(null);
+    api.listLinearRegressions(null);
     api.listAssociations(null);
     api.listAssociationSets(null);
     api.listTopicModels(null);
@@ -1006,6 +1037,7 @@ be ``HTTP_ACCEPTED`` if the resource can be updated without problems or one of t
     api.updateCorrelation(correlation, args);
     api.updateStatisticalTest(statisticalTest, args);
     api.updateLogisticRegression(logisticRegression, args);
+    api.updateLinearcRegression(linearRegression, args);
     api.updateAssociation(association, args);
     api.updateAssociationSet(associationSet, args);
     api.updateTopicModel(topicModel, args);
@@ -1086,6 +1118,7 @@ each type of resource.
     api.deleteCorrelation(correlation);
     api.deleteStatisticalTest(statisticalTest);
     api.deleteLogisticRegression(logisticRegression);
+    api.deleteLinearRegression(linearRegression);
     api.deleteAssociation(association);
     api.deleteAssociationSet(associationSet);
     api.deleteTopicModel(topicModel);

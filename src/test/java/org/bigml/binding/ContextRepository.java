@@ -36,6 +36,7 @@ public class ContextRepository {
     JSONObject correlation = null;
     JSONObject statisticalTest = null;
     JSONObject logisticRegression = null;
+    JSONObject linearRegression = null;
     JSONObject script = null;
     JSONObject execution = null;
     JSONObject library = null;
@@ -67,6 +68,7 @@ public class ContextRepository {
     LocalEnsemble localEnsemble = null;
     LocalCluster localCluster = null;
     LocalLogisticRegression localLogisticRegression = null;
+    LocalLinearRegression localLinearRegression = null;
     LocalDeepnet localDeepnet = null;
     LocalTimeseries localTimeSeries = null;
     LocalFusion localFusion = null;
@@ -285,6 +287,14 @@ public class ContextRepository {
 
     public void setLogisticRegression(JSONObject logisticRegression) {
         this.logisticRegression = logisticRegression;
+    }
+    
+    public JSONObject getLinearRegression() {
+        return linearRegression;
+    }
+
+    public void setLinearRegression(JSONObject linearRegression) {
+        this.linearRegression = linearRegression;
     }
 
     public JSONObject getScript() {
