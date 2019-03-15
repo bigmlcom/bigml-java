@@ -146,6 +146,9 @@ public class Source extends AbstractResource {
 						StringBuilder sb = new StringBuilder();
 						sb.append("[");
 						for (Object item: (List) args.get(key)) {
+							if (sb.length() > 1) {
+								sb.append(",");
+							}
 							sb.append(String.format("\"%s\"", (String) item));
 						}
 						sb.append("]");
@@ -356,5 +359,5 @@ public class Source extends AbstractResource {
 			return null;
 		}
 	}
-
+	
 }
