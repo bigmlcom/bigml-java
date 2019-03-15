@@ -37,9 +37,9 @@ import java.util.regex.Pattern;
  * JSONObject clusterData = api.
  * 		getCluster("cluster/5026965515526876630001b2");
  * 
- * LocalCluster cluster = LocalCluster(clusterData)
+ * LocalCluster cluster = new LocalCluster(clusterData);
  * cluster.centroid({"petal length": 3, "petal width": 1,
- *                   "sepal length": 1, "sepal width": 0.5})
+ *                   "sepal length": 1, "sepal width": 0.5});
  */
 public class LocalCluster extends ModelFields {
 	
@@ -70,7 +70,7 @@ public class LocalCluster extends ModelFields {
     private Double withinSS = null; 
     private Double betweenSS = null; 
     private Double ratioSS = null; 
-    private Integer criticalValue = null;
+    private Long criticalValue = null;
     //private String defaultNumericValue;
     private Integer k;
     private JSONArray summaryFields;
@@ -135,7 +135,7 @@ public class LocalCluster extends ModelFields {
                 betweenSS = (Double) Utils.getJSONObject(cluster, "clusters.between_ss");
                 ratioSS = (Double) Utils.getJSONObject(cluster, "clusters.ratio_ss");
                 
-                criticalValue = (Integer) cluster.get("critical_value");
+                criticalValue = (Long) Utils.getJSONObject(cluster, "critical_value");;
                 k = ((Long) cluster.get("k")).intValue();
                 scales = (JSONObject) cluster.get("scales");
                 
