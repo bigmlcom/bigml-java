@@ -5,6 +5,11 @@
 * Adding LinearRegression REST call methods.
 * Adding local LinearRegression.
 
+### Bugs
+
+* Fixed test suite
+
+
 ## 1.8.8 version
 
 ### Bugs
