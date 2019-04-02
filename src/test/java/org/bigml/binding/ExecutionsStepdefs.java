@@ -16,58 +16,66 @@ import static org.junit.Assert.*;
 
 public class ExecutionsStepdefs {
 
-    // Logging
-    Logger logger = LoggerFactory.getLogger(ExecutionsStepdefs.class);
-    
-    @Autowired
-    CommonStepdefs commonSteps;
+	// Logging
+	Logger logger = LoggerFactory.getLogger(ExecutionsStepdefs.class);
 
-    @Autowired
-    private ContextRepository context;
+	@Autowired
+	CommonStepdefs commonSteps;
 
-    @Given("^I create a whizzml script execution from an existing script$")
-    public void I_create_a_whizzml_script_execution_from_an_existing_script()
-        throws AuthenticationException {
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
+	@Autowired
+	private ContextRepository context;
 
-        String scriptId = (String) context.script.get("resource");
-        JSONObject resource = context.api.createExecution(scriptId, args, 5, null);
-        context.status = (Integer) resource.get("code");
-        context.location = (String) resource.get("location");
-        context.execution = (JSONObject) resource.get("object");
-        commonSteps.the_resource_has_been_created_with_status(context.status);
-    }
+	@Given("^I create a whizzml script execution from an existing script$")
+	public void I_create_a_whizzml_script_execution_from_an_existing_script()
+			throws AuthenticationException {
+		JSONObject args = new JSONObject();
+		args.put("tags", Arrays.asList("unitTest"));
 
-    @Given("^I create a whizzml script execution from the last two scripts$")
-    public void I_create_a_whizzml_script_execution_from_the_last_two_scripts() throws Throwable {
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
-        JSONObject resource = context.api.createExecution(context.scriptsIds, args, 5, null);
+		String scriptId = (String) context.script.get("resource");
+		JSONObject resource = context.api.createExecution(scriptId, args, 5,
+				null);
+		context.status = (Integer) resource.get("code");
+		context.location = (String) resource.get("location");
+		context.execution = (JSONObject) resource.get("object");
+		commonSteps.the_resource_has_been_created_with_status(context.status);
+	}
 
-        context.status = (Integer) resource.get("code");
-        context.location = (String) resource.get("location");
-        context.execution = (JSONObject) resource.get("object");
+	@Given("^I create a whizzml script execution from the last two scripts$")
+	public void I_create_a_whizzml_script_execution_from_the_last_two_scripts()
+			throws Throwable {
+		JSONObject args = new JSONObject();
+		args.put("tags", Arrays.asList("unitTest"));
+		JSONObject resource = context.api.createExecution(context.scriptsIds,
+				args, 5, null);
 
-        commonSteps.the_resource_has_been_created_with_status(context.status);
-    }
+		context.status = (Integer) resource.get("code");
+		context.location = (String) resource.get("location");
+		context.execution = (JSONObject) resource.get("object");
 
-    @Given("^I reset scripts$")
-    public void I_reset_scripts() throws AuthenticationException {
-        context.scriptsIds = new ArrayList<String>();
-    }
+		commonSteps.the_resource_has_been_created_with_status(context.status);
+	}
 
-    @Then("^the script id is correct and the result is \"([^\"]*)\"$")
-    public void the_script_id_is_correct_and_the_result_is(Long expectedResult) throws Throwable {
-        assertEquals(context.script.get("resource"), context.execution.get("script"));
+	@Given("^I reset scripts$")
+	public void I_reset_scripts() throws AuthenticationException {
+		context.scriptsIds = new ArrayList<String>();
+	}
 
-        Long result = (Long) Utils.getJSONObject(context.execution, "execution.result");
-        assertEquals(expectedResult, result);
-    }
-    
-    @Then("^the result is \"([^\"]*)\"$")
-    public void the_value_of_is_and_the_result_is(String expectedResult) throws Throwable {
-        JSONArray result = (JSONArray) Utils.getJSONObject(context.execution, "execution.results");
-        assertEquals(expectedResult, result.toString());
-    }
+	@Then("^the script id is correct and the result is \"([^\"]*)\"$")
+	public void the_script_id_is_correct_and_the_result_is(Long expectedResult)
+			throws Throwable {
+		assertEquals(context.script.get("resource"),
+				context.execution.get("script"));
+
+		Long result = (Long) Utils.getJSONObject(context.execution,
+				"execution.result");
+		assertEquals(expectedResult, result);
+	}
+
+	@Then("^the result is \"([^\"]*)\"$")
+	public void the_value_of_is_and_the_result_is(String expectedResult)
+			throws Throwable {
+		JSONArray result = (JSONArray) Utils.getJSONObject(context.execution,
+				"execution.results");
+		assertEquals(expectedResult, result.toString());
+	}
 }

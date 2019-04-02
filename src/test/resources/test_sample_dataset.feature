@@ -1,6 +1,4 @@
 Feature: Download the sample to filesystem
-    In order to download a sample
-    I need to create a sample
 
     Scenario Outline: Successfully creating a sample from a dataset:
         Given I create a data source uploading a "<data>" file

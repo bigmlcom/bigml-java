@@ -1,6 +1,4 @@
-Feature: Testing projects REST api calls
-    In order to test the project API
-    I need to create a project
+Feature: Project REST api calls
 
     Scenario Outline: Successfully creating a project:
         Given I create a project with "<options>"

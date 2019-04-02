@@ -1,6 +1,6 @@
 @beforeOrganizationScenario
 @afterOganizationScenario
-Feature: Testing Organizations
+Feature: Organizations
 
     Scenario Outline: Successfully creating a prediction in an organization:
         Given I create a data source uploading a "<data>" file

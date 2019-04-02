@@ -157,7 +157,6 @@ public class DatasetsStepdefs {
 
         String datasetId = (String) context.dataset.get("resource");
 
-
         JSONObject args = new JSONObject();
         args.put("tags", Arrays.asList("unitTest"));
         args.put("sample_rate", rate);
@@ -261,7 +260,6 @@ public class DatasetsStepdefs {
         }
 
     }
-    
     
     @Then("^I create a dataset associated to centroid \"(.*)\"$")
     public void I_create_a_dataset_associated_to_centroid(String centroidId) 

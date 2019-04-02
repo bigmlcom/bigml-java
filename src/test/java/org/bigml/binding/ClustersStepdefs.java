@@ -3,8 +3,6 @@ package org.bigml.binding;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Arrays;
@@ -13,7 +11,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import org.bigml.binding.resources.AbstractResource;
-import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -35,8 +32,6 @@ public class ClustersStepdefs {
 
     @Autowired
     private ContextRepository context;
-
-    private String downloadedFile;
 
     @Given("^I create a cluster with options \"(.*)\"$")
     public void I_create_a_cluster_with_options(String options) throws AuthenticationException {
@@ -80,16 +75,6 @@ public class ClustersStepdefs {
         context.localCluster = new LocalCluster(context.cluster);
     }
     
-    @Given("^I wait until the cluster is ready less than (\\d+) secs and I return it$")
-    public JSONObject I_wait_until_the_cluster_is_ready_less_than_secs_and_return(
-            int secs) throws Throwable {
-    	commonSteps.I_wait_until_resource_status_code_is(
-    			"cluster",
-    			AbstractResource.FINISHED,
-                AbstractResource.FAULTY, secs);
-        return context.cluster;
-    }
-
     @Given("^I get the cluster \"(.*)\"")
     public void I_get_the_cluster(String clusterId)
             throws AuthenticationException {
@@ -181,45 +166,6 @@ public class ClustersStepdefs {
         assertEquals(result, context.centroid.get("centroid_name"));
     }
 
-    @When("^I create a batch centroid for the dataset$")
-    public void I_create_a_batch_centroid_for_the_dataset() throws Throwable {
-        String clusterId = (String) context.cluster.get("resource");
-        String datasetId = (String) context.dataset.get("resource");
-
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
-
-        JSONObject resource = context.api.createBatchCentroid(
-                clusterId, datasetId, args, 5, null);
-        context.status = (Integer) resource.get("code");
-        context.location = (String) resource.get("location");
-        context.batchCentroid = (JSONObject) resource.get("object");
-        commonSteps.the_resource_has_been_created_with_status(context.status);
-    }
-    
-    @When("^I download the created centroid file to \"([^\"]*)\"$")
-    public void I_download_the_created_centroid_file_to(String fileTo)
-            throws Throwable {
-        downloadedFile = fileTo;
-
-        context.api.downloadBatchCentroid(context.batchCentroid,
-                fileTo);
-    }
-
-    @Then("^the batch centroid file is like \"([^\"]*)\"$")
-    public void the_batch_centroid_file_is_like(String checkFile)
-            throws Throwable {
-        FileInputStream downloadFis = new FileInputStream(new File(
-                downloadedFile));
-        FileInputStream checkFis = new FileInputStream(new File(checkFile));
-
-        String localCvs = Utils.inputStreamAsString(downloadFis, "UTF-8");
-        String checkCvs = Utils.inputStreamAsString(checkFis, "UTF-8");
-
-        if (!localCvs.equals(checkCvs)) {
-            throw new Exception();
-        }
-    }
 
     @Then("^the data point in the cluster closest to \"(.*)\" is \"(.*)\"$")
     public void closest_in_cluster(String reference, String closest) throws Throwable {

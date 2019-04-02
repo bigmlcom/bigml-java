@@ -27,7 +27,7 @@ import cucumber.annotation.en.When;
 
 public class CommonStepdefs {
 
-	private static final Map<String, String> RES_NAMES = new HashMap<String, String>();
+	public static final Map<String, String> RES_NAMES = new HashMap<String, String>();
 	static {
 		RES_NAMES.put("anomaly detector", "anomaly");
 		RES_NAMES.put("anomaly score", "anomalyScore");
@@ -116,12 +116,12 @@ public class CommonStepdefs {
 		return method;
 	}
 
-	private JSONObject getResource(String resourceName)
+	protected JSONObject getResource(String resourceName)
 			throws IllegalAccessException {
 		return (JSONObject) getField(resourceName).get(context);
 	}
 
-	private void setResource(String resourceName, JSONObject resource)
+	protected void setResource(String resourceName, JSONObject resource)
 			throws IllegalAccessException {
 		getField(resourceName).set(context, resource);
 	}

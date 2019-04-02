@@ -128,17 +128,7 @@ public class ModelsStepdefs {
         context.models.add(context.model);
         commonSteps.the_resource_has_been_created_with_status(context.status);
     }
-
-    @Given("^I wait until the model is ready less than (\\d+) secs and I return it$")
-    public JSONObject I_wait_until_the_model_is_ready_less_than_secs_and_return(
-            int secs) throws Throwable {
-    	commonSteps.I_wait_until_resource_status_code_is(
-        		"model",
-        		AbstractResource.FINISHED,
-                AbstractResource.FAULTY, secs);
-        return context.model;
-    }
-
+    
     @Given("^I retrieve a list of remote models tagged with \"(.*)\"$")
     public void I_retrieve_a_list_of_remote_models_tagged_with(String tag)
             throws Throwable {
