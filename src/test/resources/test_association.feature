@@ -1,6 +1,4 @@
-Feature: Testing Assocaitions REST api calls
-    In order to create an association
-    I need to create a dataset first
+Feature: Assocaition
 
     Scenario Outline: Successfully creating associations from a dataset:
         Given I create a data source uploading a "<data>" file
