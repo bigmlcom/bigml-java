@@ -10,11 +10,18 @@ import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
 /**
  * A predicate to be evaluated in a tree's node.
  *
  */
 public class Predicate {
+
+    static Logger LOGGER = LoggerFactory.getLogger(
+    		Predicate.class.getName());
 
     private String opType;
     private String operator;
@@ -316,6 +323,7 @@ public class Predicate {
         }
 
         if( term != null ) {
+            // LOGGER.info("=====================");
             JSONObject allForms = (JSONObject) Utils.getJSONObject((JSONObject) fields.get(field),
                     "summary.term_forms", new JSONObject());
             JSONArray termForms = (JSONArray) allForms.get(term);
@@ -326,7 +334,7 @@ public class Predicate {
             terms.addAll(termForms);
 
             JSONObject options = (JSONObject) Utils.getJSONObject((JSONObject) fields.get(field),
-                    "term_analysis");
+                                                                  "term_analysis", new JSONObject());
 
             return applyOperator(Utils.termMatches(inputData.get(field).toString(), terms, options));
         }

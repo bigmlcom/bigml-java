@@ -20,43 +20,43 @@ import org.slf4j.LoggerFactory;
  * Uses a number of predictions to generate a combined prediction.
  */
 public class MultiVote implements Serializable {
-    
+
 	private static final long serialVersionUID = 1L;
-	
+
     /**
      * Logging
      */
     static Logger LOGGER = LoggerFactory.getLogger(MultiVote.class.getName());
-    
-    public final static String[] PREDICTION_HEADERS = new String[] { 
+
+    public final static String[] PREDICTION_HEADERS = new String[] {
     		"prediction", "confidence", "order", "distribution", "count" };
-    
+
     private final static String[] COMBINATION_WEIGHTS = new String[] {
             null , "confidence", "probability", null, "weight" };
-    
-    
+
+
     private final static String[][] WEIGHT_KEYS = new String[][] { {},
             { "confidence" }, { "distribution", "count" }, {}, { "weight" } };
-            
+
     private final static String[] WEIGHT_LABELS = new String[] { "plurality",
             "confidence", "probability", "threshold" };
 
     final static int BINS_LIMIT = 32;
-    
+
     final static String BOOSTING_CLASS = "class";
-    
+
     public HashMap<Object, Object>[] predictions;
     public boolean boosting = false;
     public JSONArray boostingOffsets;
-    
-    
+
+
     /**
      * MultiVote: combiner class for ensembles voting predictions.
      */
     public MultiVote() {
         this(null, null);
     }
-        
+
     /**
      * MultiVote: combiner class for ensembles voting predictions.
      *
@@ -69,10 +69,10 @@ public class MultiVote implements Serializable {
             predictionsArr = new HashMap[0];
         }
         predictions = predictionsArr;
-        
+
         boosting = boostingOffsets != null && !boostingOffsets.isEmpty();
         this.boostingOffsets = boostingOffsets;
-        
+
         boolean allOrdered = true;
         for (i = 0, len = predictions.length; i < len; i++) {
             if (!predictions[i].containsKey("order")) {
@@ -86,11 +86,11 @@ public class MultiVote implements Serializable {
             }
         }
     }
-    
+
     public HashMap<Object, Object>[] getPredictions() {
         return predictions;
     }
-    
+
     /**
      * Check if this is a regression model
      *
@@ -99,7 +99,7 @@ public class MultiVote implements Serializable {
     private boolean isRegression() {
     	int index, len;
     	HashMap<Object, Object> prediction;
-    	
+
     	if (boosting) {
     		for (index = 0, len = this.predictions.length; index < len; index++) {
                 prediction = this.predictions[index];
@@ -109,7 +109,7 @@ public class MultiVote implements Serializable {
     		}
     		return false;
     	}
-    	
+
         for (index = 0, len = this.predictions.length; index < len; index++) {
             prediction = this.predictions[index];
             if (!(prediction.get("prediction") instanceof Number)) {
@@ -118,7 +118,7 @@ public class MultiVote implements Serializable {
         }
         return true;
     };
-    
+
     /**
      * Return the next order to be assigned to a prediction
      *
@@ -136,8 +136,8 @@ public class MultiVote implements Serializable {
 
         return 0;
     }
-    
-    
+
+
     /**
      * Adds a new prediction into a list of predictions
      *
@@ -175,7 +175,7 @@ public class MultiVote implements Serializable {
 
         return this;
     }
-    
+
     /**
      * Adds a new prediction into a list of predictions
      *
@@ -241,7 +241,7 @@ public class MultiVote implements Serializable {
 
         return this;
     }
-    
+
     /**
      * Given a multi vote instance (a list of predictions), extends the list
      * with another list of predictions and adds the order information.
@@ -271,7 +271,7 @@ public class MultiVote implements Serializable {
             predictions = (HashMap<Object, Object>[]) predictionsList.toArray( new HashMap[predictionsList.size()] );
         }
     }
-    
+
     /**
      * Given a list of predictions, extends the list with another list of
      *  predictions and adds the order information. For instance,
@@ -302,7 +302,7 @@ public class MultiVote implements Serializable {
         }
         return this;
     }
-    
+
     /**
      * Given a list of predictions, extends the list with another list of
      *  predictions and adds the order information. For instance,
@@ -346,8 +346,8 @@ public class MultiVote implements Serializable {
 
         return this;
     }
-    
-    
+
+
     /**
      * Singles out the votes for a chosen category and returns a prediction
      * for this category iff the number of votes reaches at least the given
@@ -397,8 +397,8 @@ public class MultiVote implements Serializable {
                     new HashMap[categoryPredictions.size()]), null);
         }
     }
-    
-    
+
+
     /**
      * Checks the presence of each of the keys in each of the predictions
      *
@@ -422,8 +422,8 @@ public class MultiVote implements Serializable {
         }
         return true;
     }
-    
-    
+
+
     /**
      * Normalizes error to a [0, top_range] range and builds probabilities
      *
@@ -472,8 +472,8 @@ public class MultiVote implements Serializable {
         }
         return normalizeFactor;
     };
-    
-    
+
+
     /**
      * Wilson score interval computation of the distribution for the prediction
      *
@@ -489,7 +489,7 @@ public class MultiVote implements Serializable {
      */
     protected static double wsConfidence(Object prediction,
             HashMap<String, Double> distribution, Integer n, Double z) {
-    	
+
     	double norm, z2, n2, wsSqrt, p = distribution.get(prediction)
                 .doubleValue(), zDefault = 1.96d;
         if (z == null) {
@@ -520,11 +520,11 @@ public class MultiVote implements Serializable {
         z2 = z * z;
         n2 = n * n;
         wsSqrt = Math.sqrt((p * (1 - p) / n) + (z2 / (4 * n2)));
-        
+
         return Utils.roundOff((p + (z2 / (2 * n)) - (z * wsSqrt)) / (1 + (z2 / n)), Constants.PRECISION);
     }
-    
-    
+
+
     /**
      * Average for regression models' predictions
      *
@@ -539,12 +539,12 @@ public class MultiVote implements Serializable {
         for (i = 0, len = this.predictions.length; i < len; i++) {
             result += ((Number) this.predictions[i].get("prediction"))
                     .doubleValue();
-            
+
             if (this.predictions[i].containsKey("median")) {
             	medianResult += ((Number) this.predictions[i].get("median"))
                 		.doubleValue();
             }
-            
+
             confidence += ((Number) this.predictions[i].get("confidence"))
                     .doubleValue();
 
@@ -566,7 +566,7 @@ public class MultiVote implements Serializable {
         average.put("count", instances);
         return average;
     }
-    
+
     /**
      * Returns the prediction combining votes using error to compute weight
      *
@@ -593,12 +593,12 @@ public class MultiVote implements Serializable {
 
             result += ((Number) prediction.get("prediction")).doubleValue()
                     * ((Number) prediction.get("errorWeight")).doubleValue();
-            
+
             if (prediction.get("median") != null) {
 	            medianResult += ((Number) prediction.get("median")).doubleValue()
 	                    * ((Number) prediction.get("errorWeight")).doubleValue();
             }
-            
+
             instances += ((Number) prediction.get("count")).longValue();
 
             combinedError += ((Number) prediction.get("confidence"))
@@ -617,8 +617,8 @@ public class MultiVote implements Serializable {
 
         return newPrediction;
     };
-    
-    
+
+
     /**
      * Average for regression models' predictions
      *
@@ -626,43 +626,43 @@ public class MultiVote implements Serializable {
     private Double weightedSum(HashMap<Object, Object>[] predictions, String key) {
     	Map<Object, Object> prediction = new HashMap<Object, Object>();
     	double weightedSum = 0;
-    	
+
     	int index, len;
     	for (index = 0, len = predictions.length; index < len; index++) {
             prediction = predictions[index];
             Double pred = (Double) prediction.get("prediction");
             Double weight = (Double) prediction.get(key);
-            
+
             weightedSum += pred * weight;
     	}
-    	
+
     	return weightedSum;
     }
-    
-    
+
+
     /**
-     * Returns the softmax values from a distribution given as a 
+     * Returns the softmax values from a distribution given as a
      * dictionary like:
      * 		{"category": {"probability": probability, "order": order}}
      */
     private HashMap<Object, Object> softmax(HashMap<Object, Object> predictions) {
     	double total = 0;
-    	
+
     	HashMap<Object, Object> normalized = new HashMap<Object, Object>();
     	for (Map.Entry<Object, Object> entry : predictions.entrySet()) {
             String key = (String) entry.getKey();
             HashMap<Object, Object> catInfo = (HashMap<Object, Object>) entry.getValue();
-            
+
             Double probability = Math.exp((Double) catInfo.get("probability"));
-            
+
             HashMap<Object, Object> pred = new HashMap<Object, Object>();
             pred.put("probability", probability);
         	pred.put("order", (Integer) catInfo.get("order"));
         	normalized.put(key, pred);
-            
+
         	total += probability;
     	}
-    	
+
     	if (total != 0) {
     		for (Map.Entry<Object, Object> entry : normalized.entrySet()) {
                 String key = (String) entry.getKey();
@@ -671,11 +671,11 @@ public class MultiVote implements Serializable {
     		}
     		return normalized;
     	}
-    	
+
     	return new HashMap<Object, Object>();
     }
-    
-    
+
+
     /**
      * Combines the predictions for a boosted classification ensemble
      * Applies the regression boosting combiner, but per class. Tie breaks
@@ -683,7 +683,7 @@ public class MultiVote implements Serializable {
      */
     private HashMap<Object, Object> classifictionBoostingCombiner(Map options) {
     	HashMap<Object, Object> prediction = new HashMap<Object, Object>();
-        
+
     	int index, len;
     	Map<String, Object> groupedPredictions = new HashMap<String, Object>();
         for (index = 0, len = this.predictions.length; index < len; index++) {
@@ -697,7 +697,7 @@ public class MultiVote implements Serializable {
             	((List<Map<Object, Object>>) groupedPredictions.get(objectiveClass)).add(prediction);
             }
         }
-        
+
         List<String> categories = new ArrayList<String>();
         for (Object cats: (JSONArray) options.get("categories")) {
         	JSONArray cat = (JSONArray) cats;
@@ -705,10 +705,11 @@ public class MultiVote implements Serializable {
         }
 
         HashMap<Object, Object> predictions = new HashMap<Object, Object>();
+
         for (Map.Entry<String, Object> entry : groupedPredictions.entrySet()) {
             String key = entry.getKey();
             ArrayList value = (ArrayList) entry.getValue();
-            
+
             Double boostingOffset = null;
             for (Object bOffset: (JSONArray) boostingOffsets) {
             	JSONArray offset = (JSONArray) bOffset;
@@ -717,31 +718,30 @@ public class MultiVote implements Serializable {
             		break;
             	}
             }
-            
+
             HashMap<Object, Object>[] preds = new HashMap[value.size()];
             for (index = 0, len = preds.length; index < len; index++) {
             	preds[index] = (HashMap<Object, Object>) value.get(index);
             }
-            
+
             HashMap<Object, Object> pred = new HashMap<Object, Object>();
-            pred.put("probability", 
+            pred.put("probability",
         			 	weightedSum(preds, "weight") + boostingOffset);
         	pred.put("order", categories.indexOf(key));
             predictions.put(key, pred);
         }
-        
+
         predictions = softmax(predictions);
-        
         String predictionName = (String) predictions.keySet().toArray()[0];
         HashMap<Object, Object> predictionInfo = (HashMap<Object, Object>) predictions.get(predictionName);
-        
+
         for (Map.Entry<Object, Object> entry : predictions.entrySet()) {
             String key = (String) entry.getKey();
             HashMap<Object, Object> predInfo = (HashMap<Object, Object>) entry.getValue();
-            
+
             Double predProbability = (Double) predInfo.get("probability");
             Double predictionProbability = (Double) predictionInfo.get("probability");
-            
+
             if (predProbability > predictionProbability) {
             	predictionName = key;
             	predictionInfo = predInfo;
@@ -758,11 +758,11 @@ public class MultiVote implements Serializable {
         prediction.put("prediction", predictionName);
         prediction.put("probability", Utils.roundOff(
         		(Double) predictionInfo.get("probability"), Constants.PRECISION));
-        
+
     	return prediction;
     }
-    
-    
+
+
     /**
      * Creates a new predictions array based on the training data probability
      */
@@ -793,18 +793,18 @@ public class MultiVote implements Serializable {
             }
 
             order = (Integer) prediction.get("order");
-            
+
             HashMap distribution = (HashMap) prediction.get("distribution");
             for (Object key : distribution.keySet()) {
-            	Map<Object, Object> newPred = new HashMap<Object, Object>(); 
+            	Map<Object, Object> newPred = new HashMap<Object, Object>();
                 newPred.put("prediction", key);
                 newPred.put("probability", ((Integer) distribution.get(key) / (double) total));
                 newPred.put("count", distribution.get(key));
                 newPred.put("order", order);
-	                
+
 	            predictionsList.add(newPred);
     		}
-            
+
         }
         HashMap<Object, Object>[] predictions = new HashMap[predictionsList.size()];
         for (index = 0, len = predictions.length; index < len; index++) {
@@ -813,8 +813,8 @@ public class MultiVote implements Serializable {
         }
         return predictions;
     };
-    
-    
+
+
     /**
      * Builds a distribution based on the predictions of the MultiVote
      *
@@ -856,8 +856,8 @@ public class MultiVote implements Serializable {
         combinedDistribution[1] = total;
         return combinedDistribution;
     }
-    
-    
+
+
     /**
      * Returns the prediction combining votes by using the given weight
      *
@@ -870,14 +870,14 @@ public class MultiVote implements Serializable {
      *        the confidences of the votes.
      */
     public HashMap<Object, Object> combineCategorical(String weightLabel) {
-        
+
         int index, len;
         double weight = 1.0;
         Object category;
         HashMap<Object, Object> prediction = new HashMap<Object, Object>();
         HashMap<Object, Object> mode = new HashMap<Object, Object>();
         ArrayList tuples = new ArrayList();
-        
+
         for (index = 0, len = this.predictions.length; index < len; index++) {
             prediction = this.predictions[index];
 
@@ -910,7 +910,7 @@ public class MultiVote implements Serializable {
 
             mode.put(category, categoryHash);
         }
-        
+
         for (Object key : mode.keySet()) {
             if (mode.get(key) != null) {
                 Object[] tuple = new Object[] { key, mode.get(key) };
@@ -919,13 +919,13 @@ public class MultiVote implements Serializable {
         }
 
         Collections.sort(tuples, new TupleComparator());
-        
+
         Object[] tuple = (Object[]) tuples.get(0);
         Object predictionName = (Object) tuple[0];
 
         HashMap<Object, Object> output = new HashMap<Object, Object>();
         output.put("prediction", predictionName);
-        
+
         if (this.predictions[0].get("confidence") != null) {
             return this.weightedConfidence(predictionName, weightLabel);
         }
@@ -1006,8 +1006,8 @@ public class MultiVote implements Serializable {
 
         return result;
     }
-    
-    
+
+
     /**
      * Returns a distribution formed by grouping the distributions of each predicted node.
      */
@@ -1018,7 +1018,7 @@ public class MultiVote implements Serializable {
         for (HashMap<Object, Object> prediction : multiVoteInstance.getPredictions()) {
             HashMap<Object, Number> predictionDist = null;
             Object distribution = prediction.get("distribution");
-            
+
             if( distribution instanceof Map ) {
                 predictionDist = (HashMap<Object, Number>) distribution;
             } else {
@@ -1040,8 +1040,8 @@ public class MultiVote implements Serializable {
 
         return distributionInfo;
     }
-    
-    
+
+
     /**
      * Reduces a number of predictions voting for classification and averaging
      * predictions for regression using the PLURALITY method and without confidence
@@ -1051,42 +1051,42 @@ public class MultiVote implements Serializable {
     public HashMap<Object, Object> combine() {
         return combine((PredictionMethod) null, null);
     }
-    
-    
+
+
     /**
      * Reduces a number of predictions voting for classification and
      * averaging predictions for regression.
      */
     public HashMap<Object, Object> combine(PredictionMethod method, Map options) {
-    	
+
     	if (method == null) {
             method = PredictionMethod.PLURALITY;
         }
-    	
+
     	// there must be at least one prediction to be combined
         if (this.predictions.length == 0) {
             throw new Error("No predictions to be combined.");
         }
-        
+
         // and all predictions should have the weight-related keys
         String[] keys = WEIGHT_KEYS[method.getCode()];
         if (keys.length > 0) {
             checkKeys(this.predictions, keys);
         }
-        
+
         if (this.boosting) {
         	for (HashMap<Object, Object> prediction : predictions) {
         		if( !prediction.containsKey("boosting") ) {
                     prediction.put("boosting", 0.0);
                 }
         	}
-        	
+
         	if (this.isRegression()) {
         		// sum all gradients weighted by their "weight" plus the
         		// boosting offset
         		HashMap<Object, Object> prediction = new HashMap<Object, Object>();
-            	prediction.put("prediction", 
-            			weightedSum(predictions, "weight") + 
+            	prediction.put("prediction",
+            			weightedSum(predictions, "weight") +
             			(Double) this.boostingOffsets.get(0));
             	return prediction;
         	} else {
@@ -1099,14 +1099,14 @@ public class MultiVote implements Serializable {
                         prediction.put("confidence", 0.0);
                     }
                 }
-        		
+
         		if (method == PredictionMethod.CONFIDENCE) {
                     return this.errorWeighted();
                 }
                 return this.avg();
         	}
         }
-        
+
         MultiVote multiVote = null;
         if (method == PredictionMethod.THRESHOLD) {
             Integer threshold = (Integer) options.get("threshold");
@@ -1118,11 +1118,11 @@ public class MultiVote implements Serializable {
         } else {
             multiVote = this;
         }
-        
+
         return multiVote.combineCategorical(COMBINATION_WEIGHTS[method.getCode()]);
     }
-    
-    
+
+
     /**
      * Comparator
      */

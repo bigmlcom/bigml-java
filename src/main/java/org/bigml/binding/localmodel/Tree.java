@@ -1,6 +1,6 @@
 /*
  * Tree structure for the BigML local Model
- * 
+ *
  * This module defines an auxiliary Tree structure that is used in the local Model
  * to make predictions locally or embedded into your application without needing
  * to send requests to BigML.io.
@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A tree-like predictive model.
- * 
+ *
  */
 public class Tree extends AbstractTree {
 
@@ -36,17 +36,17 @@ public class Tree extends AbstractTree {
      * Logging
      */
     static Logger LOGGER = LoggerFactory.getLogger(Tree.class.getName());
-    
+
     final static String INDENT = "    ";
     final static double DEFAULT_RZ = 1.96;
     final static int BINS_LIMIT = 32;
-    
+
     private static final JSONObject languageConversions;
     static {
         InputStream input = Tree.class.getResourceAsStream("/org/bigml/binding/localmodel/languageConversions.json");
         languageConversions = (JSONObject) JSONValue.parse(new InputStreamReader(input));
     }
-    
+
  // Map operator str to its corresponding java operator
     static HashMap<String, String> JAVA_OPERATOR = new HashMap<String, String>();
     static {
@@ -91,8 +91,8 @@ public class Tree extends AbstractTree {
         JAVA_OPERATOR.put(Constants.OPTYPE_DATETIME + "-"
                 + Constants.OPERATOR_GT, "\"{2}\".compareTo({3})>0");
     }
-    
-    
+
+
     private String parentId;
     private final List<Tree> children;
     private JSONObject rootDistribution;
@@ -109,18 +109,18 @@ public class Tree extends AbstractTree {
     private Integer max;
     private Integer min;
     private JSONObject treeInfo;
-    
+
     /**
      * Constructor
      */
     public Tree(final JSONObject tree, final JSONObject fields,
                 final Object objectiveField, final JSONObject rootDistribution,
-                final String parentId, final Map<String, Tree> idsMap, 
+                final String parentId, final Map<String, Tree> idsMap,
                 final boolean subtree, JSONObject treeInfo) {
-        
+
     	super(tree, fields, objectiveField);
     	this.rootDistribution = rootDistribution;
-    	
+
     	if( tree.containsKey("id") ) {
             this.parentId = parentId;
 
@@ -129,31 +129,31 @@ public class Tree extends AbstractTree {
                 idsMap.put(id, this);
             }
         }
-    	
+
     	children = new ArrayList<Tree>();
         JSONArray childrenObj = (JSONArray) tree.get("children");
         if (childrenObj != null) {
             for (int i = 0; i < childrenObj.size(); i++) {
                 JSONObject child = (JSONObject) childrenObj.get(i);
-                Tree childTree = new Tree(child, fields, objectiveField, 
+                Tree childTree = new Tree(child, fields, objectiveField,
                 		null, id, idsMap, subtree, treeInfo);
                 children.add(childTree);
             }
         }
-    	
+
         this.regression = isRegression();
-        boolean treeRegression = treeInfo.get("regression")!=null ? 
+        boolean treeRegression = treeInfo.get("regression")!=null ?
         		(Boolean) treeInfo.get("regression") : true;
         treeInfo.put("regression", this.regression && treeRegression);
         this.regression = (Boolean) treeInfo.get("regression");
-        
+
         this.confidence = tree.containsKey("confidence") ?
         		((Number) tree.get("confidence")).doubleValue():
         		null;
         this.distribution = null;
         this.distributionUnit = null;
         this.weighted = false;
-        
+
         JSONArray distributionObj = (JSONArray) tree.get("distribution");
         JSONObject summary = null;
         if (distributionObj != null) {
@@ -161,7 +161,7 @@ public class Tree extends AbstractTree {
         } else if( tree.get("objective_summary") != null ) {
         	summary = (JSONObject) tree.get("objective_summary");
         	extractDistribution(summary);
-        	
+
             if (tree.get("weighted_objective_summary") != null) {
             	summary = (JSONObject) tree.get(
             			"weighted_objective_summary");
@@ -176,7 +176,7 @@ public class Tree extends AbstractTree {
                             .get("categories");
                     this.weightedDistributionUnit = "categories";
                 }
-            	
+
             	this.weight = ((Number) tree.get("weight")).doubleValue();
             	this.weighted = true;
             }
@@ -184,12 +184,12 @@ public class Tree extends AbstractTree {
             summary = rootDistribution;
             extractDistribution(summary);
         }
-        
+
         if( this.regression ) {
-        	treeInfo.put("max_bins", 
-        		Math.max(((Number) treeInfo.get("max_bins")).intValue(), 
+        	treeInfo.put("max_bins",
+        		Math.max(((Number) treeInfo.get("max_bins")).intValue(),
         				 distribution.size()));
-            
+
             median = null;
             if( summary != null ) {
                 median = ((Number) summary.get("median")).doubleValue();
@@ -198,7 +198,7 @@ public class Tree extends AbstractTree {
             if( median == null ) {
                 median = distributionMedian(distribution, count);
             }
-            
+
             if (summary.containsKey("maximum")) {
             	max = ((Number) summary.get("maximum")).intValue();
             } else {
@@ -208,7 +208,7 @@ public class Tree extends AbstractTree {
             		max = Math.max(max, ((Number) dist.get(0)).intValue());
             	}
             }
-            
+
             if (summary.containsKey("minimum")) {
             	min = ((Number) summary.get("minimum")).intValue();
             } else {
@@ -219,19 +219,19 @@ public class Tree extends AbstractTree {
             	}
             }
         }
-        
+
         if( !this.regression && this.distribution != null ) {
             impurity = calculateGiniImpurity();
         }
-        
+
         this.treeInfo = treeInfo;
     }
-    
-    
+
+
     public String getParentId() {
         return parentId;
     }
-    
+
     public Double getMedian() {
         return median;
     }
@@ -251,38 +251,38 @@ public class Tree extends AbstractTree {
     public String getDistributionUnit() {
         return distributionUnit;
     }
-    
+
     public Integer getMaxBins() {
         return (Integer) treeInfo.get("max_bins");
     }
-    
+
     public List<Tree> getChildren() {
         return children;
     }
-    
+
     public Boolean getWeighted() {
         return weighted;
     }
-    
+
     public Integer getMin() {
         return min;
     }
-    
+
     public Integer getMax() {
         return max;
     }
-    
-    
+
+
     /**
      * Creates a copy of the current tree node
      *
      * @return the copy of the tree node
      */
     protected Tree clone() {
-        return new Tree(tree, fields, objectiveField, rootDistribution, 
+        return new Tree(tree, fields, objectiveField, rootDistribution,
         		id, null, false, treeInfo);
     }
-    
+
     private void extractDistribution(JSONObject summary) {
     	if (summary.get("bins") != null) {
             this.distribution = (JSONArray) summary.get("bins");
@@ -296,7 +296,7 @@ public class Tree extends AbstractTree {
             this.distributionUnit = "categories";
         }
     }
-    
+
     /**
      * Checks if the node's value is a category
      *
@@ -329,7 +329,7 @@ public class Tree extends AbstractTree {
 
         return true;
     }
-    
+
     /**
      * Returns the median value for a distribution
      *
@@ -339,7 +339,7 @@ public class Tree extends AbstractTree {
         Double previousValue = null;
         for (Object binInfo : distribution) {
             Double value = ((Number) ((JSONArray) binInfo).get(0)).doubleValue();
-            
+
             counter += ((Number) ((JSONArray) binInfo).get(1)).intValue();
             if( counter > (count / 2) ) {
                 if( (count % 2 == 0) && ((counter - 1) == (count / 2)) &&
@@ -349,13 +349,13 @@ public class Tree extends AbstractTree {
 
                 return value;
             }
-            
+
             previousValue = value;
         }
 
         return null;
     }
-    
+
     /**
      * Returns the gini impurity score associated to the distribution in the node
      *
@@ -373,7 +373,7 @@ public class Tree extends AbstractTree {
 
         return 1.0 - purity;
     }
-    
+
     /**
      * Computes the variance error
      *
@@ -424,15 +424,15 @@ public class Tree extends AbstractTree {
 
         return Double.NaN;
     }
-    
-    
+
+
     /**
      * Computes the mean of a distribution in the [[point, instances]] syntax
      */
     protected double mean(List<JSONArray> distribution) {
         double addition = 0.0f;
         double count = 0.0f;
-        
+
         for (JSONArray bin : distribution) {
             double point = ((Number) bin.get(0)).doubleValue();
             double instances = ((Number) bin.get(1)).doubleValue();
@@ -440,15 +440,15 @@ public class Tree extends AbstractTree {
             addition += point * instances;
             count += instances;
         }
-        
+
         if( count > 1 ) {
             return addition / count;
         }
-        
+
         return Double.NaN;
     }
-    
-    
+
+
     /**
      * Wilson score interval computation of the distribution for the prediction
      *
@@ -520,8 +520,8 @@ public class Tree extends AbstractTree {
         wsSqrt = Math.sqrt((p * (1 - p) / n) + (z2 / (4 * n2)));
         return (p + (z2 / (2 * n)) - (z * wsSqrt)) / (1 + (z2 / n));
     }
-    
-    
+
+
     /**
      * Returns a list that includes all the leaves of the tree.
      *
@@ -561,7 +561,7 @@ public class Tree extends AbstractTree {
     public List<Tree> getLeaves(TreeNodeFilter filter) {
         return getLeaves(null, filter);
     }
-    
+
     /**
      * Returns the information associated to each of the tree nodes in rows format
      */
@@ -625,11 +625,11 @@ public class Tree extends AbstractTree {
 
         return rows;
     }
-    
-    
+
+
     /**
      * Translates a tree model into a set of IF-THEN rules.
-     * 
+     *
      * @param depth
      *            controls the size of indentation
      */
@@ -703,7 +703,7 @@ public class Tree extends AbstractTree {
 
         return rules;
     }
-    
+
     /**
      * Filters the contents of a nodesList. If any of the nodes is in the
      * ids list, the rest of nodes are removed. If none is in the ids list
@@ -731,8 +731,8 @@ public class Tree extends AbstractTree {
 
         return nodes;
     }
-    
-    
+
+
     /**
      * Prints out an IF-THEN rule version of the tree.
      */
@@ -769,11 +769,11 @@ public class Tree extends AbstractTree {
         }
         return generateRules(0, language, idsPath, subtree);
     }
-    
-    
+
+
     /**
      * Translate the model into a set of "if" java statements.
-     * 
+     *
      */
     public String getJavaBody(final List<String> idsPath, final boolean subtree) {
         return getJavaBody(0, "", null, null, idsPath, subtree);
@@ -863,24 +863,24 @@ public class Tree extends AbstractTree {
 
         return instructions;
     }
-    
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
+
+
+
     /**
      * Makes a prediction based on a number of field values.
-     * 
+     *
      * The input fields must be keyed by Id.
-     * 
+     *
      * .predict({"petal length": 1})
-     * 
+     *
      */
     public HashMap<Object, Object> predict(final JSONObject inputData) {
         return predict(inputData, null, MissingStrategy.LAST_PREDICTION);
@@ -889,11 +889,11 @@ public class Tree extends AbstractTree {
 
     /**
      * Makes a prediction based on a number of field values.
-     * 
+     *
      * The input fields must be keyed by Id.
-     * 
+     *
      * .predict({"petal length": 1})
-     * 
+     *
      */
     public Prediction predict(final JSONObject inputData, List<String> path,
                                            MissingStrategy strategy) {
@@ -917,7 +917,7 @@ public class Tree extends AbstractTree {
                     }
                 }
             }
-            
+
             Integer dMin = !this.regression ? null : this.min;
             Integer dMax = !this.regression ? null : this.max;
 
@@ -929,7 +929,7 @@ public class Tree extends AbstractTree {
             TreeHolder lastNode = new TreeHolder();
             Map<Object, Number> finalDistribution = predictProportional(
             		inputData, lastNode, path, false, false);
-            
+
             if( isRegression() ) {
             	// singular case:
                 // when the prediction is the one given in a 1-instance node
@@ -946,11 +946,11 @@ public class Tree extends AbstractTree {
 
                 // when there's more instances, sort elements by their mean
                 JSONArray distribution  = Utils.convertDistributionMapToSortedArray(finalDistribution);
-                
+
                 String distributionUnit = (distribution.size() > BINS_LIMIT ? "bins" : "counts");
 
                 distribution = Utils.mergeBins(distribution, BINS_LIMIT);
-                
+
                 long totalInstances = calculateTotalInstances(distribution);
 
                 double prediction = 0.0;
@@ -959,11 +959,11 @@ public class Tree extends AbstractTree {
                 	// where there's only one bin, there will be no error, but
                     // we use a correction derived from the parent's error
                 	prediction = ((Number) ((JSONArray) distribution.get(0)).get(0)).doubleValue();
-                	
+
                 	if (totalInstances < 2) {
                 		totalInstances = 1;
                 	}
-                	
+
                 	try {
                 		// some strange models can have nodes with no confidence
                 		confidence = lastNode.tree.getConfidence();
@@ -975,26 +975,31 @@ public class Tree extends AbstractTree {
                 	confidence = regressionError(unbiasedSampleVariance(distribution, prediction),
                             totalInstances, DEFAULT_RZ);
                 }
-                
+
                 Integer dMin = !this.regression ? null : this.min;
                 Integer dMax = !this.regression ? null : this.max;
-                
+
                 return new Prediction(prediction, confidence, totalInstances,
                         distributionMedian(distribution, totalInstances),
                         path, distribution, distributionUnit,
-                        lastNode.getTree().getChildren(), 
+                        lastNode.getTree().getChildren(),
                         dMin,
                         dMax);
             } else {
                 JSONArray distribution  = Utils.convertDistributionMapToSortedArray(finalDistribution);
                 long totalInstances = calculateTotalInstances(distribution);
 
-                return new Prediction(((JSONArray) distribution.get(0)).get(0),
-                        wsConfidence(((JSONArray) distribution.get(0)).get(0), distribution,
-                                totalInstances, DEFAULT_RZ),
-                        totalInstances, null,
-                        path, distribution, "categorical",
-                        lastNode.getTree().getChildren(), null, null);
+                if (distribution.size() > 0) {
+                    return new Prediction(((JSONArray) distribution.get(0)).get(0),
+                                          wsConfidence(((JSONArray) distribution.get(0)).get(0), distribution,
+                                                       totalInstances, DEFAULT_RZ),
+                                          totalInstances, null,
+                                          path, distribution, "categorical",
+                                          lastNode.getTree().getChildren(), null, null);
+                }
+                else {
+                    return new Prediction();
+                }
             }
         } else {
             throw new UnsupportedOperationException(
@@ -1018,20 +1023,20 @@ public class Tree extends AbstractTree {
     protected Map<Object, Number> predictProportional(
     		final JSONObject inputData, final TreeHolder lastNode, List<String> path,
             Boolean missingFound, Boolean median) {
-    	
+
         if( path == null ) {
             path = new ArrayList<String>();
         }
 
         Map<Object, Number> finalDistribution = new HashMap<Object, Number>();
-        
+
         // We are in a leaf node... the only thing we need to do is return distribution of the node as a Map object
         if( children.isEmpty() ) {
             lastNode.setTree(this);
             distribution = !this.weighted ? distribution : weightedDistribution;
             return Utils.mergeDistributions(new HashMap<Object, Number>(), Utils.convertDistributionArrayToMap(distribution));
         }
-        
+
         String optype = (String) ((JSONObject) fields.get(split(children))).get("optype");
         if( isOneBranch(children, inputData) || optype.equals("text") || optype.equals("items")) {
         	for (Tree child : children) {
@@ -1042,7 +1047,7 @@ public class Tree extends AbstractTree {
                     }
                     return child.predictProportional(inputData, lastNode, path, missingFound, median);
                 }
-            }	
+            }
         } else {
             // missing value found, the unique path stops
             missingFound = true;
@@ -1050,7 +1055,7 @@ public class Tree extends AbstractTree {
                 finalDistribution = Utils.mergeDistributions(finalDistribution,
                         child.predictProportional(inputData, lastNode, path, missingFound, median));
             }
-            
+
             /*
             minimums = []
             maximums = []
@@ -1073,20 +1078,20 @@ public class Tree extends AbstractTree {
                     max(maximums) if maximums else None, self, population,
                     self)
             */
-            
-            
+
+
             return finalDistribution;
         }
 
 
         return null;
     }
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
     protected static class TreeHolder {
         private Tree tree;
 
