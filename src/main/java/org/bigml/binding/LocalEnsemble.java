@@ -8,16 +8,16 @@
  * reduce the latency for each prediction and let you use your models
  * offline.
  *
- * Example usage (assuming that you have previously set up the 
- * BIGML_USERNAME and BIGML_API_KEY environment variables and that you 
+ * Example usage (assuming that you have previously set up the
+ * BIGML_USERNAME and BIGML_API_KEY environment variables and that you
  * own the ensemble/id below):
  *
  *
  * import org.bigml.binding.LocalEnsemble;
- * 
+ *
  * // API client
  * BigMLClient api = new BigMLClient();
- * 
+ *
  * JSONObject ensemble = api.
  * 		getEnsemble("ensemble/5b39e6b9c7736e583400214c");
  * LocalEnsemble localEnsemble = new LocalEnsemble(ensemble)
@@ -27,7 +27,7 @@
  * 		 \"sepal length\": 1, \"sepal width\": 0.5}");
  *
  * localEnsemble.predict(predictors)
- * 
+ *
  */
 package org.bigml.binding;
 
@@ -43,10 +43,10 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A local predictive Ensemble.
- * 
+ *
  * Uses a number of BigML remote models to build an ensemble local version that
  * can be used to generate prediction.
- * 
+ *
  */
 public class LocalEnsemble extends ModelFields implements SupervisedModelInterface {
 
@@ -273,7 +273,7 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
 				boostingOffsets = (JSONArray) ensemble.get("initial_offsets");
 			}
 		}
-		
+
 		if (!regression) {
 			JSONObject summary = (JSONObject) Utils.getJSONObject(
 					(JSONObject) fields.get(objectiveField), "summary");
@@ -292,14 +292,14 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
 			multiModel = new MultiModel(models, fields, classNames);
 		}
 	}
-	
+
 	/**
 	 * Returns the resourceId
 	 */
 	public String getResourceId() {
 		return ensembleId;
 	}
-	
+
 	/**
 	 * Returns the class names
 	 */
@@ -369,14 +369,14 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
 						(JSONObject) split);
 				fields.putAll(localModel.getFields());
 			}
-		} catch (Exception e) {}
+		} catch (Exception e) {logger.error("Not good", e);}
 	}
 
 	/**
 	 * Computes the predicted distributions and combines them to give the final
 	 * predicted distribution. Depending on the method parameter probability,
 	 * votes or the confidence are used to weight the models.
-	 * 
+	 *
 	 */
 	private List<Double> combineDistributions(JSONObject inputData,
 			MissingStrategy missingStrategy, PredictionMethod method)
@@ -385,7 +385,7 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
 		if (method == null) {
 			method = PredictionMethod.PROBABILITY;
 		}
-		
+
 		MultiVoteList votes = null;
 
 		if (modelsSplit != null && modelsSplit.size() > 1) {
@@ -626,7 +626,7 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
 
 	/**
 	 * Sorting utility
-	 * 
+	 *
 	 */
 	private void sortDistribution(JSONArray distribution) {
 		Collections.sort(distribution, new Comparator<JSONArray>() {
@@ -687,14 +687,14 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
 	 *            distribution: distribution of probabilities for each of the
 	 *            objective field classes - unused_fields: list of fields in the
 	 *            input data that
-	 * 
+	 *
 	 */
-	public HashMap<String, Object> predict(JSONObject inputData, 
-			PredictionMethod method, Map options, 
+	public HashMap<String, Object> predict(JSONObject inputData,
+			PredictionMethod method, Map options,
 			MissingStrategy missingStrategy,
-			JSONObject operatingPoint, String operatingKind, 
+			JSONObject operatingPoint, String operatingKind,
 			Boolean median, Boolean full) throws Exception {
-		
+
 		if (missingStrategy == null) {
 			missingStrategy = MissingStrategy.LAST_PREDICTION;
 		}
@@ -728,7 +728,7 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
 			// combiner is set, default operating kind is "probability"
 			operatingKind = "probability";
 		}
-		
+
 		// Operating Point
 		if (operatingPoint != null) {
 			if (regression) {
@@ -746,7 +746,7 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
 				method = "confidence".equals(operatingKind)
 						? PredictionMethod.CONFIDENCE
 						: PredictionMethod.PLURALITY;
-				
+
 				return predict(inputData, method, options, missingStrategy,
 						null, null, null, full);
 			} else {
@@ -755,7 +755,7 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
 						operatingKind);
 			}
 		}
-		
+
 		MultiVote votes = null;
 		if (modelsSplit != null && modelsSplit.size() > 1) {
 			// If there's more than one chunk of models, they must be
@@ -774,7 +774,7 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
 			// corresponding multimodel to predict
 			MultiVote votesSplit = this.multiModel.generateVotes(inputData,
 					missingStrategy, unusedFields);
-			
+
 			votes = new MultiVote(votesSplit.predictions, boostingOffsets);
 		}
 
@@ -787,7 +787,7 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
 		}
 
 		HashMap<Object, Object> results = votes.combine(method, options);
-		
+
 		HashMap<String, Object> prediction = new HashMap<String, Object>();
 		for (Object key : results.keySet()) {
 			prediction.put((String) key, results.get(key));
@@ -835,12 +835,16 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
 		}
 
 		for (Object pred : predictions) {
-			HashMap<String, Object> prediction 
+			HashMap<String, Object> prediction
 				= (HashMap<String, Object>) pred;
 			String category = (String) prediction.get("category");
-
-			prediction.put("prediction", prediction.get("category"));
-			prediction.remove("category");
+                        if (category != null) {
+                            prediction.put("prediction", category);
+                            prediction.remove("category");
+                        }
+                        else {
+                            category = (String) prediction.get("prediction");
+                        }
 
 			if (category.equals(positiveClass)
 					&& (Double) prediction.get(kind) > threshold) {
@@ -848,7 +852,7 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
 			}
 		}
 
-		HashMap<String, Object> prediction 
+		HashMap<String, Object> prediction
 			= (HashMap<String, Object>) predictions.get(0);
 		String category = (String) prediction.get("prediction");
 		if (category.equals(positiveClass)) {
@@ -894,7 +898,7 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
 			predictions = predictVotes(inputData, missingStrategy);
 		}
 
-		HashMap<String, Object> prediction 
+		HashMap<String, Object> prediction
 			= (HashMap<String, Object>) predictions.get(0);
 		prediction.put("prediction", prediction.get("category"));
 		prediction.remove("category");
@@ -907,7 +911,7 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
 	 * For classification models, Predicts a probability for each possible
 	 * output class, based on input values. The input fields must be a
 	 * dictionary keyed by field name or field ID.
-	 * 
+	 *
 	 * For regressions, the output is a single element list containing the
 	 * prediction.
 	 *
@@ -930,13 +934,19 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
 			if (boosting != null) {
 				prediction = predict(inputData, PredictionMethod.PLURALITY,
 						null, missingStrategy, null, null, null, true);
+                                // logger.info("*** PREDICTION is " + prediction);
 				JSONArray probabilities = (JSONArray) prediction
 						.get("probabilities");
-				predictions.add(probabilities);
+                                if (probabilities != null) {
+                                    predictions.add(probabilities);
+                                }
+                                else {
+                                    predictions.add(prediction);
+                                }
 			} else {
 				List<Double> output = combineDistributions(inputData,
 						missingStrategy, null);
-				
+
 				for (int i = 0; i < classNames.size(); i++) {
 					prediction = new JSONObject();
 					prediction.put("category", (String) classNames.get(i));
@@ -955,7 +965,7 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
 	 * For classification models, Predicts a confidence for each possible output
 	 * class, based on input values. The input fields must be a dictionary keyed
 	 * by field name or field ID.
-	 * 
+	 *
 	 * For regressions, the output is a single element list containing the
 	 * prediction.
 	 *
@@ -999,7 +1009,7 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
 	 * For classification models, Predicts the votes for each possible output
 	 * class, based on input values. The input fields must be a dictionary keyed
 	 * by field name or field ID.
-	 * 
+	 *
 	 * For regressions, the output is a single element list containing the
 	 * prediction.
 	 *
