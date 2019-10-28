@@ -64,14 +64,14 @@
     <scm>
         <url>https://github.com/bigmlcom/bigml-java</url>
     </scm>
-    
+
     <repositories>
 	    <repository>
 	      <id>Clojars</id>
 	      <url>http://clojars.org/repo/</url>
 	    </repository>
 	 </repositories>
-	 
+
     <dependencies>
         <!-- Testing -->
         <dependency>
