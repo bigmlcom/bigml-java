@@ -1,5 +1,10 @@
 # Changes in the BigML.io Java bindings
 
+## 1.8.10 version
+
+* Make empty constructor for BigMLClent public.
+* Fixed test suite.
+
 ## 1.8.9 version
 
 * Adding LinearRegression REST call methods.
