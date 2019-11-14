@@ -100,7 +100,7 @@ public class BigMLClient {
     /**
      * Constructor
      */
-    protected BigMLClient()  {
+    public BigMLClient()  {
     	try {
     		this.init(null, null, null, null);
     	} catch (AuthenticationException ae) {
