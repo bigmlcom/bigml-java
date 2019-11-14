@@ -186,9 +186,8 @@ Feature: Create Predictions
         Examples:
         | data  | time_1  | time_2 | time_3 | options | data_input | prediction | probability | objective |
         | data/spam.csv | 50      | 50     | 180  | {"fields": {"000001": {"optype": "text", "term_analysis": {"token_mode": "full_terms_only", "language": "en"}}}}  | {"Message": "A normal message"}  |  ham | 0.8795  | 000000  |
-        | data/spam.csv | 50      | 50     | 180  | {"fields": {"000001": {"optype": "text", "term_analysis": {"token_mode": "all", "language": "en"}}}}  | {"Message": "mobile"}  |  ham | 0.8117 | 000000  |
-        | data/movies.csv | 50      | 50     | 180  | {"fields": {"000007": {"optype": "items", "item_analysis": {"separator": "$"}}}}  | {"gender": "Female", "genres": "Adventure$Action", "timestamp": 993906291, "occupation": "K-12 student", "zipcode": 59583, "rating": 3}  |  Under 18  | 0.8393  | 000002  |
-    
+        | data/spam.csv | 50      | 50     | 180  | {"fields": {"000001": {"optype": "text", "term_analysis": {"token_mode": "all", "language": "en"}}}}  | {"Message": "mobile"}  |  ham | 0.91833 | 000000  |
+        | data/movies.csv | 50      | 50     | 180  | {"fields": {"000007": {"optype": "items", "item_analysis": {"separator": "$"}}}}  | {"gender": "Female", "genres": "Adventure$Action", "timestamp": 993906291, "occupation": "K-12 student", "zipcode": 59583, "rating": 3}  |  Under 18  | 0.83441  | 000002  |
     
     Scenario Outline: Successfully comparing predictions with text options
         Given I create a data source uploading a "<data>" file
