@@ -42,6 +42,8 @@ import org.bigml.binding.utils.Utils;
 public class LocalAssociation extends ModelFields implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+	
+	private static String ASSOCIATION_RE = "^association/[a-f,0-9]{24}$";
 
 	final static String DEFAULT_SEARCH_STRATEGY = "leverage";
     final static int DEFAULT_K = 100;
@@ -93,24 +95,63 @@ public class LocalAssociation extends ModelFields implements Serializable {
         NO_ITEMS.add("numeric");
         NO_ITEMS.add("categorical");
     }
-
+    
+    private String associationId;
+    private BigMLClient bigmlClient;
 	private List<AssociationRule> rules;
 	private List<AssociationItem> items;
-
+	
 	public LocalAssociation(JSONObject association) throws Exception {
-		super();
+        this(null, association);
+    }
 
-		if (association.get("resource") == null) {
-			throw new Exception(
-					"Cannot create the Association instance. Could not find " +
-                    "the 'resource' key in the resource");
+	public LocalAssociation(
+			BigMLClient bigmlClient, JSONObject association) 
+					throws Exception {
+		
+		super((JSONObject) Utils.getJSONObject(
+				association, "association.fields", new JSONObject()));
+
+		this.bigmlClient =
+            (bigmlClient != null)
+                ? bigmlClient
+                : new BigMLClient(null, null, BigMLClient.STORAGE);
+
+		// checks whether the information needed for local predictions 
+		// is in the first argument
+		if (!checkModelFields(association)) {
+			// if the fields used by the association are not
+			// available, use only ID to retrieve it again
+			associationId = (String) association.get("resource");
+			boolean validId = associationId.matches(ASSOCIATION_RE);
+			if (!validId) {
+				throw new Exception(
+						associationId + " is not a valid resource ID.");
+			}
 		}
-
-		if (association.containsKey("object") && association.get("object") instanceof Map) {
+		
+		if (!(association.containsKey("resource")
+				&& association.get("resource") != null)) {
+			association = this.bigmlClient.getAssociation(associationId);
+			
+			if ((String) association.get("resource") == null) {
+				throw new Exception(
+						associationId + " is not a valid resource ID.");
+			}
+		}
+    	
+		if (association.containsKey("object") &&
+				association.get("object") instanceof JSONObject) {
+			association = (JSONObject) association.get("object");
+		}
+		
+		if (association.containsKey("object") && 
+				association.get("object") instanceof Map) {
 			association = (JSONObject) association.get("object");
 		}
 
-		if (association.containsKey("associations") && association.get("associations") instanceof Map) {
+		if (association.containsKey("associations") && 
+				association.get("associations") instanceof Map) {
 			JSONObject status = (JSONObject) association.get("status");
 			if (status != null && status.containsKey("code")
 					&& AbstractResource.FINISHED == ((Number) status.get("code")).intValue()) {

@@ -56,6 +56,7 @@ public class LocalPca extends ModelFields implements Serializable {
 	static Logger logger = LoggerFactory.getLogger(LocalPca.class.getName());
 
 	private String pcaId;
+	private BigMLClient bigmlClient;
 	private JSONArray inputFields = null;
 	private JSONObject datasetFieldTypes;
 	private JSONObject categoriesProbabilities;
@@ -66,10 +67,21 @@ public class LocalPca extends ModelFields implements Serializable {
 	private JSONArray cumulativeVariance;
 	private JSONArray variance;
 	private JSONObject textStats;
-
+	
 	public LocalPca(JSONObject pca) throws Exception {
+        this(null, pca);
+    }
+	
+	public LocalPca(BigMLClient bigmlClient, JSONObject pca) 
+			throws Exception {
+		
 		super((JSONObject) Utils.getJSONObject(pca, "pca.fields",
 				new JSONObject()));
+		
+		this.bigmlClient =
+            (bigmlClient != null)
+                ? bigmlClient
+                : new BigMLClient(null, null, BigMLClient.STORAGE);
 
 		// checks whether the information needed for local predictions
 		// is in the first argument
@@ -84,9 +96,7 @@ public class LocalPca extends ModelFields implements Serializable {
 		}
 
 		if (!(pca.containsKey("resource") && pca.get("resource") != null)) {
-			BigMLClient client = new BigMLClient(null, null,
-					BigMLClient.STORAGE);
-			pca = client.getPca(pcaId);
+			pca = this.bigmlClient.getPca(pcaId);
 
 			if ((String) pca.get("resource") == null) {
 				throw new Exception(pcaId + " is not a valid resource ID.");

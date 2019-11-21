@@ -80,7 +80,8 @@ public class LocalTimeseries extends ModelFields {
     private JSONObject forecast;
 
     private String timeseriesId;
-
+    private BigMLClient bigmlClient;
+    
     private JSONArray inputFields;
     private JSONArray objectiveFields;
 
@@ -94,19 +95,28 @@ public class LocalTimeseries extends ModelFields {
     private String trend;
     private JSONObject timeRange;
     private JSONObject fieldParameters;
-
+    
     public LocalTimeseries(JSONObject jsonData) throws Exception {
-		super(Utils.getFromJSONOr(jsonData, "time_series.fields"));
-
+        this(null, jsonData);
+    }
+    
+    public LocalTimeseries(BigMLClient bigmlClient, JSONObject jsonData) 
+    		throws Exception {
+		
+    	super(Utils.getFromJSONOr(jsonData, "time_series.fields"));
+    	
+    	this.bigmlClient =
+            (bigmlClient != null)
+                ? bigmlClient
+                : new BigMLClient(null, null, BigMLClient.STORAGE);
+    	
 		if (!checkModelFields(jsonData)) {
 			timeseriesId = (String) jsonData.get("resource");
 		}
 		
 		if (!(jsonData.containsKey("resource")
 				&& jsonData.get("resource") != null)) {
-			BigMLClient client = new BigMLClient(null, null,
-					BigMLClient.STORAGE);
-			jsonData = client.getTimeSeries(timeseriesId);
+			jsonData = this.bigmlClient.getTimeSeries(timeseriesId);
 			
 			if ((String)jsonData.get("resource") == null) {
 				throw new Exception(

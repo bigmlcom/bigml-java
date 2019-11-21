@@ -44,30 +44,64 @@ import java.util.Map;
 public class LocalAnomaly extends ModelFields implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    
+    private static String ANOMALY_RE = "^anomaly/[a-f,0-9]{24}$";
+    
+    private String anomalyId;
+    private BigMLClient bigmlClient;
     private JSONObject anomaly;
-    //private String anomalyId;
     private JSONArray inputFields;
     private Integer sampleSize = null;
     private Double meanDepth = null;
     private Double expectedMeanDepth = null;
     private List<JSONObject> topAnomalies;
     private List<AnomalyTree> iforest;
+    
+    public LocalAnomaly(JSONObject anomaly) throws Exception {
+        this(null, anomaly);
+    }
+    
+    public LocalAnomaly(BigMLClient bigmlClient, JSONObject anomaly) 
+    		throws Exception {
+        
+    	super((JSONObject) Utils.getJSONObject(
+    			anomaly, "anomaly.fields", new JSONObject()));
+    	
+    	this.bigmlClient =
+            (bigmlClient != null)
+                ? bigmlClient
+                : new BigMLClient(null, null, BigMLClient.STORAGE);
+    	
+    	// checks whether the information needed for local predictions 
+		// is in the first argument
+		if (!checkModelFields(anomaly)) {
+			// if the fields used by the anomaly are not
+			// available, use only ID to retrieve it again
+			anomalyId = (String) anomaly.get("resource");
+			boolean validId = anomalyId.matches(ANOMALY_RE);
+			if (!validId) {
+				throw new Exception(
+						anomalyId + " is not a valid resource ID.");
+			}
+		}
+		
+		if (!(anomaly.containsKey("resource")
+				&& anomaly.get("resource") != null)) {
+			anomaly = this.bigmlClient.getAnomaly(anomalyId);
+			
+			if ((String) anomaly.get("resource") == null) {
+				throw new Exception(
+						anomalyId + " is not a valid resource ID.");
+			}
+		}
+    	
+		if (anomaly.containsKey("object") &&
+				anomaly.get("object") instanceof JSONObject) {
+			anomaly = (JSONObject) anomaly.get("object");
+		}
 
-    public LocalAnomaly(JSONObject anomalyData) throws Exception {
-        super();
-
-        if (anomalyData.get("resource") == null) {
-            throw new Exception(
-                    "Cannot create the Anomaly instance. Could not " +
-            		"find the 'resource' key in the resource");
-        }
-
-        //anomalyId = (String) anomalyData.get("resource");
-
-        anomaly = anomalyData;
-
-        if (anomaly.containsKey("object") && anomaly.get("object") instanceof Map) {
+        if (anomaly.containsKey("object") && 
+        		anomaly.get("object") instanceof Map) {
             anomaly = (JSONObject) anomaly.get("object");
         }
 

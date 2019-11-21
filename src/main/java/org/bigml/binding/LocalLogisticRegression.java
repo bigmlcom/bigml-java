@@ -69,7 +69,7 @@ public class LocalLogisticRegression extends ModelFields implements SupervisedMo
 			.getLogger(LocalLogisticRegression.class.getName());
 
 	private String logisticRegressionId;
-
+	private BigMLClient bigmlClient;
 	private JSONObject datasetFieldTypes = null;
 	private JSONArray inputFields = null;
 	private String objectiveField = null;
@@ -86,10 +86,20 @@ public class LocalLogisticRegression extends ModelFields implements SupervisedMo
 	private List<String> classNames = new ArrayList<String>();
 	private String weightField;
 	
-	
 	public LocalLogisticRegression(JSONObject logistic) throws Exception {
+        this(null, logistic);
+    }
+	
+	public LocalLogisticRegression(
+			BigMLClient bigmlClient, JSONObject logistic) throws Exception {
+		
 		super((JSONObject) Utils.getJSONObject(
 				logistic, "logistic_regression.fields", new JSONObject()));
+		
+		this.bigmlClient =
+            (bigmlClient != null)
+                ? bigmlClient
+                : new BigMLClient(null, null, BigMLClient.STORAGE);
 		
 		// checks whether the information needed for local predictions 
 		// is in the first argument
@@ -107,9 +117,8 @@ public class LocalLogisticRegression extends ModelFields implements SupervisedMo
 		
 		if (!(logistic.containsKey("resource")
 				&& logistic.get("resource") != null)) {
-			BigMLClient client = new BigMLClient(null, null,
-					BigMLClient.STORAGE);
-			logistic = client.getLogisticRegression(logisticRegressionId);
+			logistic = this.bigmlClient.getLogisticRegression(
+					logisticRegressionId);
 			
 			if ((String) logistic.get("resource") == null) {
 				throw new Exception(

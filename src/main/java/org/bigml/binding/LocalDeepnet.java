@@ -61,6 +61,7 @@ public class LocalDeepnet extends ModelFields implements SupervisedModelInterfac
 			LocalDeepnet.class.getName());
 	
 	private String deepnetId;
+	private BigMLClient bigmlClient;
 	private JSONArray inputFields = null;
 	private String objectiveField = null;
 	private JSONArray objectiveFields = null;
@@ -71,10 +72,20 @@ public class LocalDeepnet extends ModelFields implements SupervisedModelInterfac
 	private JSONArray preprocess = null;
 	//private JSONObject optimizer = null;
 	
-	
 	public LocalDeepnet(JSONObject deepnet) throws Exception {
+        this(null, deepnet);
+    }
+	
+	public LocalDeepnet(BigMLClient bigmlClient, JSONObject deepnet) 
+			throws Exception {
+		
 		super((JSONObject) Utils.getJSONObject(
 				deepnet, "deepnet.fields", new JSONObject()));
+		
+		this.bigmlClient =
+            (bigmlClient != null)
+                ? bigmlClient
+                : new BigMLClient(null, null, BigMLClient.STORAGE);
 		
 		// checks whether the information needed for local predictions 
 		// is in the first argument
@@ -91,9 +102,7 @@ public class LocalDeepnet extends ModelFields implements SupervisedModelInterfac
 		
 		if (!(deepnet.containsKey("resource")
 				&& deepnet.get("resource") != null)) {
-			BigMLClient client = new BigMLClient(null, null, 
-					BigMLClient.STORAGE);
-			deepnet = client.getDeepnet(deepnetId);
+			deepnet = this.bigmlClient.getDeepnet(deepnetId);
 			
 			if ((String) deepnet.get("resource") == null) {
 				throw new Exception(

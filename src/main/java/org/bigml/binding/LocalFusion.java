@@ -61,6 +61,7 @@ public class LocalFusion extends ModelFields implements SupervisedModelInterface
 			LocalFusion.class.getName());
 
 	private String fusionId;
+	private BigMLClient bigmlClient;
 	private String objectiveField = null;
 	private JSONArray modelsIds;
 	private List<Double> weights = new ArrayList<Double>();
@@ -71,15 +72,20 @@ public class LocalFusion extends ModelFields implements SupervisedModelInterface
 	
 	public LocalFusion(JSONObject fusion) 
 			throws Exception {
-		this(fusion, null);
+		this(null, fusion, null);
 	}
 	
 	
-	public LocalFusion(JSONObject fusion, Integer maxModels) 
+	public LocalFusion(BigMLClient bigmlClient, JSONObject fusion, Integer maxModels) 
 			throws Exception {
 		
 		super((JSONObject) Utils.getJSONObject(
 				fusion, "fusion.fields", new JSONObject()));
+		
+		this.bigmlClient =
+            (bigmlClient != null)
+                ? bigmlClient
+                : new BigMLClient(null, null, BigMLClient.STORAGE);
 		
 		// checks whether the information needed for local predictions 
 		// is in the first argument
@@ -96,9 +102,7 @@ public class LocalFusion extends ModelFields implements SupervisedModelInterface
 		
 		if (!(fusion.containsKey("resource")
 				&& fusion.get("resource") != null)) {
-			BigMLClient client = new BigMLClient(null, null, 
-					BigMLClient.STORAGE);
-			fusion = client.getFusion(fusionId);
+			fusion = this.bigmlClient.getFusion(fusionId);
 			
 			if ((String) fusion.get("resource") == null) {
 				throw new Exception(

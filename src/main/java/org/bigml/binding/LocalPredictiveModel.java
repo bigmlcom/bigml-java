@@ -61,7 +61,8 @@ import java.util.*;
  * generate prediction locally.
  *
  */
-public class LocalPredictiveModel extends BaseModel implements PredictionConverter, SupervisedModelInterface {
+public class LocalPredictiveModel extends BaseModel
+	implements PredictionConverter, SupervisedModelInterface {
 
     private static final long serialVersionUID = 1L;
     
@@ -70,6 +71,8 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
      */
     static Logger logger = LoggerFactory.getLogger(LocalPredictiveModel.class
             .getName());
+    
+    private static String MODEL_RE = "^model/[a-f,0-9]{24}$";
 
     // Map operator str to its corresponding java operator
     static HashMap<String, String> JAVA_TYPES = new HashMap<String, String>();
@@ -100,7 +103,9 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
 
     private static final String[] OPERATING_POINT_KINDS = {
     		"probability", "confidence" };
-    
+   
+    private String modelId;
+    private BigMLClient bigmlClient;
     private JSONObject root;
     private Tree tree;
     private BoostedTree boostedTree;
@@ -112,16 +117,40 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
     private JSONObject boosting = null;
     private List<String> classNames = new ArrayList<String>();
     private List<String> objectiveCategories = new ArrayList<String>();
-
-    /**
-     * Constructor
-     *
-     * @param model		the json representation for the remote model
-     */
+    
+    
     public LocalPredictiveModel(JSONObject model) throws Exception {
-        super(model);
+        this(null, model);
+    }
+    
+    public LocalPredictiveModel(
+    		BigMLClient bigmlClient, JSONObject model) throws Exception {
+        
+    	super(model);
+    	
+    	this.bigmlClient =
+            (bigmlClient != null)
+                ? bigmlClient
+                : new BigMLClient(null, null, BigMLClient.STORAGE);
         
         try {
+        	modelId = (String) model.get("resource");
+        	boolean validId = modelId.matches(MODEL_RE);
+			if (!validId) {
+				throw new Exception(
+						modelId + " is not a valid resource ID.");
+			}
+        	
+        	if (!(model.containsKey("resource")
+    				&& model.get("resource") != null)) {
+    			model = this.bigmlClient.getModel(modelId);
+    			
+    			if ((String) model.get("resource") == null) {
+    				throw new Exception(
+    						modelId + " is not a valid resource ID.");
+    			}
+    		}
+        	
         	if (model.containsKey("object") &&
         			model.get("object") instanceof JSONObject) {
         		model = (JSONObject) model.get("object");

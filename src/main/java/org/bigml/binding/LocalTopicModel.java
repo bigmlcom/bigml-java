@@ -42,6 +42,8 @@ import org.bigml.binding.utils.Utils;
 public class LocalTopicModel extends ModelFields implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+	
+	private static String TOPICMODEL_RE = "^topicmodel/[a-f,0-9]{24}$";
 
 	final static int MAXIMUM_TERM_LENGTH = 30;
 	final static int MIN_UPDATES = 16;
@@ -50,7 +52,9 @@ public class LocalTopicModel extends ModelFields implements Serializable {
 
 	// Logging
 	Logger logger = LoggerFactory.getLogger(LocalTopicModel.class);
-
+	
+	private String topicModelId;
+	private BigMLClient bigmlClient;
 	private StemmerInterface stemmer;
 	private long seed;
 	private Boolean caseSensitive = false;
@@ -63,10 +67,51 @@ public class LocalTopicModel extends ModelFields implements Serializable {
 
 	private Double alpha;
 	private Double ktimesalpha;
-
+	
 	public LocalTopicModel(JSONObject topicModel) throws Exception {
+        this(null, topicModel);
+    }
+	
+	public LocalTopicModel(BigMLClient bigmlClient, JSONObject topicModel) 
+			throws Exception {
+		
 		super();
-
+		
+		this.bigmlClient =
+            (bigmlClient != null)
+                ? bigmlClient
+                : new BigMLClient(null, null, BigMLClient.STORAGE);
+		
+		// checks whether the information needed for local predictions 
+		// is in the first argument
+		if (!checkModelFields(topicModel)) {
+			// if the fields used by the topic model are not
+			// available, use only ID to retrieve it again
+			topicModelId = (String) topicModel.get("resource");
+			boolean validId = topicModelId.matches(
+					TOPICMODEL_RE);
+			if (!validId) {
+				throw new Exception(
+						topicModelId + " is not a valid resource ID.");
+			}
+		}
+		
+		if (!(topicModel.containsKey("resource")
+				&& topicModel.get("resource") != null)) {
+			topicModel = this.bigmlClient.getTopicModel(
+					topicModelId);
+			
+			if ((String) topicModel.get("resource") == null) {
+				throw new Exception(
+						topicModelId + " is not a valid resource ID.");
+			}
+		}
+		
+		if (topicModel.containsKey("object") &&
+				topicModel.get("object") instanceof JSONObject) {
+			topicModel = (JSONObject) topicModel.get("object");
+		}
+		
 		if (topicModel.get("resource") == null) {
 			throw new Exception(
 					"Cannot create the topicModel instance. Could not "
