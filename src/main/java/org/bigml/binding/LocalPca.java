@@ -56,7 +56,6 @@ public class LocalPca extends ModelFields implements Serializable {
 	static Logger logger = LoggerFactory.getLogger(LocalPca.class.getName());
 
 	private String pcaId;
-	private BigMLClient bigmlClient;
 	private JSONArray inputFields = null;
 	private JSONObject datasetFieldTypes;
 	private JSONObject categoriesProbabilities;
@@ -78,10 +77,7 @@ public class LocalPca extends ModelFields implements Serializable {
 		super((JSONObject) Utils.getJSONObject(pca, "pca.fields",
 				new JSONObject()));
 		
-		this.bigmlClient =
-            (bigmlClient != null)
-                ? bigmlClient
-                : new BigMLClient(null, null, BigMLClient.STORAGE);
+		initBigML(bigmlClient);
 
 		// checks whether the information needed for local predictions
 		// is in the first argument

@@ -48,7 +48,6 @@ public class LocalAnomaly extends ModelFields implements Serializable {
     private static String ANOMALY_RE = "^anomaly/[a-f,0-9]{24}$";
     
     private String anomalyId;
-    private BigMLClient bigmlClient;
     private JSONObject anomaly;
     private JSONArray inputFields;
     private Integer sampleSize = null;
@@ -67,10 +66,7 @@ public class LocalAnomaly extends ModelFields implements Serializable {
     	super((JSONObject) Utils.getJSONObject(
     			anomaly, "anomaly.fields", new JSONObject()));
     	
-    	this.bigmlClient =
-            (bigmlClient != null)
-                ? bigmlClient
-                : new BigMLClient(null, null, BigMLClient.STORAGE);
+    	initBigML(bigmlClient);
     	
     	// checks whether the information needed for local predictions 
 		// is in the first argument

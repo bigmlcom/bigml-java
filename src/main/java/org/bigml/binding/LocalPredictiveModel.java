@@ -105,7 +105,6 @@ public class LocalPredictiveModel extends BaseModel
     		"probability", "confidence" };
    
     private String modelId;
-    private BigMLClient bigmlClient;
     private JSONObject root;
     private Tree tree;
     private BoostedTree boostedTree;
@@ -128,10 +127,7 @@ public class LocalPredictiveModel extends BaseModel
         
     	super(model);
     	
-    	this.bigmlClient =
-            (bigmlClient != null)
-                ? bigmlClient
-                : new BigMLClient(null, null, BigMLClient.STORAGE);
+    	initBigML(bigmlClient);
         
         try {
         	modelId = (String) model.get("resource");

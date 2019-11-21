@@ -82,7 +82,6 @@ public class LocalLinearRegression extends ModelFields {
             .getLogger(LocalLogisticRegression.class.getName());
 
     private String linearRegressionId;
-    private BigMLClient bigmlClient;
     private JSONArray inputFields = null;
     private JSONObject datasetFieldTypes = null;
     private String objectiveField = null;
@@ -108,10 +107,7 @@ public class LocalLinearRegression extends ModelFields {
         super((JSONObject) Utils.getJSONObject(
                 linear, "linear_regression.fields", new JSONObject()));
 
-        this.bigmlClient =
-            (bigmlClient != null)
-                ? bigmlClient
-                : new BigMLClient(null, null, BigMLClient.STORAGE);
+        initBigML(bigmlClient);
 
         // checks whether the information needed for local predictions
         // is in the first argument

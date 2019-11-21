@@ -65,7 +65,6 @@ public class LocalCluster extends ModelFields {
 
     
     private String clusterId;
-    private BigMLClient bigmlClient;
     private List<LocalCentroid> centroids;
     private JSONArray clusters;
     private LocalCentroid clusterGlobal;
@@ -97,10 +96,7 @@ public class LocalCluster extends ModelFields {
         super((JSONObject) Utils.getJSONObject(
                 cluster, "cluster.fields", new JSONObject()));
 
-        this.bigmlClient =
-            (bigmlClient != null)
-                ? bigmlClient
-                : new BigMLClient(null, null, BigMLClient.STORAGE);
+        initBigML(bigmlClient);
 
         // checks whether the information needed for local predictions 
         // is in the first argument

@@ -54,7 +54,6 @@ public class LocalTopicModel extends ModelFields implements Serializable {
 	Logger logger = LoggerFactory.getLogger(LocalTopicModel.class);
 	
 	private String topicModelId;
-	private BigMLClient bigmlClient;
 	private StemmerInterface stemmer;
 	private long seed;
 	private Boolean caseSensitive = false;
@@ -77,10 +76,7 @@ public class LocalTopicModel extends ModelFields implements Serializable {
 		
 		super();
 		
-		this.bigmlClient =
-            (bigmlClient != null)
-                ? bigmlClient
-                : new BigMLClient(null, null, BigMLClient.STORAGE);
+		initBigML(bigmlClient);
 		
 		// checks whether the information needed for local predictions 
 		// is in the first argument

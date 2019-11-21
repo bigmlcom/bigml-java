@@ -61,7 +61,6 @@ public class LocalFusion extends ModelFields implements SupervisedModelInterface
 			LocalFusion.class.getName());
 
 	private String fusionId;
-	private BigMLClient bigmlClient;
 	private String objectiveField = null;
 	private JSONArray modelsIds;
 	private List<Double> weights = new ArrayList<Double>();
@@ -82,10 +81,7 @@ public class LocalFusion extends ModelFields implements SupervisedModelInterface
 		super((JSONObject) Utils.getJSONObject(
 				fusion, "fusion.fields", new JSONObject()));
 		
-		this.bigmlClient =
-            (bigmlClient != null)
-                ? bigmlClient
-                : new BigMLClient(null, null, BigMLClient.STORAGE);
+		initBigML(bigmlClient);
 		
 		// checks whether the information needed for local predictions 
 		// is in the first argument

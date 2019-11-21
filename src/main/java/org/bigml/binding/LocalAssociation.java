@@ -97,7 +97,6 @@ public class LocalAssociation extends ModelFields implements Serializable {
     }
     
     private String associationId;
-    private BigMLClient bigmlClient;
 	private List<AssociationRule> rules;
 	private List<AssociationItem> items;
 	
@@ -112,10 +111,7 @@ public class LocalAssociation extends ModelFields implements Serializable {
 		super((JSONObject) Utils.getJSONObject(
 				association, "association.fields", new JSONObject()));
 
-		this.bigmlClient =
-            (bigmlClient != null)
-                ? bigmlClient
-                : new BigMLClient(null, null, BigMLClient.STORAGE);
+		initBigML(bigmlClient);
 
 		// checks whether the information needed for local predictions 
 		// is in the first argument

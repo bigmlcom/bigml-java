@@ -39,6 +39,8 @@ public class ModelFields implements Serializable {
 		FIELDS_PARENT.put("deepnet", "deepnet");
 		FIELDS_PARENT.put("linearregression", "linear_regression");
 	}
+	
+	protected BigMLClient bigmlClient;
 
 	protected String objectiveFieldId;
 	protected String objectiveFieldName;
@@ -92,6 +94,19 @@ public class ModelFields implements Serializable {
 	public ModelFields(JSONObject fields, String objectiveFieldId,
 			String dataLocale, List<String> missingTokens) {
 		initialize(fields, objectiveFieldId, dataLocale, missingTokens);
+	}
+	
+	/**
+	 * Inits BigMLClient
+	 * 
+	 * @param bigmlClient	BigMLClient
+	 */
+	protected void initBigML(BigMLClient bigmlClient) throws Exception {
+		
+		this.bigmlClient =
+            (bigmlClient != null)
+                ? bigmlClient
+                : new BigMLClient(null, null, BigMLClient.STORAGE);
 	}
 
 	/**

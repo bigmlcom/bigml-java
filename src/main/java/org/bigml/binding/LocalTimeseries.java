@@ -75,18 +75,13 @@ public class LocalTimeseries extends ModelFields {
 
     // Logging
     Logger logger = LoggerFactory.getLogger(LocalTimeseries.class);
-
+    
+    private String timeseriesId;
     private JSONObject timeseries;
     private JSONObject forecast;
-
-    private String timeseriesId;
-    private BigMLClient bigmlClient;
-    
     private JSONArray inputFields;
     private JSONArray objectiveFields;
-
     private Boolean allNumericObjectives;
-
     private Long period;
     private JSONObject etsModels;
     private JSONObject error;
@@ -105,10 +100,7 @@ public class LocalTimeseries extends ModelFields {
 		
     	super(Utils.getFromJSONOr(jsonData, "time_series.fields"));
     	
-    	this.bigmlClient =
-            (bigmlClient != null)
-                ? bigmlClient
-                : new BigMLClient(null, null, BigMLClient.STORAGE);
+    	initBigML(bigmlClient);
     	
 		if (!checkModelFields(jsonData)) {
 			timeseriesId = (String) jsonData.get("resource");

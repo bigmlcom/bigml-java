@@ -66,7 +66,6 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
         .getLogger(LocalEnsemble.class.getName());
 
     private String ensembleId;
-    private BigMLClient bigmlClient;
     private String objectiveField = null;
     private JSONObject boosting = null;
     private JSONArray models;
@@ -100,10 +99,7 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
         super((JSONObject) Utils.getJSONObject(ensemble, "ensemble.fields",
                                                new JSONObject()));
 
-        this.bigmlClient =
-            (bigmlClient != null)
-                ? bigmlClient
-                : new BigMLClient(null, null, BigMLClient.STORAGE);
+        initBigML(bigmlClient);
 
         // checks whether the information needed for local predictions
         // is in the first argument
