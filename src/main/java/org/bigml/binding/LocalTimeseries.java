@@ -59,8 +59,8 @@ public class LocalTimeseries extends ModelFields {
 	
 	private static final long serialVersionUID = 1L;
 	
-    private static final String RequiredInput = "horizon";
-    
+	static String TIMESERIES_RE = "^timeseries/[a-f,0-9]{24}$";
+	
     public static final List<String> SubmodelKeys = 
         Collections.unmodifiableList(Arrays.asList("indices",
                                                    "names",
@@ -75,17 +75,12 @@ public class LocalTimeseries extends ModelFields {
 
     // Logging
     Logger logger = LoggerFactory.getLogger(LocalTimeseries.class);
-
+    
     private JSONObject timeseries;
     private JSONObject forecast;
-
-    private String timeseriesId;
-
     private JSONArray inputFields;
     private JSONArray objectiveFields;
-
     private Boolean allNumericObjectives;
-
     private Long period;
     private JSONObject etsModels;
     private JSONObject error;
@@ -94,50 +89,34 @@ public class LocalTimeseries extends ModelFields {
     private String trend;
     private JSONObject timeRange;
     private JSONObject fieldParameters;
-
+    
     public LocalTimeseries(JSONObject jsonData) throws Exception {
-		super(Utils.getFromJSONOr(jsonData, "time_series.fields"));
-
-		if (!checkModelFields(jsonData)) {
-			timeseriesId = (String) jsonData.get("resource");
-		}
+		this(null, jsonData);
+    }
+    
+    public LocalTimeseries(BigMLClient bigmlClient, JSONObject timeseries) 
+    		throws Exception {
 		
-		if (!(jsonData.containsKey("resource")
-				&& jsonData.get("resource") != null)) {
-			BigMLClient client = new BigMLClient(null, null,
-					BigMLClient.STORAGE);
-			jsonData = client.getTimeSeries(timeseriesId);
-			
-			if ((String)jsonData.get("resource") == null) {
-				throw new Exception(
-					timeseriesId + " is not a valid resource ID.");
-			}
-		}
-		
-		if (jsonData.containsKey("object") &&
-				jsonData.get("object") instanceof JSONObject) {
-			jsonData = (JSONObject)jsonData.get("object");
-		}
+    	super(bigmlClient, timeseries);
+    	timeseries = this.model;
 
         try {
-            this.timeseriesId = (String) jsonData.get("resource");
-            this.inputFields = (JSONArray) jsonData.get("input_fields");
-            this.forecast = (JSONObject) jsonData.get("forecast");
-            this.objectiveFields = Utils.getFromJSONOr(jsonData,
-                                                       "objective_fields",
-                                                       new JSONArray());
+            this.inputFields = (JSONArray) timeseries.get("input_fields");
+            this.forecast = (JSONObject) timeseries.get("forecast");
+            this.objectiveFields = Utils.getFromJSONOr(
+            		timeseries, "objective_fields", new JSONArray());
             
             String objectiveField =
-                Utils.getFromJSONOr(jsonData, "objective_field", "");
+                Utils.getFromJSONOr(timeseries, "objective_field", "");
 
-            JSONObject status = Utils.getFromJSONOr(jsonData, "status");
+            JSONObject status = Utils.getFromJSONOr(timeseries, "status");
             if (status != null &&
                 status.containsKey("code") &&
                 AbstractResource.FINISHED == ((Number) status.get("code")).intValue()) {
 
-                JSONObject timeseriesInfo = Utils.getFromJSONOr(jsonData, "time_series");
-                //-- object.model.fields???
-                this.fields = Utils.getFromJSONOr(timeseriesInfo, "fields");
+                JSONObject timeseriesInfo = Utils.getFromJSONOr(timeseries, "time_series");
+                initialize(Utils.getFromJSONOr(
+            			timeseriesInfo, "fields"), null, null, null);
             
                 if (this.inputFields == null || this.inputFields.size() == 0) {
                     this.inputFields = new JSONArray();
@@ -167,21 +146,30 @@ public class LocalTimeseries extends ModelFields {
                 this.trend = Utils.getFromJSONOr(timeseriesInfo, "trend", null);
                 this.timeRange = Utils.getFromJSONOr(timeseriesInfo, "time_range");
                 this.fieldParameters = Utils.getFromJSONOr(timeseriesInfo, "field_parameters");
-  
-                //-- not used:            
-                //              String objectiveId = objectiveFieldsget("id");
-
             } else { 
                 logger.error("The model is not finished yet");
-                throw new IllegalStateException("The model isn't finished yet: " + jsonData.toString());
+                throw new IllegalStateException("The model isn't finished yet: " + timeseries.toString());
             }
 
         } catch (Exception e) {
             logger.error("Invalid model structure", e);
             throw e;
-//            throw new InvalidModelException();
         }
     }
+    
+    /**
+	 * Returns reg expre for model Id.
+	 */
+    public String getModelIdRe() {
+		return TIMESERIES_RE;
+	}
+    
+    /**
+	 * Returns bigml resource JSONObject.
+	 */
+    public JSONObject getBigMLModel(String modelId) {
+		return (JSONObject) this.bigmlClient.getTimeSeries(modelId);
+	}
 
     /* Filters the submodels available for the field in the time-series
        model according to the criteria provided in the prediction input data
@@ -335,7 +323,6 @@ public class LocalTimeseries extends ModelFields {
         
         HashMap<String, Object> result = new HashMap<String, Object>();
         for (Object k: this.timeseries.keySet()) {
-            JSONObject o = (JSONObject)this.timeseries.get(k);
             HashMap<String, Object> lf = new HashMap<String, Object>();
             lf.put("point_forecast", this.forecast.get("point_forecast"));
             lf.put("point_forecast_2", this.forecast.get("point_forecast"));

@@ -42,6 +42,8 @@ import org.bigml.binding.utils.Utils;
 public class LocalTopicModel extends ModelFields implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+	
+	private static String TOPICMODEL_RE = "^topicmodel/[a-f,0-9]{24}$";
 
 	final static int MAXIMUM_TERM_LENGTH = 30;
 	final static int MIN_UPDATES = 16;
@@ -50,7 +52,7 @@ public class LocalTopicModel extends ModelFields implements Serializable {
 
 	// Logging
 	Logger logger = LoggerFactory.getLogger(LocalTopicModel.class);
-
+	
 	private StemmerInterface stemmer;
 	private long seed;
 	private Boolean caseSensitive = false;
@@ -60,23 +62,18 @@ public class LocalTopicModel extends ModelFields implements Serializable {
 	private Double[][] phi;
 	private HashMap<String, Integer> termToIndex;
 	private JSONArray topics;
-
 	private Double alpha;
 	private Double ktimesalpha;
-
+	
 	public LocalTopicModel(JSONObject topicModel) throws Exception {
-		super();
-
-		if (topicModel.get("resource") == null) {
-			throw new Exception(
-					"Cannot create the topicModel instance. Could not "
-							+ "find the 'resource' key in the resource");
-		}
-
-		if (topicModel.containsKey("object")
-				&& topicModel.get("object") instanceof Map) {
-			topicModel = (JSONObject) topicModel.get("object");
-		}
+        this(null, topicModel);
+    }
+	
+	public LocalTopicModel(
+		BigMLClient bigmlClient, JSONObject topicModel) throws Exception {
+		
+		super(bigmlClient, topicModel);
+		topicModel = this.model;
 
 		if (topicModel.containsKey("topic_model")
 				&& topicModel.get("topic_model") instanceof Map) {
@@ -159,6 +156,20 @@ public class LocalTopicModel extends ModelFields implements Serializable {
 							+ " resource:\n\n%s",
 					((JSONObject) topicModel.get("model")).keySet()));
 		}
+	}
+	
+	/**
+	 * Returns reg expre for model Id.
+	 */
+    public String getModelIdRe() {
+		return TOPICMODEL_RE;
+	}
+    
+    /**
+	 * Returns bigml resource JSONObject.
+	 */
+    public JSONObject getBigMLModel(String modelId) {
+		return (JSONObject) this.bigmlClient.getTopicModel(modelId);
 	}
 	
 	

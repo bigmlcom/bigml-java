@@ -31,7 +31,7 @@ import java.util.Map;
  * // Retrieve a remote anomaly by id
  * JSONObject jsonAnomaly = api.getAnomaly("anomaly/551aa203af447f5484000ec0");
  *
- * // A lightweight wrapper around an Anomaly resurce
+ * // A lightweight wrapper around an Anomaly resource
  * LocalAnomaly localAnomaly = new LocalAnomaly(jsonAnomaly);
  *
  * // Input data
@@ -44,33 +44,26 @@ import java.util.Map;
 public class LocalAnomaly extends ModelFields implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
-    private JSONObject anomaly;
-    //private String anomalyId;
+    
+    private static String ANOMALY_RE = "^anomaly/[a-f,0-9]{24}$";
+    
     private JSONArray inputFields;
     private Integer sampleSize = null;
     private Double meanDepth = null;
     private Double expectedMeanDepth = null;
     private List<JSONObject> topAnomalies;
     private List<AnomalyTree> iforest;
-
-    public LocalAnomaly(JSONObject anomalyData) throws Exception {
-        super();
-
-        if (anomalyData.get("resource") == null) {
-            throw new Exception(
-                    "Cannot create the Anomaly instance. Could not " +
-            		"find the 'resource' key in the resource");
-        }
-
-        //anomalyId = (String) anomalyData.get("resource");
-
-        anomaly = anomalyData;
-
-        if (anomaly.containsKey("object") && anomaly.get("object") instanceof Map) {
-            anomaly = (JSONObject) anomaly.get("object");
-        }
-
+    
+    public LocalAnomaly(JSONObject anomaly) throws Exception {
+        this(null, anomaly);
+    }
+    
+    public LocalAnomaly(BigMLClient bigmlClient, JSONObject anomaly) 
+    		throws Exception {
+        
+ 		super(bigmlClient, anomaly);
+ 		anomaly = this.model;
+        
         if (anomaly.get("sample_size") != null) {
             this.sampleSize = ((Number) anomaly.get("sample_size")).intValue();
         }
@@ -109,7 +102,8 @@ public class LocalAnomaly extends ModelFields implements Serializable {
                                     objectiveFieldId, fields));
                         }
                     }
-                    this.topAnomalies = (List<JSONObject>) Utils.getJSONObject(anomaly, "model.top_anomalies", new JSONArray());
+                    this.topAnomalies = (List<JSONObject>) 
+                    		Utils.getJSONObject(anomaly, "model.top_anomalies", new JSONArray());
                 } else {
                     throw new Exception("The anomaly isn't finished yet");
                 }
@@ -123,21 +117,18 @@ public class LocalAnomaly extends ModelFields implements Serializable {
     }
     
     /**
-     * Returns the anomaly score given by the iforest
-     *
-     * To produce an anomaly score, we evaluate each tree in the iforest
-     * for its depth result (see the depth method in the AnomalyTree
-     * object for details). We find the average of these depths
-     * to produce an `observed_mean_depth`. We calculate an
-     * `expected_mean_depth` using the `sample_size` and `mean_depth`
-     * parameters which come as part of the forest message.
-     * We combine those values as seen below, which should result in a
-     * value between 0 and 1.
-     */
-    @Deprecated
-    public double score(JSONObject inputData, boolean byName) {
-    	return score(inputData);
-    }
+	 * Returns reg expre for model Id.
+	 */
+    public String getModelIdRe() {
+		return ANOMALY_RE;
+	}
+    
+    /**
+	 * Returns bigml resource JSONObject.
+	 */
+    public JSONObject getBigMLModel(String modelId) {
+		return (JSONObject) this.bigmlClient.getAnomaly(modelId);
+	}
     
     /**
      * Returns the anomaly score given by the iforest
@@ -213,5 +204,5 @@ public class LocalAnomaly extends ModelFields implements Serializable {
         } else {
             return String.format("(not (or %s))", anomaliesFilter);
         }
-    }
+    }   
 }

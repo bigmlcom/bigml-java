@@ -70,41 +70,16 @@ public class LocalDeepnet extends ModelFields implements SupervisedModelInterfac
 	private JSONArray networks = null;
 	private JSONArray preprocess = null;
 	//private JSONObject optimizer = null;
-	
-	
+		
 	public LocalDeepnet(JSONObject deepnet) throws Exception {
-		super((JSONObject) Utils.getJSONObject(
-				deepnet, "deepnet.fields", new JSONObject()));
+        this(null, deepnet);
+    }
+	
+	public LocalDeepnet(BigMLClient bigmlClient, JSONObject deepnet) 
+			throws Exception {
 		
-		// checks whether the information needed for local predictions 
-		// is in the first argument
-		if (!checkModelFields(deepnet)) {
-			// if the fields used by the deepnet are not
-			// available, use only ID to retrieve it again
-			deepnetId = (String) deepnet.get("resource");
-			boolean validId = deepnetId.matches(DEEPNET_RE);
-			if (!validId) {
-				throw new Exception(
-						deepnetId + " is not a valid resource ID.");
-			}
-		}
-		
-		if (!(deepnet.containsKey("resource")
-				&& deepnet.get("resource") != null)) {
-			BigMLClient client = new BigMLClient(null, null, 
-					BigMLClient.STORAGE);
-			deepnet = client.getDeepnet(deepnetId);
-			
-			if ((String) deepnet.get("resource") == null) {
-				throw new Exception(
-						deepnetId + " is not a valid resource ID.");
-			}
-		}
-		
-		if (deepnet.containsKey("object") &&
-				deepnet.get("object") instanceof JSONObject) {
-			deepnet = (JSONObject) deepnet.get("object");
-		}
+		super(bigmlClient, deepnet);
+		deepnet = this.model;
 		
 		deepnetId = (String) deepnet.get("resource");
 		
@@ -177,6 +152,20 @@ public class LocalDeepnet extends ModelFields implements SupervisedModelInterfac
 							+ "Could not find the 'deepnet' key in "
 							+ "the resource:\n\n%s", deepnet));
 		}	
+	}
+	
+	/**
+	 * Returns reg expre for model Id.
+	 */
+    public String getModelIdRe() {
+		return DEEPNET_RE;
+	}
+    
+    /**
+	 * Returns bigml resource JSONObject.
+	 */
+    public JSONObject getBigMLModel(String modelId) {
+		return (JSONObject) this.bigmlClient.getDeepnet(modelId);
 	}
 	
 	/**

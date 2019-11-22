@@ -42,6 +42,8 @@ import org.bigml.binding.utils.Utils;
 public class LocalAssociation extends ModelFields implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+	
+	private static String ASSOCIATION_RE = "^association/[a-f,0-9]{24}$";
 
 	final static String DEFAULT_SEARCH_STRATEGY = "leverage";
     final static int DEFAULT_K = 100;
@@ -93,23 +95,20 @@ public class LocalAssociation extends ModelFields implements Serializable {
         NO_ITEMS.add("numeric");
         NO_ITEMS.add("categorical");
     }
-
+    
 	private List<AssociationRule> rules;
 	private List<AssociationItem> items;
-
+	
 	public LocalAssociation(JSONObject association) throws Exception {
-		super();
-
-		if (association.get("resource") == null) {
-			throw new Exception(
-					"Cannot create the Association instance. Could not find " +
-                    "the 'resource' key in the resource");
-		}
-
-		if (association.containsKey("object") && association.get("object") instanceof Map) {
-			association = (JSONObject) association.get("object");
-		}
-
+        this(null, association);
+    }
+	
+	public LocalAssociation(
+		BigMLClient bigmlClient, JSONObject association) throws Exception {
+		
+		super(bigmlClient, association);
+		association = this.model;
+ 		
 		if (association.containsKey("associations") && association.get("associations") instanceof Map) {
 			JSONObject status = (JSONObject) association.get("status");
 			if (status != null && status.containsKey("code")
@@ -148,38 +147,19 @@ public class LocalAssociation extends ModelFields implements Serializable {
 	}
 	
 	/**
-     * Returns the Consequents for the rules whose LHS best match the provided
-     * items. Cosine similarity is used to score the match.
-     *
-     * @param inputData
-     *            an object with field's id/value pairs representing the
-     *            instance you want to create an associationset for.
-     *
-     *            {"petal length": 4.4,
-     *             "sepal length": 5.1,
-     *             "petal width": 1.3,
-     *             "sepal width": 2.1,
-     *             "species": "Iris-versicolor"}
-     * @param k
-     *           maximum number of item predictions to return (Default 100)
-     * @param scoreBy
-     *          Code for the metric used in scoring (default search_strategy)
-     *              leverage
-     *              confidence
-     *              support
-     *              lhs-cover
-     *              lift
-     * @param byName
-     *          If True, input_data is keyed by field name, field_id is used
-     *          otherwise.
-     */
-	@Deprecated
-    public List associationSet(JSONObject inputData, Integer k, 
-    		String scoreBy, Boolean byName) throws Exception {
-    	return associationSet(inputData, k, scoreBy);
-    }
-
-
+	 * Returns reg expre for model Id.
+	 */
+	public String getModelIdRe() {
+		return ASSOCIATION_RE;
+	}
+    
+	/**
+	 * Returns bigml resource JSONObject.
+	 */
+    public JSONObject getBigMLModel(String modelId) {
+		return (JSONObject) this.bigmlClient.getAssociation(modelId);
+	}
+	
     /**
      * Returns the Consequents for the rules whose LHS best match the provided
      * items. Cosine similarity is used to score the match.
@@ -325,8 +305,6 @@ public class LocalAssociation extends ModelFields implements Serializable {
 	 */
 	public List<AssociationItem> items(String field, List<String> names,
         Map inputMap, ItemFilter itemFilter) throws Exception {
-
-
 
 		String fieldId = null;
 		if (field != null) {

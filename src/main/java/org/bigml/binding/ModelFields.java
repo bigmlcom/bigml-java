@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
  * the Model class, that is used for local predictions.
  * 
  */
-public class ModelFields implements Serializable {
+public abstract class ModelFields implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -39,6 +39,10 @@ public class ModelFields implements Serializable {
 		FIELDS_PARENT.put("deepnet", "deepnet");
 		FIELDS_PARENT.put("linearregression", "linear_regression");
 	}
+	
+	protected String modelId;
+	protected JSONObject model;
+	protected BigMLClient bigmlClient;
 
 	protected String objectiveFieldId;
 	protected String objectiveFieldName;
@@ -68,30 +72,67 @@ public class ModelFields implements Serializable {
 	 */
 	protected ModelFields() {
 	}
-
+	
+	
 	/**
-	 * The constructor can be instantiated with the fields structure. The
-	 * structure is checked and fields structure is returned if a resource type
-	 * is matched.
-	 *
-	 * @param fields
-	 *            the resource that hold the fields structure
+	 * Constructor
+	 * 
+	 * @param bigmlClient
+	 * @param model
+	 * @throws Exception
 	 */
-	public ModelFields(JSONObject fields) {
-		initialize(fields, null, null, null);
+	protected ModelFields(BigMLClient bigmlClient, JSONObject model) 
+			throws Exception {
+		
+		initBigML(bigmlClient);
+		
+		// checks whether the information needed for local predictions 
+ 		// is in the model argument
+ 		if (!checkModelFields(model)) {
+ 			// if the fields used by the model are not
+ 			// available, use only ID to retrieve it again
+ 			modelId = (String) model.get("resource");
+ 			boolean validId = modelId.matches(getModelIdRe());
+ 			if (!validId) {
+ 				throw new Exception(
+ 					modelId + " is not a valid resource ID.");
+ 			}
+ 		}
+ 		
+ 		if (!(model.containsKey("resource")
+ 				&& model.get("resource") != null)) {
+ 			model = getBigMLModel(modelId);
+
+ 			if ((String) model.get("resource") == null) {
+ 				throw new Exception(
+ 					modelId + " is not a valid resource ID.");
+ 			}
+ 		}
+ 		
+ 		if (model.containsKey("object") &&
+ 				model.get("object") instanceof JSONObject) {
+ 			model = (JSONObject) model.get("object");
+ 		}
+ 		
+ 		if (model.containsKey("object") && 
+ 				model.get("object") instanceof Map) {
+ 			model = (JSONObject) model.get("object");
+        }
+ 		
+ 		this.model = model; 
 	}
-
+	
 	/**
-	 * The constructor can be instantiated with the fields structure. The
-	 * structure is checked and fields structure is returned if a resource type
-	 * is matched.
-	 *
-	 * @param fields
-	 *            the resource that hold the fields structure
+	 * Inits BigMLClient
+	 * 
+	 * @param bigmlClient	BigMLClient
 	 */
-	public ModelFields(JSONObject fields, String objectiveFieldId,
-			String dataLocale, List<String> missingTokens) {
-		initialize(fields, objectiveFieldId, dataLocale, missingTokens);
+	protected void initBigML(BigMLClient bigmlClient) throws Exception {
+
+		this.bigmlClient =
+            (bigmlClient != null)
+                ? bigmlClient
+                : new BigMLClient(null, null, BigMLClient.STORAGE);
 	}
 
 	/**
@@ -623,4 +664,14 @@ public class ModelFields implements Serializable {
 	public JSONObject getFields() {
 		return fields;
 	}
+	
+	/**
+	 * Returns reg expre for model Id.
+	 */
+	public abstract String getModelIdRe();
+	
+	/**
+	 * Returns bigml resource JSONObject.
+	 */
+	public abstract JSONObject getBigMLModel(String modelId);
 }

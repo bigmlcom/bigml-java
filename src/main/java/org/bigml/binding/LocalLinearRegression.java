@@ -82,7 +82,6 @@ public class LocalLinearRegression extends ModelFields {
             .getLogger(LocalLogisticRegression.class.getName());
 
     private String linearRegressionId;
-    private BigMLClient bigmlClient;
     private JSONArray inputFields = null;
     private JSONObject datasetFieldTypes = null;
     private String objectiveField = null;
@@ -105,42 +104,9 @@ public class LocalLinearRegression extends ModelFields {
 
     public LocalLinearRegression(BigMLClient bigmlClient,
                                  JSONObject linear) throws Exception {
-        super((JSONObject) Utils.getJSONObject(
-                linear, "linear_regression.fields", new JSONObject()));
-
-        this.bigmlClient =
-            (bigmlClient != null)
-                ? bigmlClient
-                : new BigMLClient(null, null, BigMLClient.STORAGE);
-
-        // checks whether the information needed for local predictions
-        // is in the first argument
-        if (!checkModelFields(linear)) {
-            // if the fields used by the linear regression are not
-            // available, use only ID to retrieve it again
-            linearRegressionId = (String) linear.get("resource");
-            boolean validId = linearRegressionId.matches(
-                    LINEARREGRESSION_RE);
-            if (!validId) {
-                throw new Exception(
-                        linearRegressionId + " is not a valid resource ID.");
-            }
-        }
-
-        if (!(linear.containsKey("resource")
-                && linear.get("resource") != null)) {
-            linear = this.bigmlClient.getLogisticRegression(linearRegressionId);
-
-            if ((String) linear.get("resource") == null) {
-                throw new Exception(
-                    linearRegressionId + " is not a valid resource ID.");
-            }
-        }
-
-        if (linear.containsKey("object") &&
-                linear.get("object") instanceof JSONObject) {
-            linear = (JSONObject) linear.get("object");
-        }
+    	
+    	super(bigmlClient, linear);
+    	linear = this.model;
 
         linearRegressionId = (String) linear.get("resource");
 
@@ -248,6 +214,20 @@ public class LocalLinearRegression extends ModelFields {
         }
 
     }
+    
+    /**
+	 * Returns reg expre for model Id.
+	 */
+    public String getModelIdRe() {
+		return LINEARREGRESSION_RE;
+	}
+    
+    /**
+	 * Returns bigml resource JSONObject.
+	 */
+    public JSONObject getBigMLModel(String modelId) {
+		return (JSONObject) this.bigmlClient.getLinearRegression(modelId);
+	}
 
     /**
      * Returns the resourceId
