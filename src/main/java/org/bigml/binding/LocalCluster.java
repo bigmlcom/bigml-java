@@ -45,6 +45,8 @@ public class LocalCluster extends ModelFields {
 	
 	private static final long serialVersionUID = 1L;
 	
+	private static String CLUSTER_RE = "^cluster/[a-f,0-9]{24}$";
+	
 	protected static final String[] OPTIONAL_FIELDS = { 
     		"categorical", "text", "items", "datetime" };
 
@@ -86,17 +88,23 @@ public class LocalCluster extends ModelFields {
     
     
     public LocalCluster(JSONObject cluster) throws Exception {
-        super((JSONObject) Utils.getJSONObject(cluster, "clusters.fields"));
-
-        if (cluster.get("resource") == null) {
-            throw new Exception(
-                    "Cannot create the Cluster instance. Could not find "
-                    + "the 'cluster' key in the resource");
-        }
+        this(null, cluster);
+    }
+    
+    public LocalCluster(BigMLClient bigmlClient, JSONObject cluster) 
+    		throws Exception {
         
+    	super(bigmlClient, cluster);
+    	cluster = this.model;
+    	
         clusterId = (String) cluster.get("resource");
         
         if (cluster.containsKey("clusters")) {
+        	JSONObject model = (JSONObject) cluster.get("clusters");
+        	super.initialize(
+        		(JSONObject) Utils.getJSONObject(cluster, "clusters.fields"),
+        		null, null, null);
+        	
             JSONObject status = (JSONObject) Utils.getJSONObject(cluster, "status");
             if( status != null &&
                     status.containsKey("code") &&
@@ -197,6 +205,20 @@ public class LocalCluster extends ModelFields {
     }
     
     /**
+	 * Returns reg expre for model Id.
+	 */
+	public String getModelIdRe() {
+		return CLUSTER_RE;
+	}
+    
+	/**
+	 * Returns bigml resource JSONObject.
+	 */
+    public JSONObject getBigMLModel(String modelId) {
+		return (JSONObject) this.bigmlClient.getCluster(modelId);
+	}
+    
+    /**
      * Prepares the fields to be able to compute the distance2
      */
     private JSONObject prepareForDistance(JSONObject inputData) {
@@ -218,19 +240,6 @@ public class LocalCluster extends ModelFields {
         Utils.cast(inputData, fields);
         inputData = new JSONObject(inputData);
         return inputData;
-    }
-    
-    /**
-     * Returns the nearest centroid as a JSONObject with the following properties:
-     *
-     *   centroid_id
-     *   centroid_name
-     *   distance
-     *
-     */
-    @Deprecated
-    public JSONObject centroid(JSONObject inputData, Boolean byName) {
-    	return centroid(inputData);
     }
     
     /**
@@ -570,25 +579,6 @@ public class LocalCluster extends ModelFields {
      * centroid id of the cluster plus the list of points
      * 
      */
-    @Deprecated
-    public JSONObject closestInCluster(JSONObject referencePoint, 
-    		Integer numberOfPoints, String centroidId, Boolean byName) 
-    		throws Exception {
-    	return closestInCluster(referencePoint, numberOfPoints, centroidId);
-    }
-    
-    
-    /**
-     * Computes the list of data points closer to a reference point.
-     * If no centroid_id information is provided, the points are chosen
-     * from the same cluster as the reference point.
-     * The points are returned in a list, sorted according
-     * to their distance to the reference point. The number_of_points
-     * parameter can be set to truncate the list to a maximum number of
-     * results. The response is a dictionary that contains the
-     * centroid id of the cluster plus the list of points
-     * 
-     */
     public JSONObject closestInCluster(JSONObject referencePoint, 
     		Integer numberOfPoints, String centroidId) 
     		throws Exception {
@@ -652,14 +642,6 @@ public class LocalCluster extends ModelFields {
     	return closest;
     }
     
-    /**
-     *  Gives the list of centroids sorted according to its distance to
-     *  an arbitrary reference point.
-     */
-    @Deprecated
-    public JSONObject sortedCentroids(JSONObject referencePoint, Boolean byName) {
-    	return sortedCentroids(referencePoint);
-    }
     
     /**
      *  Gives the list of centroids sorted according to its distance to
@@ -886,10 +868,6 @@ public class LocalCluster extends ModelFields {
         }
 
         return summary;
-    }
-
-    public String getClusterId() {
-        return clusterId;
     }
 
 }

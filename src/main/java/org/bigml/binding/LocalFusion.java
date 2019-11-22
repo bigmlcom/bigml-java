@@ -71,45 +71,15 @@ public class LocalFusion extends ModelFields implements SupervisedModelInterface
 	
 	public LocalFusion(JSONObject fusion) 
 			throws Exception {
-		this(fusion, null);
+		this(null, fusion, null);
 	}
 	
-	
-	public LocalFusion(JSONObject fusion, Integer maxModels) 
+	public LocalFusion(
+		BigMLClient bigmlClient, JSONObject fusion, Integer maxModels) 
 			throws Exception {
 		
-		super((JSONObject) Utils.getJSONObject(
-				fusion, "fusion.fields", new JSONObject()));
-		
-		// checks whether the information needed for local predictions 
-		// is in the first argument
-		if (!checkModelFields(fusion)) {
-			// if the fields used by the logistic regression are not
-			// available, use only ID to retrieve it again
-			fusionId = (String) fusion.get("resource");
-			boolean validId = fusionId.matches(FUSION_RE);
-			if (!validId) {
-				throw new Exception(
-						fusionId + " is not a valid resource ID.");
-			}
-		}
-		
-		if (!(fusion.containsKey("resource")
-				&& fusion.get("resource") != null)) {
-			BigMLClient client = new BigMLClient(null, null, 
-					BigMLClient.STORAGE);
-			fusion = client.getFusion(fusionId);
-			
-			if ((String) fusion.get("resource") == null) {
-				throw new Exception(
-						fusionId + " is not a valid resource ID.");
-			}
-		}
-		
-		if (fusion.containsKey("object") &&
-				fusion.get("object") instanceof JSONObject) {
-			fusion = (JSONObject) fusion.get("object");
-		}
+		super(bigmlClient, fusion);
+		fusion = this.model;
 		
 		fusionId = (String) fusion.get("resource");
 		
@@ -203,6 +173,20 @@ public class LocalFusion extends ModelFields implements SupervisedModelInterface
 							+ "Could not find the 'fusion' key in "
 							+ "the resource:\n\n%s", fusion));
 		}
+	}
+	
+	/**
+	 * Returns reg expre for model Id.
+	 */
+    public String getModelIdRe() {
+		return FUSION_RE;
+	}
+    
+    /**
+	 * Returns bigml resource JSONObject.
+	 */
+    public JSONObject getBigMLModel(String modelId) {
+		return (JSONObject) this.bigmlClient.getFusion(modelId);
 	}
 	
 	/**

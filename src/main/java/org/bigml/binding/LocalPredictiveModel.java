@@ -20,7 +20,8 @@
 
   BigMLClient bigmlClient = new BigMLClient();
 
-  Model model = new Model(bigmlClient.getModel('model/5026965515526876630001b2'));
+  Model model = new Model(
+  bigmlClient.getModel('model/5026965515526876630001b2'));
   model.predict("{\"petal length\": 3, \"petal width\": 1}");
 
   You can also see model in a IF-THEN rule format with:
@@ -41,6 +42,7 @@ import org.bigml.binding.localmodel.Predicate;
 import org.bigml.binding.localmodel.Prediction;
 import org.bigml.binding.localmodel.Tree;
 import org.bigml.binding.localmodel.TreeNodeFilter;
+import org.bigml.binding.resources.AbstractResource;
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -61,73 +63,113 @@ import java.util.*;
  * generate prediction locally.
  *
  */
-public class LocalPredictiveModel extends BaseModel implements PredictionConverter, SupervisedModelInterface {
+public class LocalPredictiveModel extends ModelFields 
+	implements PredictionConverter, SupervisedModelInterface {
 
     private static final long serialVersionUID = 1L;
+    
+    private static String MODEL_RE = "^model/[a-f,0-9]{24}$";
     
     /**
      * Logging
      */
-    static Logger logger = LoggerFactory.getLogger(LocalPredictiveModel.class
-            .getName());
-
-    // Map operator str to its corresponding java operator
-    static HashMap<String, String> JAVA_TYPES = new HashMap<String, String>();
-    static {
-        JAVA_TYPES.put(Constants.OPTYPE_CATEGORICAL + "-string", "String");
-        JAVA_TYPES.put(Constants.OPTYPE_TEXT + "-string", "String");
-        JAVA_TYPES.put(Constants.OPTYPE_DATETIME + "-string", "String");
-        JAVA_TYPES.put(Constants.OPTYPE_NUMERIC + "-double", "Double");
-        JAVA_TYPES.put(Constants.OPTYPE_NUMERIC + "-float", "Float");
-        JAVA_TYPES.put(Constants.OPTYPE_NUMERIC + "-integer", "Float");
-        JAVA_TYPES.put(Constants.OPTYPE_NUMERIC + "-int8", "Float");
-        JAVA_TYPES.put(Constants.OPTYPE_NUMERIC + "-int16", "Float");
-        JAVA_TYPES.put(Constants.OPTYPE_NUMERIC + "-int32", "Float");
-        JAVA_TYPES.put(Constants.OPTYPE_NUMERIC + "-int64", "Float");
-        JAVA_TYPES.put(Constants.OPTYPE_NUMERIC + "-day", "Integer");
-        JAVA_TYPES.put(Constants.OPTYPE_NUMERIC + "-month", "Integer");
-        JAVA_TYPES.put(Constants.OPTYPE_NUMERIC + "-year", "Integer");
-        JAVA_TYPES.put(Constants.OPTYPE_NUMERIC + "-hour", "Integer");
-        JAVA_TYPES.put(Constants.OPTYPE_NUMERIC + "-minute", "Integer");
-        JAVA_TYPES.put(Constants.OPTYPE_NUMERIC + "-second", "Integer");
-        JAVA_TYPES.put(Constants.OPTYPE_NUMERIC + "-millisecond", "Integer");
-        JAVA_TYPES.put(Constants.OPTYPE_NUMERIC + "-day-of-week", "Integer");
-        JAVA_TYPES.put(Constants.OPTYPE_NUMERIC + "-day-of-month", "Integer");
-        JAVA_TYPES.put(Constants.OPTYPE_NUMERIC + "-boolean", "Boolean");
-    }
+    static Logger logger = LoggerFactory.getLogger(
+    	LocalPredictiveModel.class.getName());
 
     public static Double DEFAULT_IMPURITY = 0.2;
 
     private static final String[] OPERATING_POINT_KINDS = {
-    		"probability", "confidence" };
+    	"probability", "confidence" };
     
+    private String modelId;
     private JSONObject root;
     private Tree tree;
     private BoostedTree boostedTree;
     private Map<String, Tree> idsMap;
     private Map<String, List<String>> terms = new HashMap<String, List<String>>();
     private int maxBins = 0;
-    
+    protected JSONArray fieldImportance;
+    protected String objectiveField;
     private Boolean regression = false;
     private JSONObject boosting = null;
     private List<String> classNames = new ArrayList<String>();
-    private List<String> objectiveCategories = new ArrayList<String>();
+    //private List<String> objectiveCategories = new ArrayList<String>();
 
-    /**
-     * Constructor
-     *
-     * @param model		the json representation for the remote model
-     */
+    public static void main(String[] args) {
+		try {
+			String mid = "model/5dd824e828e1f45b7c0002db";
+	        BigMLClient api = new BigMLClient();
+	        LocalPredictiveModel m =
+	            new LocalPredictiveModel(api.getModel(mid));
+	        System.out.println("m ...... " + m);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+    
+    
     public LocalPredictiveModel(JSONObject model) throws Exception {
-        super(model);
-        
-        try {
-        	if (model.containsKey("object") &&
-        			model.get("object") instanceof JSONObject) {
-        		model = (JSONObject) model.get("object");
-    		}
-        	
-        	// boosting models are to be handled using the BoostedTree
+        this(null, model);
+    }
+    
+    
+    public LocalPredictiveModel(
+        	BigMLClient bigmlClient, JSONObject model) throws Exception {
+    	
+    	super(bigmlClient, model);
+    	model = this.model;
+    	
+    	JSONObject status = (JSONObject) Utils.getJSONObject(model, "status");
+        if( status != null &&
+                status.containsKey("code") &&
+                AbstractResource.FINISHED == ((Number) status.get("code")).intValue() ) {
+
+            JSONObject fields = (JSONObject) Utils.getJSONObject(model, "model.fields");
+
+            if (Utils.getJSONObject(model, "model.model_fields") != null) {
+                fields = (JSONObject) Utils.getJSONObject(model, "model.model_fields");
+
+                JSONObject modelFields = (JSONObject) Utils.getJSONObject(
+                        model, "model.fields");
+                Iterator iter = fields.keySet().iterator();
+                while (iter.hasNext()) {
+                    String key = (String) iter.next();
+                    if (modelFields.get(key) == null) {
+                        throw new Exception(
+                        	"Some fields are missing to generate a local model. Please, provide a model with the complete list of fields.");
+                    }
+                }
+
+                iter = fields.keySet().iterator();
+                while (iter.hasNext()) {
+                    String key = (String) iter.next();
+                    JSONObject field = (JSONObject) fields.get(key);
+                    JSONObject modelField = (JSONObject) modelFields.get(key);
+                    field.put("summary", modelField.get("summary"));
+                    field.put("name", modelField.get("name"));
+                }
+            }
+
+            Object objectiveFields = Utils.getJSONObject(model, "objective_fields");
+            objectiveField = objectiveFields instanceof JSONArray ? (String) ((JSONArray) objectiveFields)
+                    .get(0) : (String) objectiveFields;
+
+            super.initialize(fields, objectiveField, null, null);
+
+            JSONArray modelFieldImportance = (JSONArray) Utils.getJSONObject(model, "model.importance", null);
+
+            if (modelFieldImportance != null) {
+                fieldImportance = new JSONArray();
+
+                for (Object element : modelFieldImportance) {
+                    JSONArray elementItem = (JSONArray) element;
+                    if (fields.containsKey(elementItem.get(0).toString())) {
+                        fieldImportance.add(elementItem);
+                    }
+                }
+            }
+            
+            // boosting models are to be handled using the BoostedTree
             // class
         	boolean boostedEnsemble = (Boolean) Utils.getJSONObject(
         			model, "boosted_ensemble", false);
@@ -173,27 +215,61 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
     						(JSONObject) fields.get(objectiveField), 
                 			"summary.categories", new JSONArray());
             		
+            		/*
             		for (Object category: categories) {
             			objectiveCategories.add((String) ((JSONArray) category).get(0));
             		}
+            		*/
             	}
             }
-            
-        } catch (Exception e) {
-        	e.printStackTrace();
-            logger.error("Invalid model structure", e);
-            throw new InvalidModelException();
         }
     }
     
+    /**
+	 * Returns reg expr for model Id.
+	 */
+    public String getModelIdRe() {
+		return MODEL_RE;
+	}
+    
+    /**
+	 * Returns bigml resource JSONObject.
+	 */
+    public JSONObject getBigMLModel(String modelId) {
+		return (JSONObject) this.bigmlClient.getModel(modelId);
+	}
+    
+    public String getResourceId() {
+        return modelId;
+    }
+    
+    /**
+     * Describes and return the fields for this model.
+     */
+    public JSONObject fields() {
+    	return isBoosting() ? boostedTree.listFields() : tree.listFields();
+    }
+    
+    /**
+     * Sets the fields for this model.
+     */
+    public void setFields(JSONObject fields) {
+    	this.fields = fields;
+    }
     
     /**
 	 * Returns the class names
 	 */
-	public List<String> getClassNames() {
+    public List<String> getClassNames() {
 		return classNames;
 	}
     
+    /**
+     * Sets the classNames for this model.
+     */
+    public void setClassNames(List<String> classNames) {
+    	this.classNames = classNames;
+    }
     
     /**
      * Correction term based on the training dataset distribution
@@ -225,27 +301,6 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
     	}
     	
     	return categoryMap;
-    }
-    
-    /**
-     * Describes and return the fields for this model.
-     */
-    public JSONObject fields() {
-    	return isBoosting() ? boostedTree.listFields() : tree.listFields();
-    }
-    
-    /**
-     * Sets the fields for this model.
-     */
-    public void setFields(JSONObject fields) {
-    	this.fields = fields;
-    }
-    
-    /**
-     * Sets the classNames for this model.
-     */
-    public void setClassNames(List<String> classNames) {
-    	this.classNames = classNames;
     }
     
     /**
@@ -359,8 +414,6 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
             throws Exception {
         return predict(args, strategy, null, null, true, null);
     }
-    
-    
 
     /**
      * Makes a prediction based on a number of field values using a 
@@ -482,7 +535,6 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
         return predict(inputObj, MissingStrategy.LAST_PREDICTION, null, null, true);
     }
     
-    
     /**
      * Makes a prediction based on a number of field values.
      *
@@ -519,7 +571,6 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
             throws InputDataParseException {
     	return predict(args, strategy, multiple);
     }
-    
 
     /**
      * Makes a prediction based on a number of field values.
@@ -1691,7 +1742,6 @@ public class LocalPredictiveModel extends BaseModel implements PredictionConvert
         }
     }
     
-   	
    	/**
 	  * Sorts the categories in the predicted node according to the
       *  given criteria

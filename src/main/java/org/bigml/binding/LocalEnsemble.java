@@ -66,11 +66,9 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
         .getLogger(LocalEnsemble.class.getName());
 
     private String ensembleId;
-    private BigMLClient bigmlClient;
     private String objectiveField = null;
     private JSONObject boosting = null;
     private JSONArray models;
-    private JSONObject model = null;
     private List<JSONArray> modelsSplit = new ArrayList<JSONArray>();
     private String[] modelsIds;
     private JSONArray distributions;
@@ -97,41 +95,8 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
     public LocalEnsemble(BigMLClient bigmlClient, JSONObject ensemble, Integer maxModels)
         throws Exception {
 
-        super((JSONObject) Utils.getJSONObject(ensemble, "ensemble.fields",
-                                               new JSONObject()));
-
-        this.bigmlClient =
-            (bigmlClient != null)
-                ? bigmlClient
-                : new BigMLClient(null, null, BigMLClient.STORAGE);
-
-        // checks whether the information needed for local predictions
-        // is in the first argument
-        if (!checkModelFields(ensemble)) {
-            // if the fields used by the ensemble are not available,
-            // use only ID to retrieve it again
-            ensembleId = (String) ensemble.get("resource");
-            boolean validId = ensembleId.matches(ENSEMBLE_RE);
-            if (!validId) {
-                throw new Exception(
-                                    ensembleId + " is not a valid resource ID.");
-            }
-        }
-
-        if (!(ensemble.containsKey("resource")
-              && ensemble.get("resource") != null)) {
-            ensemble = this.bigmlClient.getEnsemble(ensembleId);
-
-            if ((String) ensemble.get("resource") == null) {
-                throw new Exception(
-                                    ensembleId + " is not a valid resource ID.");
-            }
-        }
-
-        if (ensemble.containsKey("object")
-            && ensemble.get("object") instanceof JSONObject) {
-            ensemble = (JSONObject) ensemble.get("object");
-        }
+    	super(bigmlClient, ensemble);
+    	ensemble = this.model;
 
         ensembleId = (String) ensemble.get("resource");
 
@@ -209,6 +174,20 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
 
         init(null, maxModels);
     }
+    
+    /**
+	 * Returns reg expre for model Id.
+	 */
+    public String getModelIdRe() {
+		return ENSEMBLE_RE;
+	}
+    
+    /**
+	 * Returns bigml resource JSONObject.
+	 */
+    public JSONObject getBigMLModel(String modelId) {
+		return (JSONObject) this.bigmlClient.getEnsemble(modelId);
+	}
 
     protected void init(JSONObject ensemble, Integer maxModels)
         throws Exception {
@@ -216,7 +195,7 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
         for (String id : modelsIds) {
             models.add(this.bigmlClient.getModel(id));
         }
-        model = (JSONObject) models.get(0);
+        JSONObject model = (JSONObject) models.get(0);
         int numberOfModels = models.size();
 
         maxModels = maxModels != null ? maxModels : numberOfModels;
@@ -231,9 +210,9 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
 
         if (distributions != null) {
             distributions = new JSONArray();
-            for (Object model : models) {
+            for (Object modelObj : models) {
                 JSONObject treDist = (JSONObject) Utils.getJSONObject(
-                                                                      (JSONObject) model, "model.tree.distribution");
+                	(JSONObject) modelObj, "model.tree.distribution");
 
                 if (treDist != null) {
                     JSONObject categories = new JSONObject();
@@ -248,9 +227,9 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
             }
 
             if (distributions.size() == 0) {
-                for (Object model : models) {
+                for (Object modelObj : models) {
                     distributions.add((JSONObject) Utils.getJSONObject(
-                                                                       (JSONObject) model, "object.model.distribution"));
+                    	(JSONObject) modelObj, "object.model.distribution"));
                 }
             }
         }
@@ -389,7 +368,7 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
                                                                            (JSONObject) split);
                 fields.putAll(localModel.getFields());
             }
-        } catch (Exception e) {logger.error("Not good", e);}
+        } catch (Exception e) {logger.error("Not good");}
     }
 
     /**

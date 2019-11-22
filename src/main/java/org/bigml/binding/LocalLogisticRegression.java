@@ -69,7 +69,6 @@ public class LocalLogisticRegression extends ModelFields implements SupervisedMo
 			.getLogger(LocalLogisticRegression.class.getName());
 
 	private String logisticRegressionId;
-
 	private JSONObject datasetFieldTypes = null;
 	private JSONArray inputFields = null;
 	private String objectiveField = null;
@@ -86,41 +85,16 @@ public class LocalLogisticRegression extends ModelFields implements SupervisedMo
 	private List<String> classNames = new ArrayList<String>();
 	private String weightField;
 	
-	
 	public LocalLogisticRegression(JSONObject logistic) throws Exception {
-		super((JSONObject) Utils.getJSONObject(
-				logistic, "logistic_regression.fields", new JSONObject()));
+        this(null, logistic);
+    }
+	
+	public LocalLogisticRegression(
+		BigMLClient bigmlClient, JSONObject logistic) 
+			throws Exception {
 		
-		// checks whether the information needed for local predictions 
-		// is in the first argument
-		if (!checkModelFields(logistic)) {
-			// if the fields used by the logistic regression are not
-			// available, use only ID to retrieve it again
-			logisticRegressionId = (String) logistic.get("resource");
-			boolean validId = logisticRegressionId.matches(
-					LOGISTICREGRESSION_RE);
-			if (!validId) {
-				throw new Exception(
-					logisticRegressionId + " is not a valid resource ID.");
-			}
-		}
-		
-		if (!(logistic.containsKey("resource")
-				&& logistic.get("resource") != null)) {
-			BigMLClient client = new BigMLClient(null, null,
-					BigMLClient.STORAGE);
-			logistic = client.getLogisticRegression(logisticRegressionId);
-			
-			if ((String) logistic.get("resource") == null) {
-				throw new Exception(
-					logisticRegressionId + " is not a valid resource ID.");
-			}
-		}
-		
-		if (logistic.containsKey("object") &&
-				logistic.get("object") instanceof JSONObject) {
-			logistic = (JSONObject) logistic.get("object");
-		}
+		super(bigmlClient, logistic);
+		logistic = this.model;
 		
 		logisticRegressionId = (String) logistic.get("resource");
 		
@@ -248,6 +222,20 @@ public class LocalLogisticRegression extends ModelFields implements SupervisedMo
 							+ "the resource:\n\n%s", logistic));
 		}
 
+	}
+	
+	/**
+	 * Returns reg expre for model Id.
+	 */
+    public String getModelIdRe() {
+		return LOGISTICREGRESSION_RE;
+	}
+    
+    /**
+	 * Returns bigml resource JSONObject.
+	 */
+    public JSONObject getBigMLModel(String modelId) {
+		return (JSONObject) this.bigmlClient.getLogisticRegression(modelId);
 	}
 	
 	/**

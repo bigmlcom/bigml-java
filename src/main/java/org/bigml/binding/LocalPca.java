@@ -55,7 +55,6 @@ public class LocalPca extends ModelFields implements Serializable {
 	 */
 	static Logger logger = LoggerFactory.getLogger(LocalPca.class.getName());
 
-	private String pcaId;
 	private JSONArray inputFields = null;
 	private JSONObject datasetFieldTypes;
 	private JSONObject categoriesProbabilities;
@@ -66,39 +65,16 @@ public class LocalPca extends ModelFields implements Serializable {
 	private JSONArray cumulativeVariance;
 	private JSONArray variance;
 	private JSONObject textStats;
-
+	
 	public LocalPca(JSONObject pca) throws Exception {
-		super((JSONObject) Utils.getJSONObject(pca, "pca.fields",
-				new JSONObject()));
-
-		// checks whether the information needed for local predictions
-		// is in the first argument
-		if (!checkModelFields(pca)) {
-			// if the fields used by the pca are not
-			// available, use only ID to retrieve it again
-			pcaId = (String) pca.get("resource");
-			boolean validId = pcaId.matches(PCA_RE);
-			if (!validId) {
-				throw new Exception(pcaId + " is not a valid resource ID.");
-			}
-		}
-
-		if (!(pca.containsKey("resource") && pca.get("resource") != null)) {
-			BigMLClient client = new BigMLClient(null, null,
-					BigMLClient.STORAGE);
-			pca = client.getPca(pcaId);
-
-			if ((String) pca.get("resource") == null) {
-				throw new Exception(pcaId + " is not a valid resource ID.");
-			}
-		}
-
-		if (pca.containsKey("object")
-				&& pca.get("object") instanceof JSONObject) {
-			pca = (JSONObject) pca.get("object");
-		}
-
-		this.pcaId = (String) pca.get("resource");
+        this(null, pca);
+    }
+	
+	public LocalPca(BigMLClient bigmlClient, JSONObject pca) 
+			throws Exception {
+		
+		super(bigmlClient, pca);
+    	pca = this.model;
 
 		try {
 			this.inputFields = (JSONArray) Utils.getJSONObject(pca,
@@ -189,6 +165,20 @@ public class LocalPca extends ModelFields implements Serializable {
 					+ "the resource:\n\n%s", pca));
 		}
 
+	}
+	
+	/**
+	 * Returns reg expre for model Id.
+	 */
+    public String getModelIdRe() {
+		return PCA_RE;
+	}
+    
+    /**
+	 * Returns bigml resource JSONObject.
+	 */
+    public JSONObject getBigMLModel(String modelId) {
+		return (JSONObject) this.bigmlClient.getPca(modelId);
 	}
 
 	/**
