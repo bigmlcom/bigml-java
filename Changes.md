@@ -1,5 +1,15 @@
 # Changes in the BigML.io Java bindings
 
+## 1.8.11 version
+
+* New constructor in local model objects with BigMLClient param.
+* Using storage in local model objects.
+
+### Bugs
+
+* Fixed test suite
+
+
 ## 1.8.10 version
 
 * Make empty constructor for BigMLClent public.
