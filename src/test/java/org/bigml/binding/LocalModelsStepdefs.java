@@ -32,9 +32,9 @@ public class LocalModelsStepdefs {
     public void I_create_a_local_model(String jsonModelFile) throws Exception {
 
         String jsonModel = Utils.readFile(jsonModelFile);
-        JSONObject localeModel = (JSONObject) JSONValue.parse(jsonModel);
+        JSONObject localModel = (JSONObject) JSONValue.parse(jsonModel);
         
-        context.localModel = new LocalPredictiveModel(localeModel);
+        context.localModel = new LocalPredictiveModel(localModel);
         assertTrue("", context.localModel != null);
     }
 

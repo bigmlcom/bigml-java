@@ -120,8 +120,8 @@ public class ClustersStepdefs {
     @When("^I create a local centroid for \"(.*)\"$")
     public void I_create_a_local_centroid_for(String inputData)
             throws AuthenticationException {
-        context.localCentroid = context.localCluster.centroid((JSONObject) JSONValue.parse(inputData),
-                Boolean.TRUE);
+        context.localCentroid = context.localCluster.centroid(
+            (JSONObject) JSONValue.parse(inputData));
     }
 
     @Given("^I check the centroid is ok$")
@@ -227,7 +227,7 @@ public class ClustersStepdefs {
         JSONObject closestObj = (JSONObject) JSONValue.parse(closest);
         
         JSONObject closestInCluster = context.localCluster.closestInCluster(
-        		referencePoint, 1, null, true);
+            referencePoint, 1, null);
         JSONObject result = (JSONObject) (
         		(JSONArray) closestInCluster.get("closest")).get(0);
         

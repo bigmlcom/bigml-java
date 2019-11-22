@@ -56,29 +56,6 @@ Feature: Create Predictions locally from Ensembles
       | data/iris.csv   |  50      | 50     | 50     | 5                | {"petal width": 0.5}  | Iris-versicolor |  0.3687     |
 
 
-  # THIS SCENARIO IS NOT NECESSARY IN THE JAVA BINDING BECAUSE WE ONLY CAN CREATE LOCALENSEMBLES
-  #  USING A LIST OF MODEL IDs. THIS IS ENOUGH TO CREATE THE LOCAL ENSEMBLES.
-  #
-  #  Scenario Outline: Successfully obtaining field importance from an Ensemble created from local models:
-  #    Given I create a data source uploading a "<data>" file
-  #    And I wait until the source is ready less than <time_1> secs
-  #    And I create a dataset
-  #    And I wait until the dataset is ready less than <time_2> secs
-  #    And I create a model with "<parms1>"
-  #    And I wait until the model is ready less than <time_3> secs
-  #    And I create a model with "<parms2>"
-  #    And I wait until the model is ready less than <time_4> secs
-  #    And I create a model with "<parms3>"
-  #    And I wait until the model is ready less than <time_5> secs
-  #    When I create a local Ensemble with the last <number_of_models> local models
-  #    Then the field importance text is "<field_importance>"
-  #    Then delete test data
-  #
-  #    Examples:
-  #      | data             |  time_1  | time_2 |parms1 | time_3 |parms2 | time_4 |parms3| time_5 |number_of_models |field_importance |
-  #      | data/iris.csv |  50      | 50     |{"input_fields": ["000000", "000001","000003", "000004"]} |20      |{"input_fields": ["000000", "000001","000002", "000004"]} | 20     |{"input_fields": ["000000", "000001","000002", "000003", "000004"]} | 20   | 3 |[["000002", 0.5269933333333333], ["000003", 0.38936], ["000000", 0.04662333333333333], ["000001", 0.037026666666666666]] |
-
-
   Scenario Outline: Successfully creating a local prediction from an Ensemble:
     Given I create a data source uploading a "<data>" file
     And I wait until the source is ready less than <time_1> secs
