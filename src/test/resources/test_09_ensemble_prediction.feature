@@ -33,5 +33,7 @@ Feature: Create Predictions from Ensembles
     Then the numerical prediction for "<objective>" is <prediction>
     Then delete test data
 
-    	| data/grades.csv | 10 | 10 | 150 | 20 | 10 |{"Assignment": 81.22, "Tutorial": 91.95, "Midterm": 79.38, "TakeHome": 105.93} | 000005 | 84.556 |
-    	| data/grades.csv | 10 | 10 | 150 | 20 | 10 |{"Assignment": 97.33, "Tutorial": 106.74, "Midterm": 76.88, "TakeHome": 108.89} | 000005 | 73.13558 |
+		Examples:
+      | data             | time_1  | time_2 | time_3 | time_4 | number_of_models | data_input    | objective | prediction  |
+    	| data/grades.csv | 30 | 30 | 150 | 30 | 30 |{"Assignment": 81.22, "Tutorial": 91.95, "Midterm": 79.38, "TakeHome": 105.93} | 000005 | 89.165 |
+    	| data/grades.csv | 30 | 30 | 150 | 30 | 30 |{"Assignment": 97.33, "Tutorial": 106.74, "Midterm": 76.88, "TakeHome": 108.89} | 000005 | 71.938 |
