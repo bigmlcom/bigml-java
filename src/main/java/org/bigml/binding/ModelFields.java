@@ -84,8 +84,6 @@ public abstract class ModelFields implements Serializable {
 	protected ModelFields(BigMLClient bigmlClient, JSONObject model) 
 			throws Exception {
 		
-		initBigML(bigmlClient);
-		
 		// checks whether the information needed for local predictions 
  		// is in the model argument
  		if (!checkModelFields(model)) {
@@ -101,6 +99,7 @@ public abstract class ModelFields implements Serializable {
  		
  		if (!(model.containsKey("resource")
  				&& model.get("resource") != null)) {
+ 			initBigML(bigmlClient);
  			model = getBigMLModel(modelId);
 
  			if ((String) model.get("resource") == null) {
