@@ -54,12 +54,7 @@ public class BigMLSampleClient {
 
         BigMLClient api = null;
         try {
-
-            // Instantiating BigMLClient with the properties BIGML_USERNAME and
-            // BIGML_API_KEY that should previously be set the
-            // binding.properties file
-
-            api = new BigMLClient();
+        	api = new BigMLClient("username", "apikey", null);
         } catch (AuthenticationException e) {
             e.printStackTrace();
             return;
@@ -87,7 +82,7 @@ public class BigMLSampleClient {
         // needs to predict
 
         JSONObject model = createModel(api, dataset);
-        predictLocally(model);
+        predictLocally(api, model);
 
         // * Third example: Evaluation Workflow
         evaluationWorkflow(api, dataset);
@@ -345,7 +340,8 @@ public class BigMLSampleClient {
         return api.getModel(model);
     }
 
-    public static void predictLocally(final JSONObject model) {
+    public static void predictLocally(
+    		final BigMLClient api, final JSONObject model) {
 
         /**
          * Creating local predictions
@@ -379,7 +375,7 @@ public class BigMLSampleClient {
 
         try {
             localModel = new LocalPredictiveModel(
-                    (JSONObject) model.get("object"));
+                    api, (JSONObject) model.get("object"));
 
             if (DEBUG) { // auxiliary console message
                 System.out.println("Model downloaded: " +

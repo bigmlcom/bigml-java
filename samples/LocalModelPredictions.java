@@ -10,7 +10,7 @@ public class LocalModelPredictions {
 
     public static void predict(String inputFile, String outFile)
         throws Exception {
-        // Use here the identifier of an model you own
+        // Use here the identifier of a model you own
         String mid = "model/52df49b60c0b5e589b00014b";
         BigMLClient api = new BigMLClient();
         LocalPredictiveModel m =
