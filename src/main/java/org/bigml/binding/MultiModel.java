@@ -167,7 +167,8 @@ public class MultiModel implements Serializable {
             		predictionList.add(0.0);
             	}
             	
-            	Prediction predictionInfo = localModel.predict(inputData, false, strategy);
+            	Prediction predictionInfo = localModel.predict(
+            			inputData, strategy);
             	String prediction = (String) predictionInfo.get("prediction");
             	predictionList.set(classNames.indexOf(prediction), 1.0);
             	
@@ -196,26 +197,6 @@ public class MultiModel implements Serializable {
         return votes;
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-
     
     /**
      * Makes a prediction based on the prediction made by every model.
