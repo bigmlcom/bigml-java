@@ -7,6 +7,8 @@
 * Using storage in local model objects.
 * Removed deprecated methods.
 
+IMPORTANT NOTICE: In next version 1.8.12 we will remove deprecated methods in BigMLCLient.
+
 ### Bugs
 
 * Fixed test suite
