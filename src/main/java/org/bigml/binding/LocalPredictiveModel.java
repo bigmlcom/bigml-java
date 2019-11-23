@@ -93,19 +93,6 @@ public class LocalPredictiveModel extends ModelFields
     private Boolean regression = false;
     private JSONObject boosting = null;
     private List<String> classNames = new ArrayList<String>();
-    //private List<String> objectiveCategories = new ArrayList<String>();
-
-    public static void main(String[] args) {
-		try {
-			String mid = "model/5dd824e828e1f45b7c0002db";
-	        BigMLClient api = new BigMLClient();
-	        LocalPredictiveModel m =
-	            new LocalPredictiveModel(api.getModel(mid));
-	        System.out.println("m ...... " + m);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
     
     
     public LocalPredictiveModel(JSONObject model) throws Exception {
@@ -214,12 +201,6 @@ public class LocalPredictiveModel extends ModelFields
             		JSONArray categories = (JSONArray) Utils.getJSONObject(
     						(JSONObject) fields.get(objectiveField), 
                 			"summary.categories", new JSONArray());
-            		
-            		/*
-            		for (Object category: categories) {
-            			objectiveCategories.add((String) ((JSONArray) category).get(0));
-            		}
-            		*/
             	}
             }
         }
@@ -416,66 +397,6 @@ public class LocalPredictiveModel extends ModelFields
     }
 
     /**
-     * Makes a prediction based on a number of field values using a 
-     * Last Prediction Strategy
-     *
-     * By default the input fields must be keyed by field name but you 
-     * can use `byName` to input them directly keyed by id.
-     *
-     */
-    @Deprecated
-    public Prediction predict(final String args, Boolean byName) 
-    		throws InputDataParseException {
-    	
-        if (byName == null) {
-            byName = true;
-        }
-
-        JSONObject argsData = (JSONObject) JSONValue.parse(args);
-        if (!args.equals("") && !args.equals("") && argsData == null) {
-            throw new InputDataParseException("Input data format not valid");
-        }
-        JSONObject inputData = argsData;
-        return predict(inputData, byName);
-    }
-
-    /**
-     * Makes a prediction based on a number of field values using a 
-     * Last Prediction Strategy
-     *
-     * The input fields must be keyed by field name.
-     */
-    @Deprecated
-    public Prediction predict(final JSONObject args, Boolean byName)
-            throws InputDataParseException {
-        return predict(args, byName, MissingStrategy.LAST_PREDICTION, null).get(0);
-    }
-
-    /**
-     * Makes a prediction based on a number of field values using the 
-     * specified Missing Strategy
-     *
-     * The input fields must be keyed by field name.
-     */
-    @Deprecated
-    public Prediction predict(final JSONObject args, Boolean byName, MissingStrategy strategy)
-            throws Exception {
-        return predict(args, strategy, null, null, true, null);
-    }
-    
-    /**
-     * Makes a multiple predictions based on a number of field values using the Last Prediction strategy
-     *
-     * The input fields must be keyed by field name.
-     * 
-     * @deprecated
-     */
-    public List<Prediction> predict(final JSONObject args, Boolean byName, Object multiple)
-            throws InputDataParseException {
-        return predict(args, byName, MissingStrategy.LAST_PREDICTION, multiple);
-    }
-    
-    /**
      * Makes a multiple predictions based on a number of field values using the Last Prediction strategy
      *
      * The input fields must be keyed by field name.
@@ -490,26 +411,6 @@ public class LocalPredictiveModel extends ModelFields
      * or names to their values as Java objects. See also predict(String,
      * Boolean, Integer, Boolean).
      */
-    @Deprecated
-    public Prediction predictWithMap(
-            final Map<String, Object> inputs, Boolean byName, Boolean withConfidence)
-            throws Exception {
-
-        JSONObject inputObj = (JSONObject) JSONValue.parse(JSONValue
-                .toJSONString(inputs));
-        return predict(inputObj, MissingStrategy.LAST_PREDICTION, null, null, true);
-    }
-    
-    @Deprecated
-    public Prediction predictWithMap(
-            final Map<String, Object> inputs, Boolean byName, MissingStrategy missingStrategy)
-            throws Exception {
-
-        JSONObject inputObj = (JSONObject) JSONValue.parse(JSONValue
-                .toJSONString(inputs));
-        return predict(inputObj, missingStrategy, null, null, true, null);
-    }
-    
     public Prediction predictWithMap(
             final Map<String, Object> inputs, MissingStrategy missingStrategy)
             throws Exception {
@@ -517,14 +418,6 @@ public class LocalPredictiveModel extends ModelFields
         JSONObject inputObj = (JSONObject) JSONValue.parse(JSONValue
                 .toJSONString(inputs));
         return predict(inputObj, missingStrategy, null, null, true, null);
-    }
-    
-    @Deprecated
-    public Prediction predictWithMap(
-            final Map<String, Object> inputs, Boolean byName)
-            throws Exception {
-    	
-        return predictWithMap(inputs, byName, MissingStrategy.LAST_PREDICTION);
     }
     
     public Prediction predictWithMap(
@@ -537,46 +430,6 @@ public class LocalPredictiveModel extends ModelFields
     
     /**
      * Makes a prediction based on a number of field values.
-     *
-     * By default the input fields must be keyed by field name but you can use
-     *  `byName` to input them directly keyed by id.
-     *
-     * inputData: Input data to be predicted
-     *
-     * byName: Boolean, True if input_data is keyed by names
-     *
-     * missingStrategy: LAST_PREDICTION|PROPORTIONAL missing strategy for
-     *                  missing fields
-     *
-     * multiple: For categorical fields, it will return the categories
-     *           in the distribution of the predicted node as a
-     *      list of dicts:
-     *          [{'prediction': 'Iris-setosa',
-     *              'confidence': 0.9154
-     *              'probability': 0.97
-     *              'count': 97},
-     *           {'prediction': 'Iris-virginica',
-     *              'confidence': 0.0103
-     *              'probability': 0.03,
-     *              'count': 3}]
-     *
-     * The value of this argument can either be an integer
-     *  (maximum number of categories to be returned), or the
-     *  literal 'all', that will cause the entire distribution
-     *  in the node to be returned.
-     *
-     *  @deprecated
-     */
-    public List<Prediction> predict(final JSONObject args, Boolean byName, MissingStrategy strategy, Object multiple)
-            throws InputDataParseException {
-    	return predict(args, strategy, multiple);
-    }
-
-    /**
-     * Makes a prediction based on a number of field values.
-     *
-     * By default the input fields must be keyed by field name but you can use
-     *  `byName` to input them directly keyed by id.
      *
      * inputData: Input data to be predicted
      *
@@ -828,7 +681,6 @@ public class LocalPredictiveModel extends ModelFields
         
 		return prediction;
 	}
-    
     
     /**
      * Computes the probability of a distribution using a Laplacian correction

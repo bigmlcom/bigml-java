@@ -60,7 +60,7 @@ public class LocalModelsStepdefs {
     public void the_numerical_prediction_of_proportional_missing_strategy_local_predictionfor_is(String args, double expectedPrediction) {
         try {
             JSONObject inputObj = (JSONObject) JSONValue.parse(args);
-            Prediction p = context.localModel.predict(inputObj, true, MissingStrategy.PROPORTIONAL);
+            Prediction p = context.localModel.predict(inputObj, MissingStrategy.PROPORTIONAL);
             Double actualPrediction = (Double) p.getPrediction();
             assertEquals(String.format("%.4g%n", expectedPrediction), String.format("%.4g%n", actualPrediction));
         } catch (Exception e) {
@@ -72,7 +72,7 @@ public class LocalModelsStepdefs {
     public void the_proportional_missing_strategy_local_prediction_for_is(String args, String pred) {
         try {
             JSONObject inputObj = (JSONObject) JSONValue.parse(args);
-            Prediction p = context.localModel.predict(inputObj, true, MissingStrategy.PROPORTIONAL);
+            Prediction p = context.localModel.predict(inputObj, MissingStrategy.PROPORTIONAL);
             String prediction = (String) p.getPrediction();
             assertTrue("", prediction != null && prediction.equals(pred));
         } catch (Exception e) {
@@ -84,7 +84,7 @@ public class LocalModelsStepdefs {
     public void the_confidence_of_the_missing_strategy_local_predictionfor_is(String args, double expectedConfidence) {
         try {
             JSONObject inputObj = (JSONObject) JSONValue.parse(args);
-            Prediction p = context.localModel.predict(inputObj, true, MissingStrategy.PROPORTIONAL);
+            Prediction p = context.localModel.predict(inputObj, MissingStrategy.PROPORTIONAL);
             Double actualConfidence = p.getConfidence();
             assertEquals(String.format("%.4g%n", expectedConfidence), String.format("%.4g%n", actualConfidence));
         } catch (Exception e) {
