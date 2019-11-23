@@ -2,9 +2,13 @@ package org.bigml.binding.samples;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.util.HashMap;
 import java.util.Map;
 
-import org.bigml.binding.LocalEnsemble
+import org.bigml.binding.LocalEnsemble;
+import org.bigml.binding.MissingStrategy;
+import org.bigml.binding.PredictionMethod;
+import org.json.simple.JSONObject;
 
 public class LocalEnsemblePredictions {
 
@@ -25,8 +29,11 @@ public class LocalEnsemblePredictions {
         // Let's write the predictions to an output file
         FileWriter writer = new FileWriter(outFile);
         while (reader.hasNext()) {
-            Map<String, Object> inputs = reader.next();
-            Map<Object, Object> pred = e.predict(inputs, true, 0, true);
+        	JSONObject inputs = (JSONObject) reader.next();
+            HashMap<String, Object> pred = 
+            	e.predict(inputs, PredictionMethod.PLURALITY,
+                    null, MissingStrategy.PROPORTIONAL, null, null, null, true);
+        
             String pv = (String) pred.get("prediction");
             if (pv != null) writer.write(pv);
         }
