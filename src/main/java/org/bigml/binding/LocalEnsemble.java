@@ -97,6 +97,8 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
 
     	super(bigmlClient, ensemble);
     	ensemble = this.model;
+    	
+    	initBigML(bigmlClient);
 
         ensembleId = (String) ensemble.get("resource");
 
@@ -164,10 +166,7 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
     }
 
     public LocalEnsemble(BigMLClient bigmlClient, List modelsIds, Integer maxModels) throws Exception {
-        this.bigmlClient =
-            (bigmlClient != null)
-                ? bigmlClient
-                : new BigMLClient(null, null, BigMLClient.STORAGE);
+        initBigML(bigmlClient);
 
         this.modelsIds = (String[]) modelsIds
             .toArray(new String[modelsIds.size()]);
