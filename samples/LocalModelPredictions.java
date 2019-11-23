@@ -27,7 +27,7 @@ public class LocalModelPredictions {
         FileWriter writer = new FileWriter(outFile);
         while (reader.hasNext()) {
             Map<String, Object> inputs = reader.next();
-            Map<Object, Object> pred = m.predict(inputs, true, true);
+            Map<Object, Object> pred = m.predictWithMap(inputs, null);
             String pv = (String) pred.get("prediction");
             if (pv != null) writer.write(pv);
         }
