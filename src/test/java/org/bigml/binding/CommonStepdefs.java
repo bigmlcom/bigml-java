@@ -43,6 +43,17 @@ public class CommonStepdefs {
 		RES_NAMES.put("batch projection", "batchProjection");
 	}
 
+	private static final String[] RESOURCES_NAMES = {
+		"project", "sample", "batchProjection", "projection", "pca",
+		"fusion", "optiml", "deepnet", "forecast", "timeSeries",
+		"configuration", "batchTopicDistribution", "topicDistribution",
+		"topicModel", "association", "library", "script", "execution",
+		"linearRegression", "logisticRegression", "statisticalTest",
+		"correlation", "batchCentroid", "centroid", "batchPrediction",
+		"prediction", "cluster", "evaluation", "ensemble", "anomaly",
+		"anomalyScore", "batchAnomalyScore", "model", "dataset",  "source"
+    };
+
 	// Logging
 	Logger logger = LoggerFactory.getLogger(CommonStepdefs.class);
 
@@ -99,6 +110,9 @@ public class CommonStepdefs {
 				method = client.getClass().getMethod(
 						name, String.class, JSONObject.class, 
 						Integer.class, Integer.class);
+			}
+			if ("list".equals(operation)) {
+				method = client.getClass().getMethod(name, String.class);
 			}
 			if ("get".equals(operation)) {
 				method = client.getClass().getMethod(name, String.class);
@@ -334,7 +348,7 @@ public class CommonStepdefs {
 		}
 
 	}
-	
+
 	@Then("^delete test data$")
 	public void delete_test_data() throws AuthenticationException {
 		if (context.models != null) {
@@ -619,8 +633,7 @@ public class CommonStepdefs {
 			context.source = null;
 		}
 	}
-	
-	
+
 	private void deleteModel(String modelId) {
 		try {
 			if (modelId.startsWith("model/")) {
@@ -652,329 +665,18 @@ public class CommonStepdefs {
 	public void delete_all_test_data() throws Exception {
 
 		context.api.getCacheManager().cleanCache();
-
-		// Projects
-		JSONArray projects = (JSONArray) context.api
-				.listProjects(";tags__in=unitTest").get("objects");
-		for (int i = 0; i < projects.size(); i++) {
-			JSONObject project = (JSONObject) projects.get(i);
-			context.api
-					.deleteProject((String) project.get("resource"));
-		}
 		
-		// Samples
-		JSONArray samples = (JSONArray) context.api
-				.listSamples(";tags__in=unitTest").get("objects");
-		for (int i = 0; i < samples.size(); i++) {
-			JSONObject sample = (JSONObject) samples.get(i);
-			context.api
-					.deleteSample((String) sample.get("resource"));
-		}
-		
-		// BatchProjections
-		JSONArray batchProjections = (JSONArray) context.api
-				.listBatchProjections(";tags__in=unitTest")
-				.get("objects");
-		for (int i = 0; i < batchProjections.size(); i++) {
-			JSONObject batchProjection = (JSONObject) batchProjections
-					.get(i);
-			context.api.deleteBatchProjection(
-					(String) batchProjection.get("resource"));
-		}
+		for (String resName : Arrays.asList(RESOURCES_NAMES)) {
+			Method listMethod = getClientMethod("list", resName);
+			Method deleteMethod = getClientMethod("delete", resName);
 
-		// Projections
-		JSONArray projections = (JSONArray) context.api
-				.listProjections(";tags__in=unitTest").get("objects");
-		for (int i = 0; i < projections.size(); i++) {
-			JSONObject projection = (JSONObject) projections
-					.get(i);
-			context.api.deleteProjection(
-					(String) projection.get("resource"));
+			JSONObject listResources = (JSONObject) listMethod.invoke(
+					context.api, ";tags__in=unitTest");
+			JSONArray resources = (JSONArray) listResources.get("objects");
+			for (int i = 0; i < resources.size(); i++) {
+				JSONObject resource = (JSONObject) resources.get(i);
+				deleteMethod.invoke(context.api, resource);
+			}
 		}
-
-		// Pcas
-		JSONArray pcas = (JSONArray) context.api
-				.listPcas(";tags__in=unitTest").get("objects");
-		for (int i = 0; i < pcas.size(); i++) {
-			JSONObject pca = (JSONObject) pcas.get(i);
-			context.api
-					.deletePca((String) pca.get("resource"));
-		}
-		
-		// Fusions
-		JSONArray fusions = (JSONArray) context.api
-				.listFusions(";tags__in=unitTest").get("objects");
-		for (int i = 0; i < fusions.size(); i++) {
-			JSONObject fusion = (JSONObject) fusions.get(i);
-			context.api
-					.deleteFusion((String) fusion.get("resource"));
-		}
-
-		// OptiMLs
-		JSONArray optimls = (JSONArray) context.api
-				.listOptiMLs(";tags__in=unitTest").get("objects");
-		for (int i = 0; i < optimls.size(); i++) {
-			JSONObject optiml = (JSONObject) optimls.get(i);
-			context.api
-					.deleteOptiML((String) optiml.get("resource"));
-		}
-
-		// Deepnets
-		JSONArray deepnets = (JSONArray) context.api
-				.listDeepnets(";tags__in=unitTest").get("objects");
-		for (int i = 0; i < deepnets.size(); i++) {
-			JSONObject deepnet = (JSONObject) deepnets.get(i);
-			context.api
-					.deleteDeepnet((String) deepnet.get("resource"));
-		}
-
-		// Forecasts
-		JSONArray forecasts = (JSONArray) context.api
-				.listForecasts(";tags__in=unitTest").get("objects");
-		for (int i = 0; i < forecasts.size(); i++) {
-			JSONObject forecast = (JSONObject) forecasts.get(i);
-			context.api
-					.deleteForecast((String) forecast.get("resource"));
-		}
-
-		// TimeSeries
-		JSONArray timeSeries = (JSONArray) context.api
-				.listTimeSeries(";tags__in=unitTest").get("objects");
-		for (int i = 0; i < timeSeries.size(); i++) {
-			JSONObject timeSeries_ = (JSONObject) timeSeries.get(i);
-			context.api
-					.deleteTimeSeries((String) timeSeries_.get("resource"));
-		}
-
-		// Configurations
-		JSONArray configurations = (JSONArray) context.api
-				.listConfigurations(";tags__in=unitTest").get("objects");
-		for (int i = 0; i < configurations.size(); i++) {
-			JSONObject configuration = (JSONObject) configurations.get(i);
-			context.api.deleteConfiguration(
-					(String) configuration.get("resource"));
-		}
-
-		// BatchTopicDistributions
-		JSONArray batchTopicDistributions = (JSONArray) context.api
-				.listBatchTopicDistributions(";tags__in=unitTest")
-				.get("objects");
-		for (int i = 0; i < batchTopicDistributions.size(); i++) {
-			JSONObject batchTopicDistribution = (JSONObject) batchTopicDistributions
-					.get(i);
-			context.api.deleteTopicDistribution(
-					(String) batchTopicDistribution.get("resource"));
-		}
-
-		// TopicDistributions
-		JSONArray topicDistributions = (JSONArray) context.api
-				.listTopicDistributions(";tags__in=unitTest").get("objects");
-		for (int i = 0; i < topicDistributions.size(); i++) {
-			JSONObject topicDistribution = (JSONObject) topicDistributions
-					.get(i);
-			context.api.deleteTopicDistribution(
-					(String) topicDistribution.get("resource"));
-		}
-
-		// TopicModels
-		JSONArray topicModels = (JSONArray) context.api
-				.listTopicModels(";tags__in=unitTest").get("objects");
-		for (int i = 0; i < topicModels.size(); i++) {
-			JSONObject topicModel = (JSONObject) topicModels.get(i);
-			context.api
-					.deleteTopicModel((String) topicModel.get("resource"));
-		}
-
-		// Associations
-		JSONArray associations = (JSONArray) context.api
-				.listAssociations(";tags__in=unitTest").get("objects");
-		for (int i = 0; i < associations.size(); i++) {
-			JSONObject association = (JSONObject) associations.get(i);
-			context.api
-					.deleteAssociation((String) association.get("resource"));
-		}
-
-		// Whizzml Libraries
-		JSONArray libraries = (JSONArray) context.api
-				.listLibraries(";tags__in=unitTest").get("objects");
-		for (int i = 0; i < libraries.size(); i++) {
-			JSONObject library = (JSONObject) libraries.get(i);
-			context.api
-					.deleteLibrary((String) library.get("resource"));
-		}
-
-		// Whizzml Scripts
-		JSONArray scripts = (JSONArray) context.api
-				.listScripts(";tags__in=unitTest").get("objects");
-		for (int i = 0; i < scripts.size(); i++) {
-			JSONObject script = (JSONObject) scripts.get(i);
-			context.api
-					.deleteScript((String) script.get("resource"));
-		}
-
-		// Whizzml Executions
-		JSONArray executions = (JSONArray) context.api
-				.listExecutions(";tags__in=unitTest").get("objects");
-		for (int i = 0; i < executions.size(); i++) {
-			JSONObject execution = (JSONObject) executions.get(i);
-			context.api
-					.deleteExecution((String) execution.get("resource"));
-		}
-		
-		// LinearRegression
-		JSONArray linearRegressions = (JSONArray) context.api
-				.listLinearRegressions(";tags__in=unitTest").get("objects");
-		for (int i = 0; i < linearRegressions.size(); i++) {
-			JSONObject linearRegression = (JSONObject) linearRegressions
-					.get(i);
-			context.api.deleteLinearRegression(
-					(String) linearRegression.get("resource"));
-		}
-				
-		// LogisticRegression
-		JSONArray logisticRegressions = (JSONArray) context.api
-				.listLogisticRegressions(";tags__in=unitTest").get("objects");
-		for (int i = 0; i < logisticRegressions.size(); i++) {
-			JSONObject logisticRegression = (JSONObject) logisticRegressions
-					.get(i);
-			context.api.deleteLogisticRegression(
-					(String) logisticRegression.get("resource"));
-		}
-
-		// StatisticalTest
-		JSONArray statisticalTests = (JSONArray) context.api
-				.listStatisticalTests(";tags__in=unitTest").get("objects");
-		for (int i = 0; i < statisticalTests.size(); i++) {
-			JSONObject statisticalTest = (JSONObject) statisticalTests.get(i);
-			context.api.deleteStatisticalTest(
-					(String) statisticalTest.get("resource"));
-		}
-
-		// Correlations
-		JSONArray correlations = (JSONArray) context.api
-				.listCorrelations(";tags__in=unitTest").get("objects");
-		for (int i = 0; i < correlations.size(); i++) {
-			JSONObject correlation = (JSONObject) correlations.get(i);
-			context.api
-					.deleteCorrelation((String) correlation.get("resource"));
-		}
-
-		// BatchCentroids
-		JSONArray batchCentroids = (JSONArray) context.api
-				.listBatchCentroids(";tags__in=unitTest").get("objects");
-		for (int i = 0; i < batchCentroids.size(); i++) {
-			JSONObject batchCentroid = (JSONObject) batchCentroids.get(i);
-			context.api.deleteBatchCentroid(
-					(String) batchCentroid.get("resource"));
-		}
-
-		// Centroids
-		JSONArray centroids = (JSONArray) context.api
-				.listCentroids(";tags__in=unitTest").get("objects");
-		for (int i = 0; i < centroids.size(); i++) {
-			JSONObject centroid = (JSONObject) centroids.get(i);
-			context.api
-					.deleteCentroid((String) centroid.get("resource"));
-		}
-
-		// BatchPredictions
-		JSONArray batchPredictions = (JSONArray) context.api
-				.listBatchPredictions(";tags__in=unitTest").get("objects");
-		for (int i = 0; i < batchPredictions.size(); i++) {
-			JSONObject batchPrediction = (JSONObject) batchPredictions.get(i);
-			context.api.deleteBatchPrediction(
-					(String) batchPrediction.get("resource"));
-		}
-
-		// Predictions
-		JSONArray predictions = (JSONArray) context.api
-				.listPredictions(";tags__in=unitTest").get("objects");
-		for (int i = 0; i < predictions.size(); i++) {
-			JSONObject prediction = (JSONObject) predictions.get(i);
-			context.api
-					.deletePrediction((String) prediction.get("resource"));
-		}
-
-		// Clusters
-		JSONArray clusters = (JSONArray) context.api
-				.listClusters(";tags__in=unitTest").get("objects");
-		for (int i = 0; i < clusters.size(); i++) {
-			JSONObject cluster = (JSONObject) clusters.get(i);
-			context.api
-					.deleteCluster((String) cluster.get("resource"));
-		}
-
-		// Evaluations
-		JSONArray evaluations = (JSONArray) context.api
-				.listEvaluations(";tags__in=unitTest").get("objects");
-		for (int i = 0; i < evaluations.size(); i++) {
-			JSONObject evaluation = (JSONObject) evaluations.get(i);
-			context.api
-					.deleteEvaluation((String) evaluation.get("resource"));
-		}
-
-		// Ensembles
-		JSONArray ensembles = (JSONArray) context.api
-				.listEnsembles(";tags__in=unitTest").get("objects");
-		for (int i = 0; i < ensembles.size(); i++) {
-			JSONObject ensemble = (JSONObject) ensembles.get(i);
-			context.api
-					.deleteEnsemble((String) ensemble.get("resource"));
-		}
-
-		// Anomalies
-		JSONArray anomalies = (JSONArray) context.api
-				.listAnomalies(";tags__in=unitTest").get("objects");
-		for (int i = 0; i < anomalies.size(); i++) {
-			JSONObject model = (JSONObject) anomalies.get(i);
-			context.api
-					.deleteAnomaly((String) model.get("resource"));
-		}
-
-		// AnomalyScores
-		JSONArray anomalyScores = (JSONArray) context.api
-				.listAnomalyScores(";tags__in=unitTest").get("objects");
-		for (int i = 0; i < anomalyScores.size(); i++) {
-			JSONObject model = (JSONObject) anomalyScores.get(i);
-			context.api
-					.deleteAnomalyScore((String) model.get("resource"));
-		}
-
-		// BatchAnomalyScores
-		JSONArray batchAnomalyScores = (JSONArray) context.api
-				.listBatchAnomalyScores(";tags__in=unitTest").get("objects");
-		for (int i = 0; i < batchAnomalyScores.size(); i++) {
-			JSONObject model = (JSONObject) batchAnomalyScores.get(i);
-			context.api
-					.deleteBatchAnomalyScore((String) model.get("resource"));
-		}
-
-		// Models
-		JSONArray models = (JSONArray) context.api
-				.listModels(";tags__in=unitTest").get("objects");
-		for (int i = 0; i < models.size(); i++) {
-			JSONObject model = (JSONObject) models.get(i);
-			context.api
-					.deleteModel((String) model.get("resource"));
-		}
-
-		// Datasets
-		JSONArray datasets = (JSONArray) context.api
-				.listDatasets(";tags__in=unitTest").get("objects");
-		for (int i = 0; i < datasets.size(); i++) {
-			JSONObject dataset = (JSONObject) datasets.get(i);
-			context.api
-					.deleteDataset((String) dataset.get("resource"));
-		}
-
-		// Sources
-		JSONArray sources = (JSONArray) context.api
-				.listSources(";tags__in=unitTest").get("objects");
-		for (int i = 0; i < sources.size(); i++) {
-			JSONObject source = (JSONObject) sources.get(i);
-			context.api
-					.deleteSource((String) source.get("resource"));
-		}
-
 	}
 }
