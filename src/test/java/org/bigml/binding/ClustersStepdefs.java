@@ -80,16 +80,6 @@ public class ClustersStepdefs {
         context.localCluster = new LocalCluster(context.cluster);
     }
     
-    @Given("^I wait until the cluster is ready less than (\\d+) secs and I return it$")
-    public JSONObject I_wait_until_the_cluster_is_ready_less_than_secs_and_return(
-            int secs) throws Throwable {
-    	commonSteps.I_wait_until_resource_status_code_is(
-    			"cluster",
-    			AbstractResource.FINISHED,
-                AbstractResource.FAULTY, secs);
-        return context.cluster;
-    }
-
     @Given("^I get the cluster \"(.*)\"")
     public void I_get_the_cluster(String clusterId)
             throws AuthenticationException {
