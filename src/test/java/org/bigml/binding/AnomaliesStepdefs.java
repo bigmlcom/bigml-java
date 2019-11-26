@@ -3,7 +3,6 @@ package org.bigml.binding;
 import cucumber.annotation.en.Given;
 import cucumber.annotation.en.Then;
 import cucumber.annotation.en.When;
-import org.bigml.binding.resources.AbstractResource;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -33,7 +32,6 @@ public class AnomaliesStepdefs {
     public void I_create_an_anomaly_from_a_dataset_list() throws AuthenticationException {
         JSONObject args = new JSONObject();
         args.put("tags", Arrays.asList("unitTest"));
-//        args.put("missing_splits", false);
 
         assertTrue("No datasets found!", context.datasets != null && context.datasets.size() > 0);
 
@@ -49,8 +47,7 @@ public class AnomaliesStepdefs {
         context.anomaly = (JSONObject) resource.get("object");
         commonSteps.the_resource_has_been_created_with_status(context.status);
     }
-
-
+   
     @Then("^I create an anomaly detector of (\\d+) anomalies from a dataset$")
     public void i_create_an_anomaly_with_top_n_from_dataset(int topN)
         throws AuthenticationException {
@@ -74,16 +71,6 @@ public class AnomaliesStepdefs {
         localAnomaly = new LocalAnomaly(context.anomaly);
     }
 
-    @Given("^I wait until the anomaly detector is ready less than (\\d+) secs and I return it$")
-    public JSONObject I_wait_until_the_anomaly_is_ready_less_than_secs_and_return(
-            int secs) throws Throwable {
-    	commonSteps.I_wait_until_resource_status_code_is(
-    			"anomaly detector",
-    			AbstractResource.FINISHED,
-                AbstractResource.FAULTY, secs);
-        return context.anomaly;
-    }
-
     @Given("^I check the anomaly detector stems from the original dataset list$")
     public void i_check_anomaly_dataset_and_datasets_list () throws AuthenticationException {
         String[] datasetIds = (String[]) context.datasets.toArray(new String[context.datasets.size()]);
@@ -104,36 +91,7 @@ public class AnomaliesStepdefs {
 
         assertEquals(datasetId, anomalyDatasetId);
     }
-
-    @Given("^I create an anomaly detector with \"(.*)\"$")
-    public void I_create_an_anomaly_with_params(String args) throws Throwable {
-        String datasetId = (String) context.dataset.get("resource");
-        JSONObject argsJSON = (JSONObject) JSONValue.parse(args);
-
-        if( argsJSON != null ) {
-            if (argsJSON.containsKey("tags")) {
-                ((JSONArray) argsJSON.get("tags")).add("unitTest");
-            } else {
-                argsJSON.put("tags", Arrays.asList("unitTest"));
-            }
-
-//            if( !argsJSON.containsKey("missing_splits") ) {
-//                argsJSON.put("missing_splits", false);
-//            }
-        } else {
-            argsJSON = new JSONObject();
-            argsJSON.put("tags", Arrays.asList("unitTest"));
-//            argsJSON.put("missing_splits", false);
-        }
-
-        JSONObject resource = context.api.createAnomaly(datasetId,
-                argsJSON, 5, null);
-        context.status = (Integer) resource.get("code");
-        context.location = (String) resource.get("location");
-        context.anomaly = (JSONObject) resource.get("object");
-        commonSteps.the_resource_has_been_created_with_status(context.status);
-    }
-
+    
     @When("^I download the created batch anomaly score file to \"([^\"]*)\"$")
     public void I_download_the_created_batch_anomaly_score_file_to(String fileTo)
             throws Throwable {
