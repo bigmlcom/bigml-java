@@ -9,8 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.*;
-
 
 public class LinearRegressionsStepdefs {
 
@@ -27,24 +25,16 @@ public class LinearRegressionsStepdefs {
     @Given("^I create a linearregression with objective \"([^\"]*)\" and params \"(.*)\"$")
     public void I_create_a_linearregression_with_objective_and_params(String objective, String params) 
     		throws Throwable {
-
-    	String datasetId = (String) context.dataset.get("resource");
-
+    	
     	JSONObject args = new JSONObject();
     	if (!"".equals(params)) {
     		args = (JSONObject) JSONValue.parse(params);
     	}
-        args.put("tags", Arrays.asList("unitTest"));
         args.put("objective_field", objective);
-
-        JSONObject resource = context.api.createLinearRegression(datasetId,
-                args, 5, null);
-        context.status = (Integer) resource.get("code");
-        context.location = (String) resource.get("location");
-        context.linearRegression = (JSONObject) resource.get("object");
-        commonSteps.the_resource_has_been_created_with_status(context.status);
-
-        if( context.models == null ) {
+        
+    	commonSteps.I_create_a_resource_from_a_dataset_with(
+    		"linearregression", args.toString());
+    	if( context.models == null ) {
             context.models = new JSONArray();
         }
         context.models.add(context.linearRegression);

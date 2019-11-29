@@ -8,7 +8,6 @@ import java.io.FileInputStream;
 import java.util.Arrays;
 
 import org.bigml.binding.utils.Utils;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.slf4j.Logger;
@@ -36,26 +35,8 @@ public class PcaStepdefs {
 	
 	@Given("^I create a pca with \"(.*)\"$")
     public void I_create_a_pca_with_params(String args) throws Throwable {
-        String datasetId = (String) context.dataset.get("resource");
-        JSONObject argsJSON = (JSONObject) JSONValue.parse(args);
-
-        if( argsJSON != null ) {
-            if (argsJSON.containsKey("tags")) {
-                ((JSONArray) argsJSON.get("tags")).add("unitTest");
-            } else {
-                argsJSON.put("tags", Arrays.asList("unitTest"));
-            }
-        } else {
-            argsJSON = new JSONObject();
-            argsJSON.put("tags", Arrays.asList("unitTest"));
-        }
-
-        JSONObject resource = context.api.createPca(datasetId,
-                argsJSON, 5, null);
-        context.status = (Integer) resource.get("code");
-        context.location = (String) resource.get("location");
-        context.pca = (JSONObject) resource.get("object");
-        commonSteps.the_resource_has_been_created_with_status(context.status);
+		commonSteps.I_create_a_resource_from_a_dataset_with(
+    		"pca", args);
     }
 	
 

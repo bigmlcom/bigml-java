@@ -1,7 +1,5 @@
 package org.bigml.binding;
 
-import java.util.Arrays;
-
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.slf4j.Logger;
@@ -18,8 +16,6 @@ public class EnsemblesStepdefs {
     @Autowired
     CommonStepdefs commonSteps;
 
-    @Autowired
-    private ContextRepository context;
     
     @Given("^I create an ensemble$")
     public void I_create_an_ensemble() throws Throwable {
@@ -27,45 +23,28 @@ public class EnsemblesStepdefs {
     }
     
     @Given("^I create an ensemble of (\\d+) models$")
-    public void I_create_an_ensemble_of_models(int numberOfModels) throws Throwable {
-
-        JSONObject ensembleSample = new JSONObject();
-        ensembleSample.put("rate", 0.70);
-        ensembleSample.put("seed", "BigML");
-
-        JSONObject args = new JSONObject();
-        args.put("number_of_models", numberOfModels);
-        args.put("ensemble_sample", ensembleSample);
-        args.put("tags", Arrays.asList("unitTest"));
-
-        String datasetId = (String) context.dataset.get("resource");
-        JSONObject resource = context.api.createEnsemble(
-                datasetId, args, 20, null);
-        context.status = (Integer) resource.get("code");
-        context.location = (String) resource.get("location");
-        context.ensemble = (JSONObject) resource.get("object");
-        commonSteps.the_resource_has_been_created_with_status(context.status);
+    public void I_create_an_ensemble_of_models(int numberOfModels) 
+    		throws Throwable {
+    	
+    	JSONObject args = new JSONObject();
+    	args.put("number_of_models", numberOfModels);
+    	I_create_an_ensemble_with_params(args.toString());
     }
     
     
     @Given("^I create an ensemble with \"(.*)\"$")
-    public void I_create_an_ensemble_with_params(String params) throws Throwable {
+    public void I_create_an_ensemble_with_params(String params) 
+    		throws Throwable {
         
-        JSONObject ensembleSample = new JSONObject();
+    	JSONObject ensembleSample = new JSONObject();
         ensembleSample.put("rate", 0.70);
         ensembleSample.put("seed", "BigML");
         
         JSONObject args = (JSONObject) JSONValue.parse(params);
         args.put("ensemble_sample", ensembleSample);
-        args.put("tags", Arrays.asList("unitTest"));
-        
-        String datasetId = (String) context.dataset.get("resource");
-        JSONObject resource = context.api.createEnsemble(
-                datasetId, args, 20, null);
-        context.status = (Integer) resource.get("code");
-        context.location = (String) resource.get("location");
-        context.ensemble = (JSONObject) resource.get("object");
-        commonSteps.the_resource_has_been_created_with_status(context.status);       
+
+    	commonSteps.I_create_a_resource_from_a_dataset_with(
+    		"ensemble", args.toString());
     }
     
 }

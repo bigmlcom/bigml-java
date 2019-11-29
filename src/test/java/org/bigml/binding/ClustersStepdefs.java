@@ -39,40 +39,20 @@ public class ClustersStepdefs {
     private String downloadedFile;
 
     @Given("^I create a cluster with options \"(.*)\"$")
-    public void I_create_a_cluster_with_options(String options) throws AuthenticationException {
-        String datasetId = (String) context.dataset.get("resource");
-
-        JSONObject args = (JSONObject) JSONValue.parse(options);
+    public void I_create_a_cluster_with_options(String options) 
+    		throws Throwable {
+    	
+    	JSONObject args = (JSONObject) JSONValue.parse(options);
         args.put("k", 8);
         args.put("seed", "BigML");
         args.put("cluster_seed", "BigML");
-        args.put("tags", Arrays.asList("unitTest"));
-
-
-        JSONObject resource = context.api.createCluster(
-                datasetId, args, 5, null);
-        context.status = (Integer) resource.get("code");
-        context.location = (String) resource.get("location");
-        context.cluster = (JSONObject) resource.get("object");
-        commonSteps.the_resource_has_been_created_with_status(context.status);
+        commonSteps.I_create_a_resource_from_a_dataset_with(
+        		"cluster", args.toString());
     }
 
     @Given("^I create a cluster$")
-    public void I_create_a_cluster() throws AuthenticationException {
-        String datasetId = (String) context.dataset.get("resource");
-
-        JSONObject args = new JSONObject();
-        args.put("k", 8);
-        args.put("seed", "BigML");
-        args.put("cluster_seed", "BigML");
-        args.put("tags", Arrays.asList("unitTest"));
-
-        JSONObject resource = context.api.createCluster(
-                datasetId, args, 5, null);
-        context.status = (Integer) resource.get("code");
-        context.location = (String) resource.get("location");
-        context.cluster = (JSONObject) resource.get("object");
-        commonSteps.the_resource_has_been_created_with_status(context.status);
+    public void I_create_a_cluster() throws Throwable {
+    	I_create_a_cluster_with_options("{}");
     }
 
     @Given("^I create a local cluster$")
@@ -80,16 +60,6 @@ public class ClustersStepdefs {
         context.localCluster = new LocalCluster(context.cluster);
     }
     
-    @Given("^I get the cluster \"(.*)\"")
-    public void I_get_the_cluster(String clusterId)
-            throws AuthenticationException {
-        JSONObject resource = context.api.getCluster(clusterId);
-        
-        Integer code = (Integer) resource.get("code");
-        assertEquals(code.intValue(), AbstractResource.HTTP_OK);
-        context.cluster = (JSONObject) resource.get("object");
-    }
-
     @When("^I create a centroid for \"(.*)\"$")
     public void I_create_a_centroid_for(String inputData)
             throws AuthenticationException {
@@ -130,7 +100,8 @@ public class ClustersStepdefs {
             } catch (InterruptedException e) {
             }
             assertTrue("Time exceded ", end.after(new Date()));
-            I_get_the_cluster((String) context.cluster.get("resource"));
+            commonSteps.I_get_the_resource(
+            		"cluster", (String) context.cluster.get("resource"));
             code = (Long) ((JSONObject) context.cluster.get("status"))
                     .get("code");
         }

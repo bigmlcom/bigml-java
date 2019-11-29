@@ -27,6 +27,7 @@ public class LogisticRegressionsStepdefs {
     public void I_create_a_logisticregression_with_objective_and_params(String objective, String params) 
     		throws Throwable {
         
+    	/*
     	String datasetId = (String) context.dataset.get("resource");
 
     	JSONObject args = new JSONObject();
@@ -44,6 +45,20 @@ public class LogisticRegressionsStepdefs {
         commonSteps.the_resource_has_been_created_with_status(context.status);
         
         if( context.models == null ) {
+            context.models = new JSONArray();
+        }
+        context.models.add(context.logisticRegression);
+        */
+    	
+    	JSONObject args = new JSONObject();
+    	if (!"".equals(params)) {
+    		args = (JSONObject) JSONValue.parse(params);
+    	}
+        args.put("objective_field", objective);
+        
+    	commonSteps.I_create_a_resource_from_a_dataset_with(
+    		"logisticregression", args.toString());
+    	if( context.models == null ) {
             context.models = new JSONArray();
         }
         context.models.add(context.logisticRegression);

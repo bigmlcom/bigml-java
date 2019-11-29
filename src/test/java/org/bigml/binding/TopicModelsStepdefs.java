@@ -37,19 +37,13 @@ public class TopicModelsStepdefs {
 
 	@Given("^I create topic model from a dataset$")
 	public void I_create_topic_model_from_a_dataset()
-			throws AuthenticationException {
-
-		String datasetId = (String) context.dataset.get("resource");
-		JSONObject args = new JSONObject();
-		args.put("tags", Arrays.asList("unitTest"));
+			throws Throwable {
+		
+		JSONObject args = (JSONObject) new JSONObject();
 		args.put("seed", "BigML");
 		args.put("topicmodel_seed", "BigML");
-		JSONObject resource = context.api
-				.createTopicModel(datasetId, args, 5, null);
-		context.status = (Integer) resource.get("code");
-		context.location = (String) resource.get("location");
-		context.topicModel = (JSONObject) resource.get("object");
-		commonSteps.the_resource_has_been_created_with_status(context.status);
+    	commonSteps.I_create_a_resource_from_a_dataset_with(
+    		"topicModel", args.toString());
 	}
 
 	@When("^I create a topic distribution for \"(.*)\"$")

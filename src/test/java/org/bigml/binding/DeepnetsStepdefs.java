@@ -7,8 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.*;
-
 
 public class DeepnetsStepdefs {
 
@@ -25,18 +23,10 @@ public class DeepnetsStepdefs {
     public void I_create_a_deepnet_with_objective_and_params(String objective, String params) 
     		throws Throwable {
         
-    	String datasetId = (String) context.dataset.get("resource");
-    	
     	JSONObject args = (JSONObject) JSONValue.parse(params);
-        args.put("tags", Arrays.asList("unitTest"));
         args.put("objective_field", objective);
-        
-        JSONObject resource = context.api.createDeepnet(datasetId,
-                args, 5, null);
-        context.status = (Integer) resource.get("code");
-        context.location = (String) resource.get("location");
-        context.deepnet = (JSONObject) resource.get("object");
-        commonSteps.the_resource_has_been_created_with_status(context.status); 	
+    	commonSteps.I_create_a_resource_from_a_dataset_with(
+    		"deepnet", args.toString());
     }
 
     @Given("^I create a local deepnet$")
