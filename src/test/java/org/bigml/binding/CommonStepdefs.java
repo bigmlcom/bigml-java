@@ -176,7 +176,11 @@ public class CommonStepdefs {
             (JSONObject) JSONValue.parse(args) :
             new JSONObject();
 
-		argsJSON.put("tags", Arrays.asList("unitTest"));
+        if (argsJSON.containsKey("tags")) {
+            ((JSONArray) argsJSON.get("tags")).add("unitTest");
+        } else {
+            argsJSON.put("tags", Arrays.asList("unitTest"));
+        }
 
 		try {
 			Method method = getClientMethod("create", resourceName);

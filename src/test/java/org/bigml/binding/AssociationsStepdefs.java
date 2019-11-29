@@ -34,20 +34,12 @@ public class AssociationsStepdefs {
 
     @Given("^I create an association with search strategy \"(.*)\" from a dataset$")
     public void I_create_an_association_with_search_strategy_from_a_dataset(String strategy)
-        throws Throwable {
-
-        String datasetId = (String) context.dataset.get("resource");
-
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
+    		throws Throwable {
+    	
+    	JSONObject args = new JSONObject();
         args.put("search_strategy", strategy);
-
-        JSONObject resource = context.api.createAssociation(
-                datasetId, args, 5, null);
-        context.status = (Integer) resource.get("code");
-        context.location = (String) resource.get("location");
-        context.association = (JSONObject) resource.get("object");
-        commonSteps.the_resource_has_been_created_with_status(context.status);
+        commonSteps.I_create_a_resource_from_a_dataset_with(
+        		"association", args.toString());
     }
 
     @Given("^I create a local association$")

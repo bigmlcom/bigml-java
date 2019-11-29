@@ -50,20 +50,12 @@ public class AnomaliesStepdefs {
    
     @Then("^I create an anomaly detector of (\\d+) anomalies from a dataset$")
     public void i_create_an_anomaly_with_top_n_from_dataset(int topN)
-        throws AuthenticationException {
-
-        String datasetId = (String) context.dataset.get("resource");
-
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
+    		throws Throwable {
+    	
+    	JSONObject args = new JSONObject();
         args.put("top_n", topN);
-
-        JSONObject resource = context.api.createAnomaly(datasetId,
-                args, 5, null);
-        context.status = (Integer) resource.get("code");
-        context.location = (String) resource.get("location");
-        context.anomaly = (JSONObject) resource.get("object");
-        commonSteps.the_resource_has_been_created_with_status(context.status);
+    	commonSteps.I_create_a_resource_from_a_dataset_with(
+        		"anomaly", args.toString());
     }
 
     @Given("^I create a local anomaly detector$")

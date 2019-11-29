@@ -33,25 +33,11 @@ public class ModelsStepdefs {
     private String sharedKey;
 
     @Given("^I create a model with missing splits$")
-    public void I_create_a_model_with_missing_splits() throws AuthenticationException {
-        String datasetId = (String) context.dataset.get("resource");
-
+    public void I_create_a_model_with_missing_splits() throws Throwable {
         JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
         args.put("missing_splits", true);
-
-        JSONObject resource = context.api.createModel(datasetId,
-                args, 5, null);
-        context.status = (Integer) resource.get("code");
-        context.location = (String) resource.get("location");
-        context.model = (JSONObject) resource.get("object");
-
-        if( context.models == null ) {
-            context.models = new JSONArray();
-        }
-        context.models.add(context.model);
-
-        commonSteps.the_resource_has_been_created_with_status(context.status);
+        
+        I_create_a_model_with_params(args.toJSONString());
     }
 
 
@@ -75,58 +61,23 @@ public class ModelsStepdefs {
 
     @Given("^I create a model with \"(.*)\"$")
     public void I_create_a_model_with_params(String args) throws Throwable {
-        String datasetId = (String) context.dataset.get("resource");
-        JSONObject argsJSON = (JSONObject) JSONValue.parse(args);
-
-        if( argsJSON != null ) {
-            if (argsJSON.containsKey("tags")) {
-                ((JSONArray) argsJSON.get("tags")).add("unitTest");
-            } else {
-                argsJSON.put("tags", Arrays.asList("unitTest"));
-            }
-
-            if( !argsJSON.containsKey("missing_splits") ) {
-                argsJSON.put("missing_splits", false);
-            }
-        } else {
-            argsJSON = new JSONObject();
-            argsJSON.put("tags", Arrays.asList("unitTest"));
-            argsJSON.put("missing_splits", false);
-        }
-
-        JSONObject resource = context.api.createModel(datasetId,
-                argsJSON, 5, null);
-        context.status = (Integer) resource.get("code");
-        context.location = (String) resource.get("location");
-        context.model = (JSONObject) resource.get("object");
-
+        
+    	JSONObject argsJSON = (JSONObject) JSONValue.parse(args);
+    	if (!argsJSON.containsKey("missing_splits")) {
+    		argsJSON.put("missing_splits", false);
+    	}
+        commonSteps.I_create_a_resource_from_a_dataset_with(
+        		"model", args);
 
         if( context.models == null ) {
             context.models = new JSONArray();
         }
         context.models.add(context.model);
-
-        commonSteps.the_resource_has_been_created_with_status(context.status);
     }
 
     @Given("^I create a model$")
-    public void I_create_a_model() throws AuthenticationException {
-        String datasetId = (String) context.dataset.get("resource");
-
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
-        args.put("missing_splits", false);
-
-        JSONObject resource = context.api.createModel(datasetId,
-                args, 5, null);
-        context.status = (Integer) resource.get("code");
-        context.location = (String) resource.get("location");
-        context.model = (JSONObject) resource.get("object");
-        if( context.models == null ) {
-            context.models = new JSONArray();
-        }
-        context.models.add(context.model);
-        commonSteps.the_resource_has_been_created_with_status(context.status);
+    public void I_create_a_model() throws Throwable {
+    	I_create_a_model_with_params("{}");
     }
 
     @Given("^I retrieve a list of remote models tagged with \"(.*)\"$")
@@ -197,10 +148,6 @@ public class ModelsStepdefs {
         }
     }
 
-    // ---------------------------------------------------------------------
-    // create_prediction_public_model.feature
-    // ---------------------------------------------------------------------
-
     @Given("^I make the model public$")
     public void I_make_the_model_public() throws Throwable {
         JSONObject changes = new JSONObject();
@@ -243,10 +190,6 @@ public class ModelsStepdefs {
                    Arrays.toString((context.datasets.toArray()))), false);
         }
     }
-
-    // ---------------------------------------------------------------------
-    // create_prediction_shared_model.feature
-    // ---------------------------------------------------------------------
 
     @Given("^I make the model shared$")
     public void make_the_model_shared() throws Throwable {
