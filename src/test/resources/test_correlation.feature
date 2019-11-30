@@ -10,7 +10,6 @@ Feature: Correlation REST api calls
         And I update the correlation name to "<correlation_name>"
         When I wait until the correlation is ready less than <time_4> secs
         Then the correlation name is "<correlation_name>"
-        Then delete test data
 
         Examples:
         | data	|  time_1  | time_2 | time_3 | time_4 | correlation_name |

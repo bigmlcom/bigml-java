@@ -7,7 +7,6 @@ Feature: Compute MultiVote predictions
         When I compute the prediction with confidence using method "<method>"
         Then the combined prediction is "<prediction>"
         And the confidence for the combined prediction is <confidence>
-        Then delete test data
 
         Examples:
           | predictions               | method       | prediction    | confidence            |
@@ -21,7 +20,6 @@ Feature: Compute MultiVote predictions
         When I compute the prediction with confidence using method "<method>"
         Then the numerical combined prediction is <prediction>
         And the confidence for the combined prediction is <confidence>
-        Then delete test data
 
         Examples:
           | predictions               | method       | prediction    | confidence            |

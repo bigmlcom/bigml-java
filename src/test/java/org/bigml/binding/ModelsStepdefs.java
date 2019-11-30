@@ -43,8 +43,8 @@ public class ModelsStepdefs {
 
     @Given("^I create a model from a dataset list$")
     public void I_create_a_model_from_a_dataset_list() throws AuthenticationException {
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
+    	
+    	JSONObject args = commonSteps.setProject(null);
         args.put("missing_splits", false);
 
         JSONObject resource = context.api.createModel(context.datasets,
@@ -238,10 +238,9 @@ public class ModelsStepdefs {
     @Then("^I create a model associated to centroid \"(.*)\"$")
     public void I_create_a_model_associated_to_centroid(String centroidId) 
     		throws Throwable {
+
         String clusterId = (String) context.cluster.get("resource");
-        
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
+        JSONObject args = commonSteps.setProject(null);
         args.put("centroid", centroidId);
 
         JSONObject resource = context.api.createModel(

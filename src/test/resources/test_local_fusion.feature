@@ -20,7 +20,6 @@ Feature: LocalFusion
         When I create a local fusion prediction for "<data_input>"
         Then the local fusion prediction is "<prediction>"
         Then the local prediction probability is <probability>
-        Then delete test data
         
         Examples:
         | data	| time_1  | time_2 | time_3 | time_4 | params | objective | data_input	| prediction	| probability	|
@@ -47,7 +46,6 @@ Feature: LocalFusion
         When I create a local fusion prediction for "<data_input>"
         Then the local fusion prediction is "<prediction>"
         Then the local prediction probability is <probability>
-        Then delete test data
         
         Examples:
         | data	| time_1  | time_2 | time_3 | time_4 | params | params2	| objective | data_input	| prediction	| probability	|
@@ -74,7 +72,6 @@ Feature: LocalFusion
         When I create a local fusion prediction for "<data_input>"
         Then the local fusion prediction is "<prediction>"
         Then the local prediction probability is <probability>
-        Then delete test data
         
         Examples:
         | data	| time_1  | time_2 | time_3 | time_4 | params | params2	| objective | data_input	| prediction	| probability	| weights	|

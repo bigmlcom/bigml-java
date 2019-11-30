@@ -12,7 +12,6 @@ Feature: LocalDeepnet
         Then the deepnet prediction for objective "<objective>" is "<prediction>"
         And I create a local deepnet prediction for "<data_input>"
         Then the local deepnet prediction is "<prediction>"
-        Then delete test data
 
         Examples:
         | data  | time_1  | time_2 | time_3 | data_input | objective    | prediction    | params    |
@@ -37,7 +36,6 @@ Feature: LocalDeepnet
         Then the prediction for "<objective>" is "<prediction>"
         When I create a local prediction with deepnet with operating point "<operating_point>" for "<data_input>"
         Then the local deepnet prediction is "<prediction>"
-        Then delete test data
 
         Examples:
         | data	| time_1  | time_2 | time_3 | data_input | objective	| prediction	| params	| operating_point	|
@@ -56,7 +54,6 @@ Feature: LocalDeepnet
         Then the prediction for "<objective>" is "<prediction>"
         When I create a local prediction with deepnet with operating kind "<operating_kind>" for "<data_input>"
         Then the local deepnet prediction is "<prediction>"
-        Then delete test data
 
         Examples:
         | data  | time_1  | time_2 | time_3 | data_input | objective    | prediction    | params    | operating_kind    |

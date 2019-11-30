@@ -15,7 +15,6 @@ Feature: Anomaly REST api
 	    Then I create an anomaly detector from a dataset list
 	    And  I wait until the anomaly detector is ready less than <time_4> secs
 	    And I check the anomaly detector stems from the original dataset list
-			Then delete test data
 			
 	  	Examples:
 	    | data                | time_1  | time_2 | time_3 | time_4 |

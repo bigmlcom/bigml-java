@@ -11,7 +11,6 @@ Feature: Batch Predictions
         And I wait until the batch prediction is ready less than <time_4> secs
         And I download the created predictions file to "<local_file>"
         Then the batch prediction file "<local_file>" is like "<predictions_file>"
-        Then delete test data
 
         Examples:
           | data             | time_1  | time_2 | time_3 | time_4 | local_file | predictions_file |
@@ -29,7 +28,6 @@ Feature: Batch Predictions
         And I wait until the batch prediction is ready less than <time_4> secs
         And I download the created predictions file to "<local_file>"
         Then the batch prediction file "<local_file>" is like "<predictions_file>"
-        Then delete test data
 
         Examples:
           | data             | time_1  | time_2 | number_of_models | time_3 | time_4 | local_file | predictions_file |
@@ -47,7 +45,6 @@ Feature: Batch Predictions
         And I wait until the batch centroid is ready less than <time_4> secs
         And I download the created centroid file to "<local_file>"
         Then the batch centroid file is like "<predictions_file>"
-				Then delete test data
 
         Examples:
           | data             |  time_1  | time_2 | time_3 | time_4 | local_file | predictions_file       |
@@ -65,7 +62,6 @@ Feature: Batch Predictions
         And I wait until the batch prediction is ready less than <time_4> secs
         Then I create a source from the batch prediction
         And I wait until the source is ready less than <time_1> secs
-        Then delete test data
 
         Examples:
           | data              |  time_1   | time_2 | time_3 | time_4 |
@@ -84,7 +80,6 @@ Feature: Batch Predictions
         And I wait until the batch anomaly score is ready less than <time_4> secs
         And I download the created batch anomaly score file to "<local_file>"
         Then the batch prediction file "<local_file>" is like "<predictions_file>"
-        Then delete test data
 
         Examples:
           | data             | time_1  | time_2 | time_3 | time_4 | local_file | predictions_file       |
@@ -102,7 +97,6 @@ Feature: Batch Predictions
         And I wait until the batch prediction is ready less than <time_4> secs
         And I download the created predictions file to "<local_file>"
         Then the batch prediction file "<local_file>" is like "<predictions_file>"
-        Then delete test data
 
         Examples:
           | data              |  time_1   | time_2 | time_3 | time_4 | local_file | predictions_file       |
@@ -120,7 +114,6 @@ Feature: Batch Predictions
         And I wait until the batch prediction is ready less than <time_4> secs    
         And I download the created predictions file to "<local_file>"
         Then the batch prediction file "<local_file>" is like "<predictions_file>"
-        Then delete test data
 
         Examples:
           | data              |  time_1   | time_2 | time_3 | time_4 | local_file | predictions_file       |
@@ -144,7 +137,6 @@ Feature: Batch Predictions
         And I wait until the batch prediction is ready less than <time_4> secs
         And I download the created predictions file to "<local_file>"
         Then the batch prediction file "<local_file>" is like "<predictions_file>"
-        Then delete test data
         
         Examples:
         | data                | time_1  | time_2 | time_3 | time_4 | local_file | predictions_file |

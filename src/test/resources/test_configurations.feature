@@ -9,7 +9,6 @@ Feature: Testing Configuration REST api calls
         And I update the configuration with "<params>"
         And the configuration name is <new_name>
         And I delete the configuration
-        Then delete test data
 
         Examples:
         | time_1  | options                | name   |   params                            |   new_name             |

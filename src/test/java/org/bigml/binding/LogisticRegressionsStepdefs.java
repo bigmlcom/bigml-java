@@ -9,8 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.*;
-
 
 public class LogisticRegressionsStepdefs {
 
@@ -27,29 +25,6 @@ public class LogisticRegressionsStepdefs {
     public void I_create_a_logisticregression_with_objective_and_params(String objective, String params) 
     		throws Throwable {
         
-    	/*
-    	String datasetId = (String) context.dataset.get("resource");
-
-    	JSONObject args = new JSONObject();
-    	if (!"".equals(params)) {
-    		args = (JSONObject) JSONValue.parse(params);
-    	}
-        args.put("tags", Arrays.asList("unitTest"));
-        args.put("objective_field", objective);
-        
-        JSONObject resource = context.api.createLogisticRegression(datasetId,
-                args, 5, null);
-        context.status = (Integer) resource.get("code");
-        context.location = (String) resource.get("location");
-        context.logisticRegression = (JSONObject) resource.get("object");
-        commonSteps.the_resource_has_been_created_with_status(context.status);
-        
-        if( context.models == null ) {
-            context.models = new JSONArray();
-        }
-        context.models.add(context.logisticRegression);
-        */
-    	
     	JSONObject args = new JSONObject();
     	if (!"".equals(params)) {
     		args = (JSONObject) JSONValue.parse(params);

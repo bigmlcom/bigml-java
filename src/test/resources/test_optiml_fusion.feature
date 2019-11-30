@@ -11,7 +11,6 @@ Feature: OptiML/Fusion REST api calls
         When I wait until the optiml is ready less than <time_4> secs
         Then the optiml name is "<optiml_name>"
         Then I delete the optiml
-        Then delete test data
 
         Examples:
         | data                | time_1  | time_2 | time_3 | time_4 | optiml_name |
@@ -39,7 +38,6 @@ Feature: OptiML/Fusion REST api calls
         And I wait until the evaluation is ready less than <time_4> secs
         Then the measured "<measure>" is <value>
         Then I delete the fusion
-        Then delete test data
 
         Examples:
         | data                | time_1  | time_2 | time_3 | time_4 | fusion_name | data_input    | objective | prediction  | measure       | value  |
@@ -66,7 +64,6 @@ Feature: OptiML/Fusion REST api calls
         When I create a local fusion prediction for "<data_input>"
         Then the local fusion prediction is "<prediction>"
         Then the local prediction probability is <probability>
-        Then delete test data
         
         Examples:
         | data	| time_1  | time_2 | time_3 | time_4 | params | objective | data_input	| prediction	| probability	|
@@ -93,7 +90,6 @@ Feature: OptiML/Fusion REST api calls
         When I create a local fusion prediction for "<data_input>"
         Then the local fusion prediction is "<prediction>"
         Then the local prediction probability is <probability>
-        Then delete test data
         
         Examples:
         | data	| time_1  | time_2 | time_3 | time_4 | params | params2	| objective | data_input	| prediction	| probability	|
@@ -120,7 +116,6 @@ Feature: OptiML/Fusion REST api calls
         When I create a local fusion prediction for "<data_input>"
         Then the local fusion prediction is "<prediction>"
         Then the local prediction probability is <probability>
-        Then delete test data
         
         Examples:
         | data	| time_1  | time_2 | time_3 | time_4 | params | params2	| objective | data_input	| prediction	| probability	| weights	|

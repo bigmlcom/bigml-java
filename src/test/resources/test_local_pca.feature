@@ -12,7 +12,6 @@ Feature: LocalPca
         Then the projection is "<projection>"
         And I create a local projection for "<data_input>"
         Then the local projection is "<projection>"
-        Then delete test data
                 
         Examples:
         | data                    | time_1  | time_2 | time_3 | data_input  | projection         | params    |
@@ -35,7 +34,6 @@ Feature: LocalPca
         And I create a local pca
         And I create a local projection for "<data_input>"
         Then the local projection is "<projection>"
-        Then delete test data
                 
         Examples:
         | data	| time_1  | time_2 | time_3 | options	|  data_input	| projection	| params    |

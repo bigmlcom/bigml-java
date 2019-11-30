@@ -64,9 +64,7 @@ public class ClustersStepdefs {
     public void I_create_a_centroid_for(String inputData)
             throws AuthenticationException {
         String clusterId = (String) context.cluster.get("resource");
-
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
+        JSONObject args = commonSteps.setProject(null);
 
         JSONObject resource = context.api.createCentroid(
                 clusterId, (JSONObject) JSONValue.parse(inputData),
@@ -146,9 +144,7 @@ public class ClustersStepdefs {
     public void I_create_a_batch_centroid_for_the_dataset() throws Throwable {
         String clusterId = (String) context.cluster.get("resource");
         String datasetId = (String) context.dataset.get("resource");
-
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
+        JSONObject args = commonSteps.setProject(null);
 
         JSONObject resource = context.api.createBatchCentroid(
                 clusterId, datasetId, args, 5, null);

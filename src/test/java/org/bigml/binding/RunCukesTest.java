@@ -1,5 +1,15 @@
 package org.bigml.binding;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 
 import cucumber.junit.Cucumber;
@@ -44,7 +54,36 @@ import cucumber.junit.Cucumber;
         "src/test/resources/test_statisticaltest.feature",
         "src/test/resources/test_timeseries.feature",
         "src/test/resources/test_topicmodel.feature",
-        "src/test/resources/test_whizzml.feature",
-        "src/test/resources/delete_all_test_data.feature" })
+        "src/test/resources/test_whizzml.feature" })
 public class RunCukesTest {
+	
+	@BeforeClass
+    public static void setup() {
+		// Create project for tests running 
+        BigMLClient api = new BigMLClient();
+        
+        Date date = Calendar.getInstance().getTime();  
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+        String projectName = "Test: java bindings " + dateFormat.format(date);
+        
+        JSONObject args = new JSONObject();
+        args.put("tags", Arrays.asList("unitTestProject"));
+        args.put("name", projectName);
+        api.createProject(args);
+    }
+
+    @AfterClass
+    public static void teardown() {
+    	// Remove all projects created for tests running
+        BigMLClient api = new BigMLClient();
+        
+        JSONObject listProjects = (JSONObject) api.listProjects(
+        	";tags__in=unitTestProject");
+		JSONArray projects = (JSONArray) listProjects.get("objects");
+		for (int i = 0; i < projects.size(); i++) {
+			JSONObject project = (JSONObject) projects.get(i);
+			api.deleteProject(project);
+		}
+    }
+    
 }

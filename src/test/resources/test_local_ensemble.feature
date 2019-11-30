@@ -10,7 +10,6 @@ Feature: LocalEnsemble
 	    And I create a local ensemble
 	    When the local ensemble prediction for "<data_input>" is "<prediction>" with confidence <confidence>
 	    #And the local probabilities are "<probabilities>"
-	    Then delete test data
 	
 	    Examples:
 	      | data             |  time_1  | time_2 | time_3 | number_of_models |  data_input    |prediction  | confidence |
@@ -30,7 +29,6 @@ Feature: LocalEnsemble
 	    And I wait until the model is ready less than <time_5> secs
 	    When I create a local Ensemble with the last <number_of_models> models
 	    Then the field importance text is "<field_importance>"
-	    Then delete test data
 	
 	    Examples:
 	      | data             |  time_1  | time_2 |parms1 | time_3 |parms2 | time_4 |parms3| time_5 |number_of_models |field_importance |
@@ -47,7 +45,6 @@ Feature: LocalEnsemble
 	    And I create a local ensemble
 	    #When I create a local ensemble prediction for "<data_input>" in JSON adding confidence
 	    When the local ensemble prediction for "<data_input>" is "<prediction>" with confidence <confidence>
-	    Then delete test data
 	
 	    Examples:
 	      | data            |  time_1  | time_2 | time_3 | number_of_models |  data_input           |prediction       | confidence  |
@@ -63,7 +60,6 @@ Feature: LocalEnsemble
 	    And I wait until the ensemble is ready less than <time_3> secs
 	    And I create a local ensemble
 	    When the local ensemble prediction using median with confidence for "<data_input>" is "<prediction>"
-	    Then delete test data
 	
 	    Examples:
 	      | data            |  time_1  | time_2 | time_3 | number_of_models |  data_input    |prediction  |
@@ -79,7 +75,6 @@ Feature: LocalEnsemble
 	    And I wait until the ensemble is ready less than <time_3> secs
 	    And I create a local ensemble with max models <max_models>
 	    When the local ensemble prediction for "<data_input>" is "<prediction>"
-	    Then delete test data
 	
 	    Examples:
 	      | data            |  time_1  | time_2 | time_3 | time_4 | number_of_models | max_models |  data_input    |prediction  |
@@ -96,7 +91,6 @@ Feature: LocalEnsemble
 				When I create a prediction with ensemble for "<data_input>"
 				Then the prediction for "<objective>" is "<prediction>"
 				When the local ensemble prediction for "<data_input>" is "<prediction>"
-				Then delete test data
 		
         Examples:
           | data	| time_1  | time_2 | time_3 | params | data_input | objective  | prediction |
@@ -118,7 +112,6 @@ Feature: LocalEnsemble
 				And I create a proportional missing strategy local prediction with ensemble with "<options>" for "<data_input>"
 				Then the local ensemble prediction is "<prediction>"
         And the local ensemble confidence is <confidence>
-				Then delete test data
 		
         Examples:
           | data	| time_1  | time_2 | time_3 | params | data_input | objective  | prediction | options	| confidence	|
@@ -142,7 +135,6 @@ Feature: LocalEnsemble
         Then the prediction for "<objective>" is "<prediction>"
         When I create a local prediction with ensemble with operating point "<operating_point>" for "<data_input>"
         Then the local ensemble prediction is "<prediction>"
-        Then delete test data
 
         Examples:
         | data	| time_1  | time_2 | time_3 | data_input | objective	| prediction	| operating_point	|
@@ -164,7 +156,6 @@ Feature: LocalEnsemble
         Then the prediction for "<objective>" is "<prediction>"
         When I create a local prediction with ensemble with operating kind "<operating_kind>" for "<data_input>"
         Then the local ensemble prediction is "<prediction>"
-        Then delete test data
 
         Examples:
         | data  | time_1  | time_2 | time_3 | data_input | objective    | prediction    | operating_kind    |

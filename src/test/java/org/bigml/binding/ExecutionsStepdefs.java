@@ -27,10 +27,9 @@ public class ExecutionsStepdefs {
 
     @Given("^I create a whizzml script execution from an existing script$")
     public void I_create_a_whizzml_script_execution_from_an_existing_script()
-        throws AuthenticationException {
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
-
+    		throws AuthenticationException {
+    	
+    	JSONObject args = commonSteps.setProject(null);
         String scriptId = (String) context.script.get("resource");
         JSONObject resource = context.api.createExecution(scriptId, args, 5, null);
         context.status = (Integer) resource.get("code");
@@ -40,9 +39,10 @@ public class ExecutionsStepdefs {
     }
 
     @Given("^I create a whizzml script execution from the last two scripts$")
-    public void I_create_a_whizzml_script_execution_from_the_last_two_scripts() throws Throwable {
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
+    public void I_create_a_whizzml_script_execution_from_the_last_two_scripts() 
+    		throws Throwable {
+    	
+    	JSONObject args = commonSteps.setProject(null);
         JSONObject resource = context.api.createExecution(context.scriptsIds, args, 5, null);
 
         context.status = (Integer) resource.get("code");

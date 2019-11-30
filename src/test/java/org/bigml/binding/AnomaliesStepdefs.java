@@ -29,11 +29,12 @@ public class AnomaliesStepdefs {
     private ContextRepository context;
 
     @Given("^I create an anomaly detector from a dataset list$")
-    public void I_create_an_anomaly_from_a_dataset_list() throws AuthenticationException {
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
+    public void I_create_an_anomaly_from_a_dataset_list()
+    		throws AuthenticationException {
 
-        assertTrue("No datasets found!", context.datasets != null && context.datasets.size() > 0);
+    	JSONObject args = commonSteps.setProject(null);
+
+    	assertTrue("No datasets found!", context.datasets != null && context.datasets.size() > 0);
 
         List datasetsIds = new ArrayList();
         for (Object datasetId : context.datasets) {
@@ -101,12 +102,10 @@ public class AnomaliesStepdefs {
 
         JSONObject anomaly = context.anomaly;
         JSONObject dataObj = (JSONObject) JSONValue.parse(data);
-
-        JSONObject argsJSON = new JSONObject();
-        argsJSON.put("tags", Arrays.asList("unitTest"));
+        JSONObject args = commonSteps.setProject(null);
 
         JSONObject resource = context.api.createAnomalyScore(
-            anomaly, dataObj, argsJSON, 5, null);
+            anomaly, dataObj, args, 5, null);
 
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");

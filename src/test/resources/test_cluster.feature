@@ -10,7 +10,6 @@ Feature: Cluster REST api
 			When I create a dataset associated to centroid "<centroid_id>"
       And I wait until the dataset is ready less than <time_4> secs
       Then the dataset is associated to the centroid "<centroid_id>" of the cluster
-      Then delete test data
 		
 			Examples:
 			| data	|  time_1  | time_2 | time_3 | time_4 | centroid_id |
@@ -27,7 +26,6 @@ Feature: Cluster REST api
 				When I create a model associated to centroid "<centroid_id>"
         And I wait until the model is ready less than <time_4> secs
 				Then the model is associated to the centroid "<centroid_id>" of the cluster
-				Then delete test data
 		
 				Examples:
         | data	|  time_1  | time_2 | time_3 | time_4 | options	| centroid_id |

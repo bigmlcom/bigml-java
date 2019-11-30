@@ -3,7 +3,6 @@ package org.bigml.binding;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Arrays;
 
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONObject;
@@ -28,8 +27,7 @@ public class SourcesStepdefs {
     public void I_create_a_data_source_uploading_a_file(String fileName)
             throws AuthenticationException {
     	
-    	JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
+        JSONObject args = commonSteps.setProject(null);
 
         JSONObject resource = context.api.createSource(
         		fileName, "new source", null, args);
@@ -43,8 +41,8 @@ public class SourcesStepdefs {
     @Given("^I create a data source using the url \"([^\"]*)\"$")
     public void I_create_a_data_source_using_the_url(String url)
             throws AuthenticationException {
-    	JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
+    	
+    	JSONObject args = commonSteps.setProject(null);
         
         JSONObject resource = context.api.createRemoteSource(
         		url, args);
@@ -67,8 +65,7 @@ public class SourcesStepdefs {
             throw new RuntimeException("Unable to load the file.", e);
         }
         
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
+        JSONObject args = commonSteps.setProject(null);
 
         JSONObject resource = context.api.createInlineSource(
         		inlineData, args);

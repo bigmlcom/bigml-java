@@ -9,7 +9,6 @@ Feature: Model REST api
 	      And I wait until the model is ready less than <time_3> secs
 	      When I create a prediction for "<data_input>"
 	      Then the prediction for "<objective>" is "<prediction>"
-	      Then delete test data
 	
 	      Examples:
 	      | data                |  time_1  | time_2 | time_3 | data_input    | objective | prediction  |
@@ -28,7 +27,6 @@ Feature: Model REST api
         And I check the model status using the model's public url
         When I create a prediction for "<data_input>"
         Then the prediction for "<objective>" is "<prediction>"
-        Then delete test data
 
         Examples:
         | data                | time_1  | time_2 | time_3 | data_input    | objective | prediction  |
@@ -50,7 +48,6 @@ Feature: Model REST api
         And I create a local model
         When I create a prediction for "<data_input>"
         Then the prediction for "<objective>" is "<prediction>"
-        Then delete test data
 
         Examples:
         | data                | time_1  | time_2 | time_3 | data_input    | objective | prediction  |
@@ -69,7 +66,6 @@ Feature: Model REST api
         Then I create a model from a dataset list
         And I wait until the model is ready less than <time_4> secs
         And I check the model stems from the original dataset list
-        Then delete test data
 
         Examples:
           | data	|  time_1  | time_2 | time_3 |  time_4 |

@@ -12,7 +12,6 @@ Feature: LocalLogisticRegression
         Then the logisticregression prediction is "<prediction>"
         And I create a local logisticregression prediction for "<data_input>"
         Then the local logisticregression prediction is "<prediction>"
-        Then delete test data
         
         Examples:
         | data  | time_1  | time_2 | time_3 | data_input | prediction |
@@ -37,7 +36,6 @@ Feature: LocalLogisticRegression
         Then the logisticregression prediction is "<prediction>"
         And I create a local logisticregression prediction for "<data_input>"
         Then the local logisticregression prediction is "<prediction>"
-				Then delete test data
 		
         Examples:
         | data  | time_1  | time_2 | time_3 | options | data_input | prediction |
@@ -64,8 +62,7 @@ Feature: LocalLogisticRegression
       	Then the logisticregression prediction is "<prediction>"
       	And the logisticregression probability for the prediction is "<probability>"
         And I create a local logisticregression prediction for "<data_input>"
-        Then the local logisticregression prediction is "<prediction>"       
-        Then delete test data
+        Then the local logisticregression prediction is "<prediction>"
         
         Examples:
         | data  | time_1  | time_2 | time_3 | options | data_input | prediction | probability | objective |
@@ -87,7 +84,6 @@ Feature: LocalLogisticRegression
         And I create a local logisticregression prediction for "<data_input>"
         Then the local logisticregression prediction is "<prediction>"       
         And the local logisticregression probability for the prediction is "<probability>"
-				Then delete test data
 		
         Examples:
         | data  | time_1  | time_2 | time_3 | params | data_input | prediction | probability | objective |
@@ -108,7 +104,6 @@ Feature: LocalLogisticRegression
         And I create a local logisticregression prediction for "<data_input>"
         Then the local logisticregression prediction is "<prediction>"       
         And the local logisticregression probability for the prediction is "<probability>"
-				Then delete test data
 		
         Examples:
         | data  | time_1  | time_2 | time_3 | options | data_input | prediction | probability | objective | params  |
@@ -133,7 +128,6 @@ Feature: LocalLogisticRegression
         And I create a local logisticregression prediction for "<data_input>"
         Then the local logisticregression prediction is "<prediction>"       
         And the local logisticregression probability for the prediction is "<probability>"
-				Then delete test data
 		
         Examples:
         | data  | time_1  | time_2 | time_3 | options | data_input | prediction | probability | objective | params  |
@@ -154,8 +148,7 @@ Feature: LocalLogisticRegression
         When I create a logisticregression prediction for "<data_input>"
 				Then the logisticregression prediction is "<prediction>"
 				And I create a local logisticregression prediction for "<data_input>"
-        Then the local logisticregression prediction is "<prediction>"       
-				Then delete test data
+        Then the local logisticregression prediction is "<prediction>"
 		
         Examples:
         | data	| time_1  | time_2 | time_3 | data_input	| prediction | options	|
@@ -174,7 +167,6 @@ Feature: LocalLogisticRegression
         Then the prediction for "<objective>" is "<prediction>"
         When I create a local prediction with logisticregression with operating kind "<operating_kind>" for "<data_input>"
         Then the local logisticregression prediction is "<prediction>"
-        Then delete test data
 
         Examples:
         | data	| time_1  | time_2 | time_3 | data_input | objective	| prediction	| operating_kind	|

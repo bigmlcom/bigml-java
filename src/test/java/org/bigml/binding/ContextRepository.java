@@ -17,6 +17,8 @@ public class ContextRepository {
     int status;
     String location = null;
     
+    String testProject = null;
+    
     JSONObject source = null;
     JSONObject dataset = null;
     JSONObject model = null;

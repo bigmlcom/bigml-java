@@ -12,7 +12,6 @@ Feature: TimeSeries REST api
         Then the time series name is "<time_series_name>"
         And I create a forecast for "<input_data>"
         Then the forecasts are "<forecast_points>"
-        Then delete test data
 
         Examples:
         | data             | time_1  | time_2 | time_3 | time_4 | time_series_name | input_data | forecast_points   |

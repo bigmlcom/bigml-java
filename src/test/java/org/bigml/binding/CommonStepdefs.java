@@ -43,17 +43,6 @@ public class CommonStepdefs {
 		RES_NAMES.put("batch projection", "batchProjection");
 	}
 
-	private static final String[] RESOURCES_NAMES = {
-		"project", "sample", "batchProjection", "projection", "pca",
-		"fusion", "optiml", "deepnet", "forecast", "timeSeries",
-		"configuration", "batchTopicDistribution", "topicDistribution",
-		"topicModel", "association", "library", "script", "execution",
-		"linearRegression", "logisticRegression", "statisticalTest",
-		"correlation", "batchCentroid", "centroid", "batchPrediction",
-		"prediction", "cluster", "evaluation", "ensemble", "anomaly",
-		"anomalyScore", "batchAnomalyScore", "model", "dataset",  "source"
-    };
-
 	// Logging
 	Logger logger = LoggerFactory.getLogger(CommonStepdefs.class);
 
@@ -139,14 +128,31 @@ public class CommonStepdefs {
 			throws IllegalAccessException {
 		getField(resourceName).set(context, resource);
 	}
-
-
+	
+	
+	public JSONObject setProject(JSONObject args) {
+		if (args == null) {
+			args = new JSONObject();
+		}
+		
+		if (args.containsKey("tags")) {
+            ((JSONArray) args.get("tags")).add("unitTest");
+        } else {
+            args.put("tags", Arrays.asList("unitTest"));
+        }
+		
+		args.put("project", context.testProject);
+		
+		return args;
+	}
+	
+	
 	@Given("^I create a (configuration|project) with \"(.*)\"$")
     public void I_create_a_resource_with_(String resourceName, String args)
         throws AuthenticationException, Exception {
 
         JSONObject argsJSON = (JSONObject) JSONValue.parse(args);
-        argsJSON.put("tags", Arrays.asList("unitTest"));
+        argsJSON = setProject(argsJSON);
 
         try {
 			Method method = getClientMethod("create-args", resourceName);
@@ -175,13 +181,9 @@ public class CommonStepdefs {
         JSONObject argsJSON = args != null ?
             (JSONObject) JSONValue.parse(args) :
             new JSONObject();
-
-        if (argsJSON.containsKey("tags")) {
-            ((JSONArray) argsJSON.get("tags")).add("unitTest");
-        } else {
-            argsJSON.put("tags", Arrays.asList("unitTest"));
-        }
-
+        
+        argsJSON = setProject(argsJSON);
+        
 		try {
 			Method method = getClientMethod("create", resourceName);
 			JSONObject resource = (JSONObject) method.invoke(
@@ -352,335 +354,19 @@ public class CommonStepdefs {
 		}
 
 	}
-
-	@Then("^delete test data$")
-	public void delete_test_data() throws AuthenticationException {
-		if (context.models != null) {
-			int modelToRemove = -1;
-			for (int iModel = 0; iModel < context.models.size(); iModel++) {
-				JSONObject modelInList = (JSONObject) context.models
-						.get(iModel);
-				if (context.model != null && 
-						modelInList.get("resource").equals(context.model.get("resource"))) {
-					modelToRemove = iModel;
-					break;
-				}
-				if (context.ensemble != null &&
-						modelInList.get("resource").equals(context.ensemble.get("resource"))) {
-					modelToRemove = iModel;
-					break;
-				}
-				if (context.deepnet != null && 
-						modelInList.get("resource").equals(context.deepnet.get("resource"))) {
-					modelToRemove = iModel;
-					break;
-				}
-				if (context.logisticRegression != null && 
-						modelInList.get("resource").equals(context.logisticRegression.get("resource"))) {
-					modelToRemove = iModel;
-					break;
-				}
-				if (context.linearRegression != null && 
-						modelInList.get("resource").equals(context.linearRegression.get("resource"))) {
-					modelToRemove = iModel;
-					break;
-				}
-				if (context.fusion != null && 
-						modelInList.get("resource").equals(context.fusion.get("resource"))) {
-					modelToRemove = iModel;
-					break;
-				}
-				if (context.pca != null && 
-						modelInList.get("resource").equals(context.pca.get("resource"))) {
-					modelToRemove = iModel;
-					break;
-				}
-			}
-
-			if (modelToRemove >= 0) {
-				context.models.remove(modelToRemove);
-			}
-		}
-		
-		if (context.pca != null) {
-			context.api.deletePca(
-					(String) context.pca.get("resource"));
-			context.pca = null;
-		}
-		if (context.projection != null) {
-			context.api.deleteProjection(
-					(String) context.projection.get("resource"));
-			context.projection = null;
-		}
-		if (context.batchProjection != null) {
-			context.api.deleteBatchProjection(
-					(String) context.batchProjection.get("resource"));
-			context.batchProjection = null;
-		}
-		if (context.fusion != null) {
-			context.api.deleteFusion(
-					(String) context.fusion.get("resource"));
-			context.fusion = null;
-		}
-		if (context.optiML != null) {
-			context.api.deleteOptiML(
-					(String) context.optiML.get("resource"));
-			context.optiML = null;
-		}
-		if (context.deepnet != null) {
-			context.api
-					.deleteDeepnet((String) context.deepnet.get("resource"));
-			context.deepnet = null;
-		}
-		if (context.forecast != null) {
-			context.api
-					.deleteForecast((String) context.forecast.get("resource"));
-			context.forecast = null;
-		}
-		if (context.timeSeries != null) {
-			context.api
-					.deleteTimeSeries((String) context.timeSeries.get("resource"));
-			context.timeSeries = null;
-		}
-		if (context.configuration != null) {
-			context.api
-					.deleteConfiguration((String) context.configuration.get("resource"));
-			context.configuration = null;
-		}
-		if (context.batchTopicDistribution != null) {
-			context.api
-					.deleteBatchTopicDistribution((String) context.batchTopicDistribution.get("resource"));
-			context.batchTopicDistribution = null;
-		}
-		if (context.topicDistribution != null) {
-			context.api
-					.deleteTopicDistribution((String) context.topicDistribution.get("resource"));
-			context.topicDistribution = null;
-		}
-		if (context.topicModel != null) {
-			context.api
-					.deleteTopicModel((String) context.topicModel.get("resource"));
-			context.topicModel = null;
-		}
-		if (context.association != null) {
-			context.api
-					.deleteAssociation((String) context.association.get("resource"));
-			context.association = null;
-		}
-		if (context.execution != null) {
-			context.api
-					.deleteExecution((String) context.execution.get("resource"));
-			context.execution = null;
-		}
-		if (context.library != null) {
-			context.api
-					.deleteLibrary((String) context.library.get("resource"));
-			context.library = null;
-		}
-		if (context.script != null) {
-			if (context.scripts != null) {
-				int scriptToRemove = -1;
-				for (int iScript = 0; iScript < context.anomalies
-						.size(); iScript++) {
-					JSONObject scriptInList = (JSONObject) context.anomalies
-							.get(iScript);
-					if (scriptInList.get("resource")
-							.equals(context.script.get("resource"))) {
-						scriptToRemove = iScript;
-						break;
-					}
-				}
-
-				if (scriptToRemove >= 0) {
-					context.scripts.remove(scriptToRemove);
-				}
-			}
-
-			context.api
-					.deleteScript((String) context.script.get("resource"));
-			context.script = null;
-		}
-		if (context.scripts != null) {
-			for (Object script : context.scripts) {
-				context.api.deleteScript((String) script);
-			}
-			context.script = null;
-		}
-		if (context.linearRegression != null) {
-			context.api
-					.deleteLinearRegression((String) context.linearRegression.get("resource"));
-			context.linearRegression = null;
-		}
-		if (context.logisticRegression != null) {
-			context.api
-					.deleteLogisticRegression((String) context.logisticRegression.get("resource"));
-			context.logisticRegression = null;
-		}
-		if (context.statisticalTest != null) {
-			context.api
-					.deleteStatisticalTest((String) context.statisticalTest.get("resource"));
-			context.statisticalTest = null;
-		}
-		if (context.correlation != null) {
-			context.api
-					.deleteCorrelation((String) context.correlation.get("resource"));
-			context.correlation = null;
-		}
-		if (context.batchCentroid != null) {
-			context.api.deleteBatchCentroid(
-					(String) context.batchCentroid.get("resource"));
-			context.batchCentroid = null;
-		}
-		if (context.centroid != null) {
-			context.api
-					.deleteCentroid((String) context.centroid.get("resource"));
-			context.centroid = null;
-		}
-		if (context.batchPrediction != null) {
-			context.api.deleteBatchPrediction(
-					(String) context.batchPrediction.get("resource"));
-			context.batchPrediction = null;
-		}
-		if (context.prediction != null) {
-			context.api.deletePrediction(
-					(String) context.prediction.get("resource"));
-			context.prediction = null;
-		}
-		if (context.evaluation != null) {
-			context.api.deleteEvaluation(
-					(String) context.evaluation.get("resource"));
-			context.evaluation = null;
-		}
-		if (context.cluster != null) {
-			context.api
-					.deleteCluster((String) context.cluster.get("resource"));
-			context.cluster = null;
-		}
-		if (context.project != null) {
-			context.api
-					.deleteProject((String) context.project.get("resource"));
-			context.project = null;
-		}
-		if (context.sample != null) {
-			context.api
-					.deleteSample((String) context.sample.get("resource"));
-			context.sample = null;
-		}
-		if (context.anomaly != null) {
-			if (context.anomalies != null) {
-				int anomalyToRemove = -1;
-				for (int iAnomaly = 0; iAnomaly < context.anomalies
-						.size(); iAnomaly++) {
-					JSONObject anomalyInList = (JSONObject) context.anomalies
-							.get(iAnomaly);
-					if (anomalyInList.get("resource")
-							.equals(context.anomaly.get("resource"))) {
-						anomalyToRemove = iAnomaly;
-						break;
-					}
-				}
-
-				if (anomalyToRemove >= 0) {
-					context.anomalies.remove(anomalyToRemove);
-				}
-			}
-
-			context.api
-					.deleteAnomaly((String) context.anomaly.get("resource"));
-			context.anomaly = null;
-		}
-		if (context.anomalies != null) {
-			for (Object anomaly : context.anomalies) {
-				context.api.deleteAnomaly((String) anomaly);
-			}
-			context.anomalies = null;
-		}
-		if (context.anomalyScore != null) {
-			context.api.deleteAnomalyScore(
-					(String) context.anomalyScore.get("resource"));
-			context.anomalyScore = null;
-		}
-		if (context.batchAnomalyScore != null) {
-			context.api.deleteBatchAnomalyScore(
-					(String) context.batchAnomalyScore.get("resource"));
-			context.batchAnomalyScore = null;
-		}
-		if (context.model != null) {
-			deleteModel((String) context.model.get("resource"));
-			context.model = null;
-		}
-		if (context.models != null) {
-			for (Object model : context.models) {
-				deleteModel((String) ((JSONObject) model).get("resource"));
-			}
-			context.models = null;
-		}
-		if (context.ensemble != null) {
-			context.api
-					.deleteEnsemble((String) context.ensemble.get("resource"));
-			context.ensemble = null;
-		}
-		if (context.dataset != null) {
-			context.api
-					.deleteDataset((String) context.dataset.get("resource"));
-			context.dataset = null;
-		}
-		if (context.datasets != null) {
-			for (Object dataset : context.datasets) {
-				context.api.deleteDataset((String) dataset);
-			}
-			context.datasets = null;
-		}
-		if (context.source != null) {
-			context.api
-					.deleteSource((String) context.source.get("resource"));
-			context.source = null;
-		}
-	}
-
-	private void deleteModel(String modelId) {
-		try {
-			if (modelId.startsWith("model/")) {
-				context.api.deleteModel(modelId);
-			}
-			if (modelId.startsWith("ensemble/")) {
-				context.api.deleteEnsemble(modelId);
-			}
-			if (modelId.startsWith("deepnet/")) {
-				context.api.deleteDeepnet(modelId);
-			}
-			if (modelId.startsWith("logisticregression/")) {
-				context.api.deleteLogisticRegression(modelId);
-			}
-			if (modelId.startsWith("linearregression/")) {
-				context.api.deleteLinearRegression(modelId);
-			}
-			if (modelId.startsWith("fusion/")) {
-				context.api.deleteFusion(modelId);
-			}
-			if (modelId.startsWith("pca/")) {
-				context.api.deletePca(modelId);
-			}
-		} catch (Exception e) {}
-	}
 	
-
+	
 	@Then("^delete all test data$")
 	public void delete_all_test_data() throws Exception {
-
+		
 		context.api.getCacheManager().cleanCache();
 		
-		for (String resName : Arrays.asList(RESOURCES_NAMES)) {
-			Method listMethod = getClientMethod("list", resName);
-			Method deleteMethod = getClientMethod("delete", resName);
-
-			JSONObject listResources = (JSONObject) listMethod.invoke(
-					context.api, ";tags__in=unitTest");
-			JSONArray resources = (JSONArray) listResources.get("objects");
-			for (int i = 0; i < resources.size(); i++) {
-				JSONObject resource = (JSONObject) resources.get(i);
-				deleteMethod.invoke(context.api, resource);
-			}
+		JSONObject listProjects = (JSONObject) context.api.listProjects(
+	        	";tags__in=unitTestProject");
+		JSONArray projects = (JSONArray) listProjects.get("objects");
+		for (int i = 0; i < projects.size(); i++) {
+			JSONObject project = (JSONObject) projects.get(i);
+			context.api.deleteProject(project);
 		}
 	}
 }

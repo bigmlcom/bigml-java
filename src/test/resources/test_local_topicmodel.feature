@@ -13,7 +13,6 @@ Feature: LocalTopicModel
         Then the local topic distribution is "<topic_distribution>"
         When I create a topic distribution for "<data_input>"
         Then the topic distribution is "<topic_distribution>"
-        Then delete test data
 
       Examples:
         | data  | time_1  | time_2 | time_3 | options    |  data_input  | topic_distribution    |

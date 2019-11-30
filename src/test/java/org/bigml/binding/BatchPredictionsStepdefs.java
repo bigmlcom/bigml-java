@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.Arrays;
 
 import org.bigml.binding.resources.AbstractResource;
 import org.bigml.binding.utils.Utils;
@@ -70,10 +69,8 @@ public class BatchPredictionsStepdefs {
     public void I_create_a_batch_prediction_for_the_dataset_with(String resourceId)
             throws Throwable {
         String datasetId = (String) context.dataset.get("resource");
-
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
-
+        JSONObject args = commonSteps.setProject(null);
+        
         JSONObject resource = context.api.createBatchPrediction(
         		resourceId, datasetId, args, 5, 3);
         context.status = (Integer) resource.get("code");
@@ -116,9 +113,7 @@ public class BatchPredictionsStepdefs {
 
         String anomalyId = (String) context.anomaly.get("resource");
         String datasetId = (String) context.dataset.get("resource");
-
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
+        JSONObject args = commonSteps.setProject(null);
 
         JSONObject resource = context.api.createBatchAnomalyScore(
                 anomalyId, datasetId, args, 5, null);
@@ -149,9 +144,11 @@ public class BatchPredictionsStepdefs {
 
         String batchPredictionId = (String) context.batchPrediction.get("resource");
         assertNotNull("A batch prediction id is needed.", batchPredictionId);
-
+        
+        JSONObject args = commonSteps.setProject(null);
+        
         JSONObject source = context.api.createSourceFromBatchPrediction(
-        		batchPredictionId, new JSONObject());
+        		batchPredictionId, args);
 
         Integer code = (Integer) source.get("code");
         assertEquals(AbstractResource.HTTP_CREATED, code.intValue());
