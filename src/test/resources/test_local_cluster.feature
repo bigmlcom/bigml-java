@@ -10,7 +10,6 @@ Feature: LocalCluster
         And I create a local cluster
         Then the data point in the cluster closest to "<reference>" is "<closest>"
 				Then the data point in the cluster closest to "<reference>" is "<closest>"
-				Then delete test data
 
         Examples:
         | data	|  time_1  | time_2 | time_3 | time_4 | reference |	closest	|
@@ -30,7 +29,6 @@ Feature: LocalCluster
         Then the centroid is "<centroid>" with distance <distance>
         And I create a local centroid for "<data_input>"
         Then the local centroid is "<centroid>" with distance <distance>
-        Then delete test data
 
         Examples:
           | data             |    time_1  | time_2 | time_3 | options | data_input                            | centroid  | distance |
@@ -61,7 +59,6 @@ Feature: LocalCluster
         Then the centroid is "<centroid>" with distance <distance>
         And I create a local centroid for "<data_input>"
         Then the local centroid is "<centroid>" with distance <distance>
-        Then delete test data
 
         Examples:
         | data	| time_1  | time_2 | time_3 | options | data_input | centroid  | distance |

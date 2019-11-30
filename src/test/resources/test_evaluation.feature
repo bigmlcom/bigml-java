@@ -10,7 +10,6 @@ Feature: Evaluation REST api
         When I create an evaluation for the model with the dataset
         And I wait until the evaluation is ready less than <time_4> secs
         Then the measured "<measure>" is <value>
-        Then delete test data
 
         Examples:
         | data	| time_1  | time_2 | time_3 | time_4 | measure       | value  |
@@ -27,7 +26,6 @@ Feature: Evaluation REST api
         When I create an evaluation for the ensemble with the dataset
         And I wait until the evaluation is ready less than <time_4> secs
         Then the measured "<measure>" is equals to <value>
-        Then delete test data
 
         Examples:
         | data             | time_1  | time_2 | number_of_models | time_3 | time_4 | measure       | value  |
@@ -44,7 +42,6 @@ Feature: Evaluation REST api
         When I create an evaluation for the linear regression with the dataset
         And I wait until the evaluation is ready less than <time_4> secs
         Then the measured "<measure>" is equals to <value>
-        Then delete test data
 
         Examples:
         | data             | time_1  | time_2 | tlp | time_3 | time_4 | measure       | value  |

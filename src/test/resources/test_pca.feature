@@ -11,7 +11,6 @@ Feature: PCA REST api calls
         When I wait until the pca is ready less than <time_4> secs
         Then the pca name is "<pca_name>"
         Then I delete the pca
-        Then delete test data
 
         Examples:
         | data                | time_1  | time_2 | time_3 | time_4 | pca_name |
@@ -27,7 +26,6 @@ Feature: PCA REST api calls
         And I wait until the pca is ready less than <time_3> secs
         When I create a projection for "<data_input>"
         Then the projection is "<projection>"
-        Then delete test data
         
         Examples:
         | data                | time_1  | time_2 | time_3 | time_4 | data_input | projection |
@@ -45,7 +43,6 @@ Feature: PCA REST api calls
         And I wait until the batch projection is ready less than <time_4> secs
         And I download the created projections file to "<local_file>"
         Then the batch projection file is like "<projections_file>"
-        Then delete test data
 
         Examples:
           | data             | time_1  | time_2 | time_3 | time_4 | local_file | projections_file |

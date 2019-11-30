@@ -7,7 +7,6 @@ Feature: Projects REST api calls
         And I update the project with "<params>"
         And the project name is <new_name>
         And I delete the project
-        Then delete test data
 
         Examples:
         | time_1  | options                |   name   |   params                            |   new_name             |

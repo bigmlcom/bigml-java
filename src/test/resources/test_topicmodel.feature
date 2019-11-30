@@ -11,7 +11,6 @@ Feature: TopicModel REST api
         And I update the topic model name to "<topic_model_name>"
         When I wait until the topic model is ready less than <time_4> secs
         Then the topic model name is "<topic_model_name>"
-        Then delete test data
 
         Examples:
         | data             | time_1  | time_2 | time_3 | time_4 | topic_model_name | params |
@@ -26,7 +25,6 @@ Feature: TopicModel REST api
 	      And I wait until the dataset is ready less than <time_2> secs
 	      When I create topic model from a dataset
 	      Then I wait until the topic model is ready less than <time_3> secs
-	      Then delete test data
 	
 	      Examples:
 	      | data                    | time_1  | time_2 | time_3   | options  |

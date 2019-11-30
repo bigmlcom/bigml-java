@@ -9,7 +9,6 @@ Feature: LocalAssociation
         And I wait until the association is ready less than <time_3> secs
         And I create a local association
         When I get the rules for "<item_list>" and the first rule is "<JSON_rule>"
-        Then delete test data
 
         Examples:
         | data                | time_1  | time_2 | time_3 | item_list | JSON_rule   |
@@ -25,7 +24,6 @@ Feature: LocalAssociation
         And I wait until the association is ready less than <time_3> secs
         And I create a local association
         When I get the rules for "<item_list>" and the first rule is "<JSON_rule>"
-        Then delete test data
 
         Examples:
         | data                | time_1  | time_2 | time_3 | item_list | JSON_rule   | strategy   |

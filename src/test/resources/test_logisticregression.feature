@@ -10,7 +10,6 @@ Feature: LogisticRegression REST api calls
         And I update the logisticregression name to "<logisticregression_name>"
         When I wait until the logisticregression is ready less than <time_4> secs
         Then the logisticregression name is "<logisticregression_name>"
-        Then delete test data
 
         Examples:
         | data	|  time_1  | time_2 | time_3 | time_4 | logisticregression_name |

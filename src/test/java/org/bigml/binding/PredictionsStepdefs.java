@@ -31,10 +31,9 @@ public class PredictionsStepdefs {
     @When("^I create a proportional missing strategy prediction for \"(.*)\"$")
     public void I_create_a_proportional_missing_strategy_prediction(String inputData)
             throws AuthenticationException {
+    	
         String modelId = (String) context.model.get("resource");
-
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
+        JSONObject args = commonSteps.setProject(null);
         args.put("missing_strategy", 1);
 
         JSONObject resource = context.api.createPrediction(
@@ -51,8 +50,8 @@ public class PredictionsStepdefs {
         String ensembleId = (String) context.ensemble.get("resource");
         
         JSONObject args = (JSONObject) JSONValue.parse(data);
-        args.put("tags", Arrays.asList("unitTest"));
         args.put("missing_strategy", 1);
+        args = commonSteps.setProject(args);
         
         JSONObject resource = context.api.createPrediction(
         		ensembleId, (JSONObject) JSONValue.parse(inputData), args, 5, null);
@@ -65,10 +64,9 @@ public class PredictionsStepdefs {
     @When("^I create a prediction for \"(.*)\"$")
     public void I_create_a_prediction(String inputData)
             throws AuthenticationException {
+    	
         String modelId = (String) context.model.get("resource");
-
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
+        JSONObject args = commonSteps.setProject(null);
 
         JSONObject resource = context.api.createPrediction(
             modelId, (JSONObject) JSONValue.parse(inputData), args, 5, null);
@@ -129,8 +127,7 @@ public class PredictionsStepdefs {
 
     	String modelId = (String) context.model.get("resource");
 
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
+        JSONObject args = commonSteps.setProject(null);
         args.put("operating_point", (JSONObject) JSONValue.parse(operatingPoint));
 
         JSONObject resource = context.api.createPrediction(
@@ -166,8 +163,7 @@ public class PredictionsStepdefs {
 
     	String modelId = (String) context.model.get("resource");
 
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
+    	JSONObject args = commonSteps.setProject(null);
         args.put("operating_kind", kind);
 
         JSONObject resource = context.api.createPrediction(
@@ -212,9 +208,7 @@ public class PredictionsStepdefs {
     @When("^I create a prediction with ensemble for \"(.*)\"$")
     public void I_create_a_prediction_with_ensemble_for(String inputData) throws AuthenticationException {
         String ensembleId = (String) context.ensemble.get("resource");
-
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
+        JSONObject args = commonSteps.setProject(null);
 
         JSONObject resource = context.api.createPrediction(
             ensembleId, (JSONObject) JSONValue.parse(inputData), args, 5, null);
@@ -237,9 +231,7 @@ public class PredictionsStepdefs {
             throws AuthenticationException {
 
     	String ensembleId = (String) context.ensemble.get("resource");
-
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
+    	JSONObject args = commonSteps.setProject(null);
         args.put("operating_point", (JSONObject) JSONValue.parse(operatingPoint));
 
         JSONObject resource = context.api.createPrediction(
@@ -278,8 +270,7 @@ public class PredictionsStepdefs {
 
     	String ensembleId = (String) context.ensemble.get("resource");
 
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
+    	JSONObject args = commonSteps.setProject(null);
         args.put("operating_kind", kind);
 
         JSONObject resource = context.api.createPrediction(
@@ -340,8 +331,7 @@ public class PredictionsStepdefs {
 
     	String logisticId = (String) context.logisticRegression.get("resource");
 
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
+    	JSONObject args = commonSteps.setProject(null);
         args.put("operating_kind", kind);
 
         JSONObject resource = context.api.createPrediction(
@@ -371,8 +361,7 @@ public class PredictionsStepdefs {
 
     	String logisticId = (String) context.logisticRegression.get("resource");
 
-    	JSONObject args = new JSONObject();
-    	args.put("tags", Arrays.asList("unitTest"));
+    	JSONObject args = commonSteps.setProject(null);
         
         JSONObject resource = context.api.createPrediction(
         		logisticId, (JSONObject) JSONValue.parse(inputData), args, 5, null);
@@ -431,8 +420,7 @@ public class PredictionsStepdefs {
 
     	String deepnetId = (String) context.deepnet.get("resource");
 
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
+    	JSONObject args = commonSteps.setProject(null);
         args.put("operating_point", (JSONObject) JSONValue.parse(operatingPoint));
 
         JSONObject resource = context.api.createPrediction(
@@ -463,8 +451,7 @@ public class PredictionsStepdefs {
 
     	String deepnetId = (String) context.deepnet.get("resource");
 
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
+    	JSONObject args = commonSteps.setProject(null);
         args.put("operating_kind", kind);
 
         JSONObject resource = context.api.createPrediction(
@@ -494,8 +481,7 @@ public class PredictionsStepdefs {
 
     	String deepnetId = (String) context.deepnet.get("resource");
     	
-    	JSONObject args = new JSONObject();
-    	args.put("tags", Arrays.asList("unitTest"));
+    	JSONObject args = commonSteps.setProject(null);
         
         JSONObject resource = context.api.createPrediction(
         		deepnetId, (JSONObject) JSONValue.parse(inputData), args, 5, null);
@@ -604,8 +590,7 @@ public class PredictionsStepdefs {
     public void I_create_a_prediction_with_fusion_for(String inputData) throws AuthenticationException {
         String fusionId = (String) context.fusion.get("resource");
 
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
+        JSONObject args = commonSteps.setProject(null);
 
         JSONObject resource = context.api.createPrediction(
         		fusionId, (JSONObject) JSONValue.parse(inputData), args, 5, null);
@@ -662,8 +647,7 @@ public class PredictionsStepdefs {
 
     	String linearId = (String) context.linearRegression.get("resource");
 
-    	JSONObject args = new JSONObject();
-    	args.put("tags", Arrays.asList("unitTest"));
+    	JSONObject args = commonSteps.setProject(null);
 
         JSONObject resource = context.api.createPrediction(
         		linearId, (JSONObject) JSONValue.parse(inputData), args, 5, null);

@@ -10,7 +10,6 @@ Feature: Ensembles REST api
         When I create a prediction with ensemble for "<data_input>"
         And I wait until the prediction is ready less than <time_4> secs
         Then the prediction for "<objective>" is "<prediction>"
-        Then delete test data
 
 				Examples:
         | data             | time_1  | time_2 | time_3 | time_4 | number_of_models | data_input    | objective | prediction  |
@@ -28,7 +27,6 @@ Feature: Ensembles REST api
 		    When I create a prediction with ensemble for "<data_input>"
 		    And I wait until the prediction is ready less than <time_4> secs
 		    Then the numerical prediction for "<objective>" is <prediction>
-		    Then delete test data
 
 				Examples:
 		      | data             | time_1  | time_2 | time_3 | time_4 | number_of_models | data_input    | objective | prediction  |

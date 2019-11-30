@@ -24,9 +24,9 @@ public class ScriptsStepdefs {
 
     @Given("^I create a whizzml script from a excerpt of code \"([^\"]*)\"$")
     public void I_create_a_whizzml_script_from_a_excerpt_of_code(String source)
-        throws AuthenticationException {
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
+    		throws AuthenticationException {
+    	
+    	JSONObject args = commonSteps.setProject(null);
 
         JSONObject resource = context.api.createScript(source, args, 5, null);
         context.status = (Integer) resource.get("code");

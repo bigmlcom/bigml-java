@@ -40,8 +40,7 @@ public class DatasetsStepdefs {
         JSONObject argsJSON = args != null ?
             (JSONObject) JSONValue.parse(args) :
             new JSONObject();
-
-        argsJSON.put("tags", Arrays.asList("unitTest"));
+        argsJSON = commonSteps.setProject(argsJSON);
 
         JSONObject resource = context.api.createDataset(sourceId,
                 argsJSON, 5, null);
@@ -62,8 +61,7 @@ public class DatasetsStepdefs {
         String clusterId = (String) context.cluster.get("resource");
         String centroidId = (String) context.centroid.get("centroid_id");
 
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
+        JSONObject args = commonSteps.setProject(null);
         args.put("centroid", centroidId);
 
         JSONObject resource = context.api.createDataset(clusterId,
@@ -128,8 +126,7 @@ public class DatasetsStepdefs {
         String datasetId = (String) context.dataset.get("resource");
         LocalAnomaly localAnomaly = new LocalAnomaly(context.anomaly);
 
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
+        JSONObject args = commonSteps.setProject(null);
         args.put("lisp_filter", localAnomaly.filter(true));
 
         JSONObject resource = context.api.createDataset(datasetId,
@@ -158,8 +155,7 @@ public class DatasetsStepdefs {
         String datasetId = (String) context.dataset.get("resource");
 
 
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
+        JSONObject args = commonSteps.setProject(null);
         args.put("sample_rate", rate);
 
         datasetOrigRows = (Long) context.dataset.get("rows");
@@ -268,8 +264,7 @@ public class DatasetsStepdefs {
     		throws Throwable {
         String clusterId = (String) context.cluster.get("resource");
         
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
+        JSONObject args = commonSteps.setProject(null);
         args.put("centroid", centroidId);
 
         JSONObject resource = context.api.createDataset(

@@ -11,7 +11,6 @@ Feature: Assocaition REST api calls
         When I wait until the association is ready less than <time_4> secs
         Then the association name is "<association_name>"
         Then I delete the association
-        Then delete test data
 
         Examples:
         | data                | time_1  | time_2 | time_3 | time_4 | association_name |

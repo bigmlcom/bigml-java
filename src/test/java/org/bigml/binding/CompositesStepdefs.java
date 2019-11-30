@@ -31,8 +31,7 @@ public class CompositesStepdefs {
     public void I_create_an_optiml_from_a_dataset() throws Throwable {
         String datasetId = (String) context.dataset.get("resource");
 
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
+        JSONObject args = commonSteps.setProject(null);
         args.put("max_training_time", 1000);
         args.put("model_types", Arrays.asList("model", "logisticregression", "linearregression"));
         args.put("metric", "max_phi");
@@ -54,8 +53,7 @@ public class CompositesStepdefs {
             models.add(modelInList.get("resource"));
         }
         
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
+        JSONObject args = commonSteps.setProject(null);
         
         JSONObject resource = context.api.createFusion(
         		models, args, 5, null);
@@ -79,8 +77,7 @@ public class CompositesStepdefs {
             
             models.add(modelWeight);
         }
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
+        JSONObject args = commonSteps.setProject(null);
         
         JSONObject resource = context.api.createFusionWithModels(
         		models, args, 5, null);

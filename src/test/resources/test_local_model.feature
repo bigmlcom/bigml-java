@@ -9,7 +9,6 @@ Feature: LocalModel
         And I wait until the model is ready less than <time_3> secs
         And I create a local model
         Then "<field_id>" field's name is changed to "<new_name>"
-        Then delete test data
 
 				Examples:
 				| data	| time_1  | time_2 | time_3 | options | field_id | new_name  |
@@ -28,7 +27,6 @@ Feature: LocalModel
 		    When I create a prediction for "<data_input>"
 		    Then the prediction for "<objective>" is "<prediction>"
 		    Then the local prediction for "<data_input>" is "<prediction>"
-		    Then delete test data
 		
 		    Examples:
 		      | data                |  time_1  | time_2 | time_3 |  data_input    | objective | prediction  |
@@ -50,7 +48,6 @@ Feature: LocalModel
 		    When I create a prediction for "<data_input>"
 		    Then the prediction for "<objective>" is "<prediction>"
 		    And the local prediction for "<data_input>" is "<prediction>"
-		    Then delete test data
 		
 		    Examples:
 		      | data             |   time_1  | time_2 | time_3 |    options | data_input                             | objective | prediction  |
@@ -78,7 +75,6 @@ Feature: LocalModel
 		    And I create a local model
 		    Then the proportional missing strategy local prediction for "<data_input>" is "<prediction>"
 		    Then the confidence of the proportional missing strategy local prediction for "<data_input>" is <confidence>
-		    Then delete test data
 		
 		    Examples:
 		      | data              | time_1  | time_2  | time_3  | data_input  | objective | prediction      | confidence        |
@@ -99,7 +95,6 @@ Feature: LocalModel
 		    And the confidence for the prediction is <confidence>
 		    Then the numerical prediction of proportional missing strategy local prediction for "<data_input>" is <prediction>
 		    Then the confidence of the proportional missing strategy local prediction for "<data_input>" is <confidence>
-		    Then delete test data
 		
 		    Examples:
 		      | data               | time_1  | time_2 | time_3 | data_input           | objective | prediction     | confidence |
@@ -121,7 +116,6 @@ Feature: LocalModel
 		    And the confidence for the prediction is <confidence>
 		    And the proportional missing strategy local prediction for "<data_input>" is "<prediction>"
 		    And the confidence of the proportional missing strategy local prediction for "<data_input>" is <confidence>
-		    Then delete test data
 		
 		    Examples:
 		      | data               | time_1  | time_2 | time_3 | data_input  | objective | prediction     | confidence |
@@ -141,7 +135,6 @@ Feature: LocalModel
         Then the prediction for "<objective>" is "<prediction>"
         When I create a local prediction with model with operating point "<operating_point>" for "<data_input>"
         Then the local model prediction is "<prediction>"
-        Then delete test data
 
         Examples:
         | data	| time_1  | time_2 | time_3 | data_input | objective	| prediction	| operating_point	|
@@ -163,7 +156,6 @@ Feature: LocalModel
         Then the prediction for "<objective>" is "<prediction>"
         When I create a local prediction with model with operating kind "<operating_kind>" for "<data_input>"
         Then the local model prediction is "<prediction>"
-        Then delete test data
 
         Examples:
         | data	| time_1  | time_2 | time_3 | data_input | objective	| prediction	| operating_kind	|
@@ -177,7 +169,6 @@ Feature: LocalModel
       Given I create a local model from a "<model>" file
       And the local prediction for "<data_input>" is "<prediction>"
       And the confidence of the local prediction for "<data_input>" is <confidence>
-      Then delete test data
 
       Examples:
       | model                | data_input             | prediction  | confidence  |
@@ -187,7 +178,6 @@ Feature: LocalModel
     Scenario Outline: Successfully creating a multiple prediction from a local model in a json file:
       Given I create a local model from a "<model>" file
       And the multiple local prediction for "<data_input>" is "<prediction>"
-      Then delete test data
 
       Examples:
       | model                | data_input             | prediction  |
@@ -204,7 +194,6 @@ Feature: LocalModel
         And I create a local model
         Then the local prediction for "<objective1>" is "<prediction1>"
         Then the local prediction for "<objective2>" is "<prediction2>"
-        Then delete test data
 
         Examples:
           | data  | time_1  | time_2 | time_3 | objective1 | prediction1  | objective2 | prediction2  |
@@ -220,7 +209,6 @@ Feature: LocalModel
         And I wait until the model is ready less than <time_3> secs
         And I create a local multi model
         And I create a local mm median batch prediction using "<input_data>" with prediction <prediction>
-        Then delete test data
 
         Examples:
           | data	|  time_1  | time_2 | time_3 |  input_data |  prediction    |
@@ -241,7 +229,6 @@ Feature: LocalModel
         And I retrieve a list of remote models tagged with "<tag>"
         And I create a local multi model
         Then the local multi prediction for "<data_input>" is "<prediction>"
-        Then delete test data
 
         Examples:
         | data             | time_1  | time_2 | time_3 | params                         |  tag  |  data_input    | prediction  |
@@ -262,7 +249,6 @@ Feature: LocalModel
         And I retrieve a list of remote models tagged with "<tag>"
         And I create a local multi model
         Then I create a batch multimodel prediction for "<data_inputs>" and predictions "<predictions>"
-        Then delete test data
 
         Examples:
             | data          | time_1  | time_2 | time_3 | params             |  tag  |  data_inputs                                                   | predictions                       |
@@ -286,7 +272,6 @@ Feature: LocalModel
 		    And I combine the votes in "<path>"
 		    Then the plurality combined predictions are "<predictions>"
 		    And the confidence weighted predictions are "<predictions>"
-		    Then delete test data
 		
 		  Examples:
 		    | data          | time_1  | time_2 | time_3 | params                         |  tag  |  data_input    | path | predictions  |

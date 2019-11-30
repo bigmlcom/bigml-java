@@ -12,7 +12,6 @@ Feature: LocalLinearRegression
         And I create a local linearregression
         And I create a local linearregression prediction for "<data_input>"
         Then the local linearregression prediction is "<prediction>"
-        Then delete test data
 
         Examples:
         | data  | time_1  | time_2 | time_3 | data_input | objective | prediction | params  |

@@ -10,7 +10,6 @@ Feature: StatiticalTest REST api calls
         And I update the statisticaltest name to "<statisticaltest_name>"
         When I wait until the statisticaltest is ready less than <time_4> secs
         Then the statisticaltest name is "<statisticaltest_name>"
-        Then delete test data
 
         Examples:
         | data	|  time_1  | time_2 | time_3 | time_4 | statisticaltest_name |

@@ -11,7 +11,6 @@ Feature: Testing Organizations
       	And I wait until the model is ready less than <time_3> secs
      		When I create a prediction for "<data_input>"
       	Then the prediction for "<objective>" is "<prediction>"
-      	Then delete test data
 
         Examples:
       	| data	|  time_1  | time_2 | time_3 | data_input    | objective | prediction  |

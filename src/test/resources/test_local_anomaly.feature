@@ -12,7 +12,6 @@ Feature: LocalAnomaly
         Then the anomaly score is "<score>"
         And I create a local anomaly score for "<data_input>"
         Then the local anomaly score is <score>
-        Then delete test data
 
       Examples:
         | data	| time_1  | time_2 | time_3 | data_input    | score    |

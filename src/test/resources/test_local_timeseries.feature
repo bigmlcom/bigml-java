@@ -12,7 +12,6 @@ Feature: LocalTimeseries
         Then the forecasts are "<forecasts>"
         And I create a local forecast for "<data_input>"
         Then the local forecasts are "<forecasts>"
-        Then delete test data
 
         Examples:
         | data                    | time_1  | time_2 | time_3 | data_input                                    | forecasts         | params    |
@@ -34,7 +33,6 @@ Feature: LocalTimeseries
         Then the forecasts are "<forecasts>"
         And I create a local forecast for "<data_input>"
         Then the local forecasts are "<forecasts>"
-        Then delete test data
 
         Examples:
         | data                    | time_1  | time_2 | time_3 | data_input                                    | forecasts         | params    |
@@ -54,7 +52,6 @@ Feature: LocalTimeseries
         Then the forecasts are "<forecasts>"
         And I create a local forecast for "<data_input>"
         Then the local forecasts are "<forecasts>"
-        Then delete test data
 
         Examples:
         | data                    | time_1  | time_2 | time_3 | data_input                                    | forecasts         | params    |
@@ -75,7 +72,6 @@ Feature: LocalTimeseries
         Then the forecasts are "<forecasts>"
         And I create a local forecast for "<data_input>"
         Then the local forecasts are "<forecasts>"
-        Then delete test data
 
         Examples:
         | data                    | time_1  | time_2 | time_3 | data_input                                    | forecasts         | params    |

@@ -30,9 +30,7 @@ public class EvaluationsStepdefs {
     public void I_create_a_evaluation() throws AuthenticationException {
         String modelId = (String) context.model.get("resource");
         String datasetId = (String) context.dataset.get("resource");
-
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
+        JSONObject args = commonSteps.setProject(null);
 
         JSONObject resource = context.api.createEvaluation(
                 modelId, datasetId, args, 5, 3);
@@ -53,9 +51,7 @@ public class EvaluationsStepdefs {
             throws Throwable {
         String ensembleId = (String) context.ensemble.get("resource");
         String datasetId = (String) context.dataset.get("resource");
-
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
+        JSONObject args = commonSteps.setProject(null);
 
         JSONObject resource = context.api.createEvaluation(
                 ensembleId, datasetId, args, 5, 3);
@@ -72,9 +68,7 @@ public class EvaluationsStepdefs {
 
         String logisticRegressionId = (String) context.logisticRegression.get("resource");
         String datasetId = (String) context.dataset.get("resource");
-
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
+        JSONObject args = commonSteps.setProject(null);
 
         JSONObject resource = context.api.createEvaluation(
                 logisticRegressionId, datasetId, args, 5, 3);
@@ -91,9 +85,7 @@ public class EvaluationsStepdefs {
 
         String linearRegressionId = (String) context.linearRegression.get("resource");
         String datasetId = (String) context.dataset.get("resource");
-
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
+        JSONObject args = commonSteps.setProject(null);
 
         JSONObject resource = context.api.createEvaluation(
         		linearRegressionId, datasetId, args, 5, 3);
@@ -110,9 +102,7 @@ public class EvaluationsStepdefs {
 
         String fusionId = (String) context.fusion.get("resource");
         String datasetId = (String) context.dataset.get("resource");
-
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
+        JSONObject args = commonSteps.setProject(null);
 
         JSONObject resource = context.api.createEvaluation(
         		fusionId, datasetId, args, 5, 3);

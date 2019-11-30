@@ -9,7 +9,6 @@ Feature: Dataset REST api
         And I wait until the dataset is ready less than <time_3> secs
         When I get the dataset status using the dataset's public url
         Then the dataset's status is FINISHED
-				Then delete test data
 
         Examples:
         | data	| time_1  | time_2 | time_3 |
@@ -23,7 +22,6 @@ Feature: Dataset REST api
         And I wait until the dataset is ready less than <time_2> secs
         And I download the dataset file to "<local_file>"
 				Then the dataset file "<data>" is like "<local_file>"
-        Then delete test data
 
         Examples:
         | data          | time_1  | time_2 | local_file |
@@ -40,7 +38,6 @@ Feature: Dataset REST api
         And I update the sample with "<params>" waiting less than <time_4> secs
         And I wait until the sample is ready less than <time_3> secs
 				Then the sample name is <name>
-        Then delete test data
 
         Examples:
         | data          | time_1  | time_2 | time_3 |   time_4  |   params                            |   name                 |
@@ -56,7 +53,6 @@ Feature: Dataset REST api
         And I wait until the sample is ready less than <time_3> secs
         And I download the sample file to "<local_file>" with <rows> rows and "<seed>" seed
         Then the sample file "<expected_file>" is like "<local_file>"
-        Then delete test data
 
         Examples:
         | data          | seed  | time_1  | time_2 | time_3 | rows  |   expected_file                 |   local_file                    |
@@ -72,7 +68,6 @@ Feature: Dataset REST api
         And I wait until the dataset is ready less than <time_3> secs
         When I compare the datasets' instances
         Then the proportion of instances between datasets is <rate>
-        Then delete test data
 
 				Examples:
 				| data             | time_1  | time_2 | time_3 | rate |
@@ -87,7 +82,6 @@ Feature: Dataset REST api
 		    And I wait until the dataset is ready less than <time_2> secs
 		    When I ask for the missing values counts in the fields
 		    Then the missing values counts dict is "<missing_values>"
-		    Then delete test data
 		
 		  Examples:
 		    | data	|  time_1  | params	| time_2 | missing_values       |
@@ -102,7 +96,6 @@ Feature: Dataset REST api
 		    And I wait until the dataset is ready less than <time_2> secs
 		    When I ask for the error counts in the fields
 		    Then the error counts dict is "<error_values>"
-		    Then delete test data
 		
 		  Examples:
 		    | data	|   time_1  | params	| time_2 |error_values       |

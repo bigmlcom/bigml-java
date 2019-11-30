@@ -53,8 +53,7 @@ public class TimeSeriesStepdefs {
     public void I_create_a_forecast(String inputData) throws Throwable {
         String timeseries = (String) context.timeSeries.get("resource");
 
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
+        JSONObject args = commonSteps.setProject(null);
 
         JSONObject resource =
         		context.api.createForecast(timeseries,

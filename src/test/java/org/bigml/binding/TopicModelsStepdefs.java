@@ -52,8 +52,7 @@ public class TopicModelsStepdefs {
 
 		String topicModelId = (String) context.topicModel.get("resource");
 
-		JSONObject args = new JSONObject();
-		args.put("tags", Arrays.asList("unitTest"));
+		JSONObject args = commonSteps.setProject(null);
 
 		JSONObject resource = context.api.createTopicDistribution(
 				topicModelId, (JSONObject) JSONValue.parse(inputData), args, 5,

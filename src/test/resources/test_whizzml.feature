@@ -7,7 +7,6 @@ Feature: Whizzml Resources REST api calls
         When I wait until the library is ready less than <time_2> secs
         Then the library name is "<library_name>"
         Then the library code is "<source_code>"
-        Then delete test data
         
         Examples:
         | source_code                      | time_1  | time_2  | library_name |
@@ -21,7 +20,6 @@ Feature: Whizzml Resources REST api calls
         When I wait until the script is ready less than <time_2> secs
         Then the script name is "<script_name>"
         Then the script code is "<source_code>"
-        Then delete test data
 
         Examples:
         | source_code   | time_1  | time_2  | script_name |
@@ -37,7 +35,6 @@ Feature: Whizzml Resources REST api calls
         When I wait until the execution is ready less than <time_2> secs
         Then the execution name is "<execution_name>"
         Then the script id is correct and the result is "<result>"
-        Then delete test data
 
         Examples:
         | source_code   | time_1  | time_2  | time_3  | execution_name | result    |
@@ -56,7 +53,6 @@ Feature: Whizzml Resources REST api calls
         When I wait until the execution is ready less than <time_2> secs
         Then the execution name is "<execution_name>"
         Then the result is "<result>"
-        Then delete test data
 
         Examples:
         | source_code   | time_1  | time_2  | time_3  | execution_name | result    |

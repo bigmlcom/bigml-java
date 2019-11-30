@@ -10,7 +10,6 @@ Feature: Linear regression
         And I update the linearregression name to "<linearregression_name>"
         When I wait until the linearregression is ready less than <time_4> secs
         Then the linearregression name is "<linearregression_name>"
-        Then delete test data
 
         Examples:
         | data  |  time_1  | time_2 | time_3 | time_4 | linearregression_name |
@@ -26,7 +25,6 @@ Feature: Linear regression
         And I wait until the linearregression is ready less than <time_3> secs
         When I create a linearregression prediction for "<data_input>"  
         Then the linearregression prediction is "<prediction>"
-        Then delete test data
 
         Examples:
         | data  |  time_1  | time_2 | time_3 | data_input | prediction |

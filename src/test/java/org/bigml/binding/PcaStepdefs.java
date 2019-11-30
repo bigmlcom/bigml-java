@@ -43,10 +43,9 @@ public class PcaStepdefs {
 	@When("^I create a projection for \"(.*)\"$")
 	public void I_create_a_projection_for(String inputData)
 			throws AuthenticationException {
-		String pcaId = (String) context.pca.get("resource");
 
-		JSONObject args = new JSONObject();
-		args.put("tags", Arrays.asList("unitTest"));
+		String pcaId = (String) context.pca.get("resource");
+		JSONObject args = commonSteps.setProject(null);
 		
 		JSONObject resource = context.api.createProjection(pcaId,
 				(JSONObject) JSONValue.parse(inputData), args, 5, null);
@@ -67,11 +66,10 @@ public class PcaStepdefs {
 	@When("^I create a batch projection for the dataset with the pca$")
     public void I_create_a_batch_projection_for_the_dataset_with_the_pca()
             throws Throwable {
+		
 		String pcaId = (String) context.pca.get("resource");
 		String datasetId = (String) context.dataset.get("resource");
-
-        JSONObject args = new JSONObject();
-        args.put("tags", Arrays.asList("unitTest"));
+		JSONObject args = commonSteps.setProject(null);
 
         JSONObject resource = context.api.createBatchProjection(
         		pcaId, datasetId, args, 5, 3);
