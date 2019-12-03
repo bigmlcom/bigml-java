@@ -1,6 +1,11 @@
 # Changes in the BigML.io Java bindings
 
 
+## 1.8.12 version
+
+* Deprecated methods removed from resource classes
+* Improved robustness guarding against internal errors in some rare cases
+
 ## 1.8.11 version
 
 * New constructor in local model objects with BigMLClient instance.
@@ -96,16 +101,16 @@ IMPORTANT NOTICE: In next version 1.8.12 we will remove deprecated methods in Bi
 * OptiML Resource
 * Fusion Resource
 * Removing seed as a connection attribute.
-* Local Clusters. 
+* Local Clusters.
 	- Support for optype items
 	- New utility methods: closestInCluster, sortedCentroids.
 	- Fixed bugs.
 * Added support for Local Topic Models
 
-	In order to give support to java 6 users the binding uses version 
-	4.7.0 for lucene-core and lucene-analyzers-common. If java is 1.8 or 
+	In order to give support to java 6 users the binding uses version
+	4.7.0 for lucene-core and lucene-analyzers-common. If java is 1.8 or
 	greater set the version of these libraries to 7.3.1 in pom.xml
-	
+
     		<dependency>
 		    <groupId>org.apache.lucene</groupId>
 		    <artifactId>lucene-core</artifactId>
@@ -376,4 +381,3 @@ dependency in your own project's pom file, because it's not anymore a dependency
 ## 1.1 version
 
 * Since version 1.1 the name of the JAR file is bigml-binding.
-

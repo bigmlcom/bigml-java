@@ -36,7 +36,7 @@ To use the latest stable release, include the following `maven` dependency in yo
     <dependency>
         <groupId>org.bigml</groupId>
         <artifactId>bigml-binding</artifactId>
-        <version>1.8.11</version>
+        <version>1.8.12</version>
     </dependency>
 
 You can also download the development version of the bindings directly from the Git repository
@@ -74,7 +74,7 @@ In BigML a user can also work for an `organization`. In this case, the organizat
     BigMLClient api = new BigMLClient(
         "myusername", "ae579e7e53fb9abd646a6ff8aa99d4afe83ac291",
         "project/53739b98d994972da7001d4a", null, null);
-  
+
 If the project used in a connection object does not belong to an existing organization but is one of the projects under the user's account, all the resources created or updated with that connection will also be assigned to the
 specified project.
 
@@ -82,7 +82,7 @@ When the resource to be managed is a `project` itself, the connection needs to i
 
     BigMLClient api = new BigMLClient(
         "myusername", "ae579e7e53fb9abd646a6ff8aa99d4afe83ac291",
-        "project/53739b98d994972da7001d4a", 
+        "project/53739b98d994972da7001d4a",
         "organization/53739b98d994972da7025d4a", null);
 
 
@@ -90,7 +90,7 @@ When the resource to be managed is a `project` itself, the connection needs to i
 Alternative domains
 ------------
 
-For [Virtual Private Cloud](https://bigml.com/pricing/vpc) setups, you can change the remote server URL to the VPC particular one by either setting the 
+For [Virtual Private Cloud](https://bigml.com/pricing/vpc) setups, you can change the remote server URL to the VPC particular one by either setting the
 `BIGML_URL` in `binding.properties` or in the JVM environment.
 By default, they have the following values:
 
