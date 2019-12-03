@@ -16,62 +16,50 @@ Feature: Dataset REST api
 
 
     Scenario Outline: Successfully exporting a dataset:
-        Given I create a data source uploading a "<data>" file
-        And I wait until the source is ready less than <time_1> secs
-        And I create a dataset
-        And I wait until the dataset is ready less than <time_2> secs
+        Given I provision a dataset from "<data>" file
         And I download the dataset file to "<local_file>"
 				Then the dataset file "<data>" is like "<local_file>"
 
         Examples:
-        | data          | time_1  | time_2 | local_file |
-        | data/iris.csv |   30      | 30     | data/exported_iris.csv |
+        | data          | local_file |
+        | data/iris.csv | data/exported_iris.csv |
         
     
     Scenario Outline: Successfully creating a sample from a dataset:
-        Given I create a data source uploading a "<data>" file
-        And I wait until the source is ready less than <time_1> secs
-        And I create a dataset
-        And I wait until the dataset is ready less than <time_2> secs
+        Given I provision a dataset from "<data>" file
         And I create a sample from a dataset
-        And I wait until the sample is ready less than <time_3> secs
-        And I update the sample with "<params>" waiting less than <time_4> secs
-        And I wait until the sample is ready less than <time_3> secs
+        And I wait until the sample is ready less than <time_1> secs
+        And I update the sample with "<params>" waiting less than <time_1> secs
+        And I wait until the sample is ready less than <time_1> secs
 				Then the sample name is <name>
 
         Examples:
-        | data          | time_1  | time_2 | time_3 |   time_4  |   params                            |   name                 |
-        | data/iris.csv |   30    |  30    |  30    |   50      |   {"name": "my new sample name"}    | "my new sample name"   |
+        | data          | time_1  | time_2 | params                            |   name                 |
+        | data/iris.csv |  50    | 50      |   {"name": "my new sample name"}    | "my new sample name"   |
 
 
     Scenario Outline: Successfully creating, reading and downloading a sample:
-        Given I create a data source uploading a "<data>" file
-        And I wait until the source is ready less than <time_1> secs
-        And I create a dataset
-        And I wait until the dataset is ready less than <time_2> secs
+        Given I provision a dataset from "<data>" file
         And I create a sample from a dataset
-        And I wait until the sample is ready less than <time_3> secs
+        And I wait until the sample is ready less than <time_1> secs
         And I download the sample file to "<local_file>" with <rows> rows and "<seed>" seed
         Then the sample file "<expected_file>" is like "<local_file>"
 
         Examples:
-        | data          | seed  | time_1  | time_2 | time_3 | rows  |   expected_file                 |   local_file                    |
-        | data/iris.csv | BigML |   30    |  30    |  30    | 50    |   data/expected_iris_sample.csv | data/exported_sample_iris.csv   |
+        | data          | seed  | time_1  | rows  |   expected_file                 |   local_file                    |
+        | data/iris.csv | BigML |   30    | 50    |   data/expected_iris_sample.csv | data/exported_sample_iris.csv   |
         
         
      Scenario Outline: Successfully creating a split dataset:
-        Given I create a data source uploading a "<data>" file
-        And I wait until the source is ready less than <time_1> secs
-        And I create a dataset
-        And I wait until the dataset is ready less than <time_2> secs
+        Given I provision a dataset from "<data>" file
         And I create a dataset extracting a <rate> sample
-        And I wait until the dataset is ready less than <time_3> secs
+        And I wait until the dataset is ready less than <time_1> secs
         When I compare the datasets' instances
         Then the proportion of instances between datasets is <rate>
 
 				Examples:
-				| data             | time_1  | time_2 | time_3 | rate |
-        | data/iris.csv    |  10     | 10     | 10     | 0.8  |
+				| data             | time_1  | rate |
+        | data/iris.csv    |  50     | 0.8  |
         
      
      Scenario Outline: Successfully obtaining missing values counts:

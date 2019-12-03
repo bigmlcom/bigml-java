@@ -1,12 +1,9 @@
 Feature: LocalLogisticRegression
 		
 		Scenario Outline: Successfully comparing logistic regression predictions
-        Given I create a data source uploading a "<data>" file
-        And I wait until the source is ready less than <time_1> secs
-        And I create a dataset
-        And I wait until the dataset is ready less than <time_2> secs
+        Given I provision a dataset from "<data>" file
         And I create a logisticregression from a dataset
-        And I wait until the logisticregression is ready less than <time_3> secs
+        And I wait until the logisticregression is ready less than <time_1> secs
         And I create a local logisticregression
         When I create a logisticregression prediction for "<data_input>"  
         Then the logisticregression prediction is "<prediction>"
@@ -14,16 +11,16 @@ Feature: LocalLogisticRegression
         Then the local logisticregression prediction is "<prediction>"
         
         Examples:
-        | data  | time_1  | time_2 | time_3 | data_input | prediction |
-        | data/iris.csv | 50      | 50     | 50 | {"petal width": 0.5, "petal length": 0.5, "sepal width": 0.5, "sepal length": 0.5} |  Iris-versicolor |
-        | data/iris.csv | 50      | 50     | 50 | {"petal width": 2, "petal length": 6, "sepal width": 0.5, "sepal length": 0.5} |  Iris-versicolor |
-        | data/iris.csv | 50      | 50     | 50 | {"petal width": 1.5, "petal length": 4, "sepal width": 0.5, "sepal length": 0.5} |  Iris-versicolor |
-      	| data/iris.csv | 50      | 50     | 50 | {"petal length": 1} |  Iris-setosa  |
-        | data/iris.csv | 50      | 50     | 50 | {"pétal.length": 4, "pétal&width\u0000": 1.5, "sépal&width": 0.5, "sépal.length": 0.5} |  Iris-versicolor |
-        | data/price.csv | 50      | 50     | 50  | {"Price": 1200} |  Product1 |
+        | data  | time_1  | data_input | prediction |
+        | data/iris.csv | 50 | {"petal width": 0.5, "petal length": 0.5, "sepal width": 0.5, "sepal length": 0.5} |  Iris-versicolor |
+        | data/iris.csv | 50 | {"petal width": 2, "petal length": 6, "sepal width": 0.5, "sepal length": 0.5} |  Iris-versicolor |
+        | data/iris.csv | 50 | {"petal width": 1.5, "petal length": 4, "sepal width": 0.5, "sepal length": 0.5} |  Iris-versicolor |
+      	| data/iris.csv | 50 | {"petal length": 1} |  Iris-setosa  |
+        | data/iris.csv | 50 | {"pétal.length": 4, "pétal&width\u0000": 1.5, "sépal&width": 0.5, "sépal.length": 0.5} |  Iris-versicolor |
+        | data/price.csv | 50  | {"Price": 1200} |  Product1 |
   
 
-	Scenario Outline: Successfully comparing predictions with text options
+		Scenario Outline: Successfully comparing predictions with text options
         Given I create a data source uploading a "<data>" file
         And I wait until the source is ready less than <time_1> secs
         And I update the source with "<options>" waiting less than <time_1> secs
@@ -71,12 +68,9 @@ Feature: LocalLogisticRegression
         | data/movies.csv | 50      | 50     | 180  | {"fields": {"000007": {"optype": "items", "item_analysis": {"separator": "$"}}}}  | {"gender": "Female", "genres": "Adventure$Action", "timestamp": 993906291, "occupation": "K-12 student", "zipcode": 59583, "rating": 3}  |  Under 18  | 0.83441  | 000002  |
     
     Scenario Outline: Successfully comparing predictions with text options
-        Given I create a data source uploading a "<data>" file
-        And I wait until the source is ready less than <time_1> secs
-        And I create a dataset
-        And I wait until the dataset is ready less than <time_2> secs
+        Given I provision a dataset from "<data>" file
         And I create a logisticregression with objective "<objective>" and params "<params>"
-        And I wait until the logisticregression is ready less than <time_3> secs
+        And I wait until the logisticregression is ready less than <time_1> secs
         And I create a local logisticregression
         When I create a logisticregression prediction for "<data_input>"
       	Then the logisticregression prediction is "<prediction>"
@@ -86,8 +80,8 @@ Feature: LocalLogisticRegression
         And the local logisticregression probability for the prediction is "<probability>"
 		
         Examples:
-        | data  | time_1  | time_2 | time_3 | params | data_input | prediction | probability | objective |
-        | data/iris.csv | 50      | 50     | 180  | {"weight_field": "000000", "missing_numerics": false}  | {"petal width": 1.5, "petal length": 2, "sepal width":1}  |  Iris-versicolor | 0.9547  | 000004  |     
+        | data  | time_1  | params | data_input | prediction | probability | objective |
+        | data/iris.csv | 180  | {"weight_field": "000000", "missing_numerics": false}  | {"petal width": 1.5, "petal length": 2, "sepal width":1}  |  Iris-versicolor | 0.9547  | 000004  |     
 
      Scenario Outline: Successfully comparing predictions with text options
         Given I create a data source uploading a "<data>" file
@@ -110,7 +104,7 @@ Feature: LocalLogisticRegression
         | data/iris.csv | 50      | 50     | 180  | {"fields": {"000000": {"optype": "categorical"}}}  | {"species": "Iris-setosa"}  |  5.0 | 0.0394  | 000000  | {"field_codings": [{"field": "species", "coding": "dummy", "dummy_class": "Iris-setosa"}]}  |
         | data/iris.csv | 50      | 50     | 180  | {"fields": {"000000": {"optype": "categorical"}}}  | {"species": "Iris-setosa"}  |  5.0 | 0.051 | 000000  | {"balance_fields": false, "field_codings": [{"field": "species", "coding": "contrast", "coefficients": [[1, 2, -1, -2]]}]}  |
         | data/iris.csv | 50      | 50     | 180  | {"fields": {"000000": {"optype": "categorical"}}}  | {"species": "Iris-setosa"}  |  5.0 | 0.051 | 000000  | {"balance_fields": false, "field_codings": [{"field": "species", "coding": "other", "coefficients": [[1, 2, -1, -2]]}]} |
-    	| data/iris.csv | 50      | 50     | 180  | {"fields": {"000000": {"optype": "categorical"}}}  | {"species": "Iris-setosa"}  |  5.0 | 0.0417  | 000000  | {"bias": false} |
+    		| data/iris.csv | 50      | 50     | 180  | {"fields": {"000000": {"optype": "categorical"}}}  | {"species": "Iris-setosa"}  |  5.0 | 0.0417  | 000000  | {"bias": false} |
 
 
     Scenario Outline: Successfully comparing predictions for logistic regression with balance_fields
@@ -156,12 +150,9 @@ Feature: LocalLogisticRegression
 		
 		
 		Scenario Outline: Successfully comparing predictions for logistic regressions with operating kind
-        Given I create a data source uploading a "<data>" file
-        And I wait until the source is ready less than <time_1> secs
-        And I create a dataset
-        And I wait until the dataset is ready less than <time_2> secs
+        Given I provision a dataset from "<data>" file
         And I create a logisticregression from a dataset
-        And I wait until the logisticregression is ready less than <time_3> secs
+        And I wait until the logisticregression is ready less than <time_1> secs
         And I create a local logisticregression
         When I create a prediction with logisticregression with operating kind "<operating_kind>" for "<data_input>"
         Then the prediction for "<objective>" is "<prediction>"
@@ -169,7 +160,7 @@ Feature: LocalLogisticRegression
         Then the local logisticregression prediction is "<prediction>"
 
         Examples:
-        | data	| time_1  | time_2 | time_3 | data_input | objective	| prediction	| operating_kind	|
-        | data/iris.csv | 50      | 50     | 30000	| {"petal length": 5} | 000004	| Iris-versicolor	| probability	|
-        | data/iris.csv | 50      | 50     | 30000	| {"petal length": 2} | 000004	| Iris-setosa	| probability	|
+        | data	| time_1  | data_input | objective	| prediction	| operating_kind	|
+        | data/iris.csv | 30000	| {"petal length": 5} | 000004	| Iris-versicolor	| probability	|
+        | data/iris.csv | 30000	| {"petal length": 2} | 000004	| Iris-setosa	| probability	|
   

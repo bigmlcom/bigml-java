@@ -1,48 +1,39 @@
 Feature: Evaluation REST api
 
      Scenario Outline: Successfully creating an evaluation:
-        Given I create a data source uploading a "<data>" file
-        And I wait until the source is ready less than <time_1> secs
-        And I create a dataset
-        And I wait until the dataset is ready less than <time_2> secs
+       Given I provision a dataset from "<data>" file
         And I create a model
-        And I wait until the model is ready less than <time_3> secs
+        And I wait until the model is ready less than <time_1> secs
         When I create an evaluation for the model with the dataset
-        And I wait until the evaluation is ready less than <time_4> secs
+        And I wait until the evaluation is ready less than <time_2> secs
         Then the measured "<measure>" is <value>
 
         Examples:
-        | data	| time_1  | time_2 | time_3 | time_4 | measure       | value  |
-        | data/iris.csv | 50      | 50     | 50     | 50     | average_phi   | 1      |
+        | data	| time_1  | time_2 | measure	| value  |
+        | data/iris.csv | 50	| 50	| average_phi   | 1	|
 
 
     Scenario Outline: Successfully creating an evaluation for an ensemble:
-        Given I create a data source uploading a "<data>" file
-        And I wait until the source is ready less than <time_1> secs
-        And I create a dataset
-        And I wait until the dataset is ready less than <time_2> secs
+        Given I provision a dataset from "<data>" file
         And I create an ensemble of <number_of_models> models
-        And I wait until the ensemble is ready less than <time_3> secs
+        And I wait until the ensemble is ready less than <time_1> secs
         When I create an evaluation for the ensemble with the dataset
-        And I wait until the evaluation is ready less than <time_4> secs
+        And I wait until the evaluation is ready less than <time_2> secs
         Then the measured "<measure>" is equals to <value>
 
         Examples:
-        | data             | time_1  | time_2 | number_of_models | time_3 | time_4 | measure       | value  |
-        | data/iris.csv | 50      | 50     | 5                | 80     | 80     | average_phi   | 0.97064   |
+        | data	| time_1  | time_2 | number_of_models | measure	| value  |
+        | data/iris.csv | 100	| 100	| 5	| average_phi	| 0.97064   |
 
 
     Scenario Outline: Successfully creating an evaluation for a linear regression:
-        Given I create a data source uploading a "<data>" file
-        And I wait until the source is ready less than <time_1> secs
-        And I create a dataset
-        And I wait until the dataset is ready less than <time_2> secs
+        Given I provision a dataset from "<data>" file
         And I create a linearregression from a dataset
-        And I wait until the linearregression is ready less than <time_3> secs
+        And I wait until the linearregression is ready less than <time_1> secs
         When I create an evaluation for the linear regression with the dataset
-        And I wait until the evaluation is ready less than <time_4> secs
+        And I wait until the evaluation is ready less than <time_2> secs
         Then the measured "<measure>" is equals to <value>
 
         Examples:
-        | data             | time_1  | time_2 | tlp | time_3 | time_4 | measure       | value  |
-        | data/iris.csv | 50      | 50     | 5                | 800     | 80     | r_squared   | 0.95382   |
+        | data	| time_1  | time_2 | tlp | measure	| value  |
+        | data/iris.csv | 800	| 1000	| 5	| r_squared	| 0.95382   |

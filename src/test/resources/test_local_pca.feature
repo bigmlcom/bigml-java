@@ -1,12 +1,9 @@
 Feature: LocalPca
 	
 	Scenario Outline: Successfully comparing projections for PCAs   
-        Given I create a data source uploading a "<data>" file
-        And I wait until the source is ready less than <time_1> secs
-        And I create a dataset
-        And I wait until the dataset is ready less than <time_2> secs
+        Given I provision a dataset from "<data>" file
         And I create a pca with "<params>"
-        And I wait until the pca is ready less than <time_3> secs
+        And I wait until the pca is ready less than <time_1> secs
         And I create a local pca
         When I create a projection for "<data_input>"
         Then the projection is "<projection>"
@@ -14,11 +11,11 @@ Feature: LocalPca
         Then the local projection is "<projection>"
                 
         Examples:
-        | data                    | time_1  | time_2 | time_3 | data_input  | projection         | params    |
-        | data/iris.csv         | 50      | 50     | 120  | {}  | {"PC2": 0, "PC3": 0, "PC1": 0, "PC6": 0, "PC4": 5e-05, "PC5": 0} | {}    |
-        | data/iris.csv         | 50      | 50     | 120  | {"petal length": 1} | {"PC2": 0.08708, "PC3": 0.20929, "PC1": 1.56084, "PC6": -1.34463, "PC4": 0.7295, "PC5": -1.00876} | {}    |
-        | data/iris.csv         | 50      | 50     | 120  | {"species": "Iris-versicolor"}  | {"PC2": 1.8602, "PC3": -2.00864, "PC1": -0.61116, "PC6": -0.66983, "PC4": -2.44618, "PC5": 0.43414} | {} |
-        | data/iris.csv         | 50      | 50     | 120  | {"petal length": 1, "sepal length": 0, "petal width": 0, "sepal width": 0, "species": "Iris-versicolor"}    | {"PC2": 7.18009, "PC3": 6.51511, "PC1": 2.78155, "PC6": 0.21372, "PC4": -1.94865, "PC5": 0.57646} | {}    |
+        | data          | time_1  | data_input  | projection         | params    |
+        | data/iris.csv	| 120  | {}  | {"PC2": 0, "PC3": 0, "PC1": 0, "PC6": 0, "PC4": 5e-05, "PC5": 0} | {}    |
+        | data/iris.csv	| 120  | {"petal length": 1} | {"PC2": 0.08708, "PC3": 0.20929, "PC1": 1.56084, "PC6": -1.34463, "PC4": 0.7295, "PC5": -1.00876} | {}    |
+        | data/iris.csv	| 120  | {"species": "Iris-versicolor"}  | {"PC2": 1.8602, "PC3": -2.00864, "PC1": -0.61116, "PC6": -0.66983, "PC4": -2.44618, "PC5": 0.43414} | {} |
+        | data/iris.csv	| 120  | {"petal length": 1, "sepal length": 0, "petal width": 0, "sepal width": 0, "species": "Iris-versicolor"}    | {"PC2": 7.18009, "PC3": 6.51511, "PC1": 2.78155, "PC6": 0.21372, "PC4": -1.94865, "PC5": 0.57646} | {}    |
 
 
     Scenario Outline: Successfully comparing projections for PCAs with text options   

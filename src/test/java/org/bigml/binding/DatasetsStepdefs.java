@@ -27,13 +27,45 @@ public class DatasetsStepdefs {
     
     @Autowired
     CommonStepdefs commonSteps;
+    @Autowired
+    SourcesStepdefs sourcesSteps;
 
     long datasetOrigRows;
     long datasetRatedRows;
 
     @Autowired
     private ContextRepository context;
-
+    
+    @Given("^I provision a dataset from \"([^\"]*)\" file$")
+    public void I_provision_a_dataset_from_file(String fileName)
+    		throws Throwable {
+        
+    	sourcesSteps.I_provision_a_data_source_from_file(fileName);
+    	
+    	JSONObject resource = null;
+    	try {
+    		JSONArray resources = (JSONArray) context.api
+    			.listDatasets("tags__in=" + fileName).get("objects");
+    		if (resources.size() > 0) {
+    			resource = (JSONObject) resources.get(0);
+    		}
+    	} catch (Exception e) {}
+    	
+    	if (resource != null) {
+    		commonSteps.I_get_the_resource(
+            	"dataset", (String) resource.get("resource"));
+            
+    	} else {
+    		JSONObject args = new JSONObject();
+    		args.put("tags", new JSONArray());
+    		((JSONArray) args.get("tags")).add(fileName);
+    		I_create_a_dataset_with_options(args.toString());
+    	}
+    	
+    	commonSteps.I_wait_until_the_resource_is_ready_less_than_secs(
+    		"dataset", 100);
+    }
+    
     @Given("^I create a dataset with \"(.*)\"$")
     public void I_create_a_dataset_with_options(String args) throws Throwable {
         String sourceId = (String) context.source.get("resource");
