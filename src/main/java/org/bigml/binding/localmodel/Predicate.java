@@ -326,7 +326,8 @@ public class Predicate {
             terms.addAll(termForms);
 
             JSONObject options = (JSONObject) Utils.getJSONObject((JSONObject) fields.get(field),
-                    "term_analysis");
+                                                                  "term_analysis", new JSONObject());
+
 
             return applyOperator(Utils.termMatches(inputData.get(field).toString(), terms, options));
         }
