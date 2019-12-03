@@ -47,7 +47,16 @@ import org.bigml.binding.localmodel.Tree;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Utils {
+
+    /**
+     * Logging
+     */
+    static Logger logger = LoggerFactory.getLogger(
+    	Utils.class.getName());
 
     // Headers
     static String JSON = "application/json; charset=utf-8";
@@ -140,7 +149,7 @@ public class Utils {
         return processHttpRequest(urlString, "DELETE", null);
     }
 
-    protected static HttpURLConnection processHttpRequest(String urlString, String methodName, String body) 
+    protected static HttpURLConnection processHttpRequest(String urlString, String methodName, String body)
     		throws NoSuchAlgorithmException, KeyManagementException, IOException {
         HttpURLConnection connection = openConnection(new URL(urlString));
 
@@ -346,7 +355,7 @@ public class Utils {
     public static <T> T getFromJSONOr(JSONObject json,
                                       String key,
                                       T def) {
-      T result = def;      
+      T result = def;
       if (json.containsKey(key)) {
         Object obj = getJSONObject(json, key);
         if (obj != null) {
@@ -399,12 +408,12 @@ public class Utils {
 
         path = path.substring(path.indexOf(".") + 1, path.length());
         if (path.length() > 0) {
-           return getJSONObject(json, path);
+            return getJSONObject(json, path, defaultValue);
         }
-        
+
         return defaultValue;
     }
-      
+
     /**
      * Inverts a dictionary changing keys per values
      *
@@ -804,13 +813,14 @@ public class Utils {
      * @param newDistribution
      */
     public static Map<Object, Number> mergeDistributions(Map<Object, Number> distribution, Map<Object, Number> newDistribution) {
-        for (Object value : newDistribution.keySet()) {
-            if( !distribution.containsKey(value) ) {
-                distribution.put(value, 0);
+        if (newDistribution != null) {
+            for (Object value : newDistribution.keySet()) {
+                if( !distribution.containsKey(value) ) {
+                    distribution.put(value, 0);
+                }
+                distribution.put(value, distribution.get(value).intValue() + newDistribution.get(value).intValue());
             }
-            distribution.put(value, distribution.get(value).intValue() + newDistribution.get(value).intValue());
         }
-
         return distribution;
     }
 
@@ -863,16 +873,18 @@ public class Utils {
 
         String opType = Constants.OPTYPE_NUMERIC;
 
-        for (Object key : distribution.keySet()) {
-            JSONArray element = new JSONArray();
-            element.add(key);
-            element.add(distribution.get(key));
-            newDistribution.add(element);
+        if (distribution != null) {
+            for (Object key : distribution.keySet()) {
+                JSONArray element = new JSONArray();
+                element.add(key);
+                element.add(distribution.get(key));
+                newDistribution.add(element);
 
-            if( key instanceof Number ) {
-                opType = Constants.OPTYPE_NUMERIC;
-            } else if( key instanceof String ) {
-                opType = Constants.OPTYPE_TEXT;
+                if( key instanceof Number ) {
+                    opType = Constants.OPTYPE_NUMERIC;
+                } else if( key instanceof String ) {
+                    opType = Constants.OPTYPE_TEXT;
+                }
             }
         }
 
@@ -1040,24 +1052,29 @@ public class Utils {
      * @param caseSensitive
      */
     public static int termMatchesTokens(String text, List<String> formsList, boolean caseSensitive) {
-        String expression = String.format("(\\b|_)%s(\\b|_)", Utils.join(formsList, "(\\b|_)|(\\b|_)"));
+        List<String> quotedFormsList = new ArrayList<String>();
+        for (String s : formsList) {
+            quotedFormsList.add(Pattern.quote(s));
+        }
+        String expression = String.format("(\\b|_)%s(\\b|_)",
+                                          Utils.join(quotedFormsList, "(\\b|_)|(\\b|_)"));
         Pattern pattern = Pattern.compile(expression, (caseSensitive ? Pattern.UNICODE_CASE :
                 (Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE)));
         Matcher matcher = pattern.matcher(text);
         return (matcher.find() ? matcher.groupCount() : 0);
     }
-    
-    
+
+
     /**
-     * Checks the operating point contents and extracts and array with 
+     * Checks the operating point contents and extracts and array with
      * the three defined variables
      */
     public static Object[] parseOperatingPoint(JSONObject operatingPoint,
     		String[] operatingKinds, List<String> classNames) {
-        
+
     	String kind, positiveClass;
     	Double threshold;
-    	
+
     	if (!operatingPoint.containsKey("kind")) {
     		throw new IllegalArgumentException(
            		 	"Failed to find the kind of operating point.");
@@ -1070,7 +1087,7 @@ public class Utils {
     						StringUtils.join(operatingKinds,",")));
     		}
     	}
-    	
+
     	if (!operatingPoint.containsKey("threshold")) {
     		throw new IllegalArgumentException(
            		 	"Failed to find the threshold of the operating point.");
@@ -1080,7 +1097,7 @@ public class Utils {
     		throw new IllegalArgumentException(
            		 	"The threshold value should be in the 0 to 1 range.");
     	}
-    	
+
     	if (!operatingPoint.containsKey("positive_class")) {
     		throw new IllegalArgumentException(
            		 	"The operating point needs to have a positive_class" +
@@ -1094,20 +1111,20 @@ public class Utils {
         						StringUtils.join(classNames,",")));
     		}
     	}
-    	
+
         return new Object[] {kind, threshold, positiveClass};
     }
-    
+
     /**
      * Checks whether some numeric fields are missing in the input data
      */
     public static void checkNoMissingNumerics(
     		JSONObject inputData, JSONObject fields, String weightField) {
-    	
+
     	for (Object fieldId : fields.keySet()) {
             JSONObject field = (JSONObject) fields.get(fieldId);
             String optype = (String) Utils.getJSONObject(field, "optype");
-            if ("numeric".equals(optype) && 
+            if ("numeric".equals(optype) &&
             		!inputData.containsKey((String) fieldId) &&
             		(weightField == null || !weightField.equals((String) fieldId))) {
             	throw new IllegalArgumentException(
@@ -1116,8 +1133,8 @@ public class Utils {
             }
     	}
     }
-    
-    
+
+
     /**
      * Checks whether some input fields are missing in the input data
      * while not training data has no missings in that field
@@ -1125,13 +1142,13 @@ public class Utils {
     public static void checkNoTrainingMissings(
     		JSONObject inputData, JSONObject fields, String weightField,
     		String objectiveFieldId) {
-    	
+
     	for (Object fieldId : fields.keySet()) {
             JSONObject field = (JSONObject) fields.get(fieldId);
-            
+
             Integer missingCount = ((Number) Utils.getJSONObject(
 					(JSONObject) field, "summary.missing_count", 0)).intValue();
-            
+
             if (!inputData.containsKey((String) fieldId) &&
             		missingCount.intValue() == 0 &&
             		(weightField == null || !weightField.equals((String) fieldId)) &&
@@ -1142,8 +1159,8 @@ public class Utils {
             }
     	}
     }
-    
-    
+
+
     /**
      * Calculates matrix inverse
      */
@@ -1151,20 +1168,20 @@ public class Utils {
     	int n = matrix.size();
 		int m = ((JSONArray) matrix.get(0)).size();
 		double[][] matrixArray = new double[n][m];
-    	 
+
 		for(int i = 0; i < n; ++i) {
 			JSONArray row = (JSONArray) matrix.get(i);
 			for(int j = 0; j < m; ++j) {
 				matrixArray[i][j] = ((Number) row.get(j)).doubleValue();
 			}
 		}
-		
+
 		RealMatrix invMatrix = MatrixUtils.createRealMatrix(matrixArray);
 		invMatrix = MatrixUtils.inverse(invMatrix);
 		//System.out.println(Arrays.toString(invMatrix.getData()));
-		
+
 		JSONArray result = new JSONArray();
-		
+
 		double[][] data = invMatrix.getData();
 		for (int i=0; i < data.length; i++) {
 			double[] row = (double[]) data[i];
@@ -1174,35 +1191,35 @@ public class Utils {
 			}
 			result.add(rowlList);
 	    }
-		
+
 		return result;
 	}
-    
-    
+
+
     /**
 	  * Sorts list of predictions
-	  * 
+	  *
 	  */
-    public static void sortPredictions(JSONArray predictions, 
+    public static void sortPredictions(JSONArray predictions,
 			 final String primaryKey, final String secondaryKey) {
-		 
+
 		Collections.sort(predictions, new Comparator<JSONObject>() {
            @Override
            public int compare(JSONObject o1, JSONObject o2) {
            	Double o1p = (Double) o1.get(primaryKey);
            	Double o2p = (Double) o2.get(primaryKey);
-           	
+
            	if (o1p.doubleValue() == o2p.doubleValue()) {
            		return ((String) o1.get(secondaryKey)).
                    		compareTo(((String) o2.get(secondaryKey)));
            	}
-           	
+
                return o2p.compareTo(o1p);
            }
        });
 	}
-    
-    
+
+
     public static List flattenList(List inList) {
     	List newList = new LinkedList();
     	for (Object i : inList) {
@@ -1217,5 +1234,5 @@ public class Utils {
 
         return newList;
     }
-    
+
 }

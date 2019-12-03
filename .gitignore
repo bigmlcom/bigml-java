@@ -7,3 +7,10 @@ logs/*.log*
 bin/
 .idea
 .bigmler
+Test Results - *
+downloaded_*.csv
+model_*_predictions.csv
+storage
+src/test/resources/*~*
+*.iml
+exported_*.csv

@@ -39,21 +39,21 @@ import org.slf4j.LoggerFactory;
  * JSONObject predictors = JSONValue.parse("{\"petal length\": 3, \"petal width\": 1}");
  *
  * localFusion.predict(predictors)
- * 
+ *
  */
 public class LocalFusion extends ModelFields implements SupervisedModelInterface {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	static String FUSION_RE = "^fusion/[a-f,0-9]{24}$";
-	
+
 	private static final String[] OPERATING_POINT_KINDS = {"probability"};
-	
-	private static final String[] LOCAL_SUPERVISED = { 
+
+	private static final String[] LOCAL_SUPERVISED = {
 			"model", "ensemble", "logisticregression", "deepnet",
             "fusion" };
-	
-	
+
+
 	/**
 	 * Logging
 	 */
@@ -68,21 +68,21 @@ public class LocalFusion extends ModelFields implements SupervisedModelInterface
 	private Boolean regression = false;
 	private List<String> classNames = new ArrayList<String>();
 	private Boolean missingNumerics = true;
-	
-	public LocalFusion(JSONObject fusion) 
+
+	public LocalFusion(JSONObject fusion)
 			throws Exception {
 		this(null, fusion, null);
 	}
-	
+
 	public LocalFusion(
-		BigMLClient bigmlClient, JSONObject fusion, Integer maxModels) 
+		BigMLClient bigmlClient, JSONObject fusion, Integer maxModels)
 			throws Exception {
-		
+
 		super(bigmlClient, fusion);
 		fusion = this.model;
-		
+
 		fusionId = (String) fusion.get("resource");
-		
+
 		if (fusion.containsKey("fusion")
 				&& fusion.get("fusion") instanceof JSONObject) {
 
@@ -92,10 +92,10 @@ public class LocalFusion extends ModelFields implements SupervisedModelInterface
 			if (status != null && status.containsKey("code")
 					&& AbstractResource.FINISHED == ((Number) status
 							.get("code")).intValue()) {
-				
+
 				JSONObject fusionInfo = (JSONObject) Utils
 						.getJSONObject(fusion, "fusion");
-				
+
 				modelsIds =  new JSONArray();
 				for (Object modelId: (JSONArray) fusion.get("models")) {
 					String model = null;
@@ -103,35 +103,35 @@ public class LocalFusion extends ModelFields implements SupervisedModelInterface
 						model = (String) modelId;
 					} else {
 						model = (String) ((JSONObject) modelId).get("id");
-						
+
 						try {
 							weights.add(((Number) ((JSONObject) modelId).get("weight")).doubleValue());
 						} catch (Exception e) {
 							weights = new ArrayList<Double>();
 						}
 					}
-					
+
 					modelsIds.add(model);
-					
+
 					String type = model.split("/")[0];
 					if (!Arrays.asList(LOCAL_SUPERVISED).contains(type)) {
 						throw new IllegalArgumentException(
 								String.format("The resource %s has not an allowed supervised model type.", OPERATING_POINT_KINDS));
 					}
 		    	}
-				
+
 				missingNumerics = (Boolean) Utils.getJSONObject(fusion, "missing_numerics", true);
-				
+
 				JSONObject fields = (JSONObject) Utils.getJSONObject(
 						fusionInfo, "fields", new JSONObject());
-	            
+
 	            // initialize ModelFields
 				super.initialize((JSONObject) fields, null, null, null,
 								 true, true, true);
-				
+
 				objectiveField = (String) Utils.getJSONObject(
 						fusion, "objective_field");
-				
+
 				// Apply maxModels
 		    	int numberOfModels = modelsIds.size();
 		    	if( maxModels != null) {
@@ -146,22 +146,22 @@ public class LocalFusion extends ModelFields implements SupervisedModelInterface
 		        } else {
 		        	modelsSplit.add(modelsIds);
 		        }
-		    	
+
 		    	String optype = (String) Utils.getJSONObject(
 						fields, objectiveField + ".optype");
-		    	
+
 		    	regression = "numeric".equals(optype);
 		    	if (!regression) {
 					JSONArray categories = (JSONArray) Utils.getJSONObject(
-							(JSONObject) fields.get(objectiveField), 
+							(JSONObject) fields.get(objectiveField),
 			    			"summary.categories", new JSONArray());
-					
+
 					for (Object cat: categories) {
 						classNames.add((String) ((JSONArray) cat).get(0));
 					}
 					Collections.sort(classNames);
 				}
-		    	
+
 			} else {
 				throw new Exception(
 						"The Fusion isn't finished yet");
@@ -174,72 +174,72 @@ public class LocalFusion extends ModelFields implements SupervisedModelInterface
 							+ "the resource:\n\n%s", fusion));
 		}
 	}
-	
+
 	/**
 	 * Returns reg expre for model Id.
 	 */
     public String getModelIdRe() {
 		return FUSION_RE;
 	}
-    
+
     /**
 	 * Returns bigml resource JSONObject.
 	 */
     public JSONObject getBigMLModel(String modelId) {
 		return (JSONObject) this.bigmlClient.getFusion(modelId);
 	}
-	
+
 	/**
 	 * Returns the resourceId
 	 */
 	public String getResourceId() {
 		return fusionId;
 	}
-	
+
 	/**
 	 * Returns the class names
 	 */
 	public List<String> getClassNames() {
 		return classNames;
 	}
-	
+
 	/**
 	 * For classification models, Predicts a probability for
      * each possible output class, based on input values.  The input
      * fields must be a dictionary keyed by field name or field ID.
-     * 
+     *
      * For regressions, the output is a single element list
      * containing the prediction.
-     * 
+     *
      * @param inputData			Input data to be predicted
      * @param missingStrategy	LAST_PREDICTION|PROPORTIONAL missing strategy
      *                        	for missing fields
 	 */
 	public JSONArray predictProbability(
-			JSONObject inputData, MissingStrategy missingStrategy) 
+			JSONObject inputData, MissingStrategy missingStrategy)
 		throws Exception {
-		
+
 		if (missingStrategy == null) {
     		missingStrategy = MissingStrategy.LAST_PREDICTION;
         }
-		
+
 		MultiVoteList votes = new MultiVoteList(null);
-		
+
 		if (!this.missingNumerics) {
 			Utils.checkNoMissingNumerics(inputData, this.fields, null);
 		}
-		
+
 		BigMLClient bigmlClient = new BigMLClient();
-		
+
 		for (Object modelSplit: modelsSplit) {
 			MultiVoteList votesSplit = new MultiVoteList(null);
-			
+
 			List<SupervisedModelInterface> models = new ArrayList<SupervisedModelInterface>();
-			
+
 			for (Object modelId: (JSONArray) modelSplit) {
 				String type = ((String) modelId).split("/")[0];
 				JSONObject model = null;
-				
+
 				if ("model".equals(type)) {
 					model = bigmlClient.getModel((String) modelId);
 					models.add(new LocalPredictiveModel(model));
@@ -261,7 +261,7 @@ public class LocalFusion extends ModelFields implements SupervisedModelInterface
 					models.add(new LocalFusion(model));
 				}
 			}
-			
+
 			JSONArray predictions;
 			for (SupervisedModelInterface model: models) {
 				try {
@@ -272,17 +272,17 @@ public class LocalFusion extends ModelFields implements SupervisedModelInterface
 					// are found
 					continue;
 				}
-				
+
 				List<Double> predictionList = new ArrayList<Double>();
             	for (Object pred : predictions) {
             		JSONObject p = (JSONObject) pred;
             		predictionList.add((Double) p.get("probability"));
             	}
-				
+
             	if (!this.weights.isEmpty()) {
 					predictionList = weight(predictionList, model.getResourceId());
 				}
-            	
+
             	// we need to check that all classes in the fusion
 				// are also in the composing model
 				if (!this.regression && !this.classNames.equals(model.getClassNames())) {
@@ -290,13 +290,13 @@ public class LocalFusion extends ModelFields implements SupervisedModelInterface
 						predictionList = rearrangePrediction(model.getClassNames(), this.classNames, predictionList);
 					} catch (Exception e) {}
 				}
-				
+
 				votesSplit.append(predictionList);
 			}
-			
+
 			votes.extend(votesSplit);
 		}
-		
+
 		JSONArray output = new JSONArray();
 		if (this.regression) {
 			double totalWeight = 1;
@@ -306,7 +306,7 @@ public class LocalFusion extends ModelFields implements SupervisedModelInterface
 					totalWeight += w;
 				}
 			}
-			
+
 			double sum = 0.0;
 			for (Object votesPreds: votes.predictions) {
 				List<Double> preds = (List<Double>) votesPreds;
@@ -314,9 +314,9 @@ public class LocalFusion extends ModelFields implements SupervisedModelInterface
 					sum += p;
 				}
 			}
-			
+
 			float divisor = ((Double) (votes.predictions.size() * totalWeight)).floatValue();
-			
+
 			JSONObject prediction = new JSONObject();
 			prediction.put("prediction", sum / divisor);
 			output.add(prediction);
@@ -329,11 +329,11 @@ public class LocalFusion extends ModelFields implements SupervisedModelInterface
 				output.add(prediction);
 			}
 		}
-		
+
 		return output;
 	}
-	
-	
+
+
 	/**
 	 * Weighs the prediction according to the weight associated to the
 	 * current model in the fusion.
@@ -344,7 +344,7 @@ public class LocalFusion extends ModelFields implements SupervisedModelInterface
 		}
 		return predictions;
 	}
-	
+
 	/**
 	 * Rearranges the probabilities in a compact array when the
 	 * list of classes in the destination resource does not match the
@@ -352,7 +352,7 @@ public class LocalFusion extends ModelFields implements SupervisedModelInterface
 	 */
 	private List<Double> rearrangePrediction(
 			List<String> originClasses, List<String> destinationClasses, List<Double> predictions) {
-		
+
 		List<Double> newPrediction = new ArrayList<Double>();
 		for (String className: destinationClasses) {
 			int originIndex = originClasses.indexOf(className);
@@ -364,19 +364,19 @@ public class LocalFusion extends ModelFields implements SupervisedModelInterface
 		}
 		return newPrediction;
 	}
-	
-	
+
+
 	/**
 	 * Computes the prediction based on a user-given operating point.
 	 */
 	private HashMap<String, Object> predictOperating(
-			JSONObject inputData, MissingStrategy missingStrategy, 
+			JSONObject inputData, MissingStrategy missingStrategy,
 			JSONObject operatingPoint) throws Exception {
 
 		if (missingStrategy == null) {
     		missingStrategy = MissingStrategy.LAST_PREDICTION;
         }
-		
+
 		// only probability is allowed as operating kind
 		Object[] operating = Utils.parseOperatingPoint(
 				operatingPoint, OPERATING_POINT_KINDS, classNames);
@@ -384,41 +384,50 @@ public class LocalFusion extends ModelFields implements SupervisedModelInterface
 		String kind = (String) operating[0];
 		Double threshold = (Double) operating[1];
 		String positiveClass = (String) operating[2];
-		
+
 		if (!Arrays.asList(OPERATING_POINT_KINDS).contains(kind)) {
 			throw new IllegalArgumentException(
 					String.format("Allowed operating kinds are %", OPERATING_POINT_KINDS));
 		}
-		
+
 		JSONArray predictions = predictProbability(
 				inputData, missingStrategy);
-		
+
 		for (Object pred: predictions) {
 			HashMap<String, Object> prediction = (HashMap<String, Object>) pred;
 			String category = (String) prediction.get("category");
-			
+			if (category == null) {
+                category = (String) prediction.get("prediction");
+            }
+
 			if (category.equals(positiveClass) &&
 					(Double) prediction.get(kind) > threshold) {
 				return prediction;
 			}
 		}
-		
-		HashMap<String, Object> prediction 
+
+		HashMap<String, Object> prediction
 			= (HashMap<String, Object>) predictions.get(0);
 		String category = (String) prediction.get("category");
+        if (category == null) {
+            category = (String) prediction.get("prediction");
+        }
+
 		if (category.equals(positiveClass)) {
 			prediction = (JSONObject) predictions.get(1);
 		}
-		
-		prediction.put("prediction", prediction.get("category"));
-		prediction.remove("category");
+
+        if (prediction.get("category") != null) {
+            prediction.put("prediction", prediction.get("category"));
+            prediction.remove("category");
+        }
 		return  prediction;
 	}
-	
-	
+
+
 	/**
 	 * Makes a prediction based on a number of field values.
-	 * 
+	 *
 	 * @param inputData			Input data to be predicted
 	 * @param missingStrategy	numeric key for the individual model's
      *                           prediction method. See the model predict
@@ -435,7 +444,7 @@ public class LocalFusion extends ModelFields implements SupervisedModelInterface
      *                    The operating_point is then defined as a map with
      *                    two attributes, e.g.:
      *                      {"positive_class": "Iris-setosa",
-     *                       "probability_threshold": 0.5} 
+     *                       "probability_threshold": 0.5}
 	 * @param full
 	 * 		   Boolean that controls whether to include the prediction's
      *         attributes. By default, only the prediction is produced. If set
@@ -445,13 +454,13 @@ public class LocalFusion extends ModelFields implements SupervisedModelInterface
      *             - probability: prediction's probability
      *             - unused_fields: list of fields in the input data that
      *                              are not being used in the model
-     *    
+     *
 	 */
 	public HashMap<String, Object> predict(
-			JSONObject inputData, MissingStrategy missingStrategy, 
-			JSONObject operatingPoint, Boolean full) 
+			JSONObject inputData, MissingStrategy missingStrategy,
+			JSONObject operatingPoint, Boolean full)
 			throws Exception {
-		
+
 		if (missingStrategy == null) {
     		missingStrategy = MissingStrategy.LAST_PREDICTION;
         }
@@ -459,21 +468,21 @@ public class LocalFusion extends ModelFields implements SupervisedModelInterface
 		if (full == null) {
 			full = false;
 		}
-		
+
 		// Checks and cleans inputData leaving the fields used in the model
         inputData = filterInputData(inputData, full);
-        
-        List<String> unusedFields = (List<String>) 
+
+        List<String> unusedFields = (List<String>)
         		inputData.get("unusedFields");
 		inputData = (JSONObject) inputData.get("newInputData");
-		
+
 		if (!this.missingNumerics) {
 			Utils.checkNoMissingNumerics(inputData, this.fields, null);
 		}
-		
+
 		// Strips affixes for numeric values and casts to the final field type
         Utils.cast(inputData, fields);
-        
+
         // When operating_point is used, we need the probabilities
         // of all possible classes to decide, so se use
         // the `predict_probability` method
@@ -483,28 +492,28 @@ public class LocalFusion extends ModelFields implements SupervisedModelInterface
         				"The operating_point argument can only be" +
                         " used in classifications.");
         	}
-        	
+
         	HashMap<String, Object> prediction = predictOperating(
         			inputData, missingStrategy, operatingPoint);
         	return prediction;
         }
-        
+
         JSONArray predictions = predictProbability(
         		inputData, missingStrategy);
-        
+
         if (!regression) {
         	Utils.sortPredictions(predictions, "probability", "prediction");
         }
-        
-        HashMap<String, Object> prediction 
+
+        HashMap<String, Object> prediction
         	= (HashMap<String, Object>) predictions.get(0);
-        
+
         // adding unused fields, if any
         if (full) {
         	prediction.put("unused_fields", unusedFields);
         }
 
-		return prediction;  
+		return prediction;
 	}
 
 }
