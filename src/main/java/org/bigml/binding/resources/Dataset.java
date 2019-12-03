@@ -27,36 +27,6 @@ public class Dataset extends AbstractResource {
 
     public final static String DOWNLOAD_DIR = "/download";
     
-    /**
-     * Constructor
-     *
-     * @deprecated
-     */
-	public Dataset() {
-		super.init(null, null, null, null, null, 
-				DATASET_RE, DATASET_PATH);
-	}
-
-	/**
-	 * Constructor
-	 *
-	 * @deprecated
-	 */
-	public Dataset(final String apiUser, final String apiKey) {
-		super.init(apiUser, apiKey, null, null, null, 
-				DATASET_RE, DATASET_PATH);
-	}
-	
-	/**
-	 * Constructor
-	 *
-	 * @deprecated
-	 */
-	public Dataset(final String apiUser, final String apiKey,
-			final CacheManager cacheManager) {
-		super.init(apiUser, apiKey, null, null, null, 
-				DATASET_RE, DATASET_PATH);
-	}
 	
     /**
      * Constructor

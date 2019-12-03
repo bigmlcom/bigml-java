@@ -18,36 +18,6 @@ public class OptiML extends AbstractModelResource {
     // Logging
     Logger logger = LoggerFactory.getLogger(OptiML.class);
     
-    /**
-     * Constructor
-     *
-     * @deprecated
-     */
-	public OptiML() {
-		super.init(null, null, null, null, null, 
-				OPTIML_RE, OPTIML_PATH);
-	}
-
-	/**
-	 * Constructor
-	 *
-	 * @deprecated
-	 */
-	public OptiML(final String apiUser, final String apiKey) {
-		super.init(apiUser, apiKey, null, null, null, 
-				OPTIML_RE, OPTIML_PATH);
-	}
-	
-	/**
-	 * Constructor
-	 *
-	 * @deprecated
-	 */
-	public OptiML(final String apiUser, final String apiKey,
-			final CacheManager cacheManager) {
-		super.init(apiUser, apiKey, null, null, null, 
-				OPTIML_RE, OPTIML_PATH);
-	}
 	
     /**
      * Constructor

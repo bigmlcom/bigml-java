@@ -20,36 +20,6 @@ public class BatchTopicDistribution extends AbstractResource {
     // Logging
     Logger logger = LoggerFactory.getLogger(BatchTopicDistribution.class);
     
-    /**
-     * Constructor
-     *
-     * @deprecated
-     */
-	public BatchTopicDistribution() {
-		super.init(null, null, null, null, null, 
-				BATCH_TOPICDISTRIBUTION_RE, BATCH_TOPICDISTRIBUTION_PATH);
-	}
-
-	/**
-	 * Constructor
-	 *
-	 * @deprecated
-	 */
-	public BatchTopicDistribution(final String apiUser, final String apiKey) {
-		super.init(apiUser, apiKey, null, null, null, 
-				BATCH_TOPICDISTRIBUTION_RE, BATCH_TOPICDISTRIBUTION_PATH);
-	}
-	
-	/**
-	 * Constructor
-	 *
-	 * @deprecated
-	 */
-	public BatchTopicDistribution(final String apiUser, final String apiKey,
-			final CacheManager cacheManager) {
-		super.init(apiUser, apiKey, null, null, null, 
-				BATCH_TOPICDISTRIBUTION_RE, BATCH_TOPICDISTRIBUTION_PATH);
-	}
 	
     /**
      * Constructor

@@ -21,36 +21,6 @@ public class Correlation extends AbstractModelResource {
     // Logging
     Logger logger = LoggerFactory.getLogger(Correlation.class);
     
-    /**
-     * Constructor
-     *
-     * @deprecated
-     */
-	public Correlation() {
-		super.init(null, null, null, null, null, 
-				CORRELATION_RE, CORRELATION_PATH);
-	}
-
-	/**
-	 * Constructor
-	 *
-	 * @deprecated
-	 */
-	public Correlation(final String apiUser, final String apiKey) {
-		super.init(apiUser, apiKey, null, null, null, 
-				CORRELATION_RE, CORRELATION_PATH);
-	}
-	
-	/**
-	 * Constructor
-	 *
-	 * @deprecated
-	 */
-	public Correlation(final String apiUser, final String apiKey,
-			final CacheManager cacheManager) {
-		super.init(apiUser, apiKey, null, null, null, 
-				CORRELATION_RE, CORRELATION_PATH);
-	}
 	
     /**
      * Constructor

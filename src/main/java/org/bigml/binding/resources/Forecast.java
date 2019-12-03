@@ -20,36 +20,6 @@ public class Forecast extends AbstractResource {
     // Logging
     Logger logger = LoggerFactory.getLogger(Forecast.class);
     
-    /**
-     * Constructor
-     *
-     * @deprecated
-     */
-	public Forecast() {
-		super.init(null, null, null, null, null, 
-				FORECAST_RE, FORECAST_PATH);
-	}
-
-	/**
-	 * Constructor
-	 *
-	 * @deprecated
-	 */
-	public Forecast(final String apiUser, final String apiKey) {
-		super.init(apiUser, apiKey, null, null, null, 
-				FORECAST_RE, FORECAST_PATH);
-	}
-	
-	/**
-	 * Constructor
-	 *
-	 * @deprecated
-	 */
-	public Forecast(final String apiUser, final String apiKey,
-			final CacheManager cacheManager) {
-		super.init(apiUser, apiKey, null, null, null, 
-				FORECAST_RE, FORECAST_PATH);
-	}
 	
     /**
      * Constructor

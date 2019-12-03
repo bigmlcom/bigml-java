@@ -19,36 +19,6 @@ public class Centroid extends AbstractResource {
     // Logging
     Logger logger = LoggerFactory.getLogger(Centroid.class);
     
-    /**
-     * Constructor
-     *
-     * @deprecated
-     */
-	public Centroid() {
-		super.init(null, null, null, null, null, 
-				CENTROID_RE, CENTROID_PATH);
-	}
-
-	/**
-	 * Constructor
-	 *
-	 * @deprecated
-	 */
-	public Centroid(final String apiUser, final String apiKey) {
-		super.init(apiUser, apiKey, null, null, null, 
-				CENTROID_RE, CENTROID_PATH);
-	}
-	
-	/**
-	 * Constructor
-	 *
-	 * @deprecated
-	 */
-	public Centroid(final String apiUser, final String apiKey,
-			final CacheManager cacheManager) {
-		super.init(apiUser, apiKey, null, null, null, 
-				CENTROID_RE, CENTROID_PATH);
-	}
 	
     /**
      * Constructor

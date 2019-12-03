@@ -22,36 +22,6 @@ public class BatchCentroid extends AbstractResource {
 
     public final static String DOWNLOAD_DIR = "/download";
     
-    /**
-     * Constructor
-     *
-     * @deprecated
-     */
-	public BatchCentroid() {
-		super.init(null, null, null, null, null, 
-				BATCH_CENTROID_RE, BATCH_CENTROID_PATH);
-	}
-
-	/**
-	 * Constructor
-	 *
-	 * @deprecated
-	 */
-	public BatchCentroid(final String apiUser, final String apiKey) {
-		super.init(apiUser, apiKey, null, null, null, 
-				BATCH_CENTROID_RE, BATCH_CENTROID_PATH);
-	}
-	
-	/**
-	 * Constructor
-	 *
-	 * @deprecated
-	 */
-	public BatchCentroid(final String apiUser, final String apiKey,
-			final CacheManager cacheManager) {
-		super.init(apiUser, apiKey, null, null, null, 
-				BATCH_CENTROID_RE, BATCH_CENTROID_PATH);
-	}
     
     /**
      * Constructor

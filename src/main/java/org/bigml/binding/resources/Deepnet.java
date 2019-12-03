@@ -18,36 +18,6 @@ public class Deepnet extends AbstractModelResource {
     // Logging
     Logger logger = LoggerFactory.getLogger(Deepnet.class);
     
-    /**
-     * Constructor
-     *
-     * @deprecated
-     */
-	public Deepnet() {
-		super.init(null, null, null, null, null, 
-				DEEPNET_RE, DEEPNET_PATH);
-	}
-
-	/**
-	 * Constructor
-	 *
-	 * @deprecated
-	 */
-	public Deepnet(final String apiUser, final String apiKey) {
-		super.init(apiUser, apiKey, null, null, null, 
-				DEEPNET_RE, DEEPNET_PATH);
-	}
-	
-	/**
-	 * Constructor
-	 *
-	 * @deprecated
-	 */
-	public Deepnet(final String apiUser, final String apiKey,
-			final CacheManager cacheManager) {
-		super.init(apiUser, apiKey, null, null, null, 
-				DEEPNET_RE, DEEPNET_PATH);
-	}
 	
     /**
      * Constructor

@@ -23,34 +23,6 @@ public class Anomaly extends AbstractModelResource {
     /**
      * Constructor
      *
-     * @deprecated
-     */
-	public Anomaly() {
-		super.init(null, null, null, null, null, ANOMALY_RE, ANOMALY_PATH);
-	}
-
-	/**
-	 * Constructor
-	 *
-	 * @deprecated
-	 */
-	public Anomaly(final String apiUser, final String apiKey) {
-		super.init(apiUser, apiKey, null, null, null, ANOMALY_RE, ANOMALY_PATH);
-	}
-	
-	/**
-	 * Constructor
-	 *
-	 * @deprecated
-	 */
-	public Anomaly(final String apiUser, final String apiKey,
-			final CacheManager cacheManager) {
-		super.init(apiUser, apiKey, null, null, null, ANOMALY_RE, ANOMALY_PATH);
-	}
-	
-    /**
-     * Constructor
-     *
      */
     public Anomaly(final BigMLClient bigmlClient,
     			   final String apiUser, final String apiKey, 

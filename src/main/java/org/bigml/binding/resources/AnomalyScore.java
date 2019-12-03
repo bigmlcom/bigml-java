@@ -25,37 +25,6 @@ public class AnomalyScore extends AbstractResource {
     /**
      * Constructor
      *
-     * @deprecated
-     */
-	public AnomalyScore() {
-		super.init(null, null, null, null, null, 
-				   ANOMALYSCORE_RE, ANOMALYSCORE_PATH);
-	}
-
-	/**
-	 * Constructor
-	 *
-	 * @deprecated
-	 */
-	public AnomalyScore(final String apiUser, final String apiKey) {
-		super.init(apiUser, apiKey, null, null, null, 
-				   ANOMALYSCORE_RE, ANOMALYSCORE_PATH);
-	}
-	
-	/**
-	 * Constructor
-	 *
-	 * @deprecated
-	 */
-	public AnomalyScore(final String apiUser, final String apiKey,
-			final CacheManager cacheManager) {
-		super.init(apiUser, apiKey, null, null, null, 
-				   ANOMALYSCORE_RE, ANOMALYSCORE_PATH);
-	}
-	
-    /**
-     * Constructor
-     *
      */
     public AnomalyScore(final BigMLClient bigmlClient,
     					final String apiUser, final String apiKey, 

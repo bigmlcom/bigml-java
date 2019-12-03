@@ -19,36 +19,7 @@ public class Evaluation extends AbstractResource {
     // Logging
     Logger logger = LoggerFactory.getLogger(Evaluation.class);
     
-    /**
-     * Constructor
-     *
-     * @deprecated
-     */
-	public Evaluation() {
-		super.init(null, null, null, null, null, 
-				EVALUATION_RE, EVALUATION_PATH);
-	}
-
-	/**
-	 * Constructor
-	 *
-	 * @deprecated
-	 */
-	public Evaluation(final String apiUser, final String apiKey) {
-		super.init(apiUser, apiKey, null, null, null, 
-				EVALUATION_RE, EVALUATION_PATH);
-	}
-	
-	/**
-	 * Constructor
-	 *
-	 * @deprecated
-	 */
-	public Evaluation(final String apiUser, final String apiKey,
-			final CacheManager cacheManager) {
-		super.init(apiUser, apiKey, null, null, null, 
-				EVALUATION_RE, EVALUATION_PATH);
-	}
+    
 	
     /**
      * Constructor

@@ -18,36 +18,6 @@ public class TimeSeries extends AbstractModelResource {
     // Logging
     Logger logger = LoggerFactory.getLogger(TimeSeries.class);
     
-    /**
-     * Constructor
-     *
-     * @deprecated
-     */
-	public TimeSeries() {
-		super.init(null, null, null, null, null, 
-				TIMESERIES_RE, TIMESERIES_PATH);
-	}
-
-	/**
-	 * Constructor
-	 *
-	 * @deprecated
-	 */
-	public TimeSeries(final String apiUser, final String apiKey) {
-		super.init(apiUser, apiKey, null, null, null, 
-				TIMESERIES_RE, TIMESERIES_PATH);
-	}
-	
-	/**
-	 * Constructor
-	 *
-	 * @deprecated
-	 */
-	public TimeSeries(final String apiUser, final String apiKey,
-			final CacheManager cacheManager) {
-		super.init(apiUser, apiKey, null, null, null, 
-				TIMESERIES_RE, TIMESERIES_PATH);
-	}
 	
     /**
      * Constructor
