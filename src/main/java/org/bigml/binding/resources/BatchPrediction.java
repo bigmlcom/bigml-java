@@ -19,37 +19,7 @@ public class BatchPrediction extends AbstractResource {
     // Logging
     Logger logger = LoggerFactory.getLogger(BatchPrediction.class);
     
-    /**
-     * Constructor
-     *
-     * @deprecated
-     */
-	public BatchPrediction() {
-		super.init(null, null, null, null, null, 
-				BATCH_PREDICTION_RE, BATCH_PREDICTION_PATH);
-	}
-
-	/**
-	 * Constructor
-	 *
-	 * @deprecated
-	 */
-	public BatchPrediction(final String apiUser, final String apiKey) {
-		super.init(apiUser, apiKey, null, null, null, 
-				BATCH_PREDICTION_RE, BATCH_PREDICTION_PATH);
-	}
-	
-	/**
-	 * Constructor
-	 *
-	 * @deprecated
-	 */
-	public BatchPrediction(final String apiUser, final String apiKey,
-			final CacheManager cacheManager) {
-		super.init(apiUser, apiKey, null, null, null, 
-				BATCH_PREDICTION_RE, BATCH_PREDICTION_PATH);
-	}
-	
+    
     /**
      * Constructor
      *

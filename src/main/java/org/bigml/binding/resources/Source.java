@@ -27,36 +27,6 @@ public class Source extends AbstractResource {
 	// Logging
 	Logger logger = LoggerFactory.getLogger(Source.class);
 	
-	/**
-     * Constructor
-     *
-     * @deprecated
-     */
-	public Source() {
-		super.init(null, null, null, null, null, 
-				SOURCE_RE, SOURCE_PATH);
-	}
-
-	/**
-	 * Constructor
-	 *
-	 * @deprecated
-	 */
-	public Source(final String apiUser, final String apiKey) {
-		super.init(apiUser, apiKey, null, null, null, 
-				SOURCE_RE, SOURCE_PATH);
-	}
-	
-	/**
-	 * Constructor
-	 *
-	 * @deprecated
-	 */
-	public Source(final String apiUser, final String apiKey,
-			final CacheManager cacheManager) {
-		super.init(apiUser, apiKey, null, null, null, 
-				SOURCE_RE, SOURCE_PATH);
-	}
 	
 	/**
 	 * Constructor

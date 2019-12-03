@@ -18,36 +18,6 @@ public class TopicModel extends AbstractModelResource {
     // Logging
     Logger logger = LoggerFactory.getLogger(TopicModel.class);
     
-    /**
-     * Constructor
-     *
-     * @deprecated
-     */
-	public TopicModel() {
-		super.init(null, null, null, null, null, 
-				TOPICMODEL_RE, TOPICMODEL_PATH);
-	}
-
-	/**
-	 * Constructor
-	 *
-	 * @deprecated
-	 */
-	public TopicModel(final String apiUser, final String apiKey) {
-		super.init(apiUser, apiKey, null, null, null, 
-				TOPICMODEL_RE, TOPICMODEL_PATH);
-	}
-	
-	/**
-	 * Constructor
-	 *
-	 * @deprecated
-	 */
-	public TopicModel(final String apiUser, final String apiKey,
-			final CacheManager cacheManager) {
-		super.init(apiUser, apiKey, null, null, null, 
-				TOPICMODEL_RE, TOPICMODEL_PATH);
-	}
 	
     /**
      * Constructor

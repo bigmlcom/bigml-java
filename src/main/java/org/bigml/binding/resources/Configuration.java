@@ -21,36 +21,6 @@ public class Configuration extends AbstractResource {
     // Logging
     Logger logger = LoggerFactory.getLogger(Configuration.class);
     
-    /**
-     * Constructor
-     *
-     * @deprecated
-     */
-	public Configuration() {
-		super.init(null, null, null, null, null, 
-				CONFIGURATION_RE, CONFIGURATION_PATH);
-	}
-
-	/**
-	 * Constructor
-	 *
-	 * @deprecated
-	 */
-	public Configuration(final String apiUser, final String apiKey) {
-		super.init(apiUser, apiKey, null, null, null, 
-				CONFIGURATION_RE, CONFIGURATION_PATH);
-	}
-	
-	/**
-	 * Constructor
-	 *
-	 * @deprecated
-	 */
-	public Configuration(final String apiUser, final String apiKey,
-			final CacheManager cacheManager) {
-		super.init(apiUser, apiKey, null, null, null, 
-				CONFIGURATION_RE, CONFIGURATION_PATH);
-	}
 	
     /**
      * Constructor

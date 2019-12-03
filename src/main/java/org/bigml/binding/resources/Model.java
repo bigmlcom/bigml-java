@@ -21,36 +21,6 @@ public class Model extends AbstractModelResource {
     // Logging
     Logger logger = LoggerFactory.getLogger(Model.class);
     
-    /**
-     * Constructor
-     *
-     * @deprecated
-     */
-	public Model() {
-		super.init(null, null, null, null, null, 
-				MODEL_RE, MODEL_PATH);
-	}
-
-	/**
-	 * Constructor
-	 *
-	 * @deprecated
-	 */
-	public Model(final String apiUser, final String apiKey) {
-		super.init(apiUser, apiKey, null, null, null, 
-				MODEL_RE, MODEL_PATH);
-	}
-	
-	/**
-	 * Constructor
-	 *
-	 * @deprecated
-	 */
-	public Model(final String apiUser, final String apiKey,
-			final CacheManager cacheManager) {
-		super.init(apiUser, apiKey, null, null, null, 
-				MODEL_RE, MODEL_PATH);
-	}
 	
     /**
      * Constructor

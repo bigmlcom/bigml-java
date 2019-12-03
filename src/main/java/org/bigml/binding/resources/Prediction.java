@@ -23,36 +23,6 @@ public class Prediction extends AbstractResource {
     // Logging
     Logger logger = LoggerFactory.getLogger(Prediction.class);
     
-    /**
-     * Constructor
-     *
-     * @deprecated
-     */
-	public Prediction() {
-		super.init(null, null, null, null, null, 
-				PREDICTION_RE, PREDICTION_PATH);
-	}
-
-	/**
-	 * Constructor
-	 *
-	 * @deprecated
-	 */
-	public Prediction(final String apiUser, final String apiKey) {
-		super.init(apiUser, apiKey, null, null, null, 
-				PREDICTION_RE, PREDICTION_PATH);
-	}
-	
-	/**
-	 * Constructor
-	 *
-	 * @deprecated
-	 */
-	public Prediction(final String apiUser, final String apiKey,
-			final CacheManager cacheManager) {
-		super.init(apiUser, apiKey, null, null, null, 
-				PREDICTION_RE, PREDICTION_PATH);
-	}
 	
     /**
      * Constructor

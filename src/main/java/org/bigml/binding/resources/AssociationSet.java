@@ -20,36 +20,6 @@ public class AssociationSet extends AbstractResource {
     // Logging
     Logger logger = LoggerFactory.getLogger(AssociationSet.class);
     
-    /**
-     * Constructor
-     *
-     * @deprecated
-     */
-	public AssociationSet() {
-		super.init(null, null, null, null, null, 
-				ASSOCIATIONSET_RE, ASSOCIATIONSET_PATH);
-	}
-
-	/**
-	 * Constructor
-	 *
-	 * @deprecated
-	 */
-	public AssociationSet(final String apiUser, final String apiKey) {
-		super.init(apiUser, apiKey, null, null, null, 
-				ASSOCIATIONSET_RE, ASSOCIATIONSET_PATH);
-	}
-	
-	/**
-	 * Constructor
-	 *
-	 * @deprecated
-	 */
-	public AssociationSet(final String apiUser, final String apiKey,
-			final CacheManager cacheManager) {
-		super.init(apiUser, apiKey, null, null, null, 
-				ASSOCIATIONSET_RE, ASSOCIATIONSET_PATH);
-	}
 	
     /**
      * Constructor

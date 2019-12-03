@@ -23,37 +23,6 @@ public class BatchAnomalyScore extends AbstractResource {
     /**
      * Constructor
      *
-     * @deprecated
-     */
-	public BatchAnomalyScore() {
-		super.init(null, null, null, null, null, 
-				BATCH_ANOMALYSCORE_RE, BATCHANOMALYSCORE_PATH);
-	}
-
-	/**
-	 * Constructor
-	 *
-	 * @deprecated
-	 */
-	public BatchAnomalyScore(final String apiUser, final String apiKey) {
-		super.init(apiUser, apiKey, null, null, null, 
-				BATCH_ANOMALYSCORE_RE, BATCHANOMALYSCORE_PATH);
-	}
-	
-	/**
-	 * Constructor
-	 *
-	 * @deprecated
-	 */
-	public BatchAnomalyScore(final String apiUser, final String apiKey,
-			final CacheManager cacheManager) {
-		super.init(apiUser, apiKey, null, null, null, 
-				BATCH_ANOMALYSCORE_RE, BATCHANOMALYSCORE_PATH);
-	}
-	
-    /**
-     * Constructor
-     *
      */
     public BatchAnomalyScore(final BigMLClient bigmlClient,
     						 final String apiUser, final String apiKey, 
