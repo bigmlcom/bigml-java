@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 import org.bigml.binding.utils.Utils;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,12 +24,47 @@ public class SourcesStepdefs {
     @Autowired
     private ContextRepository context;
 
+    @Given("^I provision a data source from \"([^\"]*)\" file$")
+    public void I_provision_a_data_source_from_file(String fileName)
+    		throws Throwable {
+        
+    	JSONObject resource = null;
+    	try {
+    		JSONArray resources = (JSONArray) context.api
+    			.listSources("tags__in=" + fileName).get("objects");
+    		if (resources.size() > 0) {
+    			resource = (JSONObject) resources.get(0);
+    		}
+    	} catch (Exception e) {}
+    	
+    	if (resource != null) {
+    		commonSteps.I_get_the_resource(
+            	"source", (String) resource.get("resource"));
+            
+    	} else {
+    		JSONObject args = new JSONObject();
+    		args.put("tags", new JSONArray());
+    		((JSONArray) args.get("tags")).add(fileName);
+    		I_create_a_data_source_uploading_a_file(fileName, args);
+    	}
+    	
+    	commonSteps.I_wait_until_the_resource_is_ready_less_than_secs(
+    		"source", 100);
+    }
+    
+    
     @Given("^I create a data source uploading a \"([^\"]*)\" file$")
     public void I_create_a_data_source_uploading_a_file(String fileName)
             throws AuthenticationException {
-    	
-        JSONObject args = commonSteps.setProject(null);
+    	I_create_a_data_source_uploading_a_file(fileName, null);
+    }
+    
+    
+    public void I_create_a_data_source_uploading_a_file(String fileName, JSONObject args)
+            throws AuthenticationException {
 
+    	args = commonSteps.setProject(args);
+        
         JSONObject resource = context.api.createSource(
         		fileName, "new source", null, args);
         context.status = (Integer) resource.get("code");

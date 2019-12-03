@@ -135,12 +135,11 @@ public class CommonStepdefs {
 			args = new JSONObject();
 		}
 		
-		if (args.containsKey("tags")) {
-            ((JSONArray) args.get("tags")).add("unitTest");
-        } else {
-            args.put("tags", Arrays.asList("unitTest"));
-        }
+		if (!args.containsKey("tags")) {
+			args.put("tags", new JSONArray());
+		}
 		
+		((JSONArray) args.get("tags")).add("unitTest");
 		args.put("project", context.testProject);
 		
 		return args;
