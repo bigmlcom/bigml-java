@@ -3,16 +3,23 @@
 
 ## 1.8.12 version
 
-* Deprecated methods removed from resource classes
 * Improved robustness guarding against internal errors in some rare cases
+* Test suite
+  - Features by resource type
+  - Refactored `delete_all_test_data method`
+  - Removed unused methods
+  - Using generic method to create models from dataset
+  - Create resources in a project
+  - Reusing soures and datasets created for tests
+
+IMPORTANT NOTICE: In next version 1.8.13 we will remove deprecated methods in BigMLCLient.
+
 
 ## 1.8.11 version
 
 * New constructor in local model objects with BigMLClient instance.
 * Using storage in local model objects.
 * Removed deprecated methods.
-
-IMPORTANT NOTICE: In next version 1.8.12 we will remove deprecated methods in BigMLCLient.
 
 ### Bugs
 
