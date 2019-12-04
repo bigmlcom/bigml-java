@@ -806,23 +806,8 @@ public class Tree extends AbstractTree {
             String fieldName = Utils.getJSONObject(fields, fieldId + ".name", "").toString();
 
             boolean hasMissingBranch = missingBranch(children) || noneValue(children);
-
-            // the missing is singled out as a special case only when there's
-            //  no missing branch in the children list
-//            if( !hasMissingBranch &&
-//                    !cmv.contains(fieldName)) {
-//                conditions.add(String.format("%s == null", fieldName));
-//                body += String.format("%s( %s ) {\n", alternate, Utils.join(conditions, " && "));
-//                if( "numeric".equals(objectiveType) ) {
-//                    body += String.format("return")
-//                }
-//            }
-
-
             for (int i = 0; i < children.size(); i++) {
                 Tree child = children.get(i);
-//                String fieldName = (String) Utils.getJSONObject(fields,
-//                        child.predicate.getField() + ".name");
                 String slug = Utils.slugify(fieldName, null, null);
 
                 String comparison = JAVA_OPERATOR.get(child.predicate
@@ -845,33 +830,12 @@ public class Tree extends AbstractTree {
             if (objectiveType.equals("numeric") ) {
                 returnSentence = "{0} return {1}F;\n";
             }
-
-//            String returnSentence = "{0} return {1};\n";
-//            if (methodReturn.equals("String")) {
-//                returnSentence = "{0} return \"{1}\";\n";
-//            }
-//            if (methodReturn.equals("Float")) {
-//                returnSentence = "{0} return {1}F;\n";
-//            }
-//            if (methodReturn.equals("Boolean")) {
-//                returnSentence = "{0} return new Boolean({1});\n";
-//            }
-
             instructions += MessageFormat.format(returnSentence, new String(
                     new char[depth]).replace("\0", INDENT), this.output);
         }
 
         return instructions;
     }
-
-
-
-
-
-
-
-
-
 
 
     /**
@@ -905,106 +869,134 @@ public class Tree extends AbstractTree {
             path = new ArrayList<String>();
         }
 
-        if( strategy == MissingStrategy.LAST_PREDICTION  ) {
+        if (strategy == MissingStrategy.LAST_PREDICTION) {
+            return predictLastPrediction(inputData, path);
+        }
+        else if (strategy == MissingStrategy.PROPORTIONAL) {
+            return predictProportional(inputData, path);
+        }
+        else {
+            String msg = String.format("Unsupported missing strategy %s", strategy.name());
+            throw new UnsupportedOperationException(msg);
+        }
+    }
 
-            if (this.children != null && this.children.size() > 0) {
-                for (int i = 0; i < this.children.size(); i++) {
-                    Tree child = this.children.get(i);
+    /* helper function for predict() */
+    private Prediction predictLastPrediction(final JSONObject inputData, List<String> path) {
+        if (this.children != null && this.children.size() > 0) {
+            for (int i = 0; i < this.children.size(); i++) {
+                Tree child = this.children.get(i);
 
-                    if( child.predicate.apply(inputData, fields) ) {
-                        path.add(child.predicate.toRule(fields));
-                        return child.predict(inputData, path, strategy);
-                    }
+                if( child.predicate.apply(inputData, fields) ) {
+                    path.add(child.predicate.toRule(fields));
+                    return child.predict(inputData, path, MissingStrategy.LAST_PREDICTION);
                 }
             }
+        }
 
-            Integer dMin = !this.regression ? null : this.min;
-            Integer dMax = !this.regression ? null : this.max;
+        Integer dMin = !this.regression ? null : this.min;
+        Integer dMax = !this.regression ? null : this.max;
 
-            return new Prediction(this.output, this.confidence, this.count,
-                                (isRegression() ? this.median : null),
-                                path, this.distribution, this.distributionUnit,
-                                children, dMin, dMax);
-        } else if( strategy == MissingStrategy.PROPORTIONAL  ) {
-            TreeHolder lastNode = new TreeHolder();
-            Map<Object, Number> finalDistribution = predictProportional(
-            		inputData, lastNode, path, false, false);
+        return new Prediction(this.output, this.confidence, this.count,
+                              (isRegression() ? this.median : null),
+                              path, this.distribution, this.distributionUnit,
+                              children, dMin, dMax);
+    }
 
-            if( isRegression() ) {
-            	// singular case:
-                // when the prediction is the one given in a 1-instance node
-                if( finalDistribution.size() == 1 ) {
-                    long instances = finalDistribution.values().toArray(new Number[1])[0].longValue();
-                    if(  instances == 1 ) {
-                        return new Prediction(lastNode.getTree().getOutput(), lastNode.getTree().getConfidence(),
-                                instances, lastNode.getTree().getMedian(),
-                                path, lastNode.getTree().getDistribution(), lastNode.getTree().getDistributionUnit(),
-                                lastNode.getTree().getChildren(),
-                                lastNode.getTree().getMin(), lastNode.getTree().getMax());
-                    }
-                }
 
-                // when there's more instances, sort elements by their mean
-                JSONArray distribution  = Utils.convertDistributionMapToSortedArray(finalDistribution);
+    /* helper function for predict() */
+    private Prediction predictProportional(final JSONObject inputData, List<String> path) {
+        TreeHolder lastNode = new TreeHolder();
+        Map<Object, Number> finalDistribution = predictProportional(inputData, lastNode, path, false, false);
 
-                String distributionUnit = (distribution.size() > BINS_LIMIT ? "bins" : "counts");
+        if ( isRegression() ) {
+            return predictProportionalRegression(inputData, path, lastNode, finalDistribution);
+        }
+        else {
+            return predictProportionalClassification(inputData, path, lastNode, finalDistribution);
+        }
+    }
 
-                distribution = Utils.mergeBins(distribution, BINS_LIMIT);
+    /* helper function for predict() */
+    private Prediction predictProportionalClassification(final JSONObject inputData, List<String> path,
+                                                         TreeHolder lastNode,
+                                                         Map<Object, Number> finalDistribution) {
+        JSONArray distribution  = Utils.convertDistributionMapToSortedArray(finalDistribution);
 
-                long totalInstances = calculateTotalInstances(distribution);
+        if (distribution.size() > 0) {
+            long totalInstances = calculateTotalInstances(distribution);
 
-                double prediction = 0.0;
-                double confidence = 0.0;
-                if (distribution.size() == 1) {
-                	// where there's only one bin, there will be no error, but
-                    // we use a correction derived from the parent's error
-                	prediction = ((Number) ((JSONArray) distribution.get(0)).get(0)).doubleValue();
+            return new Prediction(((JSONArray) distribution.get(0)).get(0),
+                                  wsConfidence(((JSONArray) distribution.get(0)).get(0), distribution,
+                                               totalInstances, DEFAULT_RZ),
+                                  totalInstances, null,
+                                  path, distribution, "categorical",
+                                  lastNode.getTree().getChildren(), null, null);
+        }
+        else {
+            return new Prediction();
+        }
+    }
 
-                	if (totalInstances < 2) {
-                		totalInstances = 1;
-                	}
+    /* helper function for predict() */
+    private Prediction predictProportionalRegression(final JSONObject inputData, List<String> path,
+                                                     TreeHolder lastNode,
+                                                     Map<Object, Number> finalDistribution) {
 
-                	try {
-                		// some strange models can have nodes with no confidence
-                		confidence = lastNode.tree.getConfidence();
-                	} catch (Exception e) {
-                		confidence = 0.0;
-                	}
-                } else {
-                	prediction = Utils.meanOfDistribution(distribution);
-                	confidence = regressionError(unbiasedSampleVariance(distribution, prediction),
-                            totalInstances, DEFAULT_RZ);
-                }
+        // singular case:
+        // when the prediction is the one given in a 1-instance node
+        if( finalDistribution.size() == 1 ) {
+            long instances = finalDistribution.values().toArray(new Number[1])[0].longValue();
+            if(  instances == 1 ) {
+                return new Prediction(lastNode.getTree().getOutput(), lastNode.getTree().getConfidence(),
+                                      instances, lastNode.getTree().getMedian(),
+                                      path, lastNode.getTree().getDistribution(), lastNode.getTree().getDistributionUnit(),
+                                      lastNode.getTree().getChildren(),
+                                      lastNode.getTree().getMin(), lastNode.getTree().getMax());
+            }
+        }
 
-                Integer dMin = !this.regression ? null : this.min;
-                Integer dMax = !this.regression ? null : this.max;
+        // when there's more instances, sort elements by their mean
+        JSONArray distribution  = Utils.convertDistributionMapToSortedArray(finalDistribution);
 
-                return new Prediction(prediction, confidence, totalInstances,
-                        distributionMedian(distribution, totalInstances),
-                        path, distribution, distributionUnit,
-                        lastNode.getTree().getChildren(),
-                        dMin,
-                        dMax);
-            } else {
-                JSONArray distribution  = Utils.convertDistributionMapToSortedArray(finalDistribution);
-                long totalInstances = calculateTotalInstances(distribution);
+        String distributionUnit = (distribution.size() > BINS_LIMIT ? "bins" : "counts");
 
-                if (distribution.size() > 0) {
-                    return new Prediction(((JSONArray) distribution.get(0)).get(0),
-                                          wsConfidence(((JSONArray) distribution.get(0)).get(0), distribution,
-                                                       totalInstances, DEFAULT_RZ),
-                                          totalInstances, null,
-                                          path, distribution, "categorical",
-                                          lastNode.getTree().getChildren(), null, null);
-                }
-                else {
-                    return new Prediction();
-                }
+        distribution = Utils.mergeBins(distribution, BINS_LIMIT);
+
+        long totalInstances = calculateTotalInstances(distribution);
+
+        double prediction = 0.0;
+        double confidence = 0.0;
+        if (distribution.size() == 1) {
+            // where there's only one bin, there will be no error, but
+            // we use a correction derived from the parent's error
+            prediction = ((Number) ((JSONArray) distribution.get(0)).get(0)).doubleValue();
+
+            if (totalInstances < 2) {
+                totalInstances = 1;
+            }
+
+            try {
+                // some strange models can have nodes with no confidence
+                confidence = lastNode.tree.getConfidence();
+            } catch (Exception e) {
+                confidence = 0.0;
             }
         } else {
-            throw new UnsupportedOperationException(
-                    String.format("Unsupported missing strategy %s", strategy.name()));
+            prediction = Utils.meanOfDistribution(distribution);
+            confidence = regressionError(unbiasedSampleVariance(distribution, prediction),
+                                         totalInstances, DEFAULT_RZ);
         }
+
+        Integer dMin = !this.regression ? null : this.min;
+        Integer dMax = !this.regression ? null : this.max;
+
+        return new Prediction(prediction, confidence, totalInstances,
+                              distributionMedian(distribution, totalInstances),
+                              path, distribution, distributionUnit,
+                              lastNode.getTree().getChildren(),
+                              dMin,
+                              dMax);
     }
 
     /**
@@ -1055,41 +1047,10 @@ public class Tree extends AbstractTree {
                 finalDistribution = Utils.mergeDistributions(finalDistribution,
                         child.predictProportional(inputData, lastNode, path, missingFound, median));
             }
-
-            /*
-            minimums = []
-            maximums = []
-            population = 0
-            for child in self.children:
-                (subtree_distribution, subtree_min,
-                 subtree_max, _, subtree_pop, _) = \
-                    child.predict_proportional(input_data, path,
-                                               missing_found, median,
-                                               parent=self)
-                if subtree_min is not None:
-                    minimums.append(subtree_min)
-                if subtree_max is not None:
-                    maximums.append(subtree_max)
-                population += subtree_pop
-                final_distribution = merge_distributions(
-                    final_distribution, subtree_distribution)
-            return (final_distribution,
-                    min(minimums) if minimums else None,
-                    max(maximums) if maximums else None, self, population,
-                    self)
-            */
-
-
             return finalDistribution;
         }
-
-
         return null;
     }
-
-
-
-
 
 
     protected static class TreeHolder {
