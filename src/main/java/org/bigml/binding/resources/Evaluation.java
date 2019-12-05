@@ -64,12 +64,13 @@ public class Evaluation extends AbstractResource {
 
         if (model == null || model.length() == 0 ||
     		!(model.matches(MODEL_RE) || 
-              	  model.matches(ENSEMBLE_RE) || 
-              	  model.matches(LOGISTICREGRESSION_RE)  || 
-              	  model.matches(LINEARREGRESSION_RE) ||
-              	  model.matches(FUSION_RE))) {
-              logger.info("Wrong model, ensemble, logisticregression, fusion "
-              		+ "or linearregression id");
+              model.matches(ENSEMBLE_RE) ||
+              model.matches(LOGISTICREGRESSION_RE) ||
+              model.matches(LINEARREGRESSION_RE) ||
+              model.matches(FUSION_RE) ||
+              model.matches(DEEPNET_RE))) {
+              logger.info("Wrong model, ensemble, logisticregression, fusion, "
+                  + "deepnet or linearregression id");
             return null;
         }
 
@@ -99,6 +100,10 @@ public class Evaluation extends AbstractResource {
             if (model.matches(FUSION_RE)) {
             	waitForResource(model, "fusionIsReady", waitTime, retries);
             }
+
+            if (model.matches(DEEPNET_RE)) {
+                waitForResource(model, "deepnetIsReady", waitTime, retries);
+            }
         	
             waitForResource(datasetId, "datasetIsReady", waitTime, retries);
 
@@ -121,6 +126,9 @@ public class Evaluation extends AbstractResource {
             }
             if (model.matches(FUSION_RE)) {
                 requestObject.put("fusion", model);
+            }
+            if (model.matches(DEEPNET_RE)) {
+                requestObject.put("deepnet", model);
             }
             requestObject.put("dataset", datasetId);
 
