@@ -1,5 +1,24 @@
 Feature: LocalModel
-	
+
+		Scenario Outline: Successfully comparing predictions:
+		    Given I create a data source uploading a "<data>" file
+		    And I wait until the source is ready less than <time_1> secs
+		    And I update the source with "<options>" waiting less than <time_1> secs
+		    And I create a dataset
+		    And I wait until the dataset is ready less than <time_2> secs
+		    And I create a model
+		    And I wait until the model is ready less than <time_3> secs
+		    And I create a local model
+		    When I create a prediction for "<data_input>"
+		    Then the prediction for "<objective>" is "<prediction>"
+		    And the local prediction for "<data_input>" is "<prediction>"
+
+		    Examples:
+		      | data             			| time_1	| time_2 | time_3 | options | data_input                             | objective | prediction  |
+		      | data/iris_missing.csv | 30      | 30     | 30     | {"fields": {"000000": {"optype": "numeric"}}, "source_parser": {"missing_tokens": ["foo"]}} | {"sepal length": "foo", "petal length": 3}	|	000004	| Iris-versicolor	|
+		      | data/iris_missing.csv | 30      | 30     | 30     | {"fields": {"000000": {"optype": "numeric"}}, "source_parser": {"missing_tokens": ["foo"]}} | {"sepal length": "foo", "petal length": 5, "petal width": 1.5}	|	000004	| Iris-virginica	|
+
+
 	 Scenario Outline: Successfully changing duplicated field names:
         Given I create a data source uploading a "<data>" file
         And I wait until the source is ready less than <time_1> secs
@@ -56,6 +75,8 @@ Feature: LocalModel
 		      | data/spam.csv |    20      | 20     | 30     | {"fields": {"000001": {"optype": "text", "term_analysis": {"case_sensitive": false, "stem_words": true, "use_stopwords": true, "language": "en"}}}} |{"Message": "A normal message"}       | 000000    | ham     |
 		      | data/spam.csv |    20      | 20     | 30     | {"fields": {"000001": {"optype": "text", "term_analysis": {"token_mode": "full_terms_only", "language": "en"}}}} |{"Message": "FREE for 1st week! No1 Nokia tone 4 ur mob every week just txt NOKIA to 87077 Get txting and tell ur mates. zed POBox 36504 W45WQ norm150p/tone 16+"}       | 000000    | spam     |
 		      | data/spam.csv |    20      | 20     | 30     | {"fields": {"000001": {"optype": "text", "term_analysis": {"token_mode": "full_terms_only", "language": "en"}}}} |{"Message": "Ok"}       | 000000    | ham     |
+					#| data/movies.csv |    20      | 20     | 30     | {"fields": {"000007": {"optype": "items", "item_analysis": {"separator": "$"}}}} | {"genres": "Adventure$Action", "timestamp": 993906291, "occupation": "K-12 student"}	| 000009    | 3.92135     |
+					#| data/text_missing.csv |    20      | 20     | 30     | {"fields": {"000001": {"optype": "text", "term_analysis": {"token_mode": "all", "language": "en"}}, "000000": {"optype": "text", "term_analysis": {"token_mode": "all", "language": "en"}}}} | {}	| 000003    | swap     |
 			
 		
 		Scenario Outline: Successfully comparing predictions with proportional missing strategy:
@@ -108,8 +129,7 @@ Feature: LocalModel
 		      | data	| time_1  | data_input  | objective | prediction     | confidence |
 		      | data/iris_missing2.csv   | 50     | {"petal width": 1}             | 000004    | Iris-setosa    | 0.8064     |
 		      | data/iris_missing2.csv   | 50     | {"petal width": 1, "petal length": 4}             | 000004    | Iris-versicolor    | 0.7847     |
-				
-		
+
 		Scenario Outline: Successfully comparing predictions for models with operating point
         Given I provision a dataset from "<data>" file
         And I create a model

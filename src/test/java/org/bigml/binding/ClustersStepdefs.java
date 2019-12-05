@@ -190,4 +190,14 @@ public class ClustersStepdefs {
         
         assertEquals(closestObj, result);
     }
+
+    @Then("^the centroid in the cluster closest to \"(.*)\" is \"(.*)\"$")
+    public void centroid_closest_in_cluster(String reference, String closest) throws Throwable {
+        JSONObject referencePoint = (JSONObject) JSONValue.parse(reference);
+
+        JSONObject closestInCluster = context.localCluster.closestInCluster(
+                referencePoint, 1, null);
+
+        assertEquals(closest, closestInCluster.get("centroid_id"));
+    }
 }

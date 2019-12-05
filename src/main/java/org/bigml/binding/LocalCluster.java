@@ -131,8 +131,8 @@ public class LocalCluster extends ModelFields {
                 	clusterGlobal.setCount(((Long) distance.get("population")).intValue());
                 }
                 
-                totalSS = (Double) Utils.getJSONObject(cluster, "clusters.total_ss");
-                withinSS = (Double) Utils.getJSONObject(cluster, "clusters.within_ss");
+                totalSS = ((Number) Utils.getJSONObject(cluster, "clusters.total_ss")).doubleValue();
+                withinSS = ((Number) Utils.getJSONObject(cluster, "clusters.within_ss")).doubleValue();
                 if (this.withinSS == null) {
                 	withinSS = 0.0;
 	                for (LocalCentroid centroid: centroids) {
@@ -140,10 +140,10 @@ public class LocalCluster extends ModelFields {
 	                	withinSS += (Double) distance.get("sum_squares");
 	                }
                 }
-                betweenSS = (Double) Utils.getJSONObject(cluster, "clusters.between_ss");
-                ratioSS = (Double) Utils.getJSONObject(cluster, "clusters.ratio_ss");
+                betweenSS = ((Number) Utils.getJSONObject(cluster, "clusters.between_ss")).doubleValue();
+                ratioSS = ((Number) Utils.getJSONObject(cluster, "clusters.ratio_ss")).doubleValue();
                 
-                criticalValue = (Long) Utils.getJSONObject(cluster, "critical_value");;
+                criticalValue = (Long) Utils.getJSONObject(cluster, "critical_value");
                 k = ((Long) cluster.get("k")).intValue();
                 scales = (JSONObject) cluster.get("scales");
                 

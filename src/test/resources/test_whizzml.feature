@@ -13,7 +13,7 @@ Feature: Whizzml Resources REST api calls
         | (define (mu x) (+ x 1))          | 10      | 10      | my library |
         
 
-		Scenario Outline: Scenario: Successfully creating a whizzml library:
+		Scenario Outline: Scenario: Successfully creating a whizzml script:
         Given I create a whizzml script from a excerpt of code "<source_code>"
         And I wait until the script is ready less than <time_1> secs
         And I update the script name to "<script_name>"

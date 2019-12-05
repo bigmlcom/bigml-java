@@ -1,6 +1,6 @@
 Feature: Batch Predictions
-
-  Scenario Outline: Successfully creating a batch prediction:
+		
+		Scenario Outline: Successfully creating a batch prediction:
         Given I provision a dataset from "<data>" file
         And I create a model
         And I wait until the model is ready less than <time_1> secs
@@ -10,25 +10,31 @@ Feature: Batch Predictions
         Then the batch prediction file "<local_file>" is like "<predictions_file>"
 
         Examples:
-          | data	| time_1  | time_2 | local_file | predictions_file |
+          | data    | time_1  | time_2 | local_file | predictions_file |
           | data/iris.csv | 50     | 50     | data/downloaded_batch_predictions.csv | data/batch_predictions.csv |
 
 
-  Scenario Outline: Successfully creating a batch prediction for an ensemble:
+		Scenario Outline: Successfully creating a batch prediction for an ensemble:
         Given I provision a dataset from "<data>" file
         And I create an ensemble of <number_of_models> models
         And I wait until the ensemble is ready less than <time_1> secs
-        When I create a batch prediction for the dataset with the ensemble
+        When I create a batch prediction for the dataset with the ensemble and "<params>"
         And I wait until the batch prediction is ready less than <time_2> secs
         And I download the created predictions file to "<local_file>"
         Then the batch prediction file "<local_file>" is like "<predictions_file>"
 
         Examples:
-          | data	| time_1  | time_2 | number_of_models | local_file | predictions_file |
-          | data/iris.csv |   80      | 530     | 5	| data/downloaded_batch_predictions_e.csv | data/batch_predictions_e.csv |
+        | data	| time_1  | time_2 | number_of_models | params	| local_file | predictions_file |
+        | data/iris.csv | 100	| 100	| 5 | {}	| data/downloaded_batch_predictions_e.csv | data/batch_predictions_e.csv |
+        | data/iris.csv | 100	| 100	| 5	| {"combiner": 0}	| data/downloaded_batch_predictions.csv	| data/batch_predictions_e_c0.csv   |
+        | data/iris.csv | 100	| 100	| 5	| {"combiner":1, "confidence": true}	| data/downloaded_batch_predictions.csv	| data/batch_predictions_e_c1.csv   |
+        | data/iris.csv | 100	| 100	| 5	| {"combiner":2, "confidence": true}	| data/downloaded_batch_predictions.csv	| data/batch_predictions_e_c2.csv   |
+				| data/iris.csv | 100	| 100	| 5	| {"operating_kind": "votes", "confidence": true}	| data/downloaded_batch_predictions.csv	| data/batch_predictions_e_o_k_v.csv   |
+        | data/iris.csv | 100	| 100	| 5	| {"operating_kind": "probability", "probability": true}	| data/downloaded_batch_predictions.csv	| data/batch_predictions_e_o_k_p.csv   |
+        | data/iris.csv | 100	| 100	| 5	| {"operating_kind": "confidence", "confidence": true}	| data/downloaded_batch_predictions.csv	| data/batch_predictions_e_o_k_c.csv   |
 
 
-	Scenario Outline: Successfully creating a batch centroid from a cluster:
+		Scenario Outline: Successfully creating a batch centroid from a cluster:
         Given I provision a dataset from "<data>" file
         And I create a cluster
         And I wait until the cluster is ready less than <time_1> secs
@@ -52,7 +58,7 @@ Feature: Batch Predictions
         And I wait until the source is ready less than <time_1> secs
 
         Examples:
-          | data              | time_1	| time_2	|
+          | data              | time_1  | time_2    |
           | data/iris.csv     | 50     | 50     |
           | data/diabetes.csv | 50     | 50     |
 
@@ -95,11 +101,11 @@ Feature: Batch Predictions
         Then the batch prediction file "<local_file>" is like "<predictions_file>"
 
         Examples:
-          | data	|  time_1   | time_2 | local_file | predictions_file       |
-          | data/grades.csv	| 50     | 50     | data/downloaded_batch_predictions_linear.csv | data/batch_predictions_linear.csv |
-	
-	
-		Scenario Outline: Successfully creating a fusion
+          | data    |  time_1   | time_2 | local_file | predictions_file       |
+          | data/grades.csv | 50     | 50     | data/downloaded_batch_predictions_linear.csv | data/batch_predictions_linear.csv |
+    
+    
+    Scenario Outline: Successfully creating a fusion
         Given I provision a dataset from "<data>" file
         And I create a model
         And I wait until the model is ready less than <time_1> secs
@@ -115,5 +121,5 @@ Feature: Batch Predictions
         Then the batch prediction file "<local_file>" is like "<predictions_file>"
         
         Examples:
-        | data	| time_1  | time_2 | local_file | predictions_file |
-        | data/iris.csv | 50      | 50     |  data/downloaded_batch_predictions.csv | data/batch_predictions_fs.csv |
+        | data  | time_1  | time_2 | local_file | predictions_file |
+        | data/iris.csv | 50      | 50     |  data/downloaded_batch_predictions.csv | data/batch_predictions_fs.csv	|

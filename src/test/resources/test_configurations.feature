@@ -1,6 +1,4 @@
 Feature: Testing Configuration REST api calls
-    In order to test the Configuration API
-    I need to create a configuration
 
     Scenario Outline: Successfully creating a configuration:
         Given I create a configuration with "<options>"

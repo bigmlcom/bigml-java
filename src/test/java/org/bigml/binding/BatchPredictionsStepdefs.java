@@ -34,42 +34,54 @@ public class BatchPredictionsStepdefs {
     public void I_create_a_batch_prediction_for_the_dataset_with_the_model()
             throws Throwable {
         String modelId = (String) context.model.get("resource");
-        I_create_a_batch_prediction_for_the_dataset_with(modelId);
+        I_create_a_batch_prediction_for_the_dataset_with(modelId, null);
     }
 
     @When("^I create a batch prediction for the dataset with the ensemble$")
     public void I_create_a_batch_prediction_for_the_dataset_with_the_ensemble()
             throws Throwable {
         String ensembleId = (String) context.ensemble.get("resource");
-        I_create_a_batch_prediction_for_the_dataset_with(ensembleId);
+        I_create_a_batch_prediction_for_the_dataset_with(ensembleId, null);
+    }
+
+    @When("^I create a batch prediction for the dataset with the ensemble and \"(.*)\"$")
+    public void I_create_a_batch_prediction_for_the_dataset_with_the_ensemble(String params)
+            throws Throwable {
+        String ensembleId = (String) context.ensemble.get("resource");
+        I_create_a_batch_prediction_for_the_dataset_with(ensembleId, params);
     }
 
     @When("^I create a batch prediction for the dataset with the logistic regression$")
     public void I_create_a_batch_prediction_for_the_dataset_with_the_logistic_regression()
             throws Throwable {
         String logisticRegresionId = (String) context.logisticRegression.get("resource");
-        I_create_a_batch_prediction_for_the_dataset_with(logisticRegresionId);
+        I_create_a_batch_prediction_for_the_dataset_with(logisticRegresionId, null);
     }
     
     @When("^I create a batch prediction for the dataset with the linear regression$")
     public void I_create_a_batch_prediction_for_the_dataset_with_the_linear_regression()
             throws Throwable {
         String linearRegresionId = (String) context.linearRegression.get("resource");
-        I_create_a_batch_prediction_for_the_dataset_with(linearRegresionId);
+        I_create_a_batch_prediction_for_the_dataset_with(linearRegresionId, null);
     }
     
     @When("^I create a batch prediction for the dataset with the fusion$")
     public void I_create_a_batch_prediction_for_the_dataset_with_the_fusion()
             throws Throwable {
         String fusionId = (String) context.fusion.get("resource");
-        I_create_a_batch_prediction_for_the_dataset_with(fusionId);
+        I_create_a_batch_prediction_for_the_dataset_with(fusionId, null);
     }
     
     
-    public void I_create_a_batch_prediction_for_the_dataset_with(String resourceId)
+    public void I_create_a_batch_prediction_for_the_dataset_with(String resourceId, String params)
             throws Throwable {
         String datasetId = (String) context.dataset.get("resource");
-        JSONObject args = commonSteps.setProject(null);
+
+        JSONObject args = new JSONObject();
+        if (params!=null && !"".equals(params)) {
+            args = (JSONObject) JSONValue.parse(params);
+        }
+        args = commonSteps.setProject(args);
         
         JSONObject resource = context.api.createBatchPrediction(
         		resourceId, datasetId, args, 5, 3);

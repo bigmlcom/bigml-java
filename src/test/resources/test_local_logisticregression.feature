@@ -16,7 +16,7 @@ Feature: LocalLogisticRegression
         | data/iris.csv | 50 | {"petal width": 2, "petal length": 6, "sepal width": 0.5, "sepal length": 0.5} |  Iris-versicolor |
         | data/iris.csv | 50 | {"petal width": 1.5, "petal length": 4, "sepal width": 0.5, "sepal length": 0.5} |  Iris-versicolor |
       	| data/iris.csv | 50 | {"petal length": 1} |  Iris-setosa  |
-        | data/iris.csv | 50 | {"pétal.length": 4, "pétal&width\u0000": 1.5, "sépal&width": 0.5, "sépal.length": 0.5} |  Iris-versicolor |
+        | data/iris_sp_chars.csv | 50 | {"pétal.length": 4, "pétal&width\u0000": 1.5, "sépal&width": 0.5, "sépal.length": 0.5} |  Iris-versicolor |
         | data/price.csv | 50  | {"Price": 1200} |  Product1 |
   
 
@@ -82,6 +82,7 @@ Feature: LocalLogisticRegression
         Examples:
         | data  | time_1  | params | data_input | prediction | probability | objective |
         | data/iris.csv | 180  | {"weight_field": "000000", "missing_numerics": false}  | {"petal width": 1.5, "petal length": 2, "sepal width":1}  |  Iris-versicolor | 0.9547  | 000004  |     
+
 
      Scenario Outline: Successfully comparing predictions with text options
         Given I create a data source uploading a "<data>" file

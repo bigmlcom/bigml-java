@@ -3,10 +3,9 @@ package org.bigml.binding;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
-
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,9 +48,20 @@ public class EvaluationsStepdefs {
     @When("^I create an evaluation for the ensemble with the dataset$")
     public void I_create_an_evaluation_for_the_ensemble_with_the_dataset()
             throws Throwable {
+
+        I_create_an_evaluation_for_the_ensemble_with_params(null);
+    }
+
+    @When("^I create an evaluation for the ensemble with the dataset and \"(.*)\"$")
+    public void I_create_an_evaluation_for_the_ensemble_with_params(String params) throws Throwable {
         String ensembleId = (String) context.ensemble.get("resource");
         String datasetId = (String) context.dataset.get("resource");
-        JSONObject args = commonSteps.setProject(null);
+
+        JSONObject args = new JSONObject();
+        if (params!=null && !"".equals(params)) {
+            args = (JSONObject) JSONValue.parse(params);
+        }
+        args = commonSteps.setProject(args);
 
         JSONObject resource = context.api.createEvaluation(
                 ensembleId, datasetId, args, 5, 3);
@@ -106,6 +116,22 @@ public class EvaluationsStepdefs {
 
         JSONObject resource = context.api.createEvaluation(
         		fusionId, datasetId, args, 5, 3);
+        context.status = (Integer) resource.get("code");
+        context.location = (String) resource.get("location");
+        context.evaluation = (JSONObject) resource.get("object");
+        commonSteps.the_resource_has_been_created_with_status(context.status);
+    }
+
+    @When("^I create an evaluation for the deepnet with the dataset$")
+    public void I_create_an_evaluation_for_the_deepnet_with_the_dataset()
+            throws Throwable {
+
+        String deepnetId = (String) context.deepnet.get("resource");
+        String datasetId = (String) context.dataset.get("resource");
+        JSONObject args = commonSteps.setProject(null);
+
+        JSONObject resource = context.api.createEvaluation(
+            deepnetId, datasetId, args, 5, 3);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.evaluation = (JSONObject) resource.get("object");
