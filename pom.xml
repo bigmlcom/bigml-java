@@ -28,33 +28,28 @@
 
     <developers>
         <developer>
-            <id>xalperte</id>
-            <name>Javier Alperte</name>
-            <email>alperte@bigml.com</email>
-            <url>http://eric.propellors.net</url>
+            <id>javinp</id>
+            <name>Francisco Javier García</name>
+            <email>garcia@bigml.com</email>
             <organization>BigML Inc.</organization>
             <organizationUrl>https://bigml.com/</organizationUrl>
             <roles>
                 <role>architect</role>
                 <role>developer</role>
             </roles>
-            <timezone>-America/Sao Paulo</timezone>
-            <properties>
-                <picUrl>http://tinyurl.com/kh29dm7</picUrl>
-            </properties>
         </developer>
-    </developers>
-
-    <contributors>
-        <contributor>
-            <name>Fco. Javier Garcia</name>
+        <developer>
+            <id>jimshur</id>
+            <name>Jim Shur</name>
+            <email>shur@bigml.com</email>
+            <organization>BigML Inc.</organization>
+            <organizationUrl>https://bigml.com/</organizationUrl>
             <roles>
                 <role>architect</role>
                 <role>developer</role>
             </roles>
-            <timezone>Europe/Madrid</timezone>
-        </contributor>
-    </contributors>
+        </developer>
+    </developers>
 
     <issueManagement>
         <system>Github</system>
