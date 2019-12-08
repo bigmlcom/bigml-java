@@ -3,6 +3,7 @@
 
 ## 1.8.12 version
 
+* Adding the ability to parse datetimes for local predictions
 * Improved robustness guarding against internal errors in some rare cases
 * Test suite
   - Features by resource type

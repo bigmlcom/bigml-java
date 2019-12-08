@@ -409,8 +409,13 @@ public class LocalPca extends ModelFields implements Serializable {
 				inputMask.add(inputData.keySet().contains(fieldId) ? 1.0 : 0.0);
 				Double value = 0.0;
 				if (inputData.keySet().contains(fieldId)) {
-					value = ((Number) Utils.getJSONObject(inputData, fieldId,
+
+					if (inputData.get(fieldId) instanceof Integer) {
+						value = ((Integer) inputData.get(fieldId)).doubleValue();
+					} else {
+						value = ((Number) Utils.getJSONObject(inputData, fieldId,
 							0)).doubleValue();
+					}
 
 					if (this.standardized) {
 						JSONObject meanStdev = getMeanStdev(field,

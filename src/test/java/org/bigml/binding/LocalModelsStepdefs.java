@@ -109,8 +109,14 @@ public class LocalModelsStepdefs {
         try {
             JSONObject inputObj = (JSONObject) JSONValue.parse(args);
             Prediction p = context.localModel.predict(inputObj);
-            String prediction = (String) p.getPrediction();
-            assertEquals(pred, prediction);
+
+            if (p.getPrediction() instanceof String) {
+                String prediction = (String) p.getPrediction();
+                assertEquals(pred, prediction);
+            } else {
+                Double prediction = (Double) p.getPrediction();
+                assertEquals(new Double(pred), prediction);
+            }
         } catch (Exception e) {
         	assertTrue("", false);
         }

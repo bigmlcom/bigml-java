@@ -262,3 +262,25 @@ Feature: LocalModel
 		  Examples:
 		    | data          | time_1  | params                         |  tag  |  data_input    | path | predictions  |
 		    | data/iris.csv |  30     | {"tags":["mytag"]} | mytag |  [{"petal width": 0.5}, {"petal length": 6, "petal width": 2}, {"petal length": 4, "petal width": 1.5}]  | data | ["Iris-setosa", "Iris-virginica", "Iris-versicolor"] |
+
+
+    Scenario Outline: Successfully comparing remote and local predictions with raw date input
+        Given I provision a dataset from "<data>" file
+        And I create a model
+        And I wait until the model is ready less than <time_1> secs
+        And I create a local model
+        When I create a prediction for "<data_input>"
+        Then the prediction for "<objective>" is "<prediction>"
+        And the local prediction for "<data_input>" is "<prediction>"
+
+        Examples:
+        | data            | time_1 | data_input                             | objective | prediction  |
+        | data/dates2.csv | 30     | {"time-1": "1910-05-08T19:10:23.106", "cat-0":"cat2"}  | 000002    | -1.01482    |
+        | data/dates2.csv | 30     | {"time-1": "1920-06-30T20:21:20.320", "cat-0":"cat1"}  | 000002    | 0.78406    |
+        | data/dates2.csv | 30     | {"time-1": "1932-01-30T19:24:11.440",  "cat-0":"cat2"}  | 000002    | -0.98757    |
+        | data/dates2.csv | 30     | {"time-1": "1950-11-06T05:34:05.252", "cat-0":"cat1"}  | 000002    | 0.27538    |
+        | data/dates2.csv | 30     | {"time-1": "1969-7-14 17:36", "cat-0":"cat2"}  | 000002    | -0.06256    |
+        | data/dates2.csv | 30     | {"time-1": "2001-01-05T23:04:04.693", "cat-0":"cat2"}  | 000002    | 0.9832    |
+        | data/dates2.csv | 30     | {"time-1": "2011-04-01T00:16:45.747", "cat-0":"cat2"}  | 000002    | -0.5977    |
+        | data/dates2.csv | 30     | {"time-1": "1969-W29-1T17:36:39Z", "cat-0":"cat1"}  | 000002    | -0.06256    |
+        | data/dates2.csv | 30     | {"time-1": "Mon Jul 14 17:36 +0000 1969", "cat-0":"cat1"}  | 000002    | -0.06256    |

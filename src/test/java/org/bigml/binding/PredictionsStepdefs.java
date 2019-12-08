@@ -296,6 +296,19 @@ public class PredictionsStepdefs {
         context.localPrediction = prediction;
     }
     
+    @When("^I create a local prediction with ensemble for \"(.*)\"$")
+    public void I_create_a_local_prediction_with_ensemble(
+	        String inputData) throws Exception {
+
+        JSONObject data = (JSONObject) JSONValue.parse(inputData);
+	    HashMap<String, Object> prediction = context.localEnsemble
+                .predict(data, null, null, null,
+                        null, null, false, true);
+
+        context.localPrediction = prediction;
+    }
+
+
     @Then("^the local ensemble prediction is \"([^\"]*)\"$")
     public void the_local_ensemble_prediction_is(String prediction) 
     		throws Throwable {
@@ -304,11 +317,11 @@ public class PredictionsStepdefs {
     	} else {
     		double result = (Double) context.localPrediction.get("prediction");
     		double expected = Double.parseDouble(prediction);
-    		assertTrue(expected == Utils.roundOff(result, 5));
+            assertEquals(expected, result, 0.00001);
     	}
     }
     
-    
+
     @Then("^the local ensemble confidence is (.*)$")
     public void the_local_ensemble_confidence_is(Double expectedConfidence) 
     		throws Throwable {
@@ -393,7 +406,7 @@ public class PredictionsStepdefs {
     public void the_logisticregression_probability_for_the_prediction_is(double probability) 
     		throws Throwable {
     	Double prob =  (Double) context.prediction.get("probability");
-    	assert(Utils.roundOff(prob, 4) == Utils.roundOff(probability, 4));
+        assertEquals(prob, probability, 0.0001);
     	
     }
 
@@ -407,7 +420,7 @@ public class PredictionsStepdefs {
     public void the_local_logistic_regression_probability_for_the_prediction_is(double probability) 
     		throws Throwable {
     	Double prob =  (Double) context.localPrediction.get("probability");
-    	assert(Utils.roundOff(prob, 4) == Utils.roundOff(probability, 4));
+        assertEquals(prob, probability, 0.0001);
     }
 
     
@@ -526,7 +539,7 @@ public class PredictionsStepdefs {
     	} else {
     		double result = (Double) context.localPrediction.get("probability");
     		double expected = Double.parseDouble(prediction);
-    		assertTrue(Utils.roundOff(expected,4) == Utils.roundOff(result, 4));
+            assertEquals(expected, result, 0.0001);
     	}
     	
     }

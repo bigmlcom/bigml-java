@@ -25,6 +25,19 @@ public class DeepnetsStepdefs {
         
     	JSONObject args = (JSONObject) JSONValue.parse(params);
         args.put("objective_field", objective);
+
+        commonSteps.I_create_a_resource_from_a_dataset_with(
+            "deepnet", args.toString());
+    }
+
+    @Given("^I create a deepnet$")
+    public void I_create_a_deepnet() throws Throwable {
+
+	    JSONObject args = new JSONObject();
+        args.put("suggest_structure", false);
+        args.put("max_iterations", 100);
+        args.put("deepnet_seed", "bigml");
+
     	commonSteps.I_create_a_resource_from_a_dataset_with(
     		"deepnet", args.toString());
     }

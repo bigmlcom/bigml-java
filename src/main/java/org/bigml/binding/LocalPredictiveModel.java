@@ -116,8 +116,9 @@ public class LocalPredictiveModel extends ModelFields
             if (Utils.getJSONObject(model, "model.model_fields") != null) {
                 fields = (JSONObject) Utils.getJSONObject(model, "model.model_fields");
 
-                JSONObject modelFields = (JSONObject) Utils.getJSONObject(
+                modelFields = (JSONObject) Utils.getJSONObject(
                         model, "model.fields");
+
                 Iterator iter = fields.keySet().iterator();
                 while (iter.hasNext()) {
                     String key = (String) iter.next();

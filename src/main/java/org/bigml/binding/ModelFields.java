@@ -1,6 +1,7 @@
 package org.bigml.binding;
 
 import org.apache.commons.text.StringEscapeUtils;
+import org.bigml.binding.utils.Chronos;
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -8,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -53,6 +56,7 @@ public abstract class ModelFields implements Serializable {
 
 	protected List<String> missingTokens;
 	protected JSONObject fields = null;
+	protected JSONObject modelFields = null;
 	protected JSONObject invertedFields = null;
 	protected String dataLocale = null;
 
@@ -349,6 +353,142 @@ public abstract class ModelFields implements Serializable {
 	}
 
 	/**
+	 * From a dictionary of fields, returns another dictionary
+	 * with the subfields from each datetime field
+	 */
+	private Map<String, JSONArray> getDatetimeFormats() {
+		JSONObject fields = this.fields;
+		if (this.modelFields != null) {
+			fields = this.modelFields;
+		}
+
+		Map<String, JSONArray> formats = new HashMap<String, JSONArray>();
+		for (Object fieldId : fields.keySet()) {
+            JSONObject field = (JSONObject) fields.get(fieldId);
+            String optype = (String) Utils.getJSONObject(field, "optype");
+
+            if ("datetime".equals(optype)) {
+                formats.put(
+                   (String) field.get("name"), (JSONArray) Utils.getJSONObject(field, "time_formats"));
+            }
+		}
+
+        return formats;
+	}
+
+
+	/**
+	 * From a dictionary of fields, returns another dictionary
+	 * with the subfields from each datetime field
+	 */
+	private Map<String, JSONObject> getDatetimeSubfields(JSONObject fields) {
+		Map<String, JSONObject> subfields = new HashMap<String, JSONObject>();
+
+		for (Object fieldId : fields.keySet()) {
+            JSONObject field = (JSONObject) fields.get(fieldId);
+            String optype = (String) Utils.getJSONObject(field, "parent_optype");
+            if ("datetime".equals(optype)) {
+                String fid = (String) Utils.getJSONObject(field, "fieldID");
+                String datatype = (String) Utils.getJSONObject(field, "datatype");
+                String parentId = (String) ((JSONArray) field.get("parent_ids")).get(0);
+                String parentName = (String) Utils.getJSONObject(fields, parentId + ".name");
+	            if (parentName == null) {
+                    parentName = (String) Utils.getJSONObject(modelFields, parentId + ".name");
+                }
+
+	            JSONObject subfield = new JSONObject();
+	            subfield.put(fid, datatype);
+
+	            if (subfields.containsKey(parentName)) {
+	                JSONObject sub = (JSONObject) subfields.get(parentName);
+                    sub.putAll(subfield);
+	            } else {
+                    subfields.put(parentName, subfield);
+	            }
+            }
+		}
+
+		return subfields;
+	}
+
+
+	/**
+	 * Retrieves all the values of the subfields from a given date
+	 */
+	private Map<String, Integer> expandDate(Object date, JSONObject subfields, JSONArray formats) {
+		Map<String, Integer> expanded = new HashMap<String, Integer>();
+
+		GregorianCalendar cal = new GregorianCalendar();
+		try {
+			Date parsedDate = Chronos.parse((String) date, formats);
+			if (parsedDate == null) {
+				return expanded;
+			}
+			cal.setTime(parsedDate);
+		} catch (Exception e) {
+			return expanded;
+		}
+
+		for (Object key : subfields.keySet()) {
+			String fieldId = (String) key;
+			String datePeriod = (String) subfields.get(fieldId);
+
+			HashMap<String, Integer> dateTypes = new HashMap<String, Integer>();
+			dateTypes.put("era", Calendar.ERA);
+			dateTypes.put("year", Calendar.YEAR);
+			dateTypes.put("month", Calendar.MONTH);
+			dateTypes.put("day-of-month", Calendar.DAY_OF_MONTH);
+			dateTypes.put("day-of-week", Calendar.DAY_OF_WEEK);
+			dateTypes.put("week-of-month", Calendar.WEEK_OF_MONTH);
+			dateTypes.put("day-of-week-in-month", Calendar.DAY_OF_WEEK_IN_MONTH);
+			dateTypes.put("am-pm", Calendar.AM_PM);
+			dateTypes.put("hour", Calendar.HOUR_OF_DAY);
+			dateTypes.put("hour-of-day", Calendar.HOUR_OF_DAY);
+			dateTypes.put("minute", Calendar.MINUTE);
+			dateTypes.put("second", Calendar.SECOND);
+			dateTypes.put("millisecond", Calendar.MILLISECOND);
+
+			Integer value = cal.get(dateTypes.get(datePeriod));
+			if ("month".equals(datePeriod)) {
+				value += 1;
+			}
+			if ("day-of-week".equals(datePeriod)) {
+				value = (value == 1 ? 7 : value-1);
+			}
+
+			expanded.put(fieldId, value);
+		}
+
+		return expanded;
+	}
+
+
+	/**
+	 * Returns the values for all the subfields from all the datetime
+	 * fields in input_data.
+	 *
+	 * @param input_data
+	 * @return
+	 */
+	protected Map<String, Object> expandDatetimeFields(JSONObject inputData) {
+		Map<String, Object> expanded = new HashMap<String, Object>();
+		Map<String, JSONArray> timeFormats = getDatetimeFormats();
+		Map<String, JSONObject> subfields = getDatetimeSubfields(this.fields);
+
+		for (Object nameObj : inputData.keySet()) {
+			String name = (String) nameObj;
+			Object date = inputData.get(name);
+			if (subfields.containsKey(name)) {
+				JSONArray formats = timeFormats.get(name);
+				expanded.putAll(expandDate(date, subfields.get(name), formats));
+			}
+		}
+
+		return expanded;
+	}
+
+
+	/**
 	 * Filters the keys given in input_data checking against model fields.
 	 * 
 	 * If `addUnusedFields` is set to True, it also provides information about
@@ -363,6 +503,8 @@ public abstract class ModelFields implements Serializable {
 		if (addUnusedFields == null) {
 			addUnusedFields = false;
 		}
+
+		Map<String, Object> datetimeFields = expandDatetimeFields(inputData);
 
 		// remove all missing values
 		Iterator<String> fieldIdItr = inputData.keySet().iterator();
@@ -386,11 +528,28 @@ public abstract class ModelFields implements Serializable {
 
 			if (fieldsId.contains(fieldId) && (objectiveFieldId == null
 					|| !fieldId.equals(objectiveFieldId))) {
-				newInputData.put(fieldId, value);
+
+				String optype = (String) Utils.getJSONObject(this.fields, fieldId + ".optype");
+				if (!"datetime".equals(optype)) {
+					newInputData.put(fieldId, value);
+				} else {
+					unusedFields.add((String) fieldId);
+				}
 			} else {
 				unusedFields.add((String) fieldId);
 			}
 		}
+
+		// Add the expanded dates in date_fields to the input_data
+	    // provided by the user (only if the user didn't specify it)
+		for (Object nameObj : datetimeFields.keySet()) {
+			String name = (String) nameObj;
+			Integer value = (Integer) datetimeFields.get(name);
+			if (!newInputData.containsKey(name)) {
+				newInputData.put(name, value);
+			}
+		}
+
 
 		JSONObject result = new JSONObject();
 		result.put("newInputData", newInputData);

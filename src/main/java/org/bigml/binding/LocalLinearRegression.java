@@ -394,8 +394,12 @@ public class LocalLinearRegression extends ModelFields {
             if ("numeric".equals(optType)) {
                 Double value = 0.0;
                 if (inputData.keySet().contains(fieldId)) {
-                    value = ((Number) Utils.getJSONObject(inputData, fieldId,
-                            0)).doubleValue();
+                    if (inputData.get(fieldId) instanceof Integer) {
+						value = ((Integer) inputData.get(fieldId)).doubleValue();
+					} else {
+						value = ((Number) Utils.getJSONObject(inputData, fieldId,
+							0)).doubleValue();
+					}
                 } else {
                     missings = true;
                     value = 0.0;
@@ -477,11 +481,6 @@ public class LocalLinearRegression extends ModelFields {
 
         // Strips affixes for numeric values and casts to the final field type
         Utils.cast(inputData, fields);
-
-        // In case that the training data has no missings, input data shouldn't
-        Utils.checkNoTrainingMissings(
-                inputData, this.fields, this.weightField,
-                this.objectiveField);
 
         // Computes text and categorical field expansion
         Map<String, Object> uniqueTerms = uniqueTerms(inputData);
