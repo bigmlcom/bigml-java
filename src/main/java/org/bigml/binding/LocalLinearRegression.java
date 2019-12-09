@@ -394,12 +394,8 @@ public class LocalLinearRegression extends ModelFields {
             if ("numeric".equals(optType)) {
                 Double value = 0.0;
                 if (inputData.keySet().contains(fieldId)) {
-                    if (inputData.get(fieldId) instanceof Integer) {
-						value = ((Integer) inputData.get(fieldId)).doubleValue();
-					} else {
-						value = ((Number) Utils.getJSONObject(inputData, fieldId,
+                    value = ((Number) Utils.getJSONObject(inputData, fieldId,
 							0)).doubleValue();
-					}
                 } else {
                     missings = true;
                     value = 0.0;
