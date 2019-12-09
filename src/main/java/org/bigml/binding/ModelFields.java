@@ -9,8 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -390,7 +388,11 @@ public abstract class ModelFields implements Serializable {
             if ("datetime".equals(optype)) {
                 String fid = (String) Utils.getJSONObject(field, "fieldID");
                 String datatype = (String) Utils.getJSONObject(field, "datatype");
-                String parentId = (String) ((JSONArray) field.get("parent_ids")).get(0);
+                JSONArray parentIds = (JSONArray) field.get("parent_ids");
+                if (parentIds == null || parentIds.size() == 0) {
+                    continue;
+                }
+                String parentId = (String) parentIds.get(0);
                 String parentName = (String) Utils.getJSONObject(fields, parentId + ".name");
 	            if (parentName == null) {
                     parentName = (String) Utils.getJSONObject(modelFields, parentId + ".name");
