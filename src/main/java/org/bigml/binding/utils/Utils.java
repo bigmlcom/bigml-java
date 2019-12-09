@@ -294,6 +294,14 @@ public class Utils {
      *
      */
     public static Object getJSONObject(JSONObject json, String path) {
+        return getJSONObject(json, path, null);
+    }
+
+    /**
+     * Returns JSONObject child.
+     *
+     */
+    public static Object getJSONObject(JSONObject json, String path, Object defaultValue) {
         String field = path;
         if (path.indexOf(".") != -1) {
             field = path.substring(0, path.indexOf("."));
@@ -320,7 +328,7 @@ public class Utils {
         json = (JSONObject) json.get(field);
 
         if (json == null) {
-            return null;
+            return defaultValue;
         }
 
         if (path.indexOf(".") == -1) {
@@ -329,10 +337,10 @@ public class Utils {
 
         path = path.substring(path.indexOf(".") + 1, path.length());
         if (path.length() > 0) {
-            return getJSONObject(json, path);
+            return getJSONObject(json, path, defaultValue);
         }
 
-        return null;
+        return defaultValue;
     }
 
     private static <T1, T2> T1 cast(T2 o, T1 d) {
@@ -371,48 +379,6 @@ public class Utils {
       return getFromJSONOr(json, key, new JSONObject());
     }
 
-    /**
-     * Returns JSONObject child.
-     *
-     */
-    public static Object getJSONObject(JSONObject json, String path, Object defaultValue) {
-        String field = path;
-        if (path.indexOf(".") != -1) {
-            field = path.substring(0, path.indexOf("."));
-        }
-
-        if (json.get(field) instanceof JSONArray) {
-            return json.get(field);
-        }
-        if (json.get(field) instanceof String) {
-            return json.get(field);
-        }
-        if (json.get(field) instanceof Long) {
-            return json.get(field);
-        }
-        if (json.get(field) instanceof Double) {
-            return json.get(field);
-        }
-        if (json.get(field) instanceof Boolean) {
-            return json.get(field);
-        }
-        json = (JSONObject) json.get(field);
-
-        if (json == null) {
-            return defaultValue;
-        }
-
-        if (path.indexOf(".") == -1) {
-            return json;
-        }
-
-        path = path.substring(path.indexOf(".") + 1, path.length());
-        if (path.length() > 0) {
-            return getJSONObject(json, path, defaultValue);
-        }
-
-        return defaultValue;
-    }
 
     /**
      * Inverts a dictionary changing keys per values
