@@ -295,6 +295,7 @@ public abstract class AbstractResource {
         return ((String) resource.get("resource")).matches(this.resourceRe);
     }
 
+
     /**
      * Create a new resource.
      */
@@ -319,6 +320,7 @@ public abstract class AbstractResource {
                 location = connection.getHeaderField(location);
                 resource = (JSONObject) JSONValue.parse(Utils
                         .inputStreamAsString(connection.getInputStream(), "UTF-8"));
+
                 resourceId = (String) resource.get("resource");
                 error = new JSONObject();
             } else {
@@ -337,7 +339,8 @@ public abstract class AbstractResource {
         }
 
         // Cache the resource if the resource if ready
-        if( cacheManager != null && resource != null && isResourceReady(resource)) {
+        if( cacheManager != null && resource != null &&
+                resourceId != null && isResourceReady(resource)) {
             cacheManager.put(resourceId, null, resource);
         }
 

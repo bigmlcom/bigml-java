@@ -1,5 +1,11 @@
 # Changes in the BigML.io Java bindings
 
+## 1.8.13 version
+
+### Bugs
+
+* Fixed bug creating remote predictions with ephemeral=true
+
 
 ## 1.8.12 version
 

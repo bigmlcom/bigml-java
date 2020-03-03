@@ -36,7 +36,7 @@ To use the latest stable release, include the following `maven` dependency in yo
     <dependency>
         <groupId>org.bigml</groupId>
         <artifactId>bigml-binding</artifactId>
-        <version>1.8.12</version>
+        <version>1.8.13</version>
     </dependency>
 
 You can also download the development version of the bindings directly from the Git repository
