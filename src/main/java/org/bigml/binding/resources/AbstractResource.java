@@ -66,7 +66,7 @@ public abstract class AbstractResource {
     public final static String PROJECTION_PATH = "projection";
     public final static String BATCH_PROJECTION_PATH = "batchprojection";
     public final static String LINEARREGRESSION_PATH = "linearregression";
-    
+
     // Base Resource regular expressions
     static String SOURCE_RE = "^" + SOURCE_PATH + "/[a-f,0-9]{24}$";
     static String DATASET_RE = "^(public/|)" + DATASET_PATH
@@ -214,17 +214,17 @@ public abstract class AbstractResource {
         STATUSES.put(UNKNOWN, "UNKNOWN");
         STATUSES.put(RUNNABLE, "RUNNABLE");
     }
-    
+
     protected BigMLClient bigmlClient;
-    
+
     protected String bigmlUser;
     protected String bigmlApiKey;
     protected String bigmlDomain;
     protected String bigmlAuth;
-    
+
     protected String project;
     protected String organization;
-    
+
     protected String resourceRe;
     protected String resourceUrl;
     protected String resourceName;
@@ -235,8 +235,8 @@ public abstract class AbstractResource {
     public final static String DOWNLOAD_DIR = "/download";
 
     public CacheManager cacheManager;
-    
-    
+
+
     protected void init(String apiUser,
 						String apiKey,
 						String project,
@@ -244,11 +244,11 @@ public abstract class AbstractResource {
 						CacheManager cacheManager,
 						String resourceRe,
 						String resourcePath) {
-			
-		init(null, apiUser, apiKey, project, organization, cacheManager, 
+
+		init(null, apiUser, apiKey, project, organization, cacheManager,
 			resourceRe, resourcePath);
 	}
-    
+
     protected void init(BigMLClient bigmlClient,
     					String apiUser,
     					String apiKey,
@@ -266,18 +266,18 @@ public abstract class AbstractResource {
 	                .getProperty("BIGML_API_KEY");
 	        bigmlAuth = "?username=" + this.bigmlUser + ";api_key="
 	                + this.bigmlApiKey + ";";
-	        
+
 	        if (project != null) {
 	        	this.project = project;
-	        	bigmlAuth += ";project=" + this.project;
+	        	bigmlAuth += "project=" + this.project + ";";
 	        }
 	        if (organization != null) {
 	        	this.organization = organization;
-	        	bigmlAuth += ";organization=" + this.organization;
+	        	bigmlAuth += "organization=" + this.organization + ";";
 	        }
-	        
+
 	        BIGML_URL = this.bigmlClient.getBigMLUrl();
-	        
+
 	        this.cacheManager = cacheManager;
 	        this.resourceRe = resourceRe;
 	        this.resourceUrl = BIGML_URL + resourcePath;
@@ -1049,12 +1049,12 @@ public abstract class AbstractResource {
         result.put("csv", csv);
         return result;
     }
-    
+
     /**
      * Waits for the resource to be finished
-     * 
+     *
      */
-    protected void waitForResource(String resourceId, String isReadyMethod, 
+    protected void waitForResource(String resourceId, String isReadyMethod,
     			Integer waitTime, Integer retries) {
     		waitTime = waitTime != null ? waitTime : 3000;
         retries = retries != null ? retries : 10;
@@ -1062,10 +1062,10 @@ public abstract class AbstractResource {
         try {
         		method = this.bigmlClient.getClass().getMethod(
         				isReadyMethod, String.class);
-        		
+
 	        if (waitTime > 0) {
 	            int count = 0;
-	            Boolean isReady = (Boolean) 
+	            Boolean isReady = (Boolean)
 	            		method.invoke(this.bigmlClient, resourceId);
 	            while (count < retries && !isReady) {
 	                Thread.sleep(waitTime);
