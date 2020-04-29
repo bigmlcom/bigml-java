@@ -1,5 +1,12 @@
 # Changes in the BigML.io Java bindings
 
+## 1.8.14 version
+
+### Bugs
+
+* Fix bigmlAuth should consistently have trailing ; char
+
+
 ## 1.8.13 version
 
 ### Bugs
