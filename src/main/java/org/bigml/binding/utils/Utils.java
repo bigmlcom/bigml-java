@@ -64,6 +64,8 @@ public class Utils {
     private static SSLSocketFactory sslSocketFactory;
 
     private static Random random = new Random(System.currentTimeMillis());
+    
+    private static Integer DECIMAL_DIGITS = 5;
 
     // Map operator str to its corresponding java operator
     static HashMap<String, Class> JAVA_TYPE_MAP = new HashMap<String, Class>();
@@ -524,6 +526,11 @@ public class Utils {
                                     "\"%s\" for value %s.", field.get("name"), value.toString()));
                 }
             }
+            
+            if ("numeric".equals(optType)) {
+            	value = Utils.roundOff(((Number) value).floatValue(), DECIMAL_DIGITS);
+            }
+            
         }
 
 //        return inputData;

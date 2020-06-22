@@ -25,7 +25,8 @@ public class AnomalyTree {
 
     private String id;
     private String objectiveFieldId;
-
+    
+    private Double weight;
     private List<AnomalyTree> children;
 
     public AnomalyTree(JSONObject tree, String objectiveFieldId, JSONObject fields) {
@@ -62,6 +63,11 @@ public class AnomalyTree {
                 children.add(new AnomalyTree((JSONObject) treeChild, objectiveFieldId, fields));
             }
         }
+        
+        if (tree.get("weight") != null) {
+        	this.weight = ((Number) tree.get("weight")).doubleValue();
+        }
+        
     }
 
     public boolean apply(JSONObject inputData) {
@@ -111,7 +117,8 @@ public class AnomalyTree {
         if( path == null ) {
             path = new ArrayList<String>();
         }
-
+        
+        /*
         // root node: if predicates are met, depth becomes 1, otherwise is 0
         if( depth == 0 ) {
             if( !this.apply(inputData) ) {
@@ -119,13 +126,24 @@ public class AnomalyTree {
             }
 
             depth++;
+        }*/
+        
+        Double weight = 1.0;
+        if ( this.weight != null ) {
+        	weight = this.weight;
         }
-
+        
+        // root node: if predicates are met, depth becomes 1, otherwise is 0
+        if( !this.apply(inputData) ) {
+            return new AnomalyDepth(path, depth);
+        }
+        depth += weight;
+        
         if( this.children != null ) {
             for (AnomalyTree child : this.children) {
                 if( child.apply(inputData) ) {
                     path.add(child.toRule());
-                    return child.depth(inputData, path, depth+1);
+                    return child.depth(inputData, path, depth);
                 }
             }
         }
