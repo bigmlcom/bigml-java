@@ -66,6 +66,7 @@ public abstract class AbstractResource {
     public final static String PROJECTION_PATH = "projection";
     public final static String BATCH_PROJECTION_PATH = "batchprojection";
     public final static String LINEARREGRESSION_PATH = "linearregression";
+    public final static String EXTERNALCONNECTOR_PATH = "externalconnector";
 
     // Base Resource regular expressions
     static String SOURCE_RE = "^" + SOURCE_PATH + "/[a-f,0-9]{24}$";
@@ -170,6 +171,8 @@ public abstract class AbstractResource {
     static String LINEARREGRESSION_RE = "^" + LINEARREGRESSION_PATH
             + "/[a-f,0-9]{24}$|^shared/" + LINEARREGRESSION_PATH
     		+ "/[a-zA-Z0-9]{26,27}$";
+    static String EXTERNALCONNECTOR_RE = "^" + EXTERNALCONNECTOR_PATH
+            + "/[a-f,0-9]{24}$|" + LINEARREGRESSION_PATH;
 
     // HTTP Status Codes from https://bigml.com/api/status_codes
     public static int HTTP_OK = 200;

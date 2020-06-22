@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -41,6 +40,7 @@ public class CommonStepdefs {
 		RES_NAMES.put("topic model", "topicModel");
 		RES_NAMES.put("statisticaltest", "statisticalTest");
 		RES_NAMES.put("batch projection", "batchProjection");
+		RES_NAMES.put("externalconnector", "externalConnector");
 	}
 
 	// Logging
@@ -147,7 +147,7 @@ public class CommonStepdefs {
 	
 	
 	@Given("^I create a (configuration|project) with \"(.*)\"$")
-    public void I_create_a_resource_with_(String resourceName, String args)
+	public void I_create_a_resource_with_(String resourceName, String args)
         throws AuthenticationException, Exception {
 
         JSONObject argsJSON = (JSONObject) JSONValue.parse(args);
