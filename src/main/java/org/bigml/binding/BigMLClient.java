@@ -91,6 +91,7 @@ public class BigMLClient {
     private Projection projection;
     private BatchProjection batchProjection;
     private LinearRegression linearRegression;
+    private ExternalConnector externalConnector;
 
     private Properties props;
     private String storage;
@@ -406,6 +407,8 @@ public class BigMLClient {
         batchProjection = new BatchProjection(this, this.bigmlUser, this.bigmlApiKey, 
         		this.projectId, this.organizationId, cacheManager);
         linearRegression = new LinearRegression(this, this.bigmlUser, this.bigmlApiKey, 
+        		this.projectId, this.organizationId, cacheManager);
+        externalConnector = new ExternalConnector(this, this.bigmlUser, this.bigmlApiKey, 
         		this.projectId, this.organizationId, cacheManager);
     }
 
@@ -7975,6 +7978,186 @@ public class BigMLClient {
      */
     public JSONObject deleteBatchProjection(final JSONObject batchProjectionJSON) {
         return batchProjection.delete(batchProjectionJSON);
+    }
+    
+    
+    // ################################################################
+    // #
+    // # ExternalConnectors
+    // # https://bigml.com/api/externalconnectors
+    // #
+    // ################################################################
+
+    /**
+     * Creates a new external connector.
+     *
+     * POST /andromeda/externalconnector?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param source
+     *            the name of the external data source to connect to.
+     * @param connectionInfo
+     *            a map containing the connection information.
+     * @param args
+     *            set of parameters for the new external connector. Optional
+     * @param waitTime
+     *            time to wait for next check of FINISHED status for dataset
+     *            before to start to create the externalc onnector. Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     *
+     */
+    public JSONObject createExternalConnector(final String source, 
+    		final Map connectionInfo, JSONObject args, Integer waitTime,
+    		Integer retries) {
+
+        return externalConnector.create(source, connectionInfo, args, waitTime, retries);
+    }
+
+    /**
+     * Retrieves an external connector.
+     *
+     * An external connector is an evolving object that is processed until it 
+     * reaches the FINISHED or FAULTY state, the method will return a JSONObject 
+     * that encloses the external connector values and state info available at 
+     * the time it is called.
+     *
+     * GET
+     * /andromeda/externalconnector/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io
+     *
+     * @param externalconnectorId
+     *            a unique identifier in the form externalconnector/id where id 
+     *            is a string of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject getExternalConnector(final String externalConnectorId) {
+        return externalConnector.get(externalConnectorId);
+    }
+
+    /**
+     * Retrieves an external connector.
+     *
+     * An external connector is an evolving object that is processed until it 
+     * reaches the FINISHED or FAULTY state, the method will return a JSONObject 
+     * that encloses the external connector values and state info available at 
+     * the time it is called.
+     *
+     * GET
+     * /andromeda/externalconnector/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io
+     *
+     * @param externalConnectorJSON
+     *            an external connector JSONObject.
+     *
+     */
+    public JSONObject getExternalConnector(final JSONObject externalConnectorJSON) {
+        return externalConnector.get(externalConnectorJSON);
+    }
+
+    /**
+     * Check whether am external connector's status is FINISHED.
+     *
+     * @param externalConnectorId
+     *            a unique identifier in the form externalConnector/id where 
+     *            id is a string of 24 alpha-numeric chars.
+     *
+     */
+    public boolean externalConnectorIsReady(final String externalConnectorId) {
+        return externalConnector.isReady(externalConnectorId);
+    }
+
+    /**
+     * Check whether an external connector's status is FINISHED.
+     *
+     * @param externalConnectorJSON
+     *            an externalConnector JSONObject.
+     *
+     */
+    public boolean externalConnectorIsReady(final JSONObject externalConnectorJSON) {
+        return externalConnector.isReady(externalConnectorJSON);
+    }
+
+    /**
+     * Lists all your external connectors.
+     *
+     * GET /andromeda/externalconnector?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * Host: bigml.io
+     *
+     * @param queryString
+     *            query filtering the listing.
+     *
+     */
+    public JSONObject listExternalConnectors(final String queryString) {
+        return externalConnector.list(queryString);
+    }
+
+    /**
+     * Updates an external connector.
+     *
+     * PUT
+     * /andromeda/externalconnector/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param externalConnectorId
+     *            a unique identifier in the form externalconnector/id where id 
+     *            is a string of 24 alpha-numeric chars.
+     * @param changes
+     *            set of parameters to update the external connector. Optional
+     *
+     */
+    public JSONObject updateExternalConnector(
+        final String externalConnectorId, final String changes) {
+        return externalConnector.update(externalConnectorId, changes);
+    }
+
+    /**
+     * Updates anexternal connector.
+     *
+     * PUT
+     * /andromeda/externalconnector/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
+     *
+     * @param externalConnectorJSON
+     *            an external connector JSONObject
+     * @param changes
+     *            set of parameters to update the external connector. Optional
+     */
+    public JSONObject updateExternalConnector(
+            final JSONObject externalConnectorJSON, final JSONObject changes) {
+        return externalConnector.update(externalConnectorJSON, changes);
+    }
+
+    /**
+     * Deletes an externalconnector.
+     *
+     * DELETE
+     * /andromeda/externalconnector/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1
+     *
+     * @param externalConnectorId
+     *            a unique identifier in the form externalconnector/id where id
+     *            is a string of 24 alpha-numeric chars.
+     *
+     */
+    public JSONObject deleteexternalConnector(final String externalConnectorId) {
+        return externalConnector.delete(externalConnectorId);
+    }
+
+    /**
+     * Deletes an external connector.
+     *
+     * DELETE
+     * /andromeda/externalconnector/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1
+     *
+     * @param externalConnectorJSON
+     *            an external connector JSONObject.
+     *
+     */
+    public JSONObject deleteExternalConnector(
+            final JSONObject externalConnectorJSON) {
+        return externalConnector.delete(externalConnectorJSON);
     }
     
 }

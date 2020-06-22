@@ -30,6 +30,7 @@ import cucumber.junit.Cucumber;
         "src/test/resources/test_dataset.feature",
         "src/test/resources/test_ensemble.feature",
         "src/test/resources/test_evaluation.feature",
+        "src/test/resources/test_externalconnector.feature",
         "src/test/resources/test_linearregression.feature",
         "src/test/resources/test_local_anomaly.feature",
         "src/test/resources/test_local_association.feature",

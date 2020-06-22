@@ -2,6 +2,8 @@
 
 ## 1.8.15 version
 
+* Adding REST methods to manage external data connections.
+
 ### Bugs
 
 * Accept null as valid value in predicate subsets

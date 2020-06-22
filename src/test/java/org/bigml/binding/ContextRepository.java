@@ -55,6 +55,7 @@ public class ContextRepository {
     JSONObject pca = null;
     JSONObject projection = null;
     JSONObject batchProjection = null;
+    JSONObject externalConnector = null;
     
     JSONArray models = null;
     JSONArray anomalies = null;
@@ -433,5 +434,13 @@ public class ContextRepository {
 
     public void setBatchProjection(JSONObject batchProjection) {
         this.batchProjection = batchProjection;
+    }
+    
+    public JSONObject getExternalConnector() {
+        return this.externalConnector;
+    }
+
+    public void setExternalConnector(JSONObject externalConnector) {
+        this.externalConnector = externalConnector;
     }
 }
