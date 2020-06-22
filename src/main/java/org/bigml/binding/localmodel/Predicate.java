@@ -28,9 +28,9 @@ public class Predicate {
         PSEUDOCODE, JAVA, PYTHON, TABLEAU
     }
 
-    /**
-     * Constructor
-     */
+	/**
+	 * Constructor
+	 */
     public Predicate(final String opType, final String operator,
             final String field, final Object value, final String term) {
         super();
@@ -45,6 +45,10 @@ public class Predicate {
         if( this.operator != null && this.operator.endsWith("*") ) {
             this.operator = this.operator.substring(0, this.operator.length() - 1);
             this.missing = true;
+        } else {
+        	if( this.opType != null && this.opType.equals("in") && this.value == null) {
+        		this.missing = true;
+        	}
         }
     }
 

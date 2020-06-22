@@ -1,5 +1,12 @@
 # Changes in the BigML.io Java bindings
 
+## 1.8.15 version
+
+### Bugs
+
+* Accept null as valid value in predicate subsets
+
+
 ## 1.8.14 version
 
 ### Bugs
