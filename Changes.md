@@ -6,6 +6,8 @@
 
 * Accept null as valid value in predicate subsets
 * Fixing corner case in local anomaly detectors trained with one row
+* Fixing local anomaly scores for new anomaly detectors with feedback and
+  setting the maximum input data precision to five digits.
 
 
 ## 1.8.14 version
