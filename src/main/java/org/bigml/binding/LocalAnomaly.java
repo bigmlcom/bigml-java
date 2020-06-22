@@ -87,10 +87,13 @@ public class LocalAnomaly extends ModelFields implements Serializable {
                     if (this.meanDepth == null || this.sampleSize == null) {
                         throw new Exception("The anomaly data is not complete. Score will not be available.");
                     } else {
-                        double defaultDepth = (
-                                2 * (0.5772156649 +
-                                        Math.log(this.sampleSize - 1) -
-                                        ((float) (this.sampleSize - 1) / this.sampleSize)));
+                    	double defaultDepth = this.meanDepth;
+                    	if (this.sampleSize != 1) {
+                    		defaultDepth = (
+                                    2 * (0.5772156649 +
+                                            Math.log(this.sampleSize - 1) -
+                                            ((float) (this.sampleSize - 1) / this.sampleSize)));
+                    	}
                         this.expectedMeanDepth = Math.min(this.meanDepth, defaultDepth);
                     }
 
@@ -143,6 +146,11 @@ public class LocalAnomaly extends ModelFields implements Serializable {
      * value between 0 and 1.
      */
     public double score(JSONObject inputData) {
+    	// Corner case with only one record
+    	if (this.sampleSize == 1) {
+        	return 1.0;
+        }
+
         // Checks and cleans input_data leaving the fields used in the model
         inputData = filterInputData(inputData);
 

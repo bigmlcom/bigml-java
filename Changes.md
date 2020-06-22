@@ -5,6 +5,7 @@
 ### Bugs
 
 * Accept null as valid value in predicate subsets
+* Fixing corner case in local anomaly detectors trained with one row
 
 
 ## 1.8.14 version
