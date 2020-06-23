@@ -112,4 +112,22 @@ public class SourcesStepdefs {
         commonSteps.the_resource_has_been_created_with_status(context.status);
     }
 
+    @Given("^I create a source from the external connector id$")
+    public void I_create_a_source_from_the_external_connector_id() throws Throwable {
+
+        JSONObject args = commonSteps.setProject(null);
+
+        JSONObject externalData = new JSONObject();
+        externalData.put("source", context.externalConnector.get("source"));
+        externalData.put("connection", context.externalConnector.get("connection"));
+
+        JSONObject resource = context.api.createExternalDataSource(
+            externalData, args);
+        context.status = (Integer) resource.get("code");
+        context.location = (String) resource.get("location");
+        context.source = (JSONObject) resource.get("object");
+
+        commonSteps.the_resource_has_been_created_with_status(context.status);
+    }
+
 }
