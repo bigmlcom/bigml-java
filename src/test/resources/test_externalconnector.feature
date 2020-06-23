@@ -5,6 +5,7 @@ Feature: ExternalConnector REST api calls
         And I wait until the externalconnector is ready less than <time_1> secs
         And I update the externalconnector with "<params>"
         And the externalconnector name is <new_name>
+        And I create a source from the external connector id
         And I delete the externalconnector
 
         Examples:

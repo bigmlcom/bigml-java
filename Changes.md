@@ -3,6 +3,8 @@
 ## 1.8.15 version
 
 * Adding REST methods to manage external data connections.
+* Adding support for creating sources from external data repositories
+(mysql, postgresql, sqlserver and elasticsearch).
 
 ### Bugs
 

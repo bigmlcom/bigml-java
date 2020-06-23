@@ -595,6 +595,21 @@ public class BigMLClient {
     }
 
     /**
+     * Creates a source using external data.
+     *
+     * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json;
+     *
+     * @param externalData
+     *            set of parameters to create the source.
+     *
+     */
+    public JSONObject createExternalDataSource(
+            final JSONObject externalData, final JSONObject args) {
+        return source.createExternalDataSource(externalData, args);
+    }
+
+    /**
      * Retrieves a remote source.
      *
      * GET /andromeda/source/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
