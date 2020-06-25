@@ -947,7 +947,7 @@ You can list resources with the appropriate api method:
     api.listScripts(null);
     api.listLibraries(null);
     api.listExecutions(null);
-    api.list_external_connectors();
+    api.listExternalConnectors();
 
 you will receive a dictionary with the following keys:
 
