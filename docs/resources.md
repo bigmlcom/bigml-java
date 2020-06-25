@@ -126,6 +126,32 @@ and you can use its project id to get, update or delete it:
 **Important**: Deleting a non-empty project will also delete **all resources**
 assigned to it, so please be extra-careful when using the ``api.deleteProject`` call.
 
+### External Connectors
+-----------------------
+
+
+To create an external connector to an existing database you need to use the
+``createExternalConnector`` method. The only two required parameters are the  the name of the external data source to connect to (allowed types are:
+``elasticsearch``, ``postgresql``, ``mysql``, ``sqlserver``) and the dictionary that contains the information needed to connect to the particular database/table. The attributes of the connection dictionary needed for the method to work will depend on the type of database used.
+
+For instance, you can create a connection to an ``Elasticsearch`` database
+hosted locally at port ``9200`` by calling:
+
+
+```
+    import org.bigml.binding.BigMLClient;
+    
+    // Create BigMLClient with the properties in binding.properties
+    BigMLClient api = new BigMLClient();
+
+    JSONObject connectionInfo = JSONValue.parse(
+        "{\"hosts\": [\"elasticsearch\"]}"
+    ); 
+    JSONObject externalConnector = api.createExternalConnector(
+        elasticsearch, connectionInfo);
+```
+
+
 
 ### Sources
 ------------
@@ -921,6 +947,7 @@ You can list resources with the appropriate api method:
     api.listScripts(null);
     api.listLibraries(null);
     api.listExecutions(null);
+    api.list_external_connectors();
 
 you will receive a dictionary with the following keys:
 
@@ -1049,6 +1076,7 @@ be ``HTTP_ACCEPTED`` if the resource can be updated without problems or one of t
     api.updateScript(script, args);
     api.updateLibrary(library, args);
     api.updateExecution(execution, args);
+    api.updateExternalConnector(externalConnector, args)
 ```
 
 Updates can change resource general properties, such as the ``name`` or
@@ -1131,6 +1159,7 @@ each type of resource.
     api.deleteScript(script);
     api.deleteLibrary(library);
     api.deleteExecution(execution);
+    api.deleteExternalConnector(externalConnector)
 ```
 
 Each of the calls above will return a dictionary with the following keys:
