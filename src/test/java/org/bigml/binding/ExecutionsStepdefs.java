@@ -61,7 +61,8 @@ public class ExecutionsStepdefs {
     public void the_script_id_is_correct_and_the_result_is(Long expectedResult) throws Throwable {
         assertEquals(context.script.get("resource"), context.execution.get("script"));
 
-        Long result = (Long) Utils.getJSONObject(context.execution, "execution.result");
+        Long result = ((Number) Utils.getJSONObject(
+        	context.execution, "execution.result")).longValue();
         assertEquals(expectedResult, result);
     }
     

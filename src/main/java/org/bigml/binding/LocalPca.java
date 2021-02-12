@@ -318,10 +318,10 @@ public class LocalPca extends ModelFields implements Serializable {
 			result.put("stdev", stddev);
 		} else {
 			if ("numeric".equals(optType)) {
-				Double mean = (Double) Utils.getJSONObject(field,
-						"summary.mean", 0);
-				Double stddev = (Double) Utils.getJSONObject(field,
-						"summary.standard_deviation", 0);
+				Double mean = ((Number) Utils.getJSONObject(field,
+						"summary.mean", 0)).doubleValue();
+				Double stddev = ((Number) Utils.getJSONObject(field,
+						"summary.standard_deviation", 0)).doubleValue();
 				result.put("mean", mean);
 				result.put("stdev", stddev);
 			} else {

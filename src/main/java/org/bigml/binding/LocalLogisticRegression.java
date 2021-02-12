@@ -677,10 +677,10 @@ public class LocalLogisticRegression extends ModelFields implements SupervisedMo
             if ("numeric".equals(field.get("optype"))) {
             	JSONObject summary = (JSONObject) field.get("summary");
             	
-            	Double mean = (Double) Utils.getJSONObject(
-            			summary, "mean", 0);
-            	Double stddev = (Double) Utils.getJSONObject(
-            			summary, "standard_deviation", 0);
+            	Double mean = ((Number) Utils.getJSONObject(
+            			summary, "mean", 0)).doubleValue();
+            	Double stddev = ((Number) Utils.getJSONObject(
+            			summary, "standard_deviation", 0)).doubleValue();
             	
             	// if stddev is not positive, we only substract the mean
             	double value = ((Number) inputData.get(fieldId)).doubleValue();

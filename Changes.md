@@ -1,5 +1,12 @@
 # Changes in the BigML.io Java bindings
 
+## 1.8.16 version
+
+### Bugs
+
+* Fixed bug parsing numeric values from models
+
+
 ## 1.8.15 version
 
 * Adding REST methods to manage external data connections.

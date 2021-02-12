@@ -183,16 +183,18 @@ public class LocalLinearRegression extends ModelFields {
                     }
                 }
 
-                this.numberOfParameters = (Long) Utils.getJSONObject(
-                        linearInfo, "number_of_parameters");
+                this.numberOfParameters = ((Number) Utils.getJSONObject(
+                        linearInfo, "number_of_parameters")).longValue();
 
                 stats = (JSONObject) Utils.getJSONObject(
                     linearInfo, "stats", new JSONObject());
 
                 if (stats != null && stats.containsKey("xtx_inverse")) {
                     this.invXtx = (JSONArray) Utils.getJSONObject(stats, "xtx_inverse");
-                    this.meanSquaredError = (Double) Utils.getJSONObject(stats, "mean_squared_error");
-                    this.numberOfSamples = (Long) Utils.getJSONObject(stats, "number_of_samples");
+                    this.meanSquaredError = ((Number) Utils.getJSONObject(
+                    	stats, "mean_squared_error")).doubleValue();
+                    this.numberOfSamples = ((Number) Utils.getJSONObject(
+                    		stats, "number_of_samples")).longValue();
 
                     // to be used in predictions
                     TDistribution tdist = new TDistribution(

@@ -143,7 +143,11 @@ public class LocalCluster extends ModelFields {
                 betweenSS = ((Number) Utils.getJSONObject(cluster, "clusters.between_ss")).doubleValue();
                 ratioSS = ((Number) Utils.getJSONObject(cluster, "clusters.ratio_ss")).doubleValue();
                 
-                criticalValue = (Long) Utils.getJSONObject(cluster, "critical_value");
+                if (Utils.getJSONObject(cluster, "critical_value") != null) {
+                	criticalValue = ((Number) Utils.getJSONObject(
+                			cluster, "critical_value")).longValue();
+                }
+
                 k = ((Long) cluster.get("k")).intValue();
                 scales = (JSONObject) cluster.get("scales");
                 

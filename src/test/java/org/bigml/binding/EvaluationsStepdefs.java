@@ -140,8 +140,8 @@ public class EvaluationsStepdefs {
 
     @Then("^the measured \"([^\"]*)\" is (\\d+)$")
     public void the_measured_is(String measure, float value) throws Throwable {
-        Long measureLong = (Long) Utils.getJSONObject(context.evaluation,
-                "result.model." + measure);
+        Long measureLong = ((Number) Utils.getJSONObject(context.evaluation,
+                "result.model." + measure)).longValue();
         assertTrue(measureLong.floatValue() == value);
     }
 
@@ -149,8 +149,8 @@ public class EvaluationsStepdefs {
     public void the_measured_is_equals_to(String measure, double value)
             throws Throwable {
     	
-        double measureLong = (Double) Utils.getJSONObject(context.evaluation,
-                "result.model." + measure);
+        double measureLong = ((Number) Utils.getJSONObject(context.evaluation,
+                "result.model." + measure)).doubleValue();
         
         assertEquals(measureLong, value, 0.00001);
     }
