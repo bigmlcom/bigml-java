@@ -528,7 +528,7 @@ public class Utils {
             }
             
             if ("numeric".equals(optType)) {
-            	value = Utils.roundOff(((Number) value).floatValue(), DECIMAL_DIGITS);
+            	value = Utils.roundOff(((Number) value).doubleValue(), DECIMAL_DIGITS);
             }
             
         }
