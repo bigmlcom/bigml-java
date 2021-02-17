@@ -32,7 +32,7 @@ import org.bigml.binding.utils.Utils;
  * JSONObject association 
  * 		= api.getAssociation("association/551aa203af447f5484000ec0");
  *
- * // A lightweight wrapper around an Association resurce LocalAssociation
+ * // A lightweight wrapper around an Association resource LocalAssociation
  * localAssociation = new LocalAssociation(association);
  *
  * // Get rules
@@ -96,6 +96,8 @@ public class LocalAssociation extends ModelFields implements Serializable {
         NO_ITEMS.add("categorical");
     }
     
+    private String defaultNumericValue = null;
+
 	private List<AssociationRule> rules;
 	private List<AssociationItem> items;
 	
@@ -108,7 +110,7 @@ public class LocalAssociation extends ModelFields implements Serializable {
 		
 		super(bigmlClient, association);
 		association = this.model;
- 		
+
 		if (association.containsKey("associations") && association.get("associations") instanceof Map) {
 			JSONObject status = (JSONObject) association.get("status");
 			if (status != null && status.containsKey("code")
@@ -118,6 +120,8 @@ public class LocalAssociation extends ModelFields implements Serializable {
                     Utils.getJSONObject(association, "associations");
 
 				super.initialize((JSONObject) associations.get("fields"), null, null, null);
+
+				this.defaultNumericValue = (String) association.get("default_numeric_value");
 
 				if (associations.get("rules") != null) {
 					rules = new ArrayList<AssociationRule>();

@@ -84,6 +84,8 @@ public class LocalLogisticRegression extends ModelFields implements SupervisedMo
 	private JSONObject fieldCodings;
 	private List<String> classNames = new ArrayList<String>();
 	private String weightField;
+	private String defaultNumericValue = null;
+
 	
 	public LocalLogisticRegression(JSONObject logistic) throws Exception {
         this(null, logistic);
@@ -141,6 +143,8 @@ public class LocalLogisticRegression extends ModelFields implements SupervisedMo
 				JSONObject fields = (JSONObject) Utils.getJSONObject(
 						logisticInfo, "fields", new JSONObject());
 				
+				this.defaultNumericValue = (String) logistic.get("default_numeric_value");
+
 				if (inputFields == null) {
 					inputFields = new JSONArray();
 					String[] inputFieldsArray = new String[fields.values().size()];

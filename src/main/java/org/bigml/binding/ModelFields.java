@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,6 +40,7 @@ public abstract class ModelFields implements Serializable {
 		FIELDS_PARENT.put("ensemble", "ensemble");
 		FIELDS_PARENT.put("deepnet", "deepnet");
 		FIELDS_PARENT.put("linearregression", "linear_regression");
+		FIELDS_PARENT.put("association", "associations");
 	}
 	
 	protected String modelId;
@@ -341,6 +343,38 @@ public abstract class ModelFields implements Serializable {
 	}
 
 	/**
+	 * Fills the value set as default for numeric missing fields if user
+	 * created the model with the default_numeric_value option
+	 */
+	public JSONObject fillNumericDefaults(JSONObject inputData) {
+		try {
+			Field objField = this.getClass().getDeclaredField("defaultNumericValue");
+			objField.setAccessible(true);
+			String value = (String) objField.get(this);
+
+			if (value != null) {
+				for (Object fieldId : fields.keySet()) {
+					JSONObject field = (JSONObject) fields.get(fieldId);
+					String optype = (String) Utils.getJSONObject(this.fields, fieldId + ".optype");
+
+					if ((this.modelFields ==null || this.modelFields.containsKey(fieldId)) &&
+						(this.objectiveFieldId == null || fieldId != this.objectiveFieldId) &&
+						"numeric".equals(optype) &&
+						inputData.get(fieldId) == null) {
+
+						double defaultValue = ((Number) Utils.getJSONObject(field,
+								"summary." + value, 0)).doubleValue();
+						inputData.put(fieldId, defaultValue);
+					}
+				}
+			}
+		} catch (Exception e) {}
+
+		return inputData;
+	}
+
+
+	/**
 	 * Filters the keys given in input_data checking against model fields.
 	 *
 	 * @param inputData
@@ -552,6 +586,8 @@ public abstract class ModelFields implements Serializable {
 			}
 		}
 
+		// We fill the input with the chosen default, if selected
+		newInputData = fillNumericDefaults(newInputData);
 
 		JSONObject result = new JSONObject();
 		result.put("newInputData", newInputData);

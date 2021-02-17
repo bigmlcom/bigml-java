@@ -170,7 +170,7 @@ public class CommonStepdefs {
     }
 	
 	
-	@Given("^I create a[n]* (anomaly detector|association|correlation|deepnet|logisticregression|linearregression|sample|statisticaltest|time series|pca) from a dataset with \"(.*)\"$")
+	@Given("^I create a[n]* (anomaly detector|association|correlation|deepnet|ensemble|logisticregression|linearregression|model|sample|statisticaltest|time series|pca) from a dataset with \"(.*)\"$")
 	public void I_create_a_resource_from_a_dataset_with(String resourceName, String args)
 			throws Throwable {
 
@@ -182,7 +182,7 @@ public class CommonStepdefs {
             new JSONObject();
         
         argsJSON = setProject(argsJSON);
-        
+
 		try {
 			Method method = getClientMethod("create", resourceName);
 			JSONObject resource = (JSONObject) method.invoke(

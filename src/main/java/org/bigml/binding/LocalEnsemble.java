@@ -79,6 +79,7 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
     private JSONArray boostingOffsets;
     private List<String> classNames = new ArrayList<String>();
     private Map<String, String> fieldNames = new HashMap<String, String>();
+    private String defaultNumericValue = null;
 
     public LocalEnsemble(JSONObject ensemble) throws Exception {
         this(null, ensemble);
@@ -130,6 +131,8 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
 
                 JSONObject fields = (JSONObject) Utils.getJSONObject(ensemble,
                                                                      "ensemble.fields", new JSONObject());
+
+                this.defaultNumericValue = (String) ensemble.get("default_numeric_value");
 
                 objectiveField = (String) Utils.getJSONObject(ensemble,
                                                               "objective_field");

@@ -162,3 +162,18 @@ Feature: LocalEnsemble
         | data/dates2.csv | 30000  | {"time-1": "2001-01-05T23:04:04.693", "cat-0":"cat2"} | 000002   | -0.23387   |
         | data/dates2.csv | 30000  | {"time-1": "1969-W29-1T17:36:39Z", "cat-0":"cat1"} | 000002   | -0.05469   |
         | data/dates2.csv | 30000  | {"time-1": "Mon Jul 14 17:36 +0000 1969", "cat-0":"cat1"} | 000002   | -0.05469   |
+
+
+    Scenario Outline: Successfully comparing predictions with ensembles
+        Given I provision a dataset from "<data>" file
+        And I create an ensemble from a dataset with "<params>"
+        And I wait until the ensemble is ready less than <time_1> secs
+        And I create a local ensemble
+        When I create a prediction with ensemble for "<data_input>"
+        Then the prediction for "<objective>" is "<prediction>"
+        When I create a local prediction with ensemble for "<data_input>"
+
+        Examples:
+        | data  | time_1  | data_input | objective      | prediction    | params                |
+        | data/iris.csv | 120  | {} | 000004    | Iris-versicolor       | {}    |
+        | data/iris.csv | 120  | {} | 000004    | Iris-versicolor       | {"default_numeric_value": "mean"}     |

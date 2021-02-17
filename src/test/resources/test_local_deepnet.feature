@@ -1,6 +1,6 @@
 Feature: LocalDeepnet
 
-		Scenario Outline: Successfully comparing predictions for deepnets
+	Scenario Outline: Successfully comparing predictions for deepnets
         Given I provision a dataset from "<data>" file
         And I create a deepnet with objective "<objective>" and params "<params>"
         And I wait until the deepnet is ready less than <time_1> secs
@@ -71,3 +71,19 @@ Feature: LocalDeepnet
         | data/dates2.csv | 30000  | {"time-1": "1950-11-06T05:34:05.602", "cat-0":"cat1"} | 000002   | -0.05673    |
         | data/dates2.csv | 30000  | {"time-1": "1932-01-30T19:24:11.440",  "cat-0":"cat2"} | 000002   | 0.16183    |
         | data/dates2.csv | 30000  | {"time-1": "Mon Jul 14 17:36 +0000 1969", "cat-0":"cat1"} | 000002   | 0.0199    |
+
+
+    Scenario Outline: Successfully comparing predictions from deepnets:
+        Given I provision a dataset from "<data>" file
+        And I create a deepnet from a dataset with "<params>"
+        And I wait until the deepnet is ready less than <time_1> secs
+        And I create a local deepnet
+        When I create a deepnet prediction for "<data_input>"
+        Then the deepnet prediction for objective "<objective>" is "<prediction>"
+        And I create a local deepnet prediction for "<data_input>"
+        Then the local deepnet prediction is "<prediction>"
+
+      Examples:  
+        | data	| time_1  | data_input	| objective    | prediction	| params	|
+        | data/iris.csv	| 1000	| {}	| 000004   | Iris-versicolor  | {}	|
+        | data/iris.csv	| 1000	| {}	| 000004   | Iris-virginica  | {"default_numeric_value": "maximum"}	|

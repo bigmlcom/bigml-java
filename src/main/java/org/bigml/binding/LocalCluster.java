@@ -73,7 +73,7 @@ public class LocalCluster extends ModelFields {
     private Double betweenSS = null; 
     private Double ratioSS = null; 
     private Long criticalValue = null;
-    //private String defaultNumericValue;
+    private String defaultNumericValue;
     private Integer k;
     private JSONArray summaryFields;
     private JSONObject scales;
@@ -110,7 +110,7 @@ public class LocalCluster extends ModelFields {
                     status.containsKey("code") &&
                     AbstractResource.FINISHED == ((Number) status.get("code")).intValue() ) {
 
-            	//defaultNumericValue = (String) cluster.get("total_ss");
+            	defaultNumericValue = (String) cluster.get("default_numeric_value");
             	summaryFields = (JSONArray) cluster.get("summary_fields");
             	datasets = (JSONObject) cluster.get("cluster_datasets");
             	clusters = (JSONArray) Utils.getJSONObject(cluster, "clusters.clusters");
@@ -256,6 +256,7 @@ public class LocalCluster extends ModelFields {
      */
     public JSONObject centroid(JSONObject inputData) {
         inputData = prepareForDistance(inputData);
+
         Map<String, Object> uniqueTerms = getUniqueTerms(inputData);
         
         JSONObject nearest = new JSONObject();
@@ -873,5 +874,30 @@ public class LocalCluster extends ModelFields {
 
         return summary;
     }
+
+
+    /**
+	 * Checks whether input data is missing a numeric field and fills it with
+	 * the average quantity set in default_numeric_value
+	 */
+	public JSONObject fillNumericDefaults(JSONObject inputData) {
+		for (Object fieldId : fields.keySet()) {
+			JSONObject field = (JSONObject) fields.get(fieldId);
+
+			String optype = (String) Utils.getJSONObject(this.fields, fieldId + ".optype");
+			if ((summaryFields == null || !summaryFields.contains(fieldId)) &&
+				"numeric".equals(optype) &&
+				inputData.get(fieldId) == null) {
+
+				double defaultValue = 0;
+				if (!"zero".equals(this.defaultNumericValue)) {
+					defaultValue = ((Number) Utils.getJSONObject(field,
+						"summary." + this.defaultNumericValue, 0)).doubleValue();
+				}
+				inputData.put(fieldId, defaultValue);
+			}
+		}
+		return inputData;
+	}
 
 }

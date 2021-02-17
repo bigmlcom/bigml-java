@@ -3,7 +3,6 @@ package org.bigml.binding.localmodel;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import org.bigml.binding.Constants;
 import org.bigml.binding.utils.Utils;
@@ -340,7 +339,7 @@ public class Predicate {
     }
 
     protected boolean applyOperator(Object inputValue) {
-        if (operator.equals(Constants.OPERATOR_EQ) ) {
+    	if (operator.equals(Constants.OPERATOR_EQ) ) {
             if( inputValue instanceof Number ) {
                 return ((Number) inputValue).doubleValue() == ((Number) value)
                         .doubleValue();
@@ -380,7 +379,6 @@ public class Predicate {
             return true;
         }
         if (operator.equals(Constants.OPERATOR_IN) )  {
-
             if( !(inputValue instanceof Collection) ) {
                 List newInputValue = new ArrayList();
                 newInputValue.add(inputValue);
@@ -388,9 +386,9 @@ public class Predicate {
             }
 
             if( value instanceof Collection ) {
-                return ((Collection) inputValue).containsAll((Collection) value);
+                return ((Collection) value).containsAll((Collection) inputValue);
             } else {
-                return ((Collection) inputValue).contains(value);
+                return ((Collection) value).contains(inputValue);
             }
         }
 

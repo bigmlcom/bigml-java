@@ -96,7 +96,7 @@ public class LocalLinearRegression extends ModelFields {
     private Double meanSquaredError = null;
     private Long numberOfParameters = null;
     private Long numberOfSamples = null;
-
+    private String defaultNumericValue = null;
 
     public LocalLinearRegression(JSONObject linear) throws Exception {
         this(null, linear);
@@ -141,6 +141,8 @@ public class LocalLinearRegression extends ModelFields {
 
                 JSONObject fields = (JSONObject) Utils.getJSONObject(
                         linearInfo, "fields", new JSONObject());
+
+                this.defaultNumericValue = (String) linear.get("default_numeric_value");
 
                 if (inputFields == null) {
                     inputFields = new JSONArray();

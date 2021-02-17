@@ -284,3 +284,18 @@ Feature: LocalModel
         | data/dates2.csv | 30     | {"time-1": "2011-04-01T00:16:45.747", "cat-0":"cat2"}  | 000002    | -0.5977    |
         | data/dates2.csv | 30     | {"time-1": "1969-W29-1T17:36:39Z", "cat-0":"cat1"}  | 000002    | -0.06256    |
         | data/dates2.csv | 30     | {"time-1": "Mon Jul 14 17:36 +0000 1969", "cat-0":"cat1"}  | 000002    | -0.06256    |
+
+
+    Scenario Outline: Successfully comparing remote and local predictions for models
+        Given I provision a dataset from "<data>" file
+        And I create a model from a dataset with "<params>"
+        And I wait until the model is ready less than <time_1> secs
+        When I create a prediction for "<data_input>"
+        Then the prediction for "<objective>" is "<prediction>"
+        And I create a local model
+        And the local prediction for "<data_input>" is "<prediction>"
+
+        Examples:
+        | data  | time_1  | data_input | objective  | prediction | params  |
+        | data/iris.csv | 120 | {} | 000004 | Iris-setosa | {}  |
+        | data/iris.csv | 120 | {} | 000004 | Iris-versicolor    | {"default_numeric_value": "mean"}  |

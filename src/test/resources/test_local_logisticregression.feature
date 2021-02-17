@@ -1,6 +1,6 @@
 Feature: LocalLogisticRegression
-
-		Scenario Outline: Successfully comparing logistic regression predictions
+	
+	Scenario Outline: Successfully comparing logistic regression predictions
         Given I provision a dataset from "<data>" file
         And I create a logisticregression from a dataset
         And I wait until the logisticregression is ready less than <time_1> secs
@@ -166,7 +166,7 @@ Feature: LocalLogisticRegression
         | data/iris.csv | 30000 | {"petal length": 2} | 000004  | Iris-setosa | probability |
 
 
-		Scenario Outline: Successfully comparing logistic regression predictions
+        Scenario Outline: Successfully comparing logistic regression predictions
         Given I provision a dataset from "<data>" file
         And I create a logisticregression from a dataset
         And I wait until the logisticregression is ready less than <time_1> secs
@@ -179,13 +179,29 @@ Feature: LocalLogisticRegression
         And the local logisticregression probability for the prediction is "<probability>"
 
         Examples:
-        | data  | time_1  | data_input | prediction    | probability	|
-        | data/dates2.csv | 50  | {"time-1": "1910-05-08T19:10:23.106", "target-1":0.722} | cat0   | 0.75024	|
-        | data/dates2.csv | 50  | {"time-1": "1920-06-30T20:21:20.320", "target-1":0.12} | cat0   | 0.75821	|
-        | data/dates2.csv | 50  | {"time-1": "1932-01-30T19:24:11.440",  "target-1":0.32} | cat0   | 0.71498	|
-        | data/dates2.csv | 50  | {"time-1": "1950-11-06T05:34:05.252", "target-1":0.124} | cat0   | 0.775	|
-        | data/dates2.csv | 50  | {"time-1": "1969-7-14 17:36", "target-1":0.784} | cat0   | 0.73663	|
-        | data/dates2.csv | 50  | {"time-1": "2001-01-05T23:04:04.693", "target-1":0.451} | cat0   | 0.6822	|
-        | data/dates2.csv | 50  | {"time-1": "2011-04-01T00:16:45.747", "target-1":0.42} | cat0   | 0.71107	|
-        | data/dates2.csv | 50  | {"time-1": "1969-W29-1T17:36:39Z", "target-1":0.67} | cat0   | 0.73663	|
-        | data/dates2.csv | 50  | {"time-1": "Mon Jul 14 17:36 +0000 1969", "target-1":0.005} | cat0   | 0.73663	|
+        | data  | time_1  | data_input | prediction    | probability    |
+        | data/dates2.csv | 50  | {"time-1": "1910-05-08T19:10:23.106", "target-1":0.722} | cat0   | 0.75024    |
+        | data/dates2.csv | 50  | {"time-1": "1920-06-30T20:21:20.320", "target-1":0.12} | cat0   | 0.75821 |
+        | data/dates2.csv | 50  | {"time-1": "1932-01-30T19:24:11.440",  "target-1":0.32} | cat0   | 0.71498    |
+        | data/dates2.csv | 50  | {"time-1": "1950-11-06T05:34:05.252", "target-1":0.124} | cat0   | 0.775  |
+        | data/dates2.csv | 50  | {"time-1": "1969-7-14 17:36", "target-1":0.784} | cat0   | 0.73663    |
+        | data/dates2.csv | 50  | {"time-1": "2001-01-05T23:04:04.693", "target-1":0.451} | cat0   | 0.6822 |
+        | data/dates2.csv | 50  | {"time-1": "2011-04-01T00:16:45.747", "target-1":0.42} | cat0   | 0.71107 |
+        | data/dates2.csv | 50  | {"time-1": "1969-W29-1T17:36:39Z", "target-1":0.67} | cat0   | 0.73663    |
+        | data/dates2.csv | 50  | {"time-1": "Mon Jul 14 17:36 +0000 1969", "target-1":0.005} | cat0   | 0.73663    |
+
+
+    Scenario Outline: Successfully comparing remote and local predictions for logistic regressions
+        Given I provision a dataset from "<data>" file
+        And I create a logisticregression from a dataset with "<params>"
+        And I wait until the logisticregression is ready less than <time_1> secs
+        When I create a logisticregression prediction for "<data_input>"
+        Then the logisticregression prediction is "<prediction>"
+        And I create a local logisticregression
+        And I create a local logisticregression prediction for "<data_input>"
+        Then the local logisticregression prediction is "<prediction>"
+
+        Examples:
+        | data  | time_1  | data_input | prediction | params  |
+        | data/iris.csv | 120 | {} | Iris-versicolor | {}  |
+        | data/iris.csv | 120 | {} | Iris-virginica	| {"default_numeric_value": "maximum"}  |

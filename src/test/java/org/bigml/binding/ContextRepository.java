@@ -43,6 +43,7 @@ public class ContextRepository {
     JSONObject execution = null;
     JSONObject library = null;
     JSONObject association = null;
+    JSONObject associationSet = null;
     JSONObject topicModel = null;
     JSONObject topicDistribution = null;
     JSONObject batchTopicDistribution = null;

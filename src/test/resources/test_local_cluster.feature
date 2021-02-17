@@ -1,6 +1,6 @@
 Feature: LocalCluster
-		
-		Scenario Outline: Successfully getting the closest point in a cluster
+
+	Scenario Outline: Successfully getting the closest point in a cluster
         Given I provision a dataset from "<data>" file
         And I create a cluster
         And I wait until the cluster is ready less than <time_1> secs
@@ -8,12 +8,12 @@ Feature: LocalCluster
         Then the data point in the cluster closest to "<reference>" is "<closest>"
 
         Examples:
-        | data	|  time_1  | reference |	closest	|
-        | data/iris.csv | 100	| {"petal length": 1.4, "petal width": 0.2, "sepal width": 3.0, "sepal length": 4.89, "species": "Iris-setosa"} | {"distance": 0.001894153207990619, "data": {"petal length": 1.4, "petal width": 0.2, "sepal width": 3.0, "sepal length": 4.9, "species": "Iris-setosa"}}	|
-        #| data/spam_4w.csv | 100	| {"Message": "mobile"} | {"distance": 0.0, "data": {"Message": "mobile", "Type": "spam"}}	|
+        | data  |  time_1  | reference |    closest |
+        | data/iris.csv | 100   | {"petal length": 1.4, "petal width": 0.2, "sepal width": 3.0, "sepal length": 4.89, "species": "Iris-setosa"} | {"distance": 0.001894153207990619, "data": {"petal length": 1.4, "petal width": 0.2, "sepal width": 3.0, "sepal length": 4.9, "species": "Iris-setosa"}}  |
+        #| data/spam_4w.csv | 100   | {"Message": "mobile"} | {"distance": 0.0, "data": {"Message": "mobile", "Type": "spam"}}  |
         
 
-		Scenario Outline: Successfully getting the closest centroid in a cluster
+	Scenario Outline: Successfully getting the closest centroid in a cluster
         Given I provision a dataset from "<data>" file
         And I create a cluster
         And I wait until the cluster is ready less than <time_1> secs
@@ -21,11 +21,11 @@ Feature: LocalCluster
         Then the centroid in the cluster closest to "<reference>" is "<closest>"
 
         Examples:
-        | data	|  time_1  | reference |	closest	|
-        | data/spam_4w.csv | 100	| {"Message": "free"} | 000005	|
+        | data  |  time_1  | reference |    closest |
+        | data/spam_4w.csv | 100    | {"Message": "free"} | 000005  |
 
 
-		Scenario Outline: Successfully comparing centroids with or without text options:
+        Scenario Outline: Successfully comparing centroids with or without text options:
         Given I create a data source uploading a "<data>" file
         And I wait until the source is ready less than <time_1> secs
         And I update the source with "<options>" waiting less than <time_1> secs
@@ -69,4 +69,19 @@ Feature: LocalCluster
         Examples:
         | data  | time_1 | options | data_input | centroid  | distance |
         | data/iris.csv | 100   | {"summary_fields": ["sepal width"]} |{"petal length": 1, "petal width": 1, "sepal length": 1, "species": "Iris-setosa"}  | Cluster 2   | 1.16436   |
-         # | data/iris.csv | 20 | {"default_numeric_value": "zero"} |{"petal length": 1}  | Cluster 4   | 1.41215   |
+
+
+    Scenario Outline: Successfully comparing centroids from clusters:
+        Given I provision a dataset from "<data>" file
+        And I create a cluster with options "<options>"
+        And I wait until the cluster is ready less than <time_1> secs
+        And I create a local cluster
+        When I create a centroid for "<data_input>"
+        Then the centroid is "<centroid>" with distance <distance>
+        And I create a local centroid for "<data_input>"
+        Then the local centroid is "<centroid>" with distance <distance>
+
+        Examples:
+        | data  | time_1 | options | data_input | centroid  | distance |
+        | data/iris.csv | 100 | {} | {"petal length": 2, "petal width": 2, "sepal length": 2, "sepal width": 2, "species": "Iris-setosa"}  | Cluster 7   | 0.7340597799442431   |
+        | data/iris.csv | 100 | {"default_numeric_value": "maximum"} | {}  | Cluster 5   | 0.502695797586787   | 

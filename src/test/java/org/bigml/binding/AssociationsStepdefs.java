@@ -6,15 +6,16 @@ import static org.junit.Assert.assertFalse;
 import java.util.*;
 
 import org.json.simple.JSONObject;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import cucumber.annotation.en.Given;
+import cucumber.annotation.en.Then;
 import cucumber.annotation.en.When;
 
-import org.bigml.binding.LocalAssociation;
 import org.bigml.binding.localassociation.*;
 
 
@@ -30,6 +31,7 @@ public class AssociationsStepdefs {
     private ContextRepository context;
 
     LocalAssociation localAssociation;
+    List localSet;
 
 
     @Given("^I create an association with search strategy \"(.*)\" from a dataset$")
@@ -62,6 +64,25 @@ public class AssociationsStepdefs {
         
         JSONObject expected = (JSONObject) JSONValue.parse(ruleJson);
         assertEquals(expected, rule.getRule());
+    }
+
+
+    @When("^I create a local association set for \"(.*)\"$")
+    public void I_create_a_local_association_set(String data)
+            throws Throwable {
+        if( data == null || data.trim().length() == 0 ) {
+            data = "{}";
+        }
+
+        JSONObject inputData = (JSONObject) JSONValue.parse(data);
+        localSet = localAssociation.associationSet(inputData, null, null);
+    }
+
+
+    @Then("^the local association set is \"(.*)\"$")
+    public void the_local_association_set_is(String expectedSet)
+            throws Throwable {
+        assertEquals(expectedSet, JSONArray.toJSONString(localSet));
     }
 
 }

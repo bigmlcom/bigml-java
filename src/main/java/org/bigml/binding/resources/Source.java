@@ -301,9 +301,7 @@ public class Source extends AbstractResource {
 				requestObject.putAll(args);
 			}
 			requestObject.put("type", 4);
-			
-			System.out.println("\n\n\nresourceurl ............. " + resourceUrl + "\n\n\n");
-			
+
 			return createResource(resourceUrl, requestObject.toJSONString());
 		} catch (Throwable e) {
 			logger.error("Error creating source");

@@ -2,6 +2,9 @@
 
 ## 1.8.16 version
 
+* Improving local models with default numeric values to automatically fill in
+  missings in input data.
+
 ### Bugs
 
 * Fixed bug parsing numeric values from models

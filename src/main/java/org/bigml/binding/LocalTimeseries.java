@@ -89,6 +89,7 @@ public class LocalTimeseries extends ModelFields {
     private String trend;
     private JSONObject timeRange;
     private JSONObject fieldParameters;
+    private String defaultNumericValue = null;
     
     public LocalTimeseries(JSONObject jsonData) throws Exception {
 		this(null, jsonData);
@@ -117,7 +118,9 @@ public class LocalTimeseries extends ModelFields {
                 JSONObject timeseriesInfo = Utils.getFromJSONOr(timeseries, "time_series");
                 initialize(Utils.getFromJSONOr(
             			timeseriesInfo, "fields"), null, null, null);
-            
+
+                this.defaultNumericValue = (String) timeseries.get("default_numeric_value");
+
                 if (this.inputFields == null || this.inputFields.size() == 0) {
                     this.inputFields = new JSONArray();
                     ArrayList<String> sortedFields = new ArrayList<String>(this.fields.keySet());

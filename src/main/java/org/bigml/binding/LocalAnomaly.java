@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+
 /**
  * A local Predictive Anomaly Detector.
  *
@@ -56,6 +57,8 @@ public class LocalAnomaly extends ModelFields implements Serializable {
 	private Double expectedMeanDepth = null;
 	private List<JSONObject> topAnomalies;
 	private List<AnomalyTree> iforest;
+	private String defaultNumericValue = null;
+	private JSONArray idFields = new JSONArray();
 
 	/*
 	 * Computing the normalization factor for simple anomaly detectors
@@ -87,6 +90,11 @@ public class LocalAnomaly extends ModelFields implements Serializable {
 			this.sampleSize = ((Number) anomaly.get("sample_size")).intValue();
 		}
 		this.inputFields = (JSONArray) anomaly.get("input_fields");
+		this.defaultNumericValue = (String) anomaly.get("default_numeric_value");
+
+		if (anomaly.get("id_fields") != null) {
+			this.idFields = (JSONArray) anomaly.get("id_fields");
+		}
 
 		if (anomaly.containsKey("model") && anomaly.get("model") instanceof Map) {
 			JSONObject model = (JSONObject) anomaly.get("model");
@@ -230,4 +238,30 @@ public class LocalAnomaly extends ModelFields implements Serializable {
 			return String.format("(not (or %s))", anomaliesFilter);
 		}
 	}
+
+	/**
+	 * Checks whether input data is missing a numeric field and fills it with
+	 * the average quantity set in default_numeric_value
+	 */
+	public JSONObject fillNumericDefaults(JSONObject inputData) {
+		for (Object fieldId : fields.keySet()) {
+			JSONObject field = (JSONObject) fields.get(fieldId);
+			String optype = (String) Utils.getJSONObject(this.fields, fieldId + ".optype");
+
+			if (!idFields.contains(fieldId) &&
+				"numeric".equals(optype) &&
+				inputData.get(fieldId) == null &&
+				this.defaultNumericValue != null) {
+
+				double defaultValue = 0.0;
+				if (!"zero".equals(this.defaultNumericValue)) {
+					defaultValue = ((Number) Utils.getJSONObject(field,
+						"summary." + this.defaultNumericValue, 0)).doubleValue();
+				}
+				inputData.put(fieldId, defaultValue);
+			}
+		}
+		return inputData;
+	}
+
 }

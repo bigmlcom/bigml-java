@@ -93,6 +93,7 @@ public class LocalPredictiveModel extends ModelFields
     private Boolean regression = false;
     private JSONObject boosting = null;
     private List<String> classNames = new ArrayList<String>();
+    private String defaultNumericValue = null;
 
 
     public LocalPredictiveModel(JSONObject model) throws Exception {
@@ -118,6 +119,8 @@ public class LocalPredictiveModel extends ModelFields
 
                 modelFields = (JSONObject) Utils.getJSONObject(
                         model, "model.fields");
+
+                this.defaultNumericValue = (String) model.get("default_numeric_value");
 
                 Iterator iter = fields.keySet().iterator();
                 while (iter.hasNext()) {

@@ -65,6 +65,7 @@ public class LocalPca extends ModelFields implements Serializable {
 	private JSONArray cumulativeVariance;
 	private JSONArray variance;
 	private JSONObject textStats;
+	private String defaultNumericValue = null;
 	
 	public LocalPca(JSONObject pca) throws Exception {
         this(null, pca);
@@ -102,6 +103,8 @@ public class LocalPca extends ModelFields implements Serializable {
 
 				JSONObject fields = (JSONObject) Utils.getJSONObject(pcaInfo,
 						"fields", new JSONObject());
+
+				this.defaultNumericValue = (String) pca.get("default_numeric_value");
 
 				if (inputFields == null) {
 					inputFields = new JSONArray();

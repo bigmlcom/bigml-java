@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -125,7 +124,7 @@ public class ClustersStepdefs {
     public void the_local_centroid_is_with_distance(String result, Double distance) throws AuthenticationException {
         assertEquals(result, context.localCentroid.get("centroid_name"));
 
-        BigDecimal centroidDist = new BigDecimal(((Number) context.centroid.get("distance")).doubleValue());
+        BigDecimal centroidDist = new BigDecimal(((Number) context.localCentroid.get("distance")).doubleValue());
         centroidDist = centroidDist.setScale(5, RoundingMode.HALF_EVEN);
 
         BigDecimal expectedDistance = new BigDecimal(distance);
