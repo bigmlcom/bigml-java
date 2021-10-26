@@ -505,32 +505,41 @@ public class Utils {
             JSONObject field = (JSONObject) fields.get(fieldId);
 
             String optType = (String) Utils.getJSONObject(field, "optype");
+            List<List> summaryCategories = (List<List>) Utils.getJSONObject(
+                field, "summary.categories", new JSONArray());
 
-            if( ("numeric".equals(optType) && value instanceof String) ||
-                    (!"numeric".equals(optType) && !(value instanceof String)) ) {
+            if ("categorical".equals(optType) && value instanceof Boolean && summaryCategories.size() ==2) {
+                // strings given as booleans
+                value = value.toString();
+            } else {
+                // numerics given as strings
+                if( ("numeric".equals(optType) && value instanceof String) ||
+                        (!"numeric".equals(optType) && !(value instanceof String)) ) {
 
-                try {
+                    try {
 
-                    if( "numeric".equals(optType) ) {
-                        value = stripAffixes(value.toString(), field);
+                        if( "numeric".equals(optType) ) {
+                            value = stripAffixes(value.toString(), field);
+                        }
+
+                        if ("numeric".equals(optType)) {
+                            value = Double.parseDouble(value.toString());
+                        } else {
+                            value = value.toString();
+                        }
+                    } catch (Exception e) {
+                        throw new IllegalStateException(
+                                String.format("Mismatch input data type in field " +
+                                        "\"%s\" for value %s.", field.get("name"), value.toString()));
                     }
+                }
 
-                    if ("numeric".equals(optType)) {
-                        value = Double.parseDouble(value.toString());
-                    } else {
-                        value = value.toString();
-                    }
-                } catch (Exception e) {
-                    throw new IllegalStateException(
-                            String.format("Mismatch input data type in field " +
-                                    "\"%s\" for value %s.", field.get("name"), value.toString()));
+                if ("numeric".equals(optType)) {
+                	value = Utils.roundOff(((Number) value).doubleValue(), DECIMAL_DIGITS);
                 }
             }
-            
-            if ("numeric".equals(optType)) {
-            	value = Utils.roundOff(((Number) value).doubleValue(), DECIMAL_DIGITS);
-            }
-            
+
+            inputData.put(fieldId, value);
         }
 
 //        return inputData;
