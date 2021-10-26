@@ -1,5 +1,14 @@
 # Changes in the BigML.io Java bindings
 
+
+## 1.8.16 version
+
+### Bugs
+
+* Fixed parsing of items in LocalCluster.
+* Fixed bug parsing boolean parameters.
+
+
 ## 1.8.16 version
 
 * Improving local models with default numeric values to automatically fill in
