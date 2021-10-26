@@ -327,11 +327,14 @@ public class LocalCluster extends ModelFields {
                 	String separator = (String) Utils.getJSONObject(
                 			itemAnalysis, fieldId + ".separator", " ");
                 	String regexp = (String) Utils.getJSONObject(
-                			itemAnalysis, fieldId + ".separator_regexp", "");
+                			itemAnalysis, fieldId + ".separator_regexp", null);
                 	if (regexp == null) {
                 		regexp = StringEscapeUtils.escapeJava(separator);
                 	}
-                	
+                    if ("$".equals(regexp)) {
+                        regexp = "\\$";
+                    }
+
                 	List<String> terms = parseItems(
                 			inputDataField.toString(), regexp);
                 	uniqueTerms.put(fieldId.toString(), 
@@ -346,7 +349,7 @@ public class LocalCluster extends ModelFields {
                 inputData.remove(fieldId.toString());
         	}
         }
-        
+
         return uniqueTerms;
     }
     
@@ -409,10 +412,7 @@ public class LocalCluster extends ModelFields {
     	List<String> terms = new ArrayList<String>();
     	if (text != null) {
             Pattern pattern = Pattern.compile(regexp, Pattern.UNICODE_CASE);
-            Matcher matcher = pattern.matcher(text);
-            while (matcher.find()) {
-            	terms.add(matcher.group());
-        	 }
+            terms = (List<String>) Arrays.asList(pattern.split(text));
     	}
     	
     	return terms;
