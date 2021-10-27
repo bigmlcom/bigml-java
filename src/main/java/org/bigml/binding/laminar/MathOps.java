@@ -15,9 +15,13 @@ public class MathOps {
 	
 	// This can be any x where np.exp(x) + 1 == np.exp(x)  Going up to 512
 	// isn't strictly necessary, but hey, why not?
-	private static int LARGE_EXP = 512;
+	private static final double HUGE_DOUBLE_EXP = 512;
+	private static final float HUGE_FLOAT_EXP = 64;
+    private static final float LARGE_FLOAT_EXP = 8;
+	private static float LEAKY_RELU_ALPHA = 0.1f;
+    private static final double SELU_ALPHA = 1.6732632423543772848170429916717;
+    private static final double SELU_SCALE = 1.0507009873554804934193349852946;
 	
-
 	private static ArrayList<List<Double>> operation(
 			String operator, ArrayList<List<Double>> mat, JSONArray vec) {
 		
@@ -177,6 +181,7 @@ public class MathOps {
 			JSONArray stdev = (JSONArray) layer.get("stdev");
 			JSONArray scale = (JSONArray) layer.get("scale");
 			JSONArray offset = (JSONArray) layer.get("offset");
+			
 			Boolean residuals = (Boolean) layer.get("residuals");
 			String afn = (String) layer.get("activation_function");
 			
@@ -209,7 +214,7 @@ public class MathOps {
 			return result;
 		}
 		
-		if ("identity".equals(afn)) {
+		if ("identity".equals(afn) || "linear".equals(afn)) {
 			return xs;
 		}
 		if ("softmax".equals(afn)) {
@@ -223,26 +228,28 @@ public class MathOps {
 					newRow.add(Math.tanh(d));
 				}
 				if ("sigmoid".equals(afn)) {
-					if (d > 0) {
-						if (d < LARGE_EXP) {
-							double exVal = Math.exp(d);
-							newRow.add(exVal / (exVal + 1));
-						} else {
-							newRow.add(1.0);
-						}
-					} else {
-						if (-d < LARGE_EXP) {
-							newRow.add(1 / (1 + Math.exp(-d)));
-						} else {
-							newRow.add(0.0);
-						}
-					}
+					newRow.add(sigmoid(d));
 				}
 				if ("softplus".equals(afn)) {
-					newRow.add(d < LARGE_EXP ? Math.log((Math.exp(d) + 1)) : d);
+					newRow.add(softplus(d));
 				}
 				if ("relu".equals(afn)) {
-					newRow.add(d>0 ? d : 0);
+					newRow.add(relu(d));
+				}
+				if ("relu6".equals(afn)) {
+					newRow.add(relu6(d));
+				}
+				if ("leaky_relu".equals(afn)) {
+					newRow.add(leakyReLU(d));
+				}
+				if ("swish".equals(afn)) {
+					newRow.add(swish(d));
+				}
+				if ("mish".equals(afn)) {
+					newRow.add(mish(d));
+				}
+				if ("selu".equals(afn)) {
+					newRow.add(selu(d));
 				}
 			}
 			result.add(newRow);
@@ -250,7 +257,6 @@ public class MathOps {
 
 		return result;
 	}
-	
 	
 	private static ArrayList<List<Double>> softmax(
 			ArrayList<List<Double>> xs) {
@@ -289,6 +295,76 @@ public class MathOps {
 		return result;
 	}
 	
+	private static Double sigmoid(Double d) {
+		if (d > 0) {
+			if (d < HUGE_DOUBLE_EXP) {
+				double exVal = Math.exp(d);
+				return exVal / (exVal + 1);
+			} else {
+				return 1.0;
+			}
+		} else {
+			if (-d < HUGE_DOUBLE_EXP) {
+				return 1 / (1 + Math.exp(-d));
+			} else {
+				return 0.0;
+			}
+		}
+	}
+	
+	private static Double softplus(Double d) {
+		return d < HUGE_FLOAT_EXP ? Math.log((Math.exp(d) + 1)) : d;
+	}
+	
+	private static Double relu(Double d) {
+		return Math.max(0, d);
+	}
+	
+	private static Double relu6(Double d) {
+		return Math.min(6, Math.max(0, d));
+	}
+	
+	private static Double swish(Double d) {
+		if (d > 0) {
+            if (d < HUGE_FLOAT_EXP) {
+                float x = (float)Math.exp(d);
+                return (d * x) / (x + 1);
+            }
+        }
+        else {
+            return (d / (1 + Math.exp(-d)));
+        }
+		return 0.0;
+	}
+	
+	private static Double leakyReLU(Double d) {
+		return d <= 0 ? d * LEAKY_RELU_ALPHA : d;
+	}
+	
+	
+	private static Double mish(Double d) {
+		float x = 1;
+
+        // tanh and softplus
+        if (d < LARGE_FLOAT_EXP) {
+            x = (float)(Math.tanh(Math.log(Math.exp(d) + 1)));
+        }
+        return d * x;
+	}
+	
+	private static Double selu(Double d) {
+		/*
+		if (d <= 0) {
+			return SELU_ALPHA * (Math.exp(d) -1) - SELU_ALPHA;
+		} else {
+			return SELU_SCALE * d;
+		}*/
+        
+        if (d <= 0) {
+        	d = SELU_ALPHA * (Math.exp(d) - 1) - SELU_ALPHA;
+        }
+        return d * SELU_SCALE;
+	}
 	
 	public static ArrayList<List<Double>> sumAndNormalize(
 			ArrayList<ArrayList<List<Double>>> inputs, boolean isRegression) {
