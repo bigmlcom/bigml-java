@@ -3,6 +3,8 @@
 
 ## 1.8.16 version
 
+* Adding activators to local deepnets prediction functions.
+
 ### Bugs
 
 * Fixed parsing of items in LocalCluster.
