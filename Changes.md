@@ -1,7 +1,7 @@
 # Changes in the BigML.io Java bindings
 
 
-## 1.8.16 version
+## 1.8.17 version
 
 * Adding activators to local deepnets prediction functions.
 
