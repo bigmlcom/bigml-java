@@ -79,4 +79,4 @@ Feature: Evaluation REST api
 
         Examples:
         | data  | time_1  | time_2 | tlp | measure  | value  |
-        | data/iris.csv | 800   | 1000  | 5 | average_phi   | 0.95007   |
+        | data/iris.csv | 800   | 1000  | 5 | average_phi   | 0.97007   |

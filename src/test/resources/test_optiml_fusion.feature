@@ -67,7 +67,7 @@ Feature: OptiML/Fusion REST api calls
         
         Examples:
         | data	| time_1  | time_2 | time_3 | time_4 | params | objective | data_input	| prediction	| probability	|
-        | data/iris.csv | 50      | 50     | 50     | 50 | {"missing_numerics": true} | 000004	| {"petal width": 1.75, "petal length": 2.45}	| Iris-setosa	| 0.4727	|
+        | data/iris.csv | 50      | 50     | 50     | 50 | {"missing_numerics": true} | 000004	| {"petal width": 1.75, "petal length": 2.45}	| Iris-setosa	| 0.4726	|
         
         
     Scenario Outline: Successfully creating fusion from models:
@@ -93,7 +93,7 @@ Feature: OptiML/Fusion REST api calls
         
         Examples:
         | data	| time_1  | time_2 | time_3 | time_4 | params | params2	| objective | data_input	| prediction	| probability	|
-        | data/iris.csv | 50      | 50     | 50     | 50 | {"missing_numerics": true} | {"missing_numerics": false, "balance_fields": false }	|  000004	| {"petal width": 1.75, "petal length": 2.45}	| Iris-setosa	| 0.4727	|
+        | data/iris.csv | 50      | 50     | 50     | 50 | {"missing_numerics": true} | {"missing_numerics": false, "balance_fields": false }	|  000004	| {"petal width": 1.75, "petal length": 2.45}	| Iris-setosa	| 0.4726	|
         
         
     Scenario Outline: Successfully creating fusion from models:
@@ -119,6 +119,6 @@ Feature: OptiML/Fusion REST api calls
         
         Examples:
         | data	| time_1  | time_2 | time_3 | time_4 | params | params2	| objective | data_input	| prediction	| probability	| weights	|
-        | data/iris.csv | 50      | 50     | 50     | 50 | {"missing_numerics": true} | {"missing_numerics": false, "balance_fields": false }	|  000004	| {"petal width": 1.75, "petal length": 2.45}	| Iris-setosa	| 0.4727	| [1, 2]	|
+        | data/iris.csv | 50      | 50     | 50     | 50 | {"missing_numerics": true} | {"missing_numerics": false, "balance_fields": false }	|  000004	| {"petal width": 1.75, "petal length": 2.45}	| Iris-setosa	| 0.4726	| [1, 2]	|
         
           
