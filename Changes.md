@@ -4,6 +4,7 @@
 ## 1.8.17 version
 
 * Adding activators to local deepnets prediction functions.
+* Updating dependencies of maven project.
 
 ### Bugs
 
