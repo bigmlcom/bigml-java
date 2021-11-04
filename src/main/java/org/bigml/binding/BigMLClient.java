@@ -111,6 +111,16 @@ public class BigMLClient {
     
     /**
      * Constructor
+     * 
+     * @param apiUser
+     * 			API username
+     * @param apiKey
+     * 			API key
+     * @param storage
+     * 			If storage is set to a directory name, the resources obtained in
+     *			CRU operations will be stored in the given directory
+     *
+     * @throws AuthenticationException if authentication in bigml domain fails
      */
     public BigMLClient(final String apiUser, final String apiKey, 
     		final String storage) throws AuthenticationException {
@@ -119,6 +129,20 @@ public class BigMLClient {
     
     /**
      * Constructor
+     * 
+     * @param bigmlDomain
+     * 			If bigmlDomain is set, the api will point to the specified domain. 
+     * 			Default will be the one in the environment variable `BIGML_DOMAIN` 
+     * 			or `bigml.io` if missing
+     * @param apiUser
+     * 			API username
+     * @param apiKey
+     * 			API key
+     * @param storage
+     * 			If storage is set to a directory name, the resources obtained in
+     *			CRU operations will be stored in the given directory
+     *
+     * @throws AuthenticationException if authentication in bigml domain fails
      */
     public BigMLClient(final String bigmlDomain, 
     		final String apiUser, final String apiKey, 
@@ -128,6 +152,26 @@ public class BigMLClient {
     
     /**
      * Constructor
+     * 
+     * @param apiUser
+     * 			API username
+     * @param apiKey
+     * 			API key
+     * @param projectId
+     * 			When projectId is set to a project ID, the user is considered to be 
+     * 			working in an organization project. The scope of the API requests 
+     * 			will be limited to this project and permissions should be previously 
+     * 			given by the organization administrator
+     * @param organizationId
+     * 			When organizationId is set to an organization ID, the user is 
+     * 			considered to be working for an organization. The scope of the API 
+     * 			requests will be limited to the projects of the organization and 
+     * 			permissions need to be previously given by the organization administrator
+     * @param storage
+     * 			If storage is set to a directory name, the resources obtained in
+     *			CRU operations will be stored in the given directory
+     *
+     * @throws AuthenticationException if authentication in bigml domain fails
      */
     public BigMLClient(final String apiUser, final String apiKey, 
     		final String projectId, final String organizationId, 
@@ -138,6 +182,30 @@ public class BigMLClient {
     
     /**
      * Constructor
+     * 
+     * @param bigmlDomain
+     * 			If bigmlDomain is set, the api will point to the specified domain. 
+     * 			Default will be the one in the environment variable `BIGML_DOMAIN` 
+     * 			or `bigml.io` if missing
+     * @param apiUser
+     * 			API username
+     * @param apiKey
+     * 			API key
+     * @param projectId
+     * 			When projectId is set to a project ID, the user is considered to be 
+     * 			working in an organization project. The scope of the API requests 
+     * 			will be limited to this project and permissions should be previously 
+     * 			given by the organization administrator
+     * @param organizationId
+     * 			When organizationId is set to an organization ID, the user is 
+     * 			considered to be working for an organization. The scope of the API 
+     * 			requests will be limited to the projects of the organization and 
+     * 			permissions need to be previously given by the organization administrator
+     * @param storage
+     * 			If storage is set to a directory name, the resources obtained in
+     *			CRU operations will be stored in the given directory
+     *
+     * @throws AuthenticationException if authentication in bigml domain fails
      */
     public BigMLClient(final String bigmlDomain, 
     		final String apiUser, final String apiKey, 
@@ -147,108 +215,6 @@ public class BigMLClient {
   			  organizationId, storage);
     }
     
-    
-    
-    @Deprecated
-    public static BigMLClient getInstance() 
-    		throws AuthenticationException {
-    	
-    	if (instance == null) {
-            instance = new BigMLClient(null, null, null, null);
-        }
-        return instance;
-    }
-    
-    @Deprecated
-    public static BigMLClient getInstance(final String storage)
-            throws AuthenticationException {
-    	
-    	if (instance == null) {
-            instance = new BigMLClient(null, null, null, storage);
-        }
-        return instance;
-    }
-    
-    @Deprecated
-    public static BigMLClient getInstance(final boolean devMode)
-            throws AuthenticationException {
-        if (instance == null) {
-            instance = new BigMLClient(null, null, null, null);
-        }
-        return instance;
-    }
-    
-    @Deprecated
-    public static BigMLClient getInstance(final String seed, 
-    		final boolean devMode)
-            throws AuthenticationException {
-        if (instance == null) {
-            instance = new BigMLClient(null, null, null, null);
-        }
-        return instance;
-    }
-    
-    @Deprecated
-    public static BigMLClient getInstance(final String apiUser,
-            final String apiKey, final boolean devMode)
-            throws AuthenticationException {
-        if (instance == null) {
-            instance = new BigMLClient(null, apiUser, apiKey, null);
-        }
-        return instance;
-    }
-    
-    @Deprecated
-    public static BigMLClient getInstance(final String apiUser,
-            final String apiKey, final String seed, final boolean devMode)
-            throws AuthenticationException {
-        if (instance == null) {
-            instance = new BigMLClient(apiUser, apiKey, seed, null);
-        }
-        return instance;
-    }
-    
-    @Deprecated
-    public static BigMLClient getInstance(final String apiUser,
-            final String apiKey, final boolean devMode, final String storage)
-            throws AuthenticationException {
-        if (instance == null) {
-            instance = new BigMLClient(apiUser, apiKey, null, storage);
-        }
-        return instance;
-    }
-    
-    @Deprecated
-    public static BigMLClient getInstance(final String apiUser,
-            final String apiKey, final String seed, 
-            final boolean devMode, final String storage)
-            throws AuthenticationException {
-        if (instance == null) {
-            instance = new BigMLClient(null, apiUser, apiKey, storage);
-        }
-        return instance;
-    }
-    
-    @Deprecated
-    public static BigMLClient getInstance(final String bigmlDomain, final String apiUser,
-            final String apiKey, final String seed, final boolean devMode, final String storage)
-            throws AuthenticationException {
-        if (instance == null) {
-            instance = new BigMLClient(bigmlDomain, apiUser, apiKey, storage);
-        }
-        return instance;
-    }
-    
-    @Deprecated
-    public static BigMLClient getInstance(final String bigmlDomain, 
-    		final String apiUser, final String apiKey, 
-    		final String storage)
-            throws AuthenticationException {
-    	if (instance == null) {
-            instance = new BigMLClient(bigmlDomain, apiUser, apiKey, storage);
-        }
-        return instance;
-    }
 
     public static void resetInstance() {
         instance = null;
@@ -264,6 +230,19 @@ public class BigMLClient {
     
     /**
      * Initialization object.
+     * 
+     * @param bigmlDomain
+     * 		If bigmlDomain is set, the api will point to the specified domain. 
+     * 		Default will be the one in the environment variable `BIGML_DOMAIN` 
+     * 		or `bigml.io` if missing
+     * @param apiUser
+     * 		API username
+     * @param apiKey
+     * 		API key
+     * @param storage
+     * 		If storage is set to a directory name, the resources obtained in
+     *		CRU operations will be stored in the given directory
+     * @throws AuthenticationException if authentication in bigml domain fails
      */
     private void init(final String bigmlDomain, final String apiUser,
                       final String apiKey, final String storage)
@@ -277,6 +256,29 @@ public class BigMLClient {
     
     /**
      * Initialization object.
+     * 
+     * @param bigmlDomain
+     * 		If bigmlDomain is set, the api will point to the specified domain. 
+     * 		Default will be the one in the environment variable `BIGML_DOMAIN` 
+     * 		or `bigml.io` if missing
+     * @param apiUser
+     * 		API username
+     * @param apiKey
+     * 		API key
+     * @param projectId
+     * 		When projectId is set to a project ID, the user is considered to be 
+     * 		working in an organization project. The scope of the API requests 
+     * 		will be limited to this project and permissions should be previously 
+     * 		given by the organization administrator
+     * @param organizationId
+     * 		When organizationId is set to an organization ID, the user is 
+     * 		considered to be working for an organization. The scope of the API 
+     * 		requests will be limited to the projects of the organization and 
+     * 		permissions need to be previously given by the organization administrator
+     * @param storage
+     * 		If storage is set to a directory name, the resources obtained in
+     *		CRU operations will be stored in the given directory
+     * @throws AuthenticationException if authentication in bigml domain fails
      */
     private void init(final String bigmlDomain, final String apiUser,
                       final String apiKey, final String projectId, 
@@ -441,6 +443,8 @@ public class BigMLClient {
      *            the name you want to give to the new source. Optional
      * @param sourceParser
      *            set of parameters to parse the source. Optional
+     * 
+     * @return a JSONObject for the new source
      */
     public JSONObject createSource(final String fileName, String name,
             JSONObject sourceParser) {
@@ -463,6 +467,8 @@ public class BigMLClient {
      *            set of parameters to parse the source. Optional
      * @param args
      *            set of parameters for the new model. Optional
+     * 
+     * @return a JSONObject for the new source
      */
     public JSONObject createSource(final String fileName, String name,
             JSONObject sourceParser, JSONObject args) {
@@ -479,7 +485,8 @@ public class BigMLClient {
      *            url for remote source
      * @param sourceParser
      *            set of parameters to create the source. Optional
-     *
+     * 
+     * @return a JSONObject for the new source
      */
     public JSONObject createRemoteSource(final String url,
             final JSONObject sourceParser) {
@@ -498,6 +505,8 @@ public class BigMLClient {
      *            set of parameters to create the source. Optional
      * @param args
      *            set of parameters for the new model. Optional
+     * 
+     * @return a JSONObject for the new source
      */
     public JSONObject createRemoteSource(final String url,
             final JSONObject sourceParser, final JSONObject args) {
@@ -515,6 +524,7 @@ public class BigMLClient {
      * @param sourceParser
      *            set of parameters to create the source. Optional
      *
+     * @return a JSONObject for the new source
      */
     public JSONObject createSourceFromBatchPrediction(final String batchPredictionId,
             final JSONObject sourceParser) {
@@ -534,6 +544,8 @@ public class BigMLClient {
      *            set of parameters to create the source. Optional
      * @param args
      *            set of parameters for the new model. Optional
+     *
+     * @return a JSONObject for the new source
      */
     public JSONObject createSourceFromBatchPrediction(final String batchPredictionId,
             final JSONObject sourceParser, final JSONObject args) {
@@ -551,6 +563,8 @@ public class BigMLClient {
      *            the resource ID of the batch anomaly score resource
      * @param sourceParser
      *            set of parameters to create the source. Optional
+     * 
+     *  @return a JSONObject for the new source
      */
     public JSONObject createSourceFromBatchAnomalyScore(final String batchAnomalyScoreId,
             final JSONObject sourceParser) {
@@ -570,6 +584,8 @@ public class BigMLClient {
      *            set of parameters to create the source. Optional
      * @param args
      *            set of parameters for the new model. Optional
+     * 
+     * @return a JSONObject for the new source
      */
     public JSONObject createSourceFromBatchAnomalyScore(final String batchAnomalyScoreId,
             final JSONObject sourceParser, final JSONObject args) {
@@ -588,6 +604,7 @@ public class BigMLClient {
      * @param sourceParser
      *            set of parameters to create the source. Optional
      *
+     * @return a JSONObject for the new source
      */
     public JSONObject createInlineSource(final String data,
             final JSONObject sourceParser) {
@@ -602,7 +619,10 @@ public class BigMLClient {
      *
      * @param externalData
      *            set of parameters to create the source.
+     * @param args
+     * 			  extra arguments
      *
+     * @return a JSONObject for the new source
      */
     public JSONObject createExternalDataSource(
             final JSONObject externalData, final JSONObject args) {
@@ -619,6 +639,7 @@ public class BigMLClient {
      *            a unique identifier in the form source/id where id is a string
      *            of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the source
      */
     public JSONObject getSource(final String sourceId) {
         return source.get(sourceId);
@@ -633,6 +654,7 @@ public class BigMLClient {
      * @param sourceJSON
      *            a source JSONObject
      *
+     * @return a JSONObject for the source
      */
     public JSONObject getSource(final JSONObject sourceJSON) {
         return source.get(sourceJSON);
@@ -645,6 +667,7 @@ public class BigMLClient {
      *            a unique identifier in the form source/id where id is a string
      *            of 24 alpha-numeric chars.
      *
+     * @return true if source is finished
      */
     public boolean sourceIsReady(final String sourceId) {
         return source.isReady(sourceId);
@@ -656,6 +679,7 @@ public class BigMLClient {
      * @param sourceJSON
      *            a source JSONObject
      *
+     * @return true if source is finished
      */
     public boolean sourceIsReady(final JSONObject sourceJSON) {
         return source.isReady(sourceJSON);
@@ -670,6 +694,7 @@ public class BigMLClient {
      * @param queryString
      *            query filtering the listing.
      *
+     * @return a JSONObject containing all sources matching the query
      */
     public JSONObject listSources(final String queryString) {
         return source.list(queryString);
@@ -690,6 +715,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the source. Optional
      *
+     * @return a JSONObject for the updated source
      */
     public JSONObject updateSource(final String sourceId, final String changes) {
         return source.update(sourceId, changes);
@@ -709,6 +735,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the source. Optional
      *
+     * @return a JSONObject for the updated source
      */
     public JSONObject updateSource(final JSONObject sourceJSON,
             final JSONObject changes) {
@@ -726,6 +753,7 @@ public class BigMLClient {
      *            a unique identifier in the form source/id where id is a string
      *            of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the deleted source
      */
     public JSONObject deleteSource(final String sourceId) {
         return source.delete(sourceId);
@@ -741,6 +769,7 @@ public class BigMLClient {
      * @param sourceJSON
      *            a source JSONObject
      *
+     * @return a JSONObject for the deleted source
      */
     public JSONObject deleteSource(final JSONObject sourceJSON) {
         return source.delete(sourceJSON);
@@ -780,6 +809,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new dataset
      */
     public JSONObject createDataset(final String resourceId, JSONObject args,
             Integer waitTime, Integer retries) {
@@ -805,6 +835,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new dataset
      */
     public JSONObject createDataset(final List datasetsIds, JSONObject args,
             Integer waitTime, Integer retries) {
@@ -823,6 +854,7 @@ public class BigMLClient {
      *            a unique identifier in the form datset/id where id is a string
      *            of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the dataset
      */
     public JSONObject getDataset(final String datasetId) {
         return dataset.get(datasetId);
@@ -838,6 +870,7 @@ public class BigMLClient {
      * @param datasetJSON
      *            a dataset JSONObject
      *
+     * @return a JSONObject for the dataset
      */
     public JSONObject getDataset(final JSONObject datasetJSON) {
         return dataset.get(datasetJSON);
@@ -847,6 +880,8 @@ public class BigMLClient {
      * Returns the ids of the fields that contain errors and their number.
      *
      * @param datasetId the dataset id of the dataset to be inspected
+     * 
+     * @return a Map with error counts in dataset
      */
     public Map<String, Long> getErrorCounts(final String datasetId) {
         return dataset.getErrorCounts(getDataset(datasetId));
@@ -856,6 +891,8 @@ public class BigMLClient {
      * Returns the ids of the fields that contain errors and their number.
      *
      * @param datasetJSON the dataset JSON object to be inspected
+     * 
+     * @return a Map with error counts in dataset 
      */
     public Map<String, Long> getErrorCounts(final JSONObject datasetJSON) {
         return dataset.getErrorCounts(datasetJSON);
@@ -868,6 +905,7 @@ public class BigMLClient {
      *            a unique identifier in the form dataset/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return true if dataset is finished
      */
     public boolean datasetIsReady(final String datasetId) {
         return dataset.isReady(datasetId);
@@ -879,6 +917,7 @@ public class BigMLClient {
      * @param datasetJSON
      *            a dataset JSONObject
      *
+     * @return true if dataset is finished
      */
     public boolean datasetIsReady(final JSONObject datasetJSON) {
         return dataset.isReady(datasetJSON);
@@ -893,6 +932,7 @@ public class BigMLClient {
      * @param queryString
      *            query filtering the listing.
      *
+     * @return a JSONObject containing all datasets matching the query
      */
     public JSONObject listDatasets(final String queryString) {
         return dataset.list(queryString);
@@ -911,6 +951,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the source. Optional
      *
+     * @return a JSONObject for the updated dataset
      */
     public JSONObject updateDataset(final String datasetId, final String changes) {
         return dataset.update(datasetId, changes);
@@ -928,6 +969,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the source. Optional
      *
+     * @return a JSONObject for the updated dataset
      */
     public JSONObject updateDataset(final JSONObject datasetJSON,
             final JSONObject changes) {
@@ -945,6 +987,7 @@ public class BigMLClient {
      *            a unique identifier in the form dataset/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the deleted dataset
      */
     public JSONObject deleteDataset(final String datasetId) {
         return dataset.delete(datasetId);
@@ -960,6 +1003,7 @@ public class BigMLClient {
      * @param datasetJSON
      *            a dataset JSONObject
      *
+     * @return a JSONObject for the deleted dataset
      */
     public JSONObject deleteDataset(final JSONObject datasetJSON) {
         return dataset.delete(datasetJSON);
@@ -977,7 +1021,7 @@ public class BigMLClient {
      *            a string of 24 alpha-numeric chars.
      * @param filename
      *            Path to save file locally
-     *
+     * @return a JSONObject for the downloaded dataset
      */
     public JSONObject downloadDataset(final String datasetId,
                                       final String filename) {
@@ -1010,6 +1054,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new model
      */
     public JSONObject createModel(final String resourceId, 
     		JSONObject args, Integer waitTime, Integer retries) {
@@ -1035,6 +1080,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new model
      */
     public JSONObject createModel(final List datasetsIds, 
     		JSONObject args, Integer waitTime, Integer retries) {
@@ -1053,6 +1099,7 @@ public class BigMLClient {
      *            a unique identifier in the form model/id where id is a string
      *            of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the model
      */
     public JSONObject getModel(final String modelId) {
         return getModel(modelId, null, null);
@@ -1073,6 +1120,7 @@ public class BigMLClient {
      * @param apiKey
      *            API key
      *
+     * @return a JSONObject for the model
      */
     public JSONObject getModel(final String modelId, final String apiUser,
             final String apiKey) {
@@ -1090,6 +1138,7 @@ public class BigMLClient {
      *            a unique identifier in the form model/id where id is a string
      *            of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the public model
      */
     public JSONObject getPublicModel(final String modelId) {
         return getPublicModel(modelId, null, null);
@@ -1110,6 +1159,7 @@ public class BigMLClient {
      * @param apiKey
      *            API key
      *
+     * @return a JSONObject for the public model
      */
     public JSONObject getPublicModel(final String modelId,
             final String apiUser, final String apiKey) {
@@ -1125,6 +1175,7 @@ public class BigMLClient {
      * @param modelJSON
      *            a model JSONObject
      *
+     * @return a JSONObject for the model
      */
     public JSONObject getModel(final JSONObject modelJSON) {
         return getModel(modelJSON, null, null);
@@ -1143,6 +1194,7 @@ public class BigMLClient {
      * @param apiKey
      *            API key
      *
+     * @return a JSONObject for the model
      */
     public JSONObject getModel(final JSONObject modelJSON,
             final String apiUser, final String apiKey) {
@@ -1162,6 +1214,7 @@ public class BigMLClient {
      * @param queryString
      *            query for filtering.
      *
+     * @return a JSONObject for the model matchibg the query
      */
     public JSONObject getModel(final String modelId, final String queryString) {
         return getModel(modelId, queryString, null, null);
@@ -1184,6 +1237,7 @@ public class BigMLClient {
      * @param apiKey
      *            API key
      *
+     * @return a JSONObject for the model
      */
     public JSONObject getModel(final String modelId, final String queryString,
             final String apiUser, final String apiKey) {
@@ -1203,6 +1257,7 @@ public class BigMLClient {
      * @param queryString
      *            query for filtering.
      *
+     * @return a JSONObject for the public model
      */
     public JSONObject getPublicModel(final String modelId,
             final String queryString) {
@@ -1226,6 +1281,7 @@ public class BigMLClient {
      * @param apiKey
      *            API key
      *
+     * @return a JSONObject for the public model
      */
     public JSONObject getPublicModel(final String modelId,
             final String queryString, final String apiUser, final String apiKey) {
@@ -1243,6 +1299,7 @@ public class BigMLClient {
      * @param queryString
      *            query for filtering.
      *
+     * @return a JSONObject for the model
      */
     public JSONObject getModel(final JSONObject modelJSON,
             final String queryString) {
@@ -1264,6 +1321,7 @@ public class BigMLClient {
      * @param apiKey
      *            API key
      *
+     * @return a JSONObject for the model
      */
     public JSONObject getModel(final JSONObject modelJSON,
             final String queryString, final String apiUser, final String apiKey) {
@@ -1277,6 +1335,7 @@ public class BigMLClient {
      *            modelId a unique identifier in the form model/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return true if model is finished
      */
     public boolean modelIsReady(final String modelId) {
         return model.isReady(modelId);
@@ -1288,6 +1347,7 @@ public class BigMLClient {
      * @param modelJSON
      *            a model JSONObject
      *
+     * @return true if model is finished
      */
     public boolean modelIsReady(final JSONObject modelJSON) {
         return model.isReady(modelJSON);
@@ -1302,6 +1362,7 @@ public class BigMLClient {
      * @param queryString
      *            query filtering the listing.
      *
+     * @return a JSONObject containing all models matching the query
      */
     public JSONObject listModels(final String queryString) {
         return model.list(queryString);
@@ -1319,6 +1380,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the source. Optional
      *
+     * @return a JSONObject for the updated model
      */
     public JSONObject updateModel(final String modelId, final String changes) {
         return model.update(modelId, changes);
@@ -1335,6 +1397,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the source. Optional
      *
+     * @return a JSONObject for the updated model
      */
     public JSONObject updateModel(final JSONObject modelJSON,
             final JSONObject changes) {
@@ -1352,6 +1415,7 @@ public class BigMLClient {
      *            a unique identifier in the form model/id where id is a string
      *            of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the deleted model
      */
     public JSONObject deleteModel(final String modelId) {
         return model.delete(modelId);
@@ -1367,6 +1431,7 @@ public class BigMLClient {
      * @param modelJSON
      *            a model JSONObject
      *
+     * @return a JSONObject for the deleted model
      */
     public JSONObject deleteModel(final JSONObject modelJSON) {
         return model.delete(modelJSON);
@@ -1396,6 +1461,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new anomaly
      */
     public JSONObject createAnomaly(final String datasetId, 
     		JSONObject args, Integer waitTime, Integer retries) {
@@ -1421,6 +1487,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new anomaly
      */
     public JSONObject createAnomaly(final List datasetsIds, 
     		JSONObject args, Integer waitTime, Integer retries) {
@@ -1439,6 +1506,7 @@ public class BigMLClient {
      *            a unique identifier in the form anomaly/id where id is a string
      *            of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the anomaly
      */
     public JSONObject getAnomaly(final String anomalyId) {
         return getAnomaly(anomalyId, null, null);
@@ -1459,6 +1527,7 @@ public class BigMLClient {
      * @param apiKey
      *            API key
      *
+     * @return a JSONObject for the anomaly
      */
     public JSONObject getAnomaly(final String anomalyId, final String apiUser,
                                final String apiKey) {
@@ -1476,6 +1545,7 @@ public class BigMLClient {
      *            a unique identifier in the form anomaly/id where id is a string
      *            of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the public anomaly
      */
     public JSONObject getPublicAnomaly(final String anomalyId) {
         return getPublicModel(anomalyId, null, null);
@@ -1496,6 +1566,7 @@ public class BigMLClient {
      * @param apiKey
      *            API key
      *
+     * @return a JSONObject for the public anomaly
      */
     public JSONObject getPublicAnomaly(final String anomalyId,
                                      final String apiUser, final String apiKey) {
@@ -1511,6 +1582,7 @@ public class BigMLClient {
      * @param anomalyJSON
      *            an anomaly JSONObject
      *
+     * @return a JSONObject for the anomaly
      */
     public JSONObject getAnomaly(final JSONObject anomalyJSON) {
         return getAnomaly(anomalyJSON, null, null);
@@ -1529,6 +1601,7 @@ public class BigMLClient {
      * @param apiKey
      *            API key
      *
+     * @return a JSONObject for the anomaly
      */
     public JSONObject getAnomaly(final JSONObject anomalyJSON,
                                final String apiUser, final String apiKey) {
@@ -1548,6 +1621,7 @@ public class BigMLClient {
      * @param queryString
      *            query for filtering.
      *
+     * @return a JSONObject for the anomaly
      */
     public JSONObject getAnomaly(final String anomalyId, final String queryString) {
         return getAnomaly(anomalyId, queryString, null, null);
@@ -1570,6 +1644,7 @@ public class BigMLClient {
      * @param apiKey
      *            API key
      *
+     * @return a JSONObject for the anomaly
      */
     public JSONObject getAnomaly(final String anomalyId, final String queryString,
                                final String apiUser, final String apiKey) {
@@ -1589,6 +1664,7 @@ public class BigMLClient {
      * @param queryString
      *            query for filtering.
      *
+     * @return a JSONObject for the public anomaly
      */
     public JSONObject getPublicAnomaly(final String anomalyId,
                                      final String queryString) {
@@ -1612,6 +1688,7 @@ public class BigMLClient {
      * @param apiKey
      *            API key
      *
+     * @return a JSONObject for the public anomaly
      */
     public JSONObject getPublicAnomaly(final String anomalyId,
                                      final String queryString, final String apiUser, final String apiKey) {
@@ -1629,6 +1706,7 @@ public class BigMLClient {
      * @param queryString
      *            query for filtering.
      *
+     * @return a JSONObject for the anomaly
      */
     public JSONObject getAnomaly(final JSONObject anomalyJSON,
                                final String queryString) {
@@ -1650,6 +1728,7 @@ public class BigMLClient {
      * @param apiKey
      *            API key
      *
+     * @return a JSONObject for the anomaly
      */
     public JSONObject getAnomaly(final JSONObject anomalyJSON,
                                final String queryString, final String apiUser, final String apiKey) {
@@ -1663,6 +1742,7 @@ public class BigMLClient {
      *            anomalyId a unique identifier in the form anomaly/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return true if anomaly is finished
      */
     public boolean anomalyIsReady(final String anomalyId) {
         return anomaly.isReady(anomalyId);
@@ -1674,6 +1754,7 @@ public class BigMLClient {
      * @param anomalyJSON
      *            an anomaly JSONObject
      *
+     * @return true if anomaly is finished
      */
     public boolean anomalyIsReady(final JSONObject anomalyJSON) {
         return anomaly.isReady(anomalyJSON);
@@ -1688,6 +1769,7 @@ public class BigMLClient {
      * @param queryString
      *            query filtering the listing.
      *
+     * @return a JSONObject containing all anomalies matching the query
      */
     public JSONObject listAnomalies(final String queryString) {
         return anomaly.list(queryString);
@@ -1705,6 +1787,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the source. Optional
      *
+     * @return a JSONObject for the updated anomaly
      */
     public JSONObject updateAnomaly(final String anomalyId, final String changes) {
         return anomaly.update(anomalyId, changes);
@@ -1721,6 +1804,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the source. Optional
      *
+     * @return a JSONObject for the updated anomaly
      */
     public JSONObject updateAnomaly(final JSONObject anomalyJSON,
                                   final JSONObject changes) {
@@ -1738,6 +1822,7 @@ public class BigMLClient {
      *            a unique identifier in the form anomaly/id where id is a string
      *            of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the deleted anomaly
      */
     public JSONObject deleteAnomaly(final String anomalyId) {
         return anomaly.delete(anomalyId);
@@ -1753,6 +1838,7 @@ public class BigMLClient {
      * @param anomalyJSON
      *            an anomaly JSONObject
      *
+     * @return a JSONObject for the deleted anomaly
      */
     public JSONObject deleteAnomaly(final JSONObject anomalyJSON) {
         return anomaly.delete(anomalyJSON);
@@ -1783,6 +1869,7 @@ public class BigMLClient {
      *            an object with field's id/value pairs representing the
      *            instance you want to create a prediction for.
      * @param byName
+     * 			  if use name or id for fields in inputData
      * @param args
      *            set of parameters for the new prediction. Required
      * @param waitTime
@@ -1791,6 +1878,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new prediction
      */
     public JSONObject createPrediction(final String modelId,
             JSONObject inputData, Boolean byName, JSONObject args,
@@ -1823,6 +1911,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new prediction
      */
     public JSONObject createPrediction(final String modelId,
             JSONObject inputData, JSONObject args,
@@ -1841,6 +1930,7 @@ public class BigMLClient {
      *            a unique identifier in the form prediction/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the prediction
      */
     public JSONObject getPrediction(final String predictionId) {
         return prediction.get(predictionId);
@@ -1855,6 +1945,7 @@ public class BigMLClient {
      * @param predictionJSON
      *            a prediction JSONObject
      *
+     * @return a JSONObject for the prediction
      */
     public JSONObject getPrediction(final JSONObject predictionJSON) {
         return prediction.get(predictionJSON);
@@ -1867,6 +1958,7 @@ public class BigMLClient {
      *            a unique identifier in the form prediction/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return true if prediction is finished
      */
     public boolean predictionIsReady(final String predictionId) {
         return prediction.isReady(predictionId);
@@ -1878,6 +1970,7 @@ public class BigMLClient {
      * @param predictionJSON
      *            a prediction JSONObject
      *
+     * @return true if prediction is finished
      */
     public boolean predictionIsReady(final JSONObject predictionJSON) {
         return prediction.isReady(predictionJSON);
@@ -1893,6 +1986,7 @@ public class BigMLClient {
      * @param queryString
      *            query filtering the listing.
      *
+     * @return a JSONObject containing all predictions matching the query
      */
     public JSONObject listPredictions(final String queryString) {
         return prediction.list(queryString);
@@ -1910,6 +2004,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the source. Optional
      *
+     * @return a JSONObject for the updated prediction
      */
     public JSONObject updatePrediction(final String predictionId,
             final String changes) {
@@ -1927,6 +2022,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the source. Optional
      *
+     * @return a JSONObject for the updated prediction
      */
     public JSONObject updatePrediction(final JSONObject predictionJSON,
             final JSONObject changes) {
@@ -1943,6 +2039,7 @@ public class BigMLClient {
      *            a unique identifier in the form prediction/id where id is a
      *            string of 24 alpha-numeric chars
      *
+     * @return a JSONObject for the deleted prediction
      */
     public JSONObject deletePrediction(final String predictionId) {
         return prediction.delete(predictionId);
@@ -1957,6 +2054,7 @@ public class BigMLClient {
      * @param predictionJSON
      *            a prediction JSONObject
      *
+     * @return a JSONObject for the deleted prediction
      */
     public JSONObject deletePrediction(final JSONObject predictionJSON) {
         return prediction.delete(predictionJSON);
@@ -1991,6 +2089,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new anomaly score
      */
     public JSONObject createAnomalyScore(final String anomalyId,
             JSONObject inputData, JSONObject args, Integer waitTime,
@@ -2019,6 +2118,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new anomaly score
      */
     public JSONObject createAnomalyScore(final JSONObject anomaly,
             JSONObject inputData, JSONObject args,
@@ -2038,6 +2138,7 @@ public class BigMLClient {
      *            a unique identifier in the form anomalyScore/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the anomaly score
      */
     public JSONObject getAnomalyScore(final String anomalyScoreId) {
         return anomalyScore.get(anomalyScoreId);
@@ -2052,6 +2153,7 @@ public class BigMLClient {
      * @param anomalyScoreJSON
      *            an anomaly score JSONObject
      *
+     * @return a JSONObject for the anomaly score
      */
     public JSONObject getAnomalyScore(final JSONObject anomalyScoreJSON) {
         return anomalyScore.get(anomalyScoreJSON);
@@ -2064,6 +2166,7 @@ public class BigMLClient {
      *            a unique identifier in the form anomalyScore/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return true if anomaly score is finished
      */
     public boolean anomalyScoreIsReady(final String anomalyScoreId) {
         return anomalyScore.isReady(anomalyScoreId);
@@ -2075,6 +2178,7 @@ public class BigMLClient {
      * @param anomalyScoreJSON
      *            an anomaly score JSONObject
      *
+     * @return true if anomaly score is finished
      */
     public boolean anomalyScoreIsReady(final JSONObject anomalyScoreJSON) {
         return anomalyScore.isReady(anomalyScoreJSON);
@@ -2090,6 +2194,7 @@ public class BigMLClient {
      * @param queryString
      *            query filtering the listing.
      *
+     * @return a JSONObject containing all anomaly scores matching the query
      */
     public JSONObject listAnomalyScores(final String queryString) {
         return anomalyScore.list(queryString);
@@ -2107,6 +2212,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the source. Optional
      *
+     * @return a JSONObject for the updated anomaly score
      */
     public JSONObject updateAnomalyScore(final String anomalyScoreId,
             final String changes) {
@@ -2124,6 +2230,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the source. Optional
      *
+     * @return a JSONObject for the updated anomaly score
      */
     public JSONObject updateAnomalyScore(final JSONObject anomalyScoreJSON,
             final JSONObject changes) {
@@ -2140,6 +2247,7 @@ public class BigMLClient {
      *            a unique identifier in the form anomalyScore/id where id is a
      *            string of 24 alpha-numeric chars
      *
+     * @return a JSONObject for the deleted anomaly score
      */
     public JSONObject deleteAnomalyScore(final String anomalyScoreId) {
         return anomalyScore.delete(anomalyScoreId);
@@ -2154,6 +2262,7 @@ public class BigMLClient {
      * @param anomalyScoreJSON
      *            an anomaly score JSONObject
      *
+     * @return a JSONObject for the deleted anomaly score
      */
     public JSONObject deleteAnomalyScore(final JSONObject anomalyScoreJSON) {
         return anomalyScore.delete(anomalyScoreJSON);
@@ -2191,6 +2300,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new evaluation
      */
     public JSONObject createEvaluation(final String modelId,
             final String datasetId, JSONObject args, Integer waitTime,
@@ -2214,6 +2324,7 @@ public class BigMLClient {
      *            a unique identifier in the form evaluation/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the evaluation
      */
     public JSONObject getEvaluation(final String evaluationId) {
         return evaluation.get(evaluationId);
@@ -2233,6 +2344,7 @@ public class BigMLClient {
      * @param evaluationJSON
      *            an evaluation JSONObject.
      *
+     * @return a JSONObject for the evaluation
      */
     public JSONObject getEvaluation(final JSONObject evaluationJSON) {
         return evaluation.get(evaluationJSON);
@@ -2245,6 +2357,7 @@ public class BigMLClient {
      *            a unique identifier in the form evaluation/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return true if evaluation is finished
      */
     public boolean evaluationIsReady(final String evaluationId) {
         return evaluation.isReady(evaluationId);
@@ -2256,6 +2369,7 @@ public class BigMLClient {
      * @param evaluationJSON
      *            an evaluation JSONObject.
      *
+     * @return true if evaluation is finished
      */
     public boolean evaluationIsReady(final JSONObject evaluationJSON) {
         return evaluation.isReady(evaluationJSON);
@@ -2271,6 +2385,7 @@ public class BigMLClient {
      * @param queryString
      *            query filtering the listing.
      *
+     * @return a JSONObject containing all evaluations matching the query
      */
     public JSONObject listEvaluations(final String queryString) {
         return evaluation.list(queryString);
@@ -2288,6 +2403,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the evaluation. Optional
      *
+     * @return a JSONObject for the updated evaluation
      */
     public JSONObject updateEvaluation(final String evaluationId,
             final String changes) {
@@ -2304,6 +2420,8 @@ public class BigMLClient {
      *            an evaluation JSONObject
      * @param changes
      *            set of parameters to update the evaluation. Optional
+     *
+     * @return a JSONObject for the updated evaluation
      */
     public JSONObject updateEvaluation(final JSONObject evaluationJSON,
             final JSONObject changes) {
@@ -2320,6 +2438,7 @@ public class BigMLClient {
      *            a unique identifier in the form evaluation/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the deleted evaluation
      */
     public JSONObject deleteEvaluation(final String evaluationId) {
         return evaluation.delete(evaluationId);
@@ -2334,6 +2453,7 @@ public class BigMLClient {
      * @param evaluationJSON
      *            an evaluation JSONObject.
      *
+     * @return a JSONObject for the deleted evaluation
      */
     public JSONObject deleteEvaluation(final JSONObject evaluationJSON) {
         return evaluation.delete(evaluationJSON);
@@ -2364,6 +2484,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new ensemble
      */
     public JSONObject createEnsemble(final String datasetId, 
     		JSONObject args, Integer waitTime, Integer retries) {
@@ -2389,6 +2510,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new ensemble
      */
     public JSONObject createEnsemble(final List datasetsIds, 
     		JSONObject args, Integer waitTime, Integer retries) {
@@ -2412,6 +2534,7 @@ public class BigMLClient {
      *            a unique identifier in the form ensemble/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the ensemble
      */
     public JSONObject getEnsemble(final String ensembleId) {
         return ensemble.get(ensembleId);
@@ -2432,6 +2555,7 @@ public class BigMLClient {
      * @param ensembleJSON
      *            an ensemble JSONObject.
      *
+     * @return a JSONObject for the ensemble
      */
     public JSONObject getEnsemble(final JSONObject ensembleJSON) {
         return ensemble.get(ensembleJSON);
@@ -2444,6 +2568,7 @@ public class BigMLClient {
      *            a unique identifier in the form ensemble/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return true if ensemble is finished
      */
     public boolean ensembleIsReady(final String ensembleId) {
         return ensemble.isReady(ensembleId);
@@ -2455,6 +2580,7 @@ public class BigMLClient {
      * @param ensembleJSON
      *            an ensemble JSONObject.
      *
+     * @return true if ensemble is finished
      */
     public boolean ensembleIsReady(final JSONObject ensembleJSON) {
         return ensemble.isReady(ensembleJSON);
@@ -2469,6 +2595,7 @@ public class BigMLClient {
      * @param queryString
      *            query filtering the listing.
      *
+     * @return a JSONObject containing all ensembles matching the query
      */
     public JSONObject listEnsembles(final String queryString) {
         return ensemble.list(queryString);
@@ -2487,6 +2614,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the ensemble. Optional
      *
+     * @return a JSONObject for the updated ensemble
      */
     public JSONObject updateEnsemble(final String ensembleId,
             final String changes) {
@@ -2504,6 +2632,8 @@ public class BigMLClient {
      *            an ensemble JSONObject
      * @param changes
      *            set of parameters to update the ensemble. Optional
+     *
+     * @return a JSONObject for the updated ensemble
      */
     public JSONObject updateEnsemble(final JSONObject ensembleJSON,
             final JSONObject changes) {
@@ -2521,6 +2651,7 @@ public class BigMLClient {
      *            a unique identifier in the form ensemble/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the deleted ensemble
      */
     public JSONObject deleteEnsemble(final String ensembleId) {
         return ensemble.delete(ensembleId);
@@ -2536,6 +2667,7 @@ public class BigMLClient {
      * @param ensembleJSON
      *            an ensemble JSONObject.
      *
+     * @return a JSONObject for the deleted ensemble
      */
     public JSONObject deleteEnsemble(final JSONObject ensembleJSON) {
         return ensemble.delete(ensembleJSON);
@@ -2573,6 +2705,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new batch prediction
      */
     public JSONObject createBatchPrediction(final String modelId,
             final String datasetId, JSONObject args, Integer waitTime,
@@ -2598,6 +2731,7 @@ public class BigMLClient {
      *            a unique identifier in the form batchPrediction/id where id is
      *            a string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the batch prediction
      */
     public JSONObject getBatchPrediction(final String batchPredictionId) {
         return batchPrediction.get(batchPredictionId);
@@ -2619,6 +2753,7 @@ public class BigMLClient {
      * @param batchPredictionJSON
      *            a batch prediction JSONObject.
      *
+     * @return a JSONObject for the batch prediction
      */
     public JSONObject getBatchPrediction(final JSONObject batchPredictionJSON) {
         return batchPrediction.get(batchPredictionJSON);
@@ -2636,7 +2771,8 @@ public class BigMLClient {
      *            a string of 24 alpha-numeric chars.
      * @param filename
      *            Path to save file locally
-     *
+     * 
+     * @return a JSONObject for the downloaded batch prediction
      */
     public JSONObject downloadBatchPrediction(final String batchPredictionId,
             final String filename) {
@@ -2655,7 +2791,8 @@ public class BigMLClient {
      *            a batch prediction JSONObject.
      * @param filename
      *            Path to save file locally
-     *
+     * 
+     * @return a JSONObject for the downloaded batch prediction
      */
     public JSONObject downloadBatchPrediction(
             final JSONObject batchPredictionJSON, final String filename) {
@@ -2670,6 +2807,7 @@ public class BigMLClient {
      *            a unique identifier in the form batchPrediction/id where id is
      *            a string of 24 alpha-numeric chars.
      *
+     * @return true if batch prediction is finished
      */
     public boolean batchPredictionIsReady(final String batchPredictionId) {
         return batchPrediction.isReady(batchPredictionId);
@@ -2681,6 +2819,7 @@ public class BigMLClient {
      * @param batchPredictionJSON
      *            a batchPrediction JSONObject.
      *
+     * @return true if batch prediction is finished
      */
     public boolean batchPredictionIsReady(final JSONObject batchPredictionJSON) {
         return batchPrediction.isReady(batchPredictionJSON);
@@ -2695,6 +2834,7 @@ public class BigMLClient {
      * @param queryString
      *            query filtering the listing.
      *
+     * @return a JSONObject containing all batch predictions matching the query
      */
     public JSONObject listBatchPredictions(final String queryString) {
         return batchPrediction.list(queryString);
@@ -2712,6 +2852,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the batch prediction. Optional
      *
+     * @return a JSONObject for the updated batch prediction
      */
     public JSONObject updateBatchPrediction(final String batchPredictionId,
             final String changes) {
@@ -2728,6 +2869,8 @@ public class BigMLClient {
      *            a batch prediction JSONObject
      * @param changes
      *            set of parameters to update the batch prediction. Optional
+     *
+     * @return a JSONObject for the updated batch prediction
      */
     public JSONObject updateBatchPrediction(
             final JSONObject batchpredictionJSON, final JSONObject changes) {
@@ -2744,6 +2887,7 @@ public class BigMLClient {
      *            a unique identifier in the form batchPrediction/id where id is
      *            a string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the deleted batch prediction
      */
     public JSONObject deleteBatchPrediction(final String batchPredictionId) {
         return batchPrediction.delete(batchPredictionId);
@@ -2758,6 +2902,7 @@ public class BigMLClient {
      * @param batchPredictionJSON
      *            a batch prediction JSONObject.
      *
+     * @return a JSONObject for the deleted batch prediction
      */
     public JSONObject deleteBatchPrediction(final JSONObject batchPredictionJSON) {
         return batchPrediction.delete(batchPredictionJSON);
@@ -2793,6 +2938,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new batch anomaly score
      */
     public JSONObject createBatchAnomalyScore(final String anomalyId,
             final String datasetId, JSONObject args, Integer waitTime,
@@ -2818,6 +2964,7 @@ public class BigMLClient {
      *            a unique identifier in the form batchanomalyscore/id where id is
      *            a string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the batch anomaly score
      */
     public JSONObject getBatchAnomalyScore(final String batchAnomalyScoreId) {
         return batchAnomalyScore.get(batchAnomalyScoreId);
@@ -2839,6 +2986,7 @@ public class BigMLClient {
      * @param batchAnomalyScoreJSON
      *            a batch anomaly score JSONObject.
      *
+     * @return a JSONObject for the batch anomaly score
      */
     public JSONObject getBatchAnomalyScore(final JSONObject batchAnomalyScoreJSON) {
         return batchAnomalyScore.get(batchAnomalyScoreJSON);
@@ -2856,7 +3004,8 @@ public class BigMLClient {
      *            a string of 24 alpha-numeric chars.
      * @param filename
      *            Path to save file locally
-     *
+     *	
+     * @return a JSONObject for the downloaded batch anomaly score
      */
     public JSONObject downloadBatchAnomalyScore(final String batchAnomalyScoreId,
             final String filename) {
@@ -2875,7 +3024,8 @@ public class BigMLClient {
      *            a batch anomaly score JSONObject.
      * @param filename
      *            Path to save file locally
-     *
+     * 
+     * @return a JSONObject for the downloaded batch anomaly score
      */
     public JSONObject downloadBatchAnomalyScore(
             final JSONObject batchAnomalyScoreJSON, final String filename) {
@@ -2890,6 +3040,7 @@ public class BigMLClient {
      *            a unique identifier in the form batchanomalyscore/id where id is
      *            a string of 24 alpha-numeric chars.
      *
+     * @return true if batch anomaly score is finished
      */
     public boolean batchAnomalyScoreIsReady(final String batchAnomalyScoreId) {
         return batchAnomalyScore.isReady(batchAnomalyScoreId);
@@ -2901,6 +3052,7 @@ public class BigMLClient {
      * @param batchAnomalyScoreJSON
      *            a batchanomalyscore JSONObject.
      *
+     * @return true if batch anomaly score is finished
      */
     public boolean batchAnomalyScoreIsReady(final JSONObject batchAnomalyScoreJSON) {
         return batchAnomalyScore.isReady(batchAnomalyScoreJSON);
@@ -2915,6 +3067,7 @@ public class BigMLClient {
      * @param queryString
      *            query filtering the listing.
      *
+     * @return a JSONObject containing all batch anomaly scores matching the query
      */
     public JSONObject listBatchAnomalyScores(final String queryString) {
         return batchAnomalyScore.list(queryString);
@@ -2932,6 +3085,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the batch anomaly score. Optional
      *
+     * @return a JSONObject for the updated batch anomaly score
      */
     public JSONObject updateBatchAnomalyScore(final String batchAnomalyScoreId,
             final String changes) {
@@ -2948,6 +3102,8 @@ public class BigMLClient {
      *            a batch anomaly score JSONObject
      * @param changes
      *            set of parameters to update the batch anomaly score. Optional
+     *
+     * @return a JSONObject for the updated batch anomaly score
      */
     public JSONObject updateBatchAnomalyScore(
             final JSONObject batchAnomalyScoreJSON, final JSONObject changes) {
@@ -2964,6 +3120,7 @@ public class BigMLClient {
      *            a unique identifier in the form batchanomalyscore/id where id is
      *            a string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the deleted batch anomaly score
      */
     public JSONObject deleteBatchAnomalyScore(final String batchAnomalyScoreId) {
         return batchAnomalyScore.delete(batchAnomalyScoreId);
@@ -2978,6 +3135,7 @@ public class BigMLClient {
      * @param batchAnomalyScoreJSON
      *            a batch anomaly score JSONObject.
      *
+     * @return a JSONObject for the deleted batch anomaly score
      */
     public JSONObject deleteBatchAnomalyScore(final JSONObject batchAnomalyScoreJSON) {
         return batchAnomalyScore.delete(batchAnomalyScoreJSON);
@@ -3008,6 +3166,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new cluster
      */
     public JSONObject createCluster(final String datasetId, 
     		JSONObject args, Integer waitTime, Integer retries) {
@@ -3033,8 +3192,9 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new cluster
      */
-    public JSONObject create(final List datasetsIds, 
+    public JSONObject createCluster(final List datasetsIds, 
     		JSONObject args, Integer waitTime, Integer retries) {
 
         return cluster.create(datasetsIds, args, waitTime, retries);
@@ -3056,6 +3216,7 @@ public class BigMLClient {
      *            a unique identifier in the form cluster/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the cluster
      */
     public JSONObject getCluster(final String clusterId) {
         return cluster.get(clusterId);
@@ -3076,6 +3237,7 @@ public class BigMLClient {
      * @param clusterJSON
      *            an cluster JSONObject.
      *
+     * @return a JSONObject for the cluster
      */
     public JSONObject getCluster(final JSONObject clusterJSON) {
         return cluster.get(clusterJSON);
@@ -3088,6 +3250,7 @@ public class BigMLClient {
      *            a unique identifier in the form cluster/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return true if cluster is finished
      */
     public boolean clusterIsReady(final String clusterId) {
         return cluster.isReady(clusterId);
@@ -3099,6 +3262,7 @@ public class BigMLClient {
      * @param clusterJSON
      *            an cluster JSONObject.
      *
+     * @return true if cluster is finished
      */
     public boolean clusterIsReady(final JSONObject clusterJSON) {
         return cluster.isReady(clusterJSON);
@@ -3113,6 +3277,7 @@ public class BigMLClient {
      * @param queryString
      *            query filtering the listing.
      *
+     * @return a JSONObject containing all clusters matching the query
      */
     public JSONObject listClusters(final String queryString) {
         return cluster.list(queryString);
@@ -3131,6 +3296,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the cluster. Optional
      *
+     * @return a JSONObject for the updated cluster
      */
     public JSONObject updateCluster(final String clusterId, final String changes) {
         return cluster.update(clusterId, changes);
@@ -3147,6 +3313,8 @@ public class BigMLClient {
      *            an cluster JSONObject
      * @param changes
      *            set of parameters to update the cluster. Optional
+     *
+     * @return a JSONObject for the updated cluster
      */
     public JSONObject updateCluster(final JSONObject clusterJSON,
             final JSONObject changes) {
@@ -3164,6 +3332,7 @@ public class BigMLClient {
      *            a unique identifier in the form cluster/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the deleted cluster
      */
     public JSONObject deleteCluster(final String clusterId) {
         return cluster.delete(clusterId);
@@ -3179,6 +3348,7 @@ public class BigMLClient {
      * @param clusterJSON
      *            an cluster JSONObject.
      *
+     * @return a JSONObject for the deleted cluster
      */
     public JSONObject deleteCluster(final JSONObject clusterJSON) {
         return cluster.delete(clusterJSON);
@@ -3200,6 +3370,9 @@ public class BigMLClient {
      * @param clusterId
      *            a unique identifier in the form cluster/id where id is a
      *            string of 24 alpha-numeric chars for the cluster.
+     * @param inputDataJSON
+     * 			  an object with field's id/value pairs representing the
+     *            instance you want to create a centroid for.		
      * @param args
      *            set of parameters for the new centroid. Optional
      * @param waitTime
@@ -3208,6 +3381,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new centroid
      */
     public JSONObject createCentroid(final String clusterId,
             JSONObject inputDataJSON, JSONObject args, Integer waitTime,
@@ -3232,6 +3406,7 @@ public class BigMLClient {
      *            a unique identifier in the form centroid/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the centroid
      */
     public JSONObject getCentroid(final String centroidId) {
         return centroid.get(centroidId);
@@ -3252,6 +3427,7 @@ public class BigMLClient {
      * @param centroidJSON
      *            a centroid JSONObject.
      *
+     * @return a JSONObject for the centroid
      */
     public JSONObject getCentroid(final JSONObject centroidJSON) {
         return centroid.get(centroidJSON);
@@ -3264,6 +3440,7 @@ public class BigMLClient {
      *            a unique identifier in the form centroid/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return true if centroid is finished
      */
     public boolean centroidIsReady(final String centroidId) {
         return centroid.isResourceReady(cluster.get(centroidId));
@@ -3275,6 +3452,7 @@ public class BigMLClient {
      * @param centroidJSON
      *            a centroid JSONObject.
      *
+     * @return true if centroid is finished
      */
     public boolean centroidIsReady(final JSONObject centroidJSON) {
         return centroid.isReady(centroidJSON);
@@ -3289,6 +3467,7 @@ public class BigMLClient {
      * @param queryString
      *            query filtering the listing.
      *
+     * @return a JSONObject containing all centroids matching the query
      */
     public JSONObject listCentroids(final String queryString) {
         return centroid.list(queryString);
@@ -3307,6 +3486,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the centroid. Optional
      *
+     * @return a JSONObject for the updated centroid
      */
     public JSONObject updateCentroid(final String centroidId,
             final String changes) {
@@ -3325,6 +3505,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the centroid. Optional
      *
+     * @return a JSONObject for the updated centroid
      */
     public JSONObject updateCentroid(final JSONObject centroidJSON,
             final JSONObject changes) {
@@ -3342,6 +3523,7 @@ public class BigMLClient {
      *            a unique identifier in the form centroid/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the deleted centroid
      */
     public JSONObject deleteCentroid(final String centroidId) {
         return centroid.delete(centroidId);
@@ -3357,6 +3539,7 @@ public class BigMLClient {
      * @param centroidJSON
      *            an centroid JSONObject.
      *
+     * @return a JSONObject for the deleted centroid
      */
     public JSONObject deleteCentroid(final JSONObject centroidJSON) {
         return centroid.delete(centroidJSON);
@@ -3390,6 +3573,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new batch centroid
      */
     public JSONObject createBatchCentroid(final String clusterId,
             final String datasetId, JSONObject args, Integer waitTime,
@@ -3413,6 +3597,7 @@ public class BigMLClient {
      *            a unique identifier in the form batchcentroid/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the batch centroid
      */
     public JSONObject getBatchCentroid(final String batchCentroidId) {
         return batchCentroid.get(batchCentroidId);
@@ -3432,6 +3617,7 @@ public class BigMLClient {
      * @param batchCentroidJSON
      *            a batch_centroid JSONObject.
      *
+     * @return a JSONObject for the batch centroid
      */
     public JSONObject getBatchCentroid(final JSONObject batchCentroidJSON) {
         return batchCentroid.get(batchCentroidJSON);
@@ -3449,7 +3635,8 @@ public class BigMLClient {
      *            string of 24 alpha-numeric chars.
      * @param filename
      *            Path to save file locally
-     *
+     * 
+     * @return a JSONObject for the downloaded batch centroid
      */
     public JSONObject downloadBatchCentroid(final String batchCentroidId,
             final String filename) {
@@ -3467,7 +3654,8 @@ public class BigMLClient {
      *            a batch centroid JSONObject.
      * @param filename
      *            Path to save file locally
-     *
+     * 
+     * @return a JSONObject for the downloaded batch centroid
      */
     public JSONObject downloadBatchCentroid(final JSONObject batchCentroidJSON,
                                             final String filename) {
@@ -3481,6 +3669,7 @@ public class BigMLClient {
      *            a unique identifier in the form batchcentroid/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return true if batch centroid is finished
      */
     public boolean batcCentroidIsReady(final String batchCentroidId) {
         return batchCentroid.isResourceReady(cluster.get(batchCentroidId));
@@ -3492,6 +3681,7 @@ public class BigMLClient {
      * @param batchCentroidJSON
      *            a batch_centroid JSONObject.
      *
+     * @return true if batch centroid is finished
      */
     public boolean batcCentroidIsReady(final JSONObject batchCentroidJSON) {
         return batchCentroid.isReady(batchCentroidJSON);
@@ -3506,6 +3696,7 @@ public class BigMLClient {
      * @param queryString
      *            query filtering the listing.
      *
+     * @return a JSONObject containing all batch centroids matching the query
      */
     public JSONObject listBatchCentroids(final String queryString) {
         return centroid.list(queryString);
@@ -3523,6 +3714,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the centroid. Optional
      *
+     * @return a JSONObject for the updated batch centroid
      */
     public JSONObject updateBatchCentroid(final String batchCentroidId,
             final String changes) {
@@ -3540,6 +3732,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the batch_centroid. Optional
      *
+     * @return a JSONObject for the updated batch centroid
      */
     public JSONObject updateBatchCentroid(final JSONObject batchCentroidJSON,
             final JSONObject changes) {
@@ -3556,6 +3749,7 @@ public class BigMLClient {
      *            a unique identifier in the form batchCentroid/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the deleted batch centroid
      */
     public JSONObject deleteBatchCentroid(final String batchCentroidId) {
         return batchCentroid.delete(batchCentroidId);
@@ -3570,6 +3764,7 @@ public class BigMLClient {
      * @param batchCentroidJSON
      *            an batch_centroid JSONObject.
      *
+     * @return a JSONObject for the deleted batch centroid
      */
     public JSONObject deleteBatchCentroid(final JSONObject batchCentroidJSON) {
         return batchCentroid.delete(batchCentroidJSON);
@@ -3604,6 +3799,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new sample
      */
     public JSONObject createSample(final String datasetId, JSONObject args,
                                     Integer waitTime, Integer retries) {
@@ -3621,6 +3817,7 @@ public class BigMLClient {
      *            a unique identifier in the form sample/id where id is a string
      *            of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the sample
      */
     public JSONObject getSample(final String sampleId) {
         return sample.get(sampleId);
@@ -3630,6 +3827,8 @@ public class BigMLClient {
      * Returns the ids of the fields that contain errors and their number.
      *
      * @param sampleId the sample id of the sample to be inspected
+     * 
+     * @return a Map with error counts in sample
      */
     public Map<String, Long> getErrorCountsInSample(final String sampleId) {
         return sample.getErrorCounts(getSample(sampleId));
@@ -3639,6 +3838,8 @@ public class BigMLClient {
      * Returns the ids of the fields that contain errors and their number.
      *
      * @param sampleJSON the sample JSON object to be inspected
+     * 
+     * @return a Map with error counts in sample
      */
     public Map<String, Long> getErrorCountsInSample(final JSONObject sampleJSON) {
         return sample.getErrorCounts(sampleJSON);
@@ -3654,6 +3855,7 @@ public class BigMLClient {
      * @param sampleJSON
      *            a sample JSONObject
      *
+     * @return a JSONObject for the sample
      */
     public JSONObject getSample(final JSONObject sampleJSON) {
         return sample.get(sampleJSON);
@@ -3672,6 +3874,7 @@ public class BigMLClient {
      * @param queryString
      *            query for filtering.
      *
+     * @return a JSONObject for the sample
      */
     public JSONObject getSample(final String sampleId, final String queryString) {
         return getSample(sampleId, queryString, null, null);
@@ -3694,6 +3897,7 @@ public class BigMLClient {
      * @param apiKey
      *            API key
      *
+     * @return a JSONObject for the sample
      */
     public JSONObject getSample(final String sampleId, final String queryString,
                                  final String apiUser, final String apiKey) {
@@ -3707,6 +3911,7 @@ public class BigMLClient {
      *            a unique identifier in the form sample/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return true if sample is finished
      */
     public boolean sampleIsReady(final String sampleId) {
         return sample.isReady(sampleId);
@@ -3718,6 +3923,7 @@ public class BigMLClient {
      * @param sampleJSON
      *            a sample JSONObject
      *
+     * @return true if sample is finished
      */
     public boolean sampleIsReady(final JSONObject sampleJSON) {
         return sample.isReady(sampleJSON);
@@ -3732,6 +3938,7 @@ public class BigMLClient {
      * @param queryString
      *            query filtering the listing.
      *
+     * @return a JSONObject containing all samples matching the query
      */
     public JSONObject listSamples(final String queryString) {
         return sample.list(queryString);
@@ -3750,6 +3957,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the source. Optional
      *
+     * @return a JSONObject for the updated sample
      */
     public JSONObject updateSample(final String sampleId, final String changes) {
         return sample.update(sampleId, changes);
@@ -3767,6 +3975,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the sample. Optional
      *
+     * @return a JSONObject for the updated sample
      */
     public JSONObject updateSample(final JSONObject sampleJSON,
                                     final JSONObject changes) {
@@ -3784,6 +3993,7 @@ public class BigMLClient {
      *            a unique identifier in the form sample/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the deleted sample
      */
     public JSONObject deleteSample(final String sampleId) {
         return sample.delete(sampleId);
@@ -3799,6 +4009,7 @@ public class BigMLClient {
      * @param sampleJSON
      *            a sample JSONObject
      *
+     * @return a JSONObject for the deleted sample
      */
     public JSONObject deleteSample(final JSONObject sampleJSON) {
         return sample.delete(sampleJSON);
@@ -3822,6 +4033,7 @@ public class BigMLClient {
      * @param args
      *            set of parameters for the new sample. Optional
      *
+     * @return a JSONObject for the new project
      */
     public JSONObject createProject(JSONObject args) {
         return project.create(args);
@@ -3838,6 +4050,7 @@ public class BigMLClient {
      *            a unique identifier in the form project/id where id is a string
      *            of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the project
      */
     public JSONObject getProject(final String projectId) {
         return project.get(projectId);
@@ -3853,6 +4066,7 @@ public class BigMLClient {
      * @param projectJSON
      *            a project JSONObject
      *
+     * @return a JSONObject for the project
      */
     public JSONObject getProject(final JSONObject projectJSON) {
         return project.get(projectJSON);
@@ -3871,6 +4085,7 @@ public class BigMLClient {
      * @param queryString
      *            query for filtering.
      *
+     * @return a JSONObject for the project
      */
     public JSONObject getProject(final String projectId, final String queryString) {
         return getProject(projectId, queryString, null, null);
@@ -3893,6 +4108,7 @@ public class BigMLClient {
      * @param apiKey
      *            API key
      *
+     * @return a JSONObject for the project
      */
     public JSONObject getProject(final String projectId, final String queryString,
                                 final String apiUser, final String apiKey) {
@@ -3906,6 +4122,7 @@ public class BigMLClient {
      *            a unique identifier in the form project/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return true if project is finished
      */
     public boolean projectIsReady(final String projectId) {
         return project.isReady(projectId);
@@ -3917,6 +4134,7 @@ public class BigMLClient {
      * @param projectJSON
      *            a project JSONObject
      *
+     * @return true if project is finished
      */
     public boolean projectIsReady(final JSONObject projectJSON) {
         return project.isReady(projectJSON);
@@ -3931,6 +4149,7 @@ public class BigMLClient {
      * @param queryString
      *            query filtering the listing.
      *
+     * @return a JSONObject containing all projects matching the query
      */
     public JSONObject listProjects(final String queryString) {
         return project.list(queryString);
@@ -3949,6 +4168,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the project. Optional
      *
+     * @return a JSONObject for the updated project
      */
     public JSONObject updateProject(final String projectId, final String changes) {
         return project.update(projectId, changes);
@@ -3966,6 +4186,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the sample. Optional
      *
+     * @return a JSONObject for the updated project
      */
     public JSONObject updateProject(final JSONObject projectJSON,
                                    final JSONObject changes) {
@@ -3983,6 +4204,7 @@ public class BigMLClient {
      *            a unique identifier in the form project/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the deleted project
      */
     public JSONObject deleteProject(final String projectId) {
         return project.delete(projectId);
@@ -3998,6 +4220,7 @@ public class BigMLClient {
      * @param projectJSON
      *            a project JSONObject
      *
+     * @return a JSONObject for the deleted project
      */
     public JSONObject deleteProject(final JSONObject projectJSON) {
         return project.delete(projectJSON);
@@ -4029,6 +4252,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new correlation
      */
     public JSONObject createCorrelation(final String datasetId, 
     		JSONObject args, Integer waitTime, Integer retries) {
@@ -4052,6 +4276,7 @@ public class BigMLClient {
      *            a unique identifier in the form correlation/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the correlation
      */
     public JSONObject getCorrelation(final String correlationId) {
         return correlation.get(correlationId);
@@ -4072,6 +4297,7 @@ public class BigMLClient {
      * @param correlationJSON
      *            an correlation JSONObject.
      *
+     * @return a JSONObject for the correlation
      */
     public JSONObject getCorrelation(final JSONObject correlationJSON) {
         return correlation.get(correlationJSON);
@@ -4084,6 +4310,7 @@ public class BigMLClient {
      *            a unique identifier in the form correlation/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return true if correlation is finished
      */
     public boolean correlationIsReady(final String correlationId) {
         return correlation.isReady(correlationId);
@@ -4095,6 +4322,7 @@ public class BigMLClient {
      * @param correlationJSON
      *            an correlation JSONObject.
      *
+     * @return true if sorrelation is finished
      */
     public boolean correlationIsReady(final JSONObject correlationJSON) {
         return correlation.isReady(correlationJSON);
@@ -4109,6 +4337,7 @@ public class BigMLClient {
      * @param queryString
      *            query filtering the listing.
      *
+     * @return a JSONObject containing all correlations matching the query
      */
     public JSONObject listCorrelations(final String queryString) {
         return correlation.list(queryString);
@@ -4127,6 +4356,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the correlation. Optional
      *
+     * @return a JSONObject for the updated correlation
      */
     public JSONObject updateCorrelation(final String correlationId, final String changes) {
         return correlation.update(correlationId, changes);
@@ -4143,6 +4373,8 @@ public class BigMLClient {
      *            an correlation JSONObject
      * @param changes
      *            set of parameters to update the correlation. Optional
+     *
+     * @return a JSONObject for the updated correlation
      */
     public JSONObject updateCorrelation(final JSONObject correlationJSON,
             final JSONObject changes) {
@@ -4160,6 +4392,7 @@ public class BigMLClient {
      *            a unique identifier in the form correlation/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the deleted correlation
      */
     public JSONObject deleteCorrelation(final String correlationId) {
         return correlation.delete(correlationId);
@@ -4175,6 +4408,7 @@ public class BigMLClient {
      * @param correlationJSON
      *            an correlation JSONObject.
      *
+     * @return a JSONObject for the deleted correlation
      */
     public JSONObject deleteCorrelation(final JSONObject correlationJSON) {
         return correlation.delete(correlationJSON);
@@ -4205,6 +4439,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new statisticaltest
      */
     public JSONObject createStatisticalTest(final String datasetId, 
     		JSONObject args, Integer waitTime, Integer retries) {
@@ -4228,6 +4463,7 @@ public class BigMLClient {
      *            a unique identifier in the form statisticaltest/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the statisticaltest
      */
     public JSONObject getStatisticalTest(final String statisticaltestId) {
         return statisticalTest.get(statisticaltestId);
@@ -4248,6 +4484,7 @@ public class BigMLClient {
      * @param statisticaltestJSON
      *            an statisticaltest JSONObject.
      *
+     * @return a JSONObject for the statisticaltest
      */
     public JSONObject getStatisticalTest(final JSONObject statisticaltestJSON) {
         return statisticalTest.get(statisticaltestJSON);
@@ -4260,6 +4497,7 @@ public class BigMLClient {
      *            a unique identifier in the form statisticaltest/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return true if statisticaltest is finished
      */
     public boolean statisticalTestIsReady(final String statisticaltestId) {
         return statisticalTest.isReady(statisticaltestId);
@@ -4271,6 +4509,7 @@ public class BigMLClient {
      * @param statisticaltestJSON
      *            an statisticaltest JSONObject.
      *
+     * @return true if statisticaltest is finished
      */
     public boolean statisticalTestIsReady(final JSONObject statisticaltestJSON) {
         return statisticalTest.isReady(statisticaltestJSON);
@@ -4285,6 +4524,7 @@ public class BigMLClient {
      * @param queryString
      *            query filtering the listing.
      *
+     * @return a JSONObject containing all statistical tests matching the query
      */
     public JSONObject listStatisticalTests(final String queryString) {
         return statisticalTest.list(queryString);
@@ -4303,6 +4543,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the statisticaltest. Optional
      *
+     * @return a JSONObject for the updated statistical test
      */
     public JSONObject updateStatisticalTest(final String statisticaltestId, final String changes) {
         return statisticalTest.update(statisticaltestId, changes);
@@ -4319,6 +4560,8 @@ public class BigMLClient {
      *            an statisticaltest JSONObject
      * @param changes
      *            set of parameters to update the statisticaltest. Optional
+     *
+     * @return a JSONObject for the updated statisticial test
      */
     public JSONObject updateStatisticalTest(final JSONObject statisticaltestJSON,
             final JSONObject changes) {
@@ -4336,6 +4579,7 @@ public class BigMLClient {
      *            a unique identifier in the form statisticaltest/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the deleted statistical test
      */
     public JSONObject deleteStatisticalTest(final String statisticaltestId) {
         return statisticalTest.delete(statisticaltestId);
@@ -4351,6 +4595,7 @@ public class BigMLClient {
      * @param statisticaltestJSON
      *            an statisticaltest JSONObject.
      *
+     * @return a JSONObject for the deleted statistical test
      */
     public JSONObject deleteStatisticalTest(final JSONObject statisticaltestJSON) {
         return statisticalTest.delete(statisticaltestJSON);
@@ -4383,6 +4628,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new logistic regression
      */
     public JSONObject createLogisticRegression(final String datasetId, 
     		JSONObject args, Integer waitTime, Integer retries) {
@@ -4409,6 +4655,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new logistic regression
      */
     public JSONObject createLogisticRegression(final List datasetsIds, 
     		JSONObject args, Integer waitTime, Integer retries) {
@@ -4432,6 +4679,7 @@ public class BigMLClient {
      *            a unique identifier in the form logisticregression/id where id
      *            is a string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the logistic regression
      */
     public JSONObject getLogisticRegression(final String logisticRegressionId) {
         return logisticRegression.get(logisticRegressionId);
@@ -4452,6 +4700,7 @@ public class BigMLClient {
      * @param logisticRegressionJSON
      *            a logisticRegression JSONObject.
      *
+     * @return a JSONObject for the logistic regression
      */
     public JSONObject getLogisticRegression(final JSONObject logisticRegressionJSON) {
         return logisticRegression.get(logisticRegressionJSON);
@@ -4463,7 +4712,8 @@ public class BigMLClient {
      * @param logisticRegressionId
      *            a unique identifier in the form logisticregression/id where id is a
      *            string of 24 alpha-numeric chars.
-     *
+     *            
+     * @return true if logistic regression is finished
      */
     public boolean logisticRegressionIsReady(final String logisticRegressionId) {
         return logisticRegression.isReady(logisticRegressionId);
@@ -4475,6 +4725,7 @@ public class BigMLClient {
      * @param logisticRegressionJSON
      *            a logisticRegression JSONObject.
      *
+     * @return true if logistic regression is finished
      */
     public boolean logisticRegressionIsReady(final JSONObject logisticRegressionJSON) {
         return logisticRegression.isReady(logisticRegressionJSON);
@@ -4489,6 +4740,7 @@ public class BigMLClient {
      * @param queryString
      *            query filtering the listing.
      *
+     * @return a JSONObject containing all logistic regressions matching the query
      */
     public JSONObject listLogisticRegressions(final String queryString) {
         return logisticRegression.list(queryString);
@@ -4507,6 +4759,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the logistic regression. Optional
      *
+     * @return a JSONObject for the updated logistic regression
      */
     public JSONObject updateLogisticRegression(final String logisticRegressionId,
             final String changes) {
@@ -4524,6 +4777,8 @@ public class BigMLClient {
      *            a logisticRegression JSONObject
      * @param changes
      *            set of parameters to update the logisticRegression. Optional
+     *
+     * @return a JSONObject for the updated logistic regression
      */
     public JSONObject updateLogisticRegression(final JSONObject logisticRegressionJSON,
             final JSONObject changes) {
@@ -4541,6 +4796,7 @@ public class BigMLClient {
      *            a unique identifier in the form logisticregression/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the deleted logistic regression
      */
     public JSONObject deleteLogisticRegression(final String logisticRegressionId) {
         return logisticRegression.delete(logisticRegressionId);
@@ -4556,6 +4812,7 @@ public class BigMLClient {
      * @param logisticRegressionJSON
      *            a logisticRegression JSONObject.
      *
+     * @return a JSONObject for the deleted logistic regression
      */
     public JSONObject deleteLogisticRegression(final JSONObject logisticRegressionJSON) {
         return logisticRegression.delete(logisticRegressionJSON);
@@ -4587,6 +4844,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new linear regression
      */
     public JSONObject createLinearRegression(final String datasetId, 
     		JSONObject args, Integer waitTime, Integer retries) {
@@ -4613,6 +4871,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new linear regression
      */
     public JSONObject createLinearRegression(final List datasetsIds, 
     		JSONObject args, Integer waitTime, Integer retries) {
@@ -4636,6 +4895,7 @@ public class BigMLClient {
      *            a unique identifier in the form linearregression/id where id
      *            is a string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the linear regression
      */
     public JSONObject getLinearRegression(final String linearRegressionId) {
         return linearRegression.get(linearRegressionId);
@@ -4656,6 +4916,7 @@ public class BigMLClient {
      * @param linearRegressionJSON
      *            a linearRegression JSONObject.
      *
+     * @return a JSONObject for the linear regression
      */
     public JSONObject getLinearRegression(final JSONObject linearRegressionJSON) {
         return linearRegression.get(linearRegressionJSON);
@@ -4668,6 +4929,7 @@ public class BigMLClient {
      *            a unique identifier in the form linearregression/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return true if linear regression is finished
      */
     public boolean linearRegressionIsReady(final String linearRegressionId) {
         return linearRegression.isReady(linearRegressionId);
@@ -4679,6 +4941,7 @@ public class BigMLClient {
      * @param linearRegressionJSON
      *            a linearRegression JSONObject.
      *
+     * @return true if linear regression is finished
      */
     public boolean linearRegressionIsReady(final JSONObject linearRegressionJSON) {
         return linearRegression.isReady(linearRegressionJSON);
@@ -4693,6 +4956,7 @@ public class BigMLClient {
      * @param queryString
      *            query filtering the listing.
      *
+     * @return a JSONObject containing all linear regressions matching the query
      */
     public JSONObject listLinearRegressions(final String queryString) {
         return linearRegression.list(queryString);
@@ -4711,6 +4975,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the linear regression. Optional
      *
+     * @return a JSONObject for the updated linear regression
      */
     public JSONObject updateLinearRegression(final String linearRegressionId,
             final String changes) {
@@ -4728,6 +4993,8 @@ public class BigMLClient {
      *            a linearRegression JSONObject
      * @param changes
      *            set of parameters to update the linearRegression. Optional
+     *
+     * @return a JSONObject for the updated linear regression
      */
     public JSONObject updateLinearRegression(final JSONObject linearRegressionJSON,
             final JSONObject changes) {
@@ -4745,6 +5012,7 @@ public class BigMLClient {
      *            a unique identifier in the form linearregression/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the deleted linear regression
      */
     public JSONObject deleteLinearRegression(final String linearRegressionId) {
         return linearRegression.delete(linearRegressionId);
@@ -4760,6 +5028,7 @@ public class BigMLClient {
      * @param linearRegressionJSON
      *            a linearRegression JSONObject.
      *
+     * @return a JSONObject for the deleted linear regression
      */
     public JSONObject deleteLinearRegression(final JSONObject linearRegressionJSON) {
         return linearRegression.delete(linearRegressionJSON);
@@ -4791,6 +5060,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new script
      */
     public JSONObject createScript(final String source, JSONObject args,
         Integer waitTime, Integer retries) {
@@ -4809,6 +5079,7 @@ public class BigMLClient {
      *            a unique identifier in the form script/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the script
      */
     public JSONObject getScript(final String scriptId) {
         return script.get(scriptId);
@@ -4824,6 +5095,7 @@ public class BigMLClient {
      * @param scriptJSON
      *            a script JSONObject
      *
+     * @return a JSONObject for the script
      */
     public JSONObject getScript(final JSONObject scriptJSON) {
         return script.get(scriptJSON);
@@ -4836,6 +5108,7 @@ public class BigMLClient {
      *            a unique identifier in the form script/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return true if script is finished
      */
     public boolean scriptIsReady(final String scriptId) {
         return script.isReady(scriptId);
@@ -4847,6 +5120,7 @@ public class BigMLClient {
      * @param scriptJSON
      *            a script JSONObject
      *
+     * @return true if script is finished
      */
     public boolean scriptIsReady(final JSONObject scriptJSON) {
         return script.isReady(scriptJSON);
@@ -4861,6 +5135,7 @@ public class BigMLClient {
      * @param queryString
      *            query filtering the listing.
      *
+     * @return a JSONObject containing all scripts matching the query
      */
     public JSONObject listScripts(final String queryString) {
         return script.list(queryString);
@@ -4879,6 +5154,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the script. Optional
      *
+     * @return a JSONObject for the updated script
      */
     public JSONObject updateScript(final String scriptId, final String changes) {
         return script.update(scriptId, changes);
@@ -4896,6 +5172,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the script. Optional
      *
+     * @return a JSONObject for the updated script
      */
     public JSONObject updateScript(final JSONObject scriptJSON,
             final JSONObject changes) {
@@ -4913,6 +5190,7 @@ public class BigMLClient {
      *            a unique identifier in the form script/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the deleted script
      */
     public JSONObject deleteScript(final String scriptId) {
         return script.delete(scriptId);
@@ -4928,6 +5206,7 @@ public class BigMLClient {
      * @param scriptJSON
      *            a script JSONObject
      *
+     * @return a JSONObject for the deleted script
      */
     public JSONObject deleteScript(final JSONObject scriptJSON) {
         return script.delete(scriptJSON);
@@ -4958,6 +5237,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new execution
      */
     public JSONObject createExecution(final String script, JSONObject args,
         Integer waitTime, Integer retries) {
@@ -4982,6 +5262,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new execution
      */
     public JSONObject createExecution(List scripts, JSONObject args,
                                       Integer waitTime, Integer retries) {
@@ -4999,6 +5280,7 @@ public class BigMLClient {
      *            a unique identifier in the form execution/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the execution
      */
     public JSONObject getExecution(final String executionId) {
         return execution.get(executionId);
@@ -5014,6 +5296,7 @@ public class BigMLClient {
      * @param executionJSON
      *            a execution JSONObject
      *
+     * @return a JSONObject for the execution
      */
     public JSONObject getExecution(final JSONObject executionJSON) {
         return execution.get(executionJSON);
@@ -5026,6 +5309,7 @@ public class BigMLClient {
      *            a unique identifier in the form execution/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return true if execution is finished
      */
     public boolean executionIsReady(final String executionId) {
         return execution.isReady(executionId);
@@ -5037,6 +5321,7 @@ public class BigMLClient {
      * @param executionJSON
      *            a execution JSONObject
      *
+     * @return true if execution is finished
      */
     public boolean executionIsReady(final JSONObject executionJSON) {
         return execution.isReady(executionJSON);
@@ -5051,6 +5336,7 @@ public class BigMLClient {
      * @param queryString
      *            query filtering the listing.
      *
+     * @return a JSONObject containing all executions matching the query
      */
     public JSONObject listExecutions(final String queryString) {
         return execution.list(queryString);
@@ -5069,6 +5355,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the execution. Optional
      *
+     * @return a JSONObject for the updated execution
      */
     public JSONObject updateExecution(final String executionId, final String changes) {
         return execution.update(executionId, changes);
@@ -5086,6 +5373,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the execution. Optional
      *
+     * @return a JSONObject for the updated execution
      */
     public JSONObject updateExecution(final JSONObject executionJSON,
             final JSONObject changes) {
@@ -5103,6 +5391,7 @@ public class BigMLClient {
      *            a unique identifier in the form execution/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the deleted execution
      */
     public JSONObject deleteExecution(final String executionId) {
         return execution.delete(executionId);
@@ -5118,6 +5407,7 @@ public class BigMLClient {
      * @param executionJSON
      *            a execution JSONObject
      *
+     * @return a JSONObject for the deleted execution
      */
     public JSONObject deleteExecution(final JSONObject executionJSON) {
         return execution.delete(executionJSON);
@@ -5150,6 +5440,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new library
      */
     public JSONObject createLibrary(final String source, JSONObject args,
         Integer waitTime, Integer retries) {
@@ -5168,6 +5459,7 @@ public class BigMLClient {
      *            a unique identifier in the form library/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the library
      */
     public JSONObject getLibrary(final String libraryId) {
         return library.get(libraryId);
@@ -5183,6 +5475,7 @@ public class BigMLClient {
      * @param executionJSON
      *            a library JSONObject
      *
+     * @return a JSONObject for the library
      */
     public JSONObject getLibrary(final JSONObject executionJSON) {
         return library.get(executionJSON);
@@ -5195,6 +5488,7 @@ public class BigMLClient {
      *            a unique identifier in the form library/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return true if library is finished
      */
     public boolean libraryIsReady(final String libraryId) {
         return library.isReady(libraryId);
@@ -5206,6 +5500,7 @@ public class BigMLClient {
      * @param executionJSON
      *            a library JSONObject
      *
+     * @return true if library is finished
      */
     public boolean libraryIsReady(final JSONObject executionJSON) {
         return library.isReady(executionJSON);
@@ -5220,6 +5515,7 @@ public class BigMLClient {
      * @param queryString
      *            query filtering the listing.
      *
+     * @return a JSONObject containing all libraries matching the query
      */
     public JSONObject listLibraries(final String queryString) {
         return library.list(queryString);
@@ -5238,6 +5534,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the library. Optional
      *
+     * @return a JSONObject for the updated library
      */
     public JSONObject updateLibrary(final String libraryId, final String changes) {
         return library.update(libraryId, changes);
@@ -5255,6 +5552,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the library. Optional
      *
+     * @return a JSONObject for the updated library
      */
     public JSONObject updateLibrary(final JSONObject executionJSON,
             final JSONObject changes) {
@@ -5272,6 +5570,7 @@ public class BigMLClient {
      *            a unique identifier in the form library/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the deleted library
      */
     public JSONObject deleteLibrary(final String libraryId) {
         return library.delete(libraryId);
@@ -5286,6 +5585,7 @@ public class BigMLClient {
      *
      * @param libraryJSON	a library JSONObject
      *
+     * @return a JSONObject for the deleted library
      */
     public JSONObject deleteLibrary(final JSONObject libraryJSON) {
         return library.delete(libraryJSON);
@@ -5317,6 +5617,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new association
      */
     public JSONObject createAssociation(final String datasetId, JSONObject args,
             Integer waitTime, Integer retries) {
@@ -5340,6 +5641,7 @@ public class BigMLClient {
      *            a unique identifier in the form association/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the association
      */
     public JSONObject getAssociation(final String associationId) {
         return association.get(associationId);
@@ -5360,6 +5662,7 @@ public class BigMLClient {
      * @param associationJSON
      *            an association JSONObject.
      *
+     * @return a JSONObject for the association
      */
     public JSONObject getAssociation(final JSONObject associationJSON) {
         return association.get(associationJSON);
@@ -5372,6 +5675,7 @@ public class BigMLClient {
      *            a unique identifier in the form association/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return true if association is finished
      */
     public boolean associationIsReady(final String associationId) {
         return association.isReady(associationId);
@@ -5383,6 +5687,7 @@ public class BigMLClient {
      * @param associationJSON
      *            an association JSONObject.
      *
+     * @return true if association is finished
      */
     public boolean associationIsReady(final JSONObject associationJSON) {
         return association.isReady(associationJSON);
@@ -5397,6 +5702,7 @@ public class BigMLClient {
      * @param queryString
      *            query filtering the listing.
      *
+     * @return a JSONObject containing all associations matching the query
      */
     public JSONObject listAssociations(final String queryString) {
         return association.list(queryString);
@@ -5415,6 +5721,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the association. Optional
      *
+     * @return a JSONObject for the updated association
      */
     public JSONObject updateAssociation(final String associationId, final String changes) {
         return association.update(associationId, changes);
@@ -5431,6 +5738,8 @@ public class BigMLClient {
      *            an association JSONObject
      * @param changes
      *            set of parameters to update the association. Optional
+     * 
+     *  @return a JSONObject for the updated association
      */
     public JSONObject updateAssociation(final JSONObject associationJSON,
             final JSONObject changes) {
@@ -5448,6 +5757,7 @@ public class BigMLClient {
      *            a unique identifier in the form association/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the deleted association
      */
     public JSONObject deleteAssociation(final String associationId) {
         return association.delete(associationId);
@@ -5463,6 +5773,7 @@ public class BigMLClient {
      * @param associationJSON
      *            an association JSONObject.
      *
+     * @return a JSONObject for the deleted association
      */
     public JSONObject deleteAssociation(final JSONObject associationJSON) {
         return association.delete(associationJSON);
@@ -5497,6 +5808,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new association set
      */
     public JSONObject createAssociationSet(final String associationId,
             JSONObject inputData, JSONObject args,
@@ -5522,6 +5834,7 @@ public class BigMLClient {
      *            a unique identifier in the form associationset/id where id is
      *            a string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the association set
      */
     public JSONObject getAssociationSet(final String associationSetId) {
         return associationSet.get(associationSetId);
@@ -5542,6 +5855,7 @@ public class BigMLClient {
      * @param associationsetJSON
      *            an association set JSONObject.
      *
+     * @return a JSONObject for the association set
      */
     public JSONObject getAssociationSet(final JSONObject associationsetJSON) {
         return associationSet.get(associationsetJSON);
@@ -5554,6 +5868,7 @@ public class BigMLClient {
      *            a unique identifier in the form associationset/id where id is
      *            a string of 24 alpha-numeric chars.
      *
+     * @return true if association set is finished
      */
     public boolean associationSetIsReady(final String associationSetId) {
         return associationSet.isReady(associationSetId);
@@ -5565,6 +5880,7 @@ public class BigMLClient {
      * @param associationSetJSON
      *            an association set JSONObject.
      *
+     * @return true if association set is finished
      */
     public boolean associationSetIsReady(final JSONObject associationSetJSON) {
         return associationSet.isReady(associationSetJSON);
@@ -5579,6 +5895,7 @@ public class BigMLClient {
      * @param queryString
      *            query filtering the listing.
      *
+     * @return a JSONObject containing all association sets matching the query
      */
     public JSONObject listAssociationSets(final String queryString) {
         return associationSet.list(queryString);
@@ -5597,6 +5914,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the association set. Optional
      *
+     * @return a JSONObject for the updated association set
      */
     public JSONObject updateAssociationSet(final String associationSetId, final String changes) {
         return associationSet.update(associationSetId, changes);
@@ -5613,6 +5931,8 @@ public class BigMLClient {
      *            an associationset JSONObject
      * @param changes
      *            set of parameters to update the association set. Optional
+     *
+     * @return a JSONObject for the updated association set
      */
     public JSONObject updateAssociationSet(final JSONObject associationSetJSON,
             final JSONObject changes) {
@@ -5630,6 +5950,7 @@ public class BigMLClient {
      *            a unique identifier in the form associationset/id where id is
      *            a string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the deleted association set
      */
     public JSONObject deleteAssociationSet(final String associationSetId) {
         return associationSet.delete(associationSetId);
@@ -5645,6 +5966,7 @@ public class BigMLClient {
      * @param associationSetJSON
      *            an association set JSONObject.
      *
+     * @return a JSONObject for the deleted association set
      */
     public JSONObject deleteAssociationSet(final JSONObject associationSetJSON) {
         return associationSet.delete(associationSetJSON);
@@ -5675,6 +5997,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new topic model
      */
     public JSONObject createTopicModel(final String datasetId, JSONObject args,
             Integer waitTime, Integer retries) {
@@ -5701,6 +6024,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new topic model
      */
     public JSONObject createTopicModel(final List datasetsIds, 
     		JSONObject args, Integer waitTime, Integer retries) {
@@ -5724,6 +6048,7 @@ public class BigMLClient {
      *            a unique identifier in the form topicmodel/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the topic model
      */
     public JSONObject getTopicModel(final String topicModelId) {
         return topicModel.get(topicModelId);
@@ -5744,6 +6069,7 @@ public class BigMLClient {
      * @param topicModelJSON
      *            a topicmodel JSONObject.
      *
+     * @return a JSONObject for the topic model
      */
     public JSONObject getTopicModel(final JSONObject topicModelJSON) {
         return topicModel.get(topicModelJSON);
@@ -5756,6 +6082,7 @@ public class BigMLClient {
      *            a unique identifier in the form topicmodel/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return true if topic model is finished
      */
     public boolean topicModelIsReady(final String topicModelId) {
         return topicModel.isReady(topicModelId);
@@ -5767,6 +6094,7 @@ public class BigMLClient {
      * @param topicModelJSON
      *            a topicmodel JSONObject.
      *
+     * @return true if topic model is finished
      */
     public boolean topicModelIsReady(final JSONObject topicModelJSON) {
         return topicModel.isReady(topicModelJSON);
@@ -5781,6 +6109,7 @@ public class BigMLClient {
      * @param queryString
      *            query filtering the listing.
      *
+     * @return a JSONObject containing all topic models matching the query
      */
     public JSONObject listTopicModels(final String queryString) {
         return topicModel.list(queryString);
@@ -5799,6 +6128,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the topic model. Optional
      *
+     * @return a JSONObject for the updated topic model 
      */
     public JSONObject updateTopicModel(final String topicModelId, final String changes) {
         return topicModel.update(topicModelId, changes);
@@ -5815,6 +6145,8 @@ public class BigMLClient {
      *            a topicmodel JSONObject
      * @param changes
      *            set of parameters to update the topic model. Optional
+     *
+     * @return a JSONObject for the updated topic model
      */
     public JSONObject updateTopicModel(final JSONObject topicModelJSON,
             final JSONObject changes) {
@@ -5832,6 +6164,7 @@ public class BigMLClient {
      *            a unique identifier in the form topicmodel/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the deleted topic model
      */
     public JSONObject deleteTopicModel(final String topicModelId) {
         return topicModel.delete(topicModelId);
@@ -5847,6 +6180,7 @@ public class BigMLClient {
      * @param topicModelJSON
      *            a topicmodel JSONObject.
      *
+     * @return a JSONObject for the deleted topic model
      */
     public JSONObject deleteTopicModel(final JSONObject topicModelJSON) {
         return topicModel.delete(topicModelJSON);
@@ -5881,6 +6215,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new topic distribution
      */
     public JSONObject createTopicDistribution(final String topicModelId,
             JSONObject inputData, JSONObject args,
@@ -5899,6 +6234,7 @@ public class BigMLClient {
      *            a unique identifier in the form topicDistribution/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the topic distribution
      */
     public JSONObject getTopicDistribution(final String topicDistributionId) {
         return topicDistribution.get(topicDistributionId);
@@ -5913,6 +6249,7 @@ public class BigMLClient {
      * @param topicDistributionJSON
      *            a topic distribution JSONObject
      *
+     * @return a JSONObject for the topic distribution
      */
     public JSONObject getTopicDistribution(final JSONObject topicDistributionJSON) {
         return topicDistribution.get(topicDistributionJSON);
@@ -5925,6 +6262,7 @@ public class BigMLClient {
      *            a unique identifier in the form topicDistribution/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return true if topic distribution is finished
      */
     public boolean topicDistributionIsReady(final String topicDistributionId) {
         return topicDistribution.isReady(topicDistributionId);
@@ -5936,6 +6274,7 @@ public class BigMLClient {
      * @param topicDistributionJSON
      *            a topic distribution JSONObject
      *
+     * @return true if topic distribution is finished
      */
     public boolean topicDistributionIsReady(final JSONObject topicDistributionJSON) {
         return topicDistribution.isReady(topicDistributionJSON);
@@ -5951,6 +6290,7 @@ public class BigMLClient {
      * @param queryString
      *            query filtering the listing.
      *
+     * @return a JSONObject containing all topic distributions matching the query
      */
     public JSONObject listTopicDistributions(final String queryString) {
         return topicDistribution.list(queryString);
@@ -5968,6 +6308,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the source. Optional
      *
+     * @return a JSONObject for the updated topic distribution
      */
     public JSONObject updateTopicDistribution(final String topicDistributionId,
             final String changes) {
@@ -5985,6 +6326,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the source. Optional
      *
+     * @return a JSONObject for the updated topic distribution
      */
     public JSONObject updateTopicDistribution(final JSONObject topicDistributionJSON,
             final JSONObject changes) {
@@ -6001,6 +6343,7 @@ public class BigMLClient {
      *            a unique identifier in the form topicDistribution/id where id is a
      *            string of 24 alpha-numeric chars
      *
+     * @return a JSONObject for the deleted topic distribution
      */
     public JSONObject deleteTopicDistribution(final String topicDistributionId) {
         return topicDistribution.delete(topicDistributionId);
@@ -6015,6 +6358,7 @@ public class BigMLClient {
      * @param topicDistributionJSON
      *            a topic distribution JSONObject
      *
+     * @return a JSONObject for the deleted topic distribution
      */
     public JSONObject deleteTopicDistribution(final JSONObject topicDistributionJSON) {
         return topicDistribution.delete(topicDistributionJSON);
@@ -6050,6 +6394,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new batch topic distribution
      */
     public JSONObject createBatchTopicDistribution(final String topicModelId,
             final String datasetId, JSONObject args, Integer waitTime,
@@ -6075,6 +6420,7 @@ public class BigMLClient {
      *            a unique identifier in the form batchtopicdistribution/id where id is
      *            a string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the batch topic distribution
      */
     public JSONObject getBatchTopicDistribution(final String batchTopicDistributionId) {
         return batchTopicDistribution.get(batchTopicDistributionId);
@@ -6096,6 +6442,7 @@ public class BigMLClient {
      * @param batchTopicDistributionJSON
      *            a batch topic distribution JSONObject.
      *
+     * @return a JSONObject for the batch topic distribution
      */
     public JSONObject getBatchTopicDistribution(final JSONObject batchTopicDistributionJSON) {
         return batchTopicDistribution.get(batchTopicDistributionJSON);
@@ -6113,7 +6460,8 @@ public class BigMLClient {
      *            a string of 24 alpha-numeric chars.
      * @param filename
      *            Path to save file locally
-     *
+     * 
+     * @return a JSONObject for the downloaded batch topic distribution
      */
     public JSONObject downloadBatchTopicDistribution(final String batchTopicDistributionId,
             final String filename) {
@@ -6132,7 +6480,8 @@ public class BigMLClient {
      *            a batch topic distribution JSONObject.
      * @param filename
      *            Path to save file locally
-     *
+     * 
+     * @return a JSONObject for the downloaded batch topic distribution
      */
     public JSONObject downloadBatchTopicDistribution(
             final JSONObject batchTopicDistributionJSON, final String filename) {
@@ -6147,6 +6496,7 @@ public class BigMLClient {
      *            a unique identifier in the form batchtopicdistribution/id where id is
      *            a string of 24 alpha-numeric chars.
      *
+     * @return true if batch topic distribution is finished
      */
     public boolean batchTopicDistributionIsReady(final String batchTopicDistributionId) {
         return batchTopicDistribution.isReady(batchTopicDistributionId);
@@ -6158,6 +6508,7 @@ public class BigMLClient {
      * @param batchTopicDistributionJSON
      *            a batch topic distribution JSONObject.
      *
+     * @return true if batch topic distribution is finished
      */
     public boolean batchTopicDistributionIsReady(final JSONObject batchTopicDistributionJSON) {
         return batchTopicDistribution.isReady(batchTopicDistributionJSON);
@@ -6172,6 +6523,7 @@ public class BigMLClient {
      * @param queryString
      *            query filtering the listing.
      *
+     * @return a JSONObject containing all batch topic distributions matching the query
      */
     public JSONObject listBatchTopicDistributions(final String queryString) {
         return batchTopicDistribution.list(queryString);
@@ -6189,6 +6541,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the batch topic distribution. Optional
      *
+     * @return a JSONObject for the updated batch topic distribution
      */
     public JSONObject updateBatchTopicDistribution(final String batchTopicDistributionId,
             final String changes) {
@@ -6205,6 +6558,8 @@ public class BigMLClient {
      *            a batch topic distribution JSONObject
      * @param changes
      *            set of parameters to update the batch topic distribution. Optional
+     *
+     * @return a JSONObject for the updated batch topic distribution
      */
     public JSONObject updateBatchTopicDistribution(
             final JSONObject batchTopicDistributionJSON, final JSONObject changes) {
@@ -6221,6 +6576,7 @@ public class BigMLClient {
      *            a unique identifier in the form batchtopicdistribution/id where id is
      *            a string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the deleted batch topic distribution
      */
     public JSONObject deleteBatchTopicDistribution(final String batchTopicDistributionId) {
         return batchTopicDistribution.delete(batchTopicDistributionId);
@@ -6235,6 +6591,7 @@ public class BigMLClient {
      * @param batchTopicDistributionJSON
      *            a batch topic distribution JSONObject.
      *
+     * @return a JSONObject for the deleted batch topic distribution
      */
     public JSONObject deleteBatchTopicDistribution(final JSONObject batchTopicDistributionJSON) {
         return batchTopicDistribution.delete(batchTopicDistributionJSON);
@@ -6258,6 +6615,7 @@ public class BigMLClient {
      * @param args
      *            set of parameters for the new sample. Optional
      *
+     * @return a JSONObject for the new configuration
      */
     public JSONObject createConfiguration(JSONObject args) {
         return configuration.create(args);
@@ -6274,6 +6632,7 @@ public class BigMLClient {
      *            a unique identifier in the form configuration/id where id is a string
      *            of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the configuration
      */
     public JSONObject getConfiguration(final String configurationId) {
         return configuration.get(configurationId);
@@ -6289,6 +6648,7 @@ public class BigMLClient {
      * @param configurationJSON
      *            a configuration JSONObject
      *
+     * @return a JSONObject for the configuration
      */
     public JSONObject getConfiguration(final JSONObject configurationJSON) {
         return configuration.get(configurationJSON);
@@ -6307,6 +6667,7 @@ public class BigMLClient {
      * @param queryString
      *            query for filtering.
      *
+     * @return a JSONObject for the configuration
      */
     public JSONObject getConfiguration(final String configurationId, final String queryString) {
         return getConfiguration(configurationId, queryString, null, null);
@@ -6329,6 +6690,7 @@ public class BigMLClient {
      * @param apiKey
      *            API key
      *
+     * @return a JSONObject for the configuration
      */
     public JSONObject getConfiguration(final String configurationId, final String queryString,
                                 final String apiUser, final String apiKey) {
@@ -6342,6 +6704,7 @@ public class BigMLClient {
      *            a unique identifier in the form configuration/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return true if configuration is finished
      */
     public boolean configurationIsReady(final String configurationId) {
         return configuration.isReady(configurationId);
@@ -6353,6 +6716,7 @@ public class BigMLClient {
      * @param configurationJSON
      *            a configuration JSONObject
      *
+     * @return true if configuration is finished
      */
     public boolean configurationIsReady(final JSONObject configurationJSON) {
         return configuration.isReady(configurationJSON);
@@ -6367,6 +6731,7 @@ public class BigMLClient {
      * @param queryString
      *            query filtering the listing.
      *
+     * @return a JSONObject containing all configurations matching the query
      */
     public JSONObject listConfigurations(final String queryString) {
         return configuration.list(queryString);
@@ -6385,6 +6750,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the configuration. Optional
      *
+     * @return a JSONObject for the updated configuration
      */
     public JSONObject updateConfiguration(final String configurationId, final String changes) {
         return configuration.update(configurationId, changes);
@@ -6402,6 +6768,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the sample. Optional
      *
+     * @return a JSONObject for the updated configuration
      */
     public JSONObject updateConfiguration(final JSONObject configurationJSON,
                                    final JSONObject changes) {
@@ -6419,6 +6786,7 @@ public class BigMLClient {
      *            a unique identifier in the form configuration/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the deleted configuration
      */
     public JSONObject deleteConfiguration(final String configurationId) {
         return configuration.delete(configurationId);
@@ -6434,6 +6802,7 @@ public class BigMLClient {
      * @param configurationJSON
      *            a configuration JSONObject
      *
+     * @return a JSONObject for the deleted configuration
      */
     public JSONObject deleteConfiguration(final JSONObject configurationJSON) {
         return configuration.delete(configurationJSON);
@@ -6465,6 +6834,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new timeseries
      */
     public JSONObject createTimeSeries(final String datasetId, JSONObject args,
             Integer waitTime, Integer retries) {
@@ -6490,7 +6860,8 @@ public class BigMLClient {
      *            Optional
      * @param retries
      *            number of times to try the operation. Optional
-     *
+     *            
+     * @return a JSONObject for the new timeseries
      */
     public JSONObject createTimeSeries(final List datasetsIds, 
     		JSONObject args, Integer waitTime, Integer retries) {
@@ -6514,6 +6885,7 @@ public class BigMLClient {
      *            a unique identifier in the form timeseries/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the timeseries
      */
     public JSONObject getTimeSeries(final String timeSeriesId) {
         return timeSeries.get(timeSeriesId);
@@ -6534,6 +6906,7 @@ public class BigMLClient {
      * @param timeSeriesJSON
      *            a timeseries JSONObject.
      *
+     * @return a JSONObject for the timeseries
      */
     public JSONObject getTimeSeries(final JSONObject timeSeriesJSON) {
         return timeSeries.get(timeSeriesJSON);
@@ -6546,6 +6919,7 @@ public class BigMLClient {
      *            a unique identifier in the form timeseries/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return true if timeseries is finished
      */
     public boolean timeSeriesIsReady(final String timeSeriesId) {
         return timeSeries.isReady(timeSeriesId);
@@ -6557,6 +6931,7 @@ public class BigMLClient {
      * @param timeSeriesJSON
      *            a timeseries JSONObject.
      *
+     * @return true if timeseries is finished
      */
     public boolean timeSeriesIsReady(final JSONObject timeSeriesJSON) {
         return timeSeries.isReady(timeSeriesJSON);
@@ -6571,6 +6946,7 @@ public class BigMLClient {
      * @param queryString
      *            query filtering the listing.
      *
+     * @return a JSONObject containing all timeseries matching the query
      */
     public JSONObject listTimeSeries(final String queryString) {
         return timeSeries.list(queryString);
@@ -6589,6 +6965,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the timeseries. Optional
      *
+     * @return a JSONObject for the updated timeseries
      */
     public JSONObject updateTimeSeries(final String timeSeriesId, final String changes) {
         return timeSeries.update(timeSeriesId, changes);
@@ -6605,6 +6982,8 @@ public class BigMLClient {
      *            a timeseries JSONObject
      * @param changes
      *            set of parameters to update the timeseries. Optional
+     *
+     * @return a JSONObject for the updated timeseries
      */
     public JSONObject updateTimeSeries(final JSONObject timeSeriesJSON,
             final JSONObject changes) {
@@ -6622,6 +7001,7 @@ public class BigMLClient {
      *            a unique identifier in the form timeseries/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the deleted timeseries
      */
     public JSONObject deleteTimeSeries(final String timeSeriesId) {
         return timeSeries.delete(timeSeriesId);
@@ -6637,6 +7017,7 @@ public class BigMLClient {
      * @param timeSeriesJSON
      *            a timeseries JSONObject.
      *
+     * @return a JSONObject for the deleted timeseries
      */
     public JSONObject deleteTimeSeries(final JSONObject timeSeriesJSON) {
         return timeSeries.delete(timeSeriesJSON);
@@ -6672,6 +7053,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new forecast
      */
     public JSONObject createForecast(final String timeSeriesId,
             JSONObject inputData, JSONObject args,
@@ -6690,6 +7072,7 @@ public class BigMLClient {
      *            a unique identifier in the form forecast/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the forecast
      */
     public JSONObject getForecast(final String forecastId) {
         return forecast.get(forecastId);
@@ -6704,6 +7087,7 @@ public class BigMLClient {
      * @param forecastJSON
      *            a forecast JSONObject
      *
+     * @return a JSONObject for the forecast
      */
     public JSONObject getForecast(final JSONObject forecastJSON) {
         return forecast.get(forecastJSON);
@@ -6716,6 +7100,7 @@ public class BigMLClient {
      *            a unique identifier in the form forecast/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return true if forecast is finished
      */
     public boolean forecastIsReady(final String forecastId) {
         return forecast.isReady(forecastId);
@@ -6726,6 +7111,7 @@ public class BigMLClient {
      *
      * @param forecastJSON  a forecast JSONObject
      *
+     * @return true if forecast is finished
      */
     public boolean forecastIsReady(final JSONObject forecastJSON) {
         return forecast.isReady(forecastJSON);
@@ -6741,6 +7127,7 @@ public class BigMLClient {
      * @param queryString
      *            query filtering the listing.
      *
+     * @return a JSONObject containing all forecasts matching the query
      */
     public JSONObject listForecasts(final String queryString) {
         return forecast.list(queryString);
@@ -6758,6 +7145,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the forecast. Optional
      *
+     * @return a JSONObject for the updated forecast
      */
     public JSONObject updateForecast(final String forecastId,
             final String changes) {
@@ -6775,6 +7163,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the forecast. Optional
      *
+     * @return a JSONObject for the updated forecast
      */
     public JSONObject updateForecast(final JSONObject forecastJSON,
             final JSONObject changes) {
@@ -6791,6 +7180,7 @@ public class BigMLClient {
      *            a unique identifier in the form forecast/id where id is a
      *            string of 24 alpha-numeric chars
      *
+     * @return a JSONObject for the deleted forecast
      */
     public JSONObject deleteForecast(final String forecastId) {
         return forecast.delete(forecastId);
@@ -6805,6 +7195,7 @@ public class BigMLClient {
      * @param forecastJSON
      *            a forecast JSONObject
      *
+     * @return a JSONObject for the deleted forecast
      */
     public JSONObject deleteForecast(final JSONObject forecastJSON) {
         return forecast.delete(forecastJSON);
@@ -6836,6 +7227,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new seepnet
      */
     public JSONObject createDeepnet(final String datasetId, JSONObject args,
             Integer waitTime, Integer retries) {
@@ -6859,6 +7251,7 @@ public class BigMLClient {
      *            a unique identifier in the form deepnet/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the deepnet
      */
     public JSONObject getDeepnet(final String deepnetId) {
         return deepnet.get(deepnetId);
@@ -6879,6 +7272,7 @@ public class BigMLClient {
      * @param deepnetJSON
      *            a deepnet JSONObject.
      *
+     * @return a JSONObject for the deepnet
      */
     public JSONObject getDeepnet(final JSONObject deepnetJSON) {
         return deepnet.get(deepnetJSON);
@@ -6891,6 +7285,7 @@ public class BigMLClient {
      *            a unique identifier in the form deepnet/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return true if deepnet is finished
      */
     public boolean deepnetIsReady(final String deepnetId) {
         return deepnet.isReady(deepnetId);
@@ -6902,6 +7297,7 @@ public class BigMLClient {
      * @param deepnetJSON
      *            a deepnet JSONObject.
      *
+     * @return true if deepnet is finished
      */
     public boolean deepnetIsReady(final JSONObject deepnetJSON) {
         return deepnet.isReady(deepnetJSON);
@@ -6916,6 +7312,7 @@ public class BigMLClient {
      * @param queryString
      *            query filtering the listing.
      *
+     * @return a JSONObject containing all deepnets matching the query
      */
     public JSONObject listDeepnets(final String queryString) {
         return deepnet.list(queryString);
@@ -6934,6 +7331,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the deepnet. Optional
      *
+     * @return a JSONObject for the updated deepnet
      */
     public JSONObject updateDeepnet(final String deepnetId, final String changes) {
         return deepnet.update(deepnetId, changes);
@@ -6950,6 +7348,8 @@ public class BigMLClient {
      *            a deepnet JSONObject
      * @param changes
      *            set of parameters to update the deepnet. Optional
+     *
+     * @return a JSONObject for the updated deepnet
      */
     public JSONObject updateDeepnet(final JSONObject deepnetJSON,
             final JSONObject changes) {
@@ -6967,6 +7367,7 @@ public class BigMLClient {
      *            a unique identifier in the form deepnet/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the deleted deepnet
      */
     public JSONObject deleteDeepnet(final String deepnetId) {
         return deepnet.delete(deepnetId);
@@ -6982,6 +7383,7 @@ public class BigMLClient {
      * @param deepnetJSON
      *            a deepnet JSONObject.
      *
+     * @return a JSONObject for the deleted deepnet
      */
     public JSONObject deleteDeepnet(final JSONObject deepnetJSON) {
         return deepnet.delete(deepnetJSON);
@@ -7013,6 +7415,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new optiML
      */
     public JSONObject createOptiML(final String datasetId, JSONObject args,
             Integer waitTime, Integer retries) {
@@ -7037,6 +7440,7 @@ public class BigMLClient {
      *            a unique identifier in the form optiml/id where id is
      *            a string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the optiML
      */
     public JSONObject getOptiML(final String optimlId) {
         return optiml.get(optimlId);
@@ -7057,6 +7461,7 @@ public class BigMLClient {
      * @param optimlJSON
      *            an optiML JSONObject.
      *
+     * @return a JSONObject for the optiML
      */
     public JSONObject getOptiML(final JSONObject optimlJSON) {
         return optiml.get(optimlJSON);
@@ -7070,6 +7475,7 @@ public class BigMLClient {
      *            a unique identifier in the form optiml/id where id is
      *            a string of 24 alpha-numeric chars.
      *
+     * @return true if optiML is finished
      */
     public boolean optiMLIsReady(final String optimlId) {
         return optiml.isReady(optimlId);
@@ -7081,6 +7487,7 @@ public class BigMLClient {
      * @param optimlJSON
      *            an optiml JSONObject.
      *
+     * @return true if optiML is finished
      */
     public boolean optimlIsReady(final JSONObject optimlJSON) {
         return optiml.isReady(optimlJSON);
@@ -7095,6 +7502,7 @@ public class BigMLClient {
      * @param queryString
      *            query filtering the listing.
      *
+     * @return a JSONObject containing all optiMLs matching the query
      */
     public JSONObject listOptiMLs(final String queryString) {
         return optiml.list(queryString);
@@ -7113,6 +7521,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the optiml. Optional
      *
+     * @return a JSONObject for the updated optiML
      */
     public JSONObject updateOptiML(final String optimlId, 
     			final String changes) {
@@ -7130,6 +7539,8 @@ public class BigMLClient {
      *            an optiml JSONObject
      * @param changes
      *            set of parameters to update the optiml. Optional
+     *
+     * @return a JSONObject for the updated optiML
      */
     public JSONObject updateOptiML(final JSONObject optimlJSON,
             final JSONObject changes) {
@@ -7147,6 +7558,7 @@ public class BigMLClient {
      *            a unique identifier in the form optiml/id where id is
      *            a string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the deleted optiML
      */
     public JSONObject deleteOptiML(final String optimlId) {
         return optiml.delete(optimlId);
@@ -7162,6 +7574,7 @@ public class BigMLClient {
      * @param optimlJSON
      *            an optiml JSONObject.
      *
+     * @return a JSONObject for the deleted optiML
      */
     public JSONObject deleteOptiML(final JSONObject optimlJSON) {
         return optiml.delete(optimlJSON);
@@ -7195,6 +7608,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new fusion
      */
     public JSONObject createFusion(final List<String> modelsIds,
         JSONObject args, Integer waitTime, Integer retries) {
@@ -7228,6 +7642,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new fusion
      */
     public JSONObject createFusionWithModels(final List<JSONObject> models,
         JSONObject args, Integer waitTime, Integer retries) {
@@ -7246,6 +7661,7 @@ public class BigMLClient {
      *            a unique identifier in the form fusion/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the fusion
      */
     public JSONObject getFusion(final String fusionId) {
         return fusion.get(fusionId);
@@ -7261,6 +7677,7 @@ public class BigMLClient {
      * @param fusionJSON
      *            a fusion JSONObject
      *
+     * @return a JSONObject for the fusion
      */
     public JSONObject getFusion(final JSONObject fusionJSON) {
         return fusion.get(fusionJSON);
@@ -7273,6 +7690,7 @@ public class BigMLClient {
      *            a unique identifier in the form fusion/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return true if fusion is finished
      */
     public boolean fusionIsReady(final String fusionId) {
         return fusion.isReady(fusionId);
@@ -7284,6 +7702,7 @@ public class BigMLClient {
      * @param fusionJSON
      *            a fusion JSONObject
      *
+     * @return true if fusion is finished
      */
     public boolean fusionIsReady(final JSONObject fusionJSON) {
         return fusion.isReady(fusionJSON);
@@ -7298,6 +7717,7 @@ public class BigMLClient {
      * @param queryString
      *            query filtering the listing.
      *
+     * @return a JSONObject containing all fusions matching the query
      */
     public JSONObject listFusions(final String queryString) {
         return fusion.list(queryString);
@@ -7316,6 +7736,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the fusion. Optional
      *
+     * @return a JSONObject for the updated fusion
      */
     public JSONObject updateFusion(final String fusionId, final String changes) {
         return fusion.update(fusionId, changes);
@@ -7333,6 +7754,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the fusion. Optional
      *
+     * @return a JSONObject for the updated fusion
      */
     public JSONObject updateFusion(final JSONObject fusionJSON,
             final JSONObject changes) {
@@ -7350,6 +7772,7 @@ public class BigMLClient {
      *            a unique identifier in the form fusion/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the deleted fusion
      */
     public JSONObject deleteFusion(final String fusionId) {
         return fusion.delete(fusionId);
@@ -7365,6 +7788,7 @@ public class BigMLClient {
      * @param fusionJSON
      *            a fusion JSONObject
      *
+     * @return a JSONObject for the deleted fusion
      */
     public JSONObject deleteFusion(final JSONObject fusionJSON) {
         return fusion.delete(fusionJSON);
@@ -7396,6 +7820,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new pca
      */
     public JSONObject createPca(final String datasetId, 
     		JSONObject args, Integer waitTime, Integer retries) {
@@ -7422,6 +7847,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new pca
      */
     public JSONObject createPca(final List datasetsIds, 
     		JSONObject args, Integer waitTime, Integer retries) {
@@ -7445,6 +7871,7 @@ public class BigMLClient {
      *            a unique identifier in the form pca/id where id
      *            is a string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the pca
      */
     public JSONObject getPca(final String pcaId) {
         return pca.get(pcaId);
@@ -7465,6 +7892,7 @@ public class BigMLClient {
      * @param pcaJSON
      *            a pca JSONObject.
      *
+     * @return a JSONObject for the pca
      */
     public JSONObject getPca(final JSONObject pcaJSON) {
         return pca.get(pcaJSON);
@@ -7477,6 +7905,7 @@ public class BigMLClient {
      *            a unique identifier in the form pca/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return true if pca is finished
      */
     public boolean pcaIsReady(final String pcaId) {
         return pca.isReady(pcaId);
@@ -7488,6 +7917,7 @@ public class BigMLClient {
      * @param pcaJSON
      *            a pca JSONObject.
      *
+     * @return true if pca is finished
      */
     public boolean pcaIsReady(final JSONObject pcaJSON) {
         return pca.isReady(pcaJSON);
@@ -7502,6 +7932,7 @@ public class BigMLClient {
      * @param queryString
      *            query filtering the listing.
      *
+     * @return a JSONObject containing all pcas matching the query
      */
     public JSONObject listPcas(final String queryString) {
         return pca.list(queryString);
@@ -7520,8 +7951,9 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the pca. Optional
      *
+     * @return a JSONObject for the updated pca
      */
-    public JSONObject updatPca(final String pcaId,
+    public JSONObject updatePca(final String pcaId,
             final String changes) {
         return pca.update(pcaId, changes);
     }
@@ -7537,6 +7969,7 @@ public class BigMLClient {
      *            a pca JSONObject
      * @param changes
      *            set of parameters to update the pca. Optional
+     *  @return a JSONObject for the updated pca
      */
     public JSONObject updatePca(final JSONObject pcaJSON,
             final JSONObject changes) {
@@ -7554,6 +7987,7 @@ public class BigMLClient {
      *            a unique identifier in the form pca/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the deleted pca
      */
     public JSONObject deletePca(final String pcaId) {
         return pca.delete(pcaId);
@@ -7569,6 +8003,7 @@ public class BigMLClient {
      * @param pcaJSON
      *            a pca JSONObject.
      *
+     * @return a JSONObject for the deleted pca
      */
     public JSONObject deletePca(final JSONObject pcaJSON) {
         return pca.delete(pcaJSON);
@@ -7605,6 +8040,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new projection
      */
     public JSONObject createProjection(final String pcaId,
             JSONObject inputData, JSONObject args, Integer waitTime,
@@ -7634,6 +8070,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new projection
      */
     public JSONObject createProjection(final JSONObject pca,
             JSONObject inputData, JSONObject args,
@@ -7653,6 +8090,7 @@ public class BigMLClient {
      *            a unique identifier in the form projection/id where id 
      *            is a string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the projection
      */
     public JSONObject getProjection(final String projectionId) {
         return projection.get(projectionId);
@@ -7667,6 +8105,7 @@ public class BigMLClient {
      * @param projectionJSON
      *            a projection JSONObject
      *
+     * @return a JSONObject for the projection
      */
     public JSONObject getProjection(final JSONObject projectionJSON) {
         return projection.get(projectionJSON);
@@ -7679,6 +8118,7 @@ public class BigMLClient {
      *            a unique identifier in the form projection/id where id 
      *            is a string of 24 alpha-numeric chars.
      *
+     * @return true if projection is finished
      */
     public boolean projectionIsReady(final String projectionId) {
         return projection.isReady(projectionId);
@@ -7690,6 +8130,7 @@ public class BigMLClient {
      * @param projectionJSON
      *            a projection JSONObject
      *
+     * @return true if projection is finished
      */
     public boolean projectionIsReady(final JSONObject projectionJSON) {
         return projection.isReady(projectionJSON);
@@ -7705,6 +8146,7 @@ public class BigMLClient {
      * @param queryString
      *            query filtering the listing.
      *
+     * @return a JSONObject containing all projections matching the query
      */
     public JSONObject listProjections(final String queryString) {
         return projection.list(queryString);
@@ -7722,6 +8164,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the projection. Optional
      *
+     * @return a JSONObject for the updated projection
      */
     public JSONObject updateProjection(final String projectionId,
             final String changes) {
@@ -7739,6 +8182,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the projection. Optional
      *
+     * @return a JSONObject for the updated projection
      */
     public JSONObject updateProjection(final JSONObject projectionJSON,
             final JSONObject changes) {
@@ -7755,6 +8199,7 @@ public class BigMLClient {
      *            a unique identifier in the form projection/id where id 
      *            is a string of 24 alpha-numeric chars
      *
+     * @return a JSONObject for the deleted projection
      */
     public JSONObject deleteProjection(final String projectionId) {
         return projection.delete(projectionId);
@@ -7769,6 +8214,7 @@ public class BigMLClient {
      * @param projectionJSON
      *            a projection JSONObject
      *
+     * @return a JSONObject for the deleted projection
      */
     public JSONObject deleteProjection(final JSONObject projectionJSON) {
         return projection.delete(projectionJSON);
@@ -7805,6 +8251,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new batch projection
      */
     public JSONObject createBatchProjection(final String pcaId,
             final String datasetId, JSONObject args, Integer waitTime,
@@ -7830,6 +8277,7 @@ public class BigMLClient {
      *            a unique identifier in the form batchprojection/id where id is
      *            a string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the batch projection
      */
     public JSONObject getBatchProjection(final String batchProjectionId) {
         return batchProjection.get(batchProjectionId);
@@ -7851,6 +8299,7 @@ public class BigMLClient {
      * @param batchProjectionJSON
      *            a batch projection JSONObject.
      *
+     * @return a JSONObject for the batch projection
      */
     public JSONObject getBatchProjection(final JSONObject batchProjectionJSON) {
         return batchProjection.get(batchProjectionJSON);
@@ -7868,7 +8317,8 @@ public class BigMLClient {
      *            a string of 24 alpha-numeric chars.
      * @param filename
      *            Path to save file locally
-     *
+     * 
+     * @return a JSONObject for the downloaded batch projection
      */
     public JSONObject downloadBatchProjection(final String batchProjectionId,
             final String filename) {
@@ -7887,7 +8337,8 @@ public class BigMLClient {
      *            a batch projection JSONObject.
      * @param filename
      *            Path to save file locally
-     *
+     * 
+     * @return a JSONObject for the downloaded batch projection
      */
     public JSONObject downloadBatchProjection(
             final JSONObject batchProjectionJSON, final String filename) {
@@ -7902,6 +8353,7 @@ public class BigMLClient {
      *            a unique identifier in the form batchprojection/id where id is
      *            a string of 24 alpha-numeric chars.
      *
+     * @return true if batch projection is finished
      */
     public boolean batchProjectionIsReady(final String batchProjectionId) {
         return batchProjection.isReady(batchProjectionId);
@@ -7910,9 +8362,10 @@ public class BigMLClient {
     /**
      * Check whether a batch projection's status is FINISHED.
      *
-     * @param batchProjectionSON
+     * @param batchProjectionJSON
      *            a batch projection JSONObject.
      *
+     * @return true if batch projection is finished
      */
     public boolean batchProjectionIsReady(final JSONObject batchProjectionJSON) {
         return batchProjection.isReady(batchProjectionJSON);
@@ -7927,6 +8380,7 @@ public class BigMLClient {
      * @param queryString
      *            query filtering the listing.
      *
+     * @return a JSONObject containing all batch projections matching the query
      */
     public JSONObject listBatchProjections(final String queryString) {
         return batchProjection.list(queryString);
@@ -7944,6 +8398,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the batch projection. Optional
      *
+     * @return a JSONObject for the updated batch projection
      */
     public JSONObject updateBatchProjection(final String batchProjectionId,
             final String changes) {
@@ -7960,6 +8415,8 @@ public class BigMLClient {
      *            a batch projection JSONObject
      * @param changes
      *            set of parameters to update the batch projection. Optional
+     *
+     * @return a JSONObject for the updated batch projection
      */
     public JSONObject updateBatchProjection(
             final JSONObject batchProjectionJSON, final JSONObject changes) {
@@ -7972,10 +8429,11 @@ public class BigMLClient {
      * DELETE /andromeda/projection/id?username=$BIGML_USERNAME;api_key=
      * $BIGML_API_KEY; HTTP/1.1
      *
-     * @param batchprojectionId
+     * @param batchProjectionId
      *            a unique identifier in the form batchprojection/id where id is
      *            a string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the deleted batch projection
      */
     public JSONObject deleteBatchProjection(final String batchProjectionId) {
         return batchProjection.delete(batchProjectionId);
@@ -7990,6 +8448,7 @@ public class BigMLClient {
      * @param batchProjectionJSON
      *            a batch projection JSONObject.
      *
+     * @return a JSONObject for the deleted batch projection
      */
     public JSONObject deleteBatchProjection(final JSONObject batchProjectionJSON) {
         return batchProjection.delete(batchProjectionJSON);
@@ -8021,6 +8480,7 @@ public class BigMLClient {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new external connector
      */
     public JSONObject createExternalConnector(final String source, 
     		final Map connectionInfo, JSONObject args, Integer waitTime,
@@ -8041,10 +8501,11 @@ public class BigMLClient {
      * /andromeda/externalconnector/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io
      *
-     * @param externalconnectorId
+     * @param externalConnectorId
      *            a unique identifier in the form externalconnector/id where id 
      *            is a string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the external connector
      */
     public JSONObject getExternalConnector(final String externalConnectorId) {
         return externalConnector.get(externalConnectorId);
@@ -8065,6 +8526,7 @@ public class BigMLClient {
      * @param externalConnectorJSON
      *            an external connector JSONObject.
      *
+     * @return a JSONObject for the external connector
      */
     public JSONObject getExternalConnector(final JSONObject externalConnectorJSON) {
         return externalConnector.get(externalConnectorJSON);
@@ -8077,6 +8539,7 @@ public class BigMLClient {
      *            a unique identifier in the form externalConnector/id where 
      *            id is a string of 24 alpha-numeric chars.
      *
+     * @return true if external connector is finished
      */
     public boolean externalConnectorIsReady(final String externalConnectorId) {
         return externalConnector.isReady(externalConnectorId);
@@ -8088,6 +8551,7 @@ public class BigMLClient {
      * @param externalConnectorJSON
      *            an externalConnector JSONObject.
      *
+     * @return true if external connector is finished
      */
     public boolean externalConnectorIsReady(final JSONObject externalConnectorJSON) {
         return externalConnector.isReady(externalConnectorJSON);
@@ -8102,6 +8566,7 @@ public class BigMLClient {
      * @param queryString
      *            query filtering the listing.
      *
+     * @return a JSONObject containing all external connectors matching the query
      */
     public JSONObject listExternalConnectors(final String queryString) {
         return externalConnector.list(queryString);
@@ -8120,6 +8585,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the external connector. Optional
      *
+     * @return a JSONObject for the updated external connector
      */
     public JSONObject updateExternalConnector(
         final String externalConnectorId, final String changes) {
@@ -8137,6 +8603,7 @@ public class BigMLClient {
      *            an external connector JSONObject
      * @param changes
      *            set of parameters to update the external connector. Optional
+     * @return a JSONObject for the updated external connector
      */
     public JSONObject updateExternalConnector(
             final JSONObject externalConnectorJSON, final JSONObject changes) {
@@ -8154,6 +8621,7 @@ public class BigMLClient {
      *            a unique identifier in the form externalconnector/id where id
      *            is a string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the deleted external connector
      */
     public JSONObject deleteexternalConnector(final String externalConnectorId) {
         return externalConnector.delete(externalConnectorId);
@@ -8169,6 +8637,7 @@ public class BigMLClient {
      * @param externalConnectorJSON
      *            an external connector JSONObject.
      *
+     * @return a JSONObject for the deleted external connector
      */
     public JSONObject deleteExternalConnector(
             final JSONObject externalConnectorJSON) {
