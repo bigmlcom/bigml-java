@@ -25,6 +25,12 @@ public class Model extends AbstractModelResource {
     /**
      * Constructor
      *
+     * @param bigmlClient	the client with connection to BigML
+     * @param apiUser		API user
+     * @param apiKey		API key
+     * @param project		project id
+     * @param organization	organization id
+     * @param cacheManager	cache manager
      */
     public Model(final BigMLClient bigmlClient,
     			 final String apiUser, final String apiKey, 
@@ -122,6 +128,7 @@ public class Model extends AbstractModelResource {
      * @param apiKey
      *            API key
      *
+     * @return a JSONObject for the model
      */
     public JSONObject get(final String modelId, final String apiUser,
             final String apiKey) {
@@ -147,6 +154,7 @@ public class Model extends AbstractModelResource {
      * @param apiKey
      *            API key
      *
+     * @return a JSONObject for the model
      */
     public JSONObject get(final JSONObject model, final String apiUser,
             final String apiKey) {
@@ -170,6 +178,7 @@ public class Model extends AbstractModelResource {
      * @param apiKey
      *            API key
      *
+     * @return a JSONObject for the model
      */
     public JSONObject get(final String modelId, final String queryString,
             final String apiUser, final String apiKey) {
@@ -197,6 +206,7 @@ public class Model extends AbstractModelResource {
      * @param apiKey
      *            API key
      *
+     * @return a JSONObject for the model
      */
     public JSONObject get(final JSONObject model, final String queryString,
             final String apiUser, final String apiKey) {

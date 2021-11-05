@@ -163,6 +163,8 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
      * @param maxModels
      *            the maximum number of models we will use in the ensemble null
      *            if we do not want a maxModels value
+     *            
+     * @throws Exception	Exception
      */
     public LocalEnsemble(List modelsIds, Integer maxModels) throws Exception {
         this(null, modelsIds, maxModels);
@@ -415,6 +417,8 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
     /**
      * Computes field importance based on the field importance information of
      * the individual models in the ensemble.
+     * 
+     * @return a list of importance data per field
      */
     public List<JSONArray> getFieldImportanceData() {
 
@@ -519,6 +523,10 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
     /**
      * Returns the required data distribution by adding the distributions in the
      * models
+     * 
+     * @param distributionType	the type of distribution to get info for
+     * 
+     * @return the data distribution per category
      */
     public JSONArray getDataDistribution(String distributionType) {
         if (distributionType == null) {
@@ -575,6 +583,8 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
     /**
      * Prints ensemble summary. Only field importance at present.
      *
+     * @return ensemble summary
+     * @throws IOException a IO exception
      */
     public String summarize() throws IOException {
         StringBuilder summarize = new StringBuilder();
@@ -688,7 +698,9 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
      *            distribution: distribution of probabilities for each of the
      *            objective field classes - unused_fields: list of fields in the
      *            input data that
-     *
+     * 
+     * @return prediction for the input data
+     * @throws Exception a generic exception
      */
     public HashMap<String, Object> predict(JSONObject inputData,
                                            PredictionMethod method, Map options,

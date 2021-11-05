@@ -76,6 +76,18 @@ public class LocalCentroid implements Serializable {
     
     /**
      * Squared Distance from the given input data to the centroid
+     * 
+     * @param inputData
+     * 				an object with field's id/value pairs representing the
+	 *              instance you want to calculated the distance for
+	 * @param termSets
+	 * 				a map with terms per field id
+	 * @param scales
+	 * 				an object with scales per field id
+	 * @param stopDistance2
+	 * 				max distance to calculate
+     * 
+     * @return	a distance
      */
     public Double distance2(Map<String, Object> inputData, Map<String, Object> termSets,
                                JSONObject scales, Double stopDistance2) {
@@ -115,6 +127,8 @@ public class LocalCentroid implements Serializable {
     /**
      * Print the statistics for the training data clustered around the 
      * centroid
+     * 
+     * @return a string builder with the statisticis
      */
     public StringBuilder printStatistics() {
         StringBuilder text = new StringBuilder(
@@ -133,6 +147,12 @@ public class LocalCentroid implements Serializable {
 
     /**
      * Returns the distance defined by cosine similarity
+     * 
+     * @param terms			the list of terms to extract the info for
+     * @param centroidTerms	the list of centroid terms
+     * @param scale			the scale factor
+     * 
+     * @return cosine distance
      */
     protected double cosineDistance2(
     		List<String> terms, JSONArray centroidTerms, double scale) {

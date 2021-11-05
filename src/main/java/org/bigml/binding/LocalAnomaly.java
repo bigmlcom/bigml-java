@@ -171,6 +171,12 @@ public class LocalAnomaly extends ModelFields implements Serializable {
 	 * calculate an `expected_mean_depth` using the `sample_size` and `mean_depth`
 	 * parameters which come as part of the forest message. We combine those values
 	 * as seen below, which should result in a value between 0 and 1.
+	 * 
+	 * @param inputData
+	 * 				an object with field's id/value pairs representing the
+	 *              instance you want to get the anomaly score for
+	 *              
+	 * @return the anomaly score for the input data
 	 */
 	public double score(JSONObject inputData) {
 		// Corner case with only one record
@@ -204,6 +210,10 @@ public class LocalAnomaly extends ModelFields implements Serializable {
 	 * Returns the LISP expression needed to filter the subset of top anomalies.
 	 * When include is set to True, only the top anomalies are selected by the
 	 * filter. If set to False, only the rest of the dataset is selected.
+	 * 
+	 * @param include	boolean indicating if include anomalies filters in response
+	 * 
+	 * @return the lisp expression needed to filter the subset of top anomalies
 	 */
 	public String filter(boolean include) {
 		List<String> anomalyFilters = new ArrayList<String>();

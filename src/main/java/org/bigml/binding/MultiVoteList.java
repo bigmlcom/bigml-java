@@ -46,6 +46,8 @@ public class MultiVoteList implements Serializable {
     
     /**
      * Extending the extend method in lists
+     * 
+     * @param predictionList the list of predicted values
      */
     public void extend(ArrayList<List<Double>> predictionList) {
     	this.predictions.addAll(predictionList);
@@ -53,6 +55,8 @@ public class MultiVoteList implements Serializable {
     
     /**
      * Extending the extend method in lists
+     * 
+     * @param predictionList the list of predicted values
      */
     public void extend(MultiVoteList predictionList) {
     	this.predictions.addAll(predictionList.predictions);
@@ -60,6 +64,8 @@ public class MultiVoteList implements Serializable {
     
     /**
      * Extending the append method in lists
+     * 
+     * @param prediction the list of predicted values
      */
     public void append(List<Double> prediction) {
     	this.predictions.add(prediction);
@@ -72,6 +78,10 @@ public class MultiVoteList implements Serializable {
      * in the same sequence. Returns the probability obtained by adding 
      * these predictions into a single one by adding their probabilities 
      * and normalizing.
+     * 
+     * @param normalize whether to normalize or not
+     * 
+     * @return the list of predicted values
      */
     public List<Double> combineToDistribution(Boolean normalize) {
     	if (normalize == null) {

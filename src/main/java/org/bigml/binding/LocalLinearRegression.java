@@ -235,6 +235,8 @@ public class LocalLinearRegression extends ModelFields {
 
     /**
      * Returns the resourceId
+     * 
+     * @return the linear regression id
      */
     public String getResourceId() {
         return linearRegressionId;
@@ -242,7 +244,7 @@ public class LocalLinearRegression extends ModelFields {
 
 
     /**
-     * Changes the field codings format to the dict notation
+     * Changes the field codings format to the dictionary notation
      *
      */
      private void formatFieldCodings(JSONArray fieldCodingsArray) {
@@ -267,6 +269,8 @@ public class LocalLinearRegression extends ModelFields {
     /**
      * Returns an array that represents the frequency of terms as ordered in the
      * reference `terms` parameter.
+     * 
+     * @return the list of frequencies
      */
     private ArrayList<Double> getTermsArray(List<String> terms,
             Map<String, Object> uniqueTerms, JSONObject field, String fieldId) {
@@ -306,7 +310,6 @@ public class LocalLinearRegression extends ModelFields {
     /**
      * Returns the prediction and the confidence intervals
      *
-     * input_data: Input data to be predicted
      */
     private ArrayList<Double> categoricalEncoding(
             ArrayList<Double> newInputs, String fieldId, boolean compact) {
@@ -464,6 +467,7 @@ public class LocalLinearRegression extends ModelFields {
      *             - prediction: the prediction value
      *             - unused_fields: list of fields in the input data that
      *
+     * @return prediction for the input data
      */
     public HashMap<String, Object> predict(
             JSONObject inputData, Boolean full) {

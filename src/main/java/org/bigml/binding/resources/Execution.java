@@ -28,6 +28,12 @@ public class Execution extends AbstractResource {
     /**
      * Constructor
      *
+     * @param bigmlClient	the client with connection to BigML
+     * @param apiUser		API user
+     * @param apiKey		API key
+     * @param project		project id
+     * @param organization	organization id
+     * @param cacheManager	cache manager
      */
     public Execution(final BigMLClient bigmlClient,
     				 final String apiUser, final String apiKey, 
@@ -54,6 +60,7 @@ public class Execution extends AbstractResource {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new execution
      */
     public JSONObject create(String script, JSONObject args,
                              Integer waitTime, Integer retries) {
@@ -97,6 +104,7 @@ public class Execution extends AbstractResource {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new execution
      */
     public JSONObject create(List<String> scripts, JSONObject args,
                              Integer waitTime, Integer retries) {

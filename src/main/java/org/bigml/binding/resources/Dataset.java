@@ -31,6 +31,12 @@ public class Dataset extends AbstractResource {
     /**
      * Constructor
      *
+     * @param bigmlClient	the client with connection to BigML
+     * @param apiUser		API user
+     * @param apiKey		API key
+     * @param project		project id
+     * @param organization	organization id
+     * @param cacheManager	cache manager
      */
     public Dataset(final BigMLClient bigmlClient,
     			   final String apiUser, final String apiKey, 
@@ -61,6 +67,7 @@ public class Dataset extends AbstractResource {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new dataset
      */
     public JSONObject create(final String resourceId, JSONObject args,
             Integer waitTime, Integer retries) {
@@ -145,6 +152,7 @@ public class Dataset extends AbstractResource {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new dataset
      */
     public JSONObject create(final List<String> datasetsIds, JSONObject args,
             Integer waitTime, Integer retries) {
@@ -188,6 +196,7 @@ public class Dataset extends AbstractResource {
      * @param dataset
      *            a dataset JSONObject
      *
+     * @return a Map with error counts in dataset
      */
     public Map<String, Long> getErrorCounts(final JSONObject dataset) {
         Map<String, Long> errorsDict = new HashMap<String, Long>();
@@ -218,6 +227,7 @@ public class Dataset extends AbstractResource {
      * @param filename
      *            Path to save file locally
      *
+     * @return a JSONObject for the downloaded dataset
      */
     public JSONObject downloadDataset(final String datasetId,
                                               final String filename) {

@@ -23,6 +23,12 @@ public class BatchProjection extends AbstractResource {
     /**
      * Constructor
      *
+     * @param bigmlClient	the client with connection to BigML
+     * @param apiUser		API user
+     * @param apiKey		API key
+     * @param project		project id
+     * @param organization	organization id
+     * @param cacheManager	cache manager
      */
     public BatchProjection(final BigMLClient bigmlClient,
     					   final String apiUser, final String apiKey, 
@@ -54,6 +60,7 @@ public class BatchProjection extends AbstractResource {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new batch projection
      */
     public JSONObject create(final String pcaId, final String datasetId,
             JSONObject args, Integer waitTime, Integer retries) {
@@ -101,6 +108,7 @@ public class BatchProjection extends AbstractResource {
      * @param filename
      *            Path to save file locally
      *
+     * @return a JSONObject for the downloaded batch projection
      */
     public JSONObject downloadBatchProjection(
     		final String batchProjectionId,
@@ -128,6 +136,7 @@ public class BatchProjection extends AbstractResource {
      * @param filename
      *            Path to save file locally
      *
+     * @return a JSONObject for the downloaded batch projection
      */
     public JSONObject downloadBatchProjection(
     		final JSONObject batchProjectionJSON,

@@ -23,6 +23,12 @@ public class Centroid extends AbstractResource {
     /**
      * Constructor
      *
+     * @param bigmlClient	the client with connection to BigML
+     * @param apiUser		API user
+     * @param apiKey		API key
+     * @param project		project id
+     * @param organization	organization id
+     * @param cacheManager	cache manager
      */
     public Centroid(final BigMLClient bigmlClient,
     				final String apiUser, final String apiKey, 
@@ -41,6 +47,8 @@ public class Centroid extends AbstractResource {
      * @param clusterId
      *            a unique identifier in the form cluster/id where id is a
      *            string of 24 alpha-numeric chars for the cluster.
+     * @param inputDataJSON
+     * 			  the input data used to create the model
      * @param args
      *            set of parameters for the new centroid. Optional
      * @param waitTime
@@ -49,6 +57,7 @@ public class Centroid extends AbstractResource {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new centroid
      */
     public JSONObject create(final String clusterId, JSONObject inputDataJSON,
             JSONObject args, Integer waitTime, Integer retries) {

@@ -24,6 +24,12 @@ public class BatchTopicDistribution extends AbstractResource {
     /**
      * Constructor
      *
+     * @param bigmlClient	the client with connection to BigML
+     * @param apiUser		API user
+     * @param apiKey		API key
+     * @param project		project id
+     * @param organization	organization id
+     * @param cacheManager	cache manager
      */
     public BatchTopicDistribution(final BigMLClient bigmlClient,
     							  final String apiUser, final String apiKey, 
@@ -55,6 +61,7 @@ public class BatchTopicDistribution extends AbstractResource {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new batch topic distribution
      */
     public JSONObject create(final String topicModelId, final String datasetId,
             JSONObject args, Integer waitTime, Integer retries) {
@@ -102,6 +109,7 @@ public class BatchTopicDistribution extends AbstractResource {
      * @param filename
      *            Path to save file locally
      *
+     * @return a JSONObject for the downloaded batch topic distribution
      */
     public JSONObject downloadBatchTopicDistribution(final String batchTopicDistributionId,
             final String filename) {
@@ -128,6 +136,7 @@ public class BatchTopicDistribution extends AbstractResource {
      * @param filename
      *            Path to save file locally
      *
+     * @return a JSONObject for the downloaded batch topic distribution
      */
     public JSONObject downloadBatchTopicDistribution(final JSONObject batchTopicDistributionJSON,
             final String filename) {

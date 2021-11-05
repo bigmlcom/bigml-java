@@ -25,6 +25,12 @@ public class Configuration extends AbstractResource {
     /**
      * Constructor
      *
+     * @param bigmlClient	the client with connection to BigML
+     * @param apiUser		API user
+     * @param apiKey		API key
+     * @param project		project id
+     * @param organization	organization id
+     * @param cacheManager	cache manager
      */
     public Configuration(final BigMLClient bigmlClient,
     					 final String apiUser, final String apiKey,
@@ -46,6 +52,7 @@ public class Configuration extends AbstractResource {
      * @param args
      *            set of parameters for the new configuration. Optional
      *
+     * @return a JSONObject for the new configuration
      */
     public JSONObject create(JSONObject args) {
 
@@ -93,6 +100,7 @@ public class Configuration extends AbstractResource {
      * @param apiKey
      *            API key
      *
+     * @return a JSONObject for the configuration
      */
     public JSONObject get(final String configurationId, final String queryString,
                           final String apiUser, final String apiKey) {
@@ -120,6 +128,7 @@ public class Configuration extends AbstractResource {
      * @param apiKey
      *            API key
      *
+     * @return a JSONObject for the configuration
      */
     public JSONObject get(final JSONObject configuration, final String queryString,
                           final String apiUser, final String apiKey) {

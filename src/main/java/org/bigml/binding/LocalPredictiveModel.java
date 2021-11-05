@@ -230,6 +230,8 @@ public class LocalPredictiveModel extends ModelFields
 
     /**
      * Describes and return the fields for this model.
+     * 
+     * @return the fields for the model
      */
     public JSONObject fields() {
     	return isBoosting() ? boostedTree.listFields() : tree.listFields();
@@ -237,6 +239,8 @@ public class LocalPredictiveModel extends ModelFields
 
     /**
      * Sets the fields for this model.
+     * 
+     * @param fields	the fields
      */
     public void setFields(JSONObject fields) {
     	this.fields = fields;
@@ -251,6 +255,8 @@ public class LocalPredictiveModel extends ModelFields
 
     /**
      * Sets the classNames for this model.
+     * 
+     * @param classNames	the list of classes names
      */
     public void setClassNames(List<String> classNames) {
     	this.classNames = classNames;
@@ -290,6 +296,8 @@ public class LocalPredictiveModel extends ModelFields
 
     /**
      * Checks if the tree is a regression problem
+     * 
+     * @return if the tree is a regression problem
      */
     public boolean isRegression() {
     	return tree.isRegression();
@@ -297,6 +305,8 @@ public class LocalPredictiveModel extends ModelFields
 
     /**
      * Checks if the tree is a boosting problem
+     * 
+     * @return if the tree is a boosting problem
      */
     public boolean isBoosting() {
         return this.boosting != null && this.boosting.size() > 0;
@@ -304,6 +314,8 @@ public class LocalPredictiveModel extends ModelFields
 
     /**
      * Checks if the tree is a boosting problem
+     * 
+     * @return if the tree is a boosting problem
      */
     public JSONObject getBoosting() {
         return this.boosting;
@@ -372,6 +384,10 @@ public class LocalPredictiveModel extends ModelFields
      *
      * The input fields must be keyed by field name.
      *
+     * @param args	the data to be predicted
+     * 
+     * @return the prediction for the args
+     * @throws InputDataParseException a input data parse exception
      */
     public Prediction predict(final String args)
             throws InputDataParseException {
@@ -382,6 +398,11 @@ public class LocalPredictiveModel extends ModelFields
      * Makes a prediction based on a number of field values.
      *
      * The input fields must be keyed by field name.
+     * 
+     * @param args	the data to be predicted
+     * 
+     * @return the prediction for the args
+     * @throws Exception a generic exception
      */
     public Prediction predict(final JSONObject args)
             throws Exception {
@@ -394,6 +415,14 @@ public class LocalPredictiveModel extends ModelFields
      * specified Missing Strategy
      *
      * The input fields must be keyed by field name.
+     * 
+     * @param args
+     * 				the data to be predicted
+     * @param strategy
+     * 				LAST_PREDICTION|PROPORTIONAL missing strategy for missing fields
+     * 
+     * @return the prediction for the args
+     * @throws Exception a generic exception
      */
     public Prediction predict(final JSONObject args, MissingStrategy strategy)
             throws Exception {
@@ -404,6 +433,28 @@ public class LocalPredictiveModel extends ModelFields
      * Makes a multiple predictions based on a number of field values using the Last Prediction strategy
      *
      * The input fields must be keyed by field name.
+     * 
+     * @param args
+     * 				the data to be predicted
+     * @param multiple
+     * 				For categorical fields, it will return the categories
+     *           	in the distribution of the predicted node as a list of dicts:
+     *          		[{'prediction': 'Iris-setosa',
+     *              	  'confidence': 0.9154
+     *                    'probability': 0.97
+     *                    'count': 97},
+     *           		{'prediction': 'Iris-virginica',
+     *                   'confidence': 0.0103
+     *                   'probability': 0.03,
+     *                   'count': 3}]
+     *
+     * 				The value of this argument can either be an integer
+     *  			(maximum number of categories to be returned), or the
+     *  			literal 'all', that will cause the entire distribution
+     *  			in the node to be returned.
+     * 
+     * @return the prediction for the args
+     * @throws InputDataParseException an input date parse exception
      */
     public List<Prediction> predict(final JSONObject args, Object multiple)
             throws InputDataParseException {
@@ -414,6 +465,14 @@ public class LocalPredictiveModel extends ModelFields
      * Convenience version of predict that take as inputs a map from field ids
      * or names to their values as Java objects. See also predict(String,
      * Boolean, Integer, Boolean).
+     * 
+     * @param inputs
+     * 				Input data to be predicted
+     * @param missingStrategy
+     * 				LAST_PREDICTION|PROPORTIONAL missing strategy for missing fields
+     * 
+     * @return the prediction for the inputs
+     * @throws Exception a generic exception
      */
     public Prediction predictWithMap(
             final Map<String, Object> inputs, MissingStrategy missingStrategy)
@@ -437,25 +496,29 @@ public class LocalPredictiveModel extends ModelFields
      *
      * inputData: Input data to be predicted
      *
-     * missingStrategy: LAST_PREDICTION|PROPORTIONAL missing strategy for
-     *                  missing fields
+     * @param args
+     * 				the data to be predicted
+     * @param strategy
+     * 				LAST_PREDICTION|PROPORTIONAL missing strategy for missing fields
+     * @param multiple
+     * 				For categorical fields, it will return the categories
+     *           	in the distribution of the predicted node as a list of dicts:
+     *          		[{'prediction': 'Iris-setosa',
+     *              	  'confidence': 0.9154
+     *                    'probability': 0.97
+     *                    'count': 97},
+     *           		{'prediction': 'Iris-virginica',
+     *                   'confidence': 0.0103
+     *                   'probability': 0.03,
+     *                   'count': 3}]
      *
-     * multiple: For categorical fields, it will return the categories
-     *           in the distribution of the predicted node as a
-     *      list of dicts:
-     *          [{'prediction': 'Iris-setosa',
-     *              'confidence': 0.9154
-     *              'probability': 0.97
-     *              'count': 97},
-     *           {'prediction': 'Iris-virginica',
-     *              'confidence': 0.0103
-     *              'probability': 0.03,
-     *              'count': 3}]
-     *
-     * The value of this argument can either be an integer
-     *  (maximum number of categories to be returned), or the
-     *  literal 'all', that will cause the entire distribution
-     *  in the node to be returned.
+     * 				The value of this argument can either be an integer
+     *  			(maximum number of categories to be returned), or the
+     *  			literal 'all', that will cause the entire distribution
+     *  			in the node to be returned.
+     *  
+     * @return the prediction for the inputData
+     * @throws InputDataParseException an input date parse exception
      */
     public List<Prediction> predict(final JSONObject args, MissingStrategy strategy, Object multiple)
             throws InputDataParseException {
@@ -594,6 +657,12 @@ public class LocalPredictiveModel extends ModelFields
      *               		 in the predicted node
      *             - unused_fields: list of fields in the input data that
      *             					are not being used in the model
+     * 
+     * @param unusedFields
+     * 			Unused fields to include in the prediction
+     * 
+     * @return the prediction for the inputData
+     * @throws Exception a generic exception
 	 */
     public Prediction predict(
 			JSONObject inputData, MissingStrategy missingStrategy,
@@ -771,6 +840,9 @@ public class LocalPredictiveModel extends ModelFields
      * @param inputData			Input data to be predicted
      * @param missingStrategy	LAST_PREDICTION|PROPORTIONAL missing strategy
      *                        	for missing fields
+     *                        
+     * @return	the predicted confidence
+     * @throws Exception a generic exception
 	 */
     public JSONArray predictConfidence(
 			JSONObject inputData, MissingStrategy missingStrategy)
@@ -895,6 +967,10 @@ public class LocalPredictiveModel extends ModelFields
 
     /**
      * Builds the list of ids that go from a given id to the tree root
+     * 
+     * @param filterId	id for the node to filter with the model
+     * 
+     * @return a list of ids
      */
     public List<String> getIdsPath(String filterId) {
         List<String> idsPath = null;
@@ -922,6 +998,8 @@ public class LocalPredictiveModel extends ModelFields
 
     /**
      * Returns a IF-THEN rule set that implements the model.
+     * 
+     * @return the IF-THEN rule set for the model
      */
     public String rules() {
     	if (isBoosting()) {
@@ -934,6 +1012,10 @@ public class LocalPredictiveModel extends ModelFields
 
     /**
      * Returns a IF-THEN rule set that implements the model.
+     * 
+     * @param language	programming language for rules PSEUDOCODE, JAVA, PYTHON, TABLEAU
+     * 
+     * @return the IF-THEN rule set for the model
      */
     public String rules(Predicate.RuleLanguage language) {
     	if (isBoosting()) {
@@ -946,6 +1028,12 @@ public class LocalPredictiveModel extends ModelFields
 
     /**
      * Returns a IF-THEN rule set that implements the model.
+     * 
+     * @param language	programming language for rules PSEUDOCODE, JAVA, PYTHON, TABLEAU
+     * @param filterId	id for the node to filter with the model
+     * @param subtree	the subtree of the model to process
+     * 
+     * @return the IF-THEN rule set for the model
      */
     public String rules(Predicate.RuleLanguage language, final String filterId, boolean subtree) {
     	if (isBoosting()) {
@@ -1013,6 +1101,8 @@ public class LocalPredictiveModel extends ModelFields
     /**
      * Average for the confidence of the predictions resulting from
      * running the training data through the model
+     * 
+     * @return the average for the confidence of the predictions
      */
     public double getAverageConfidence() {
         double total = 0.0, cumulativeConfidence = 0.0;
@@ -1030,6 +1120,11 @@ public class LocalPredictiveModel extends ModelFields
 
     /**
      * The tree nodes information in a row format
+     * 
+     * @param headers		Nodes names
+     * @param leavesOnly	Whether include leaves only or all nodes
+     * 
+     * @return list of tree nodes
      */
     public List getNodesInfo(List<String> headers, boolean leavesOnly) {
     	if (isBoosting()) {
@@ -1078,6 +1173,11 @@ public class LocalPredictiveModel extends ModelFields
 
     /**
      * Outputs the node structure to in CSV file, including the
+     * 
+     * @param outputFilePath	Path of the output file
+     * @param leavesOnly		Whether include leaves only or all nodes
+     * 
+     * @throws IOException an IO exception
      */
     public void exportTreeCSV(String outputFilePath, boolean leavesOnly)
     		throws IOException {
@@ -1227,6 +1327,8 @@ public class LocalPredictiveModel extends ModelFields
 
     /**
      * Returns training data distribution
+     * 
+     * @return the training data distribution
      */
     public JSONArray getDataDistribution() {
 
@@ -1258,6 +1360,8 @@ public class LocalPredictiveModel extends ModelFields
 
     /**
      * Returns model predicted distribution
+     * 
+     * @return the model predicted distribution
      */
     public JSONArray getPredictionDistribution() {
 
@@ -1271,6 +1375,10 @@ public class LocalPredictiveModel extends ModelFields
 
     /**
      * Returns model predicted distribution
+     * 
+     * @param groups	the groups predictions
+     * 
+     * @return the model predicted distribution
      */
     public JSONArray getPredictionDistribution(Map<Object, GroupPrediction> groups) {
 
@@ -1316,7 +1424,11 @@ public class LocalPredictiveModel extends ModelFields
 
     /**
      * Prints summary grouping distribution as class header and details
-     *
+     * 
+     * @param addFieldImportance	whether to include fields importances
+     * 
+     * @return model summary
+     * @throws IOException a IO exception
      */
     public String summarize(Boolean addFieldImportance) throws IOException {
 

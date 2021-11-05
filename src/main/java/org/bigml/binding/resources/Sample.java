@@ -29,6 +29,12 @@ public class Sample extends AbstractResource {
     /**
      * Constructor
      *
+     * @param bigmlClient	the client with connection to BigML
+     * @param apiUser		API user
+     * @param apiKey		API key
+     * @param project		project id
+     * @param organization	organization id
+     * @param cacheManager	cache manager
      */
     public Sample(final BigMLClient bigmlClient,
     			  final String apiUser, final String apiKey, 
@@ -59,6 +65,7 @@ public class Sample extends AbstractResource {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new sample
      */
     public JSONObject create(final String datasetId, JSONObject args,
             Integer waitTime, Integer retries) {
@@ -108,6 +115,7 @@ public class Sample extends AbstractResource {
      * @param apiKey
      *            API key
      *
+     * @return a JSONObject for the sample
      */
     public JSONObject get(final String sampleId, final String queryString,
                           final String apiUser, final String apiKey) {
@@ -135,6 +143,7 @@ public class Sample extends AbstractResource {
      * @param apiKey
      *            API key
      *
+     * @return a JSONObject for the sample
      */
     public JSONObject get(final JSONObject sample, final String queryString,
                           final String apiUser, final String apiKey) {
@@ -150,6 +159,7 @@ public class Sample extends AbstractResource {
      * @param sample
      *            a sample JSONObject
      *
+     * @return a Map with error counts in sample
      */
     public Map<String, Long> getErrorCounts(final JSONObject sample) {
         Map<String, Long> errorsDict = new HashMap<String, Long>();

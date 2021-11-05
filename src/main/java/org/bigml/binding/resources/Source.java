@@ -28,9 +28,15 @@ public class Source extends AbstractResource {
 	Logger logger = LoggerFactory.getLogger(Source.class);
 
 	/**
-	 * Constructor
-	 *
-	 */
+     * Constructor
+     *
+     * @param bigmlClient	the client with connection to BigML
+     * @param apiUser		API user
+     * @param apiKey		API key
+     * @param project		project id
+     * @param organization	organization id
+     * @param cacheManager	cache manager
+     */
 	public Source(final BigMLClient bigmlClient, final String apiUser, final String apiKey, final String project,
 			final String organization, final CacheManager cacheManager) {
 		super.init(bigmlClient, apiUser, apiKey, project, organization, cacheManager, SOURCE_RE, SOURCE_PATH);
@@ -48,6 +54,7 @@ public class Source extends AbstractResource {
 	 * @param name         the name you want to give to the new source. Optional
 	 * @param sourceParser set of parameters to parse the source. Optional
 	 *
+	 * @return a JSONObject for the new source
 	 */
 	public JSONObject createLocalSource(final String fileName, final String name, final JSONObject sourceParser) {
 		return this.createLocalSource(fileName, name, sourceParser, null);
@@ -65,6 +72,8 @@ public class Source extends AbstractResource {
 	 * @param name         the name you want to give to the new source. Optional
 	 * @param sourceParser set of parameters to parse the source. Optional
 	 * @param args         set of parameters for the new model. Optional
+	 * 
+	 * @return a JSONObject for the new source
 	 */
 	public JSONObject createLocalSource(final String fileName, final String name, final JSONObject sourceParser,
 			final JSONObject args) {
@@ -158,7 +167,8 @@ public class Source extends AbstractResource {
 	 *
 	 * @param batchPredictionId the ID of the batch prediction resource to use
 	 * @param sourceParser      set of parameters to create the source. Optional
-	 *
+	 * 
+	 * @return a JSONObject for the new source
 	 */
 	public JSONObject createSourceFromBatchPrediction(final String batchPredictionId, final JSONObject sourceParser) {
 
@@ -174,6 +184,8 @@ public class Source extends AbstractResource {
 	 * @param batchPredictionId the ID of the batch prediction resource to use
 	 * @param sourceParser      set of parameters to create the source. Optional
 	 * @param args              set of parameters for the new model. Optional
+	 * 
+	 * @return a JSONObject for the new source
 	 */
 	public JSONObject createSourceFromBatchPrediction(final String batchPredictionId, final JSONObject sourceParser,
 			final JSONObject args) {
@@ -192,6 +204,7 @@ public class Source extends AbstractResource {
 	 * @param anomalyScoreId the ID of the anomaly score resource to use
 	 * @param sourceParser   set of parameters to create the source. Optional
 	 *
+	 * @return a JSONObject for the new source
 	 */
 	public JSONObject createSourceFromBatchAnomalyScore(final String anomalyScoreId, final JSONObject sourceParser) {
 
@@ -207,6 +220,8 @@ public class Source extends AbstractResource {
 	 * @param anomalyScoreId the ID of the anomaly score resource to use
 	 * @param sourceParser   set of parameters to create the source. Optional
 	 * @param args           set of parameters for the new model. Optional
+	 * 
+	 * @return a JSONObject for the new source
 	 */
 	public JSONObject createSourceFromBatchAnomalyScore(final String anomalyScoreId, final JSONObject sourceParser,
 			final JSONObject args) {
@@ -224,7 +239,8 @@ public class Source extends AbstractResource {
 	 *
 	 * @param url          url for remote source
 	 * @param sourceParser set of parameters to create the source. Optional
-	 *
+	 * 
+	 * @return a JSONObject for the new source
 	 */
 	public JSONObject createRemoteSource(final String url, final JSONObject sourceParser) {
 		return this.createRemoteSource(url, sourceParser, null);
@@ -239,6 +255,8 @@ public class Source extends AbstractResource {
 	 * @param url          url for remote source
 	 * @param sourceParser set of parameters to create the source. Optional
 	 * @param args         set of parameters for the new model. Optional
+	 * 
+	 * @return a JSONObject for the new source
 	 */
 	public JSONObject createRemoteSource(final String url, final JSONObject sourceParser, final JSONObject args) {
 		try {
@@ -267,6 +285,8 @@ public class Source extends AbstractResource {
 	 * @param data         inline data for source
 	 * @param sourceParser set of parameters to create the source. Optional
 	 *
+	 *
+	 * @return a JSONObject for the new source
 	 */
 	public JSONObject createInlineSource(final String data, final JSONObject sourceParser) {
 		try {
@@ -288,8 +308,10 @@ public class Source extends AbstractResource {
 	 * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
 	 * HTTP/1.1 Host: bigml.io Content-Type: application/json;
 	 *
-	 * @param externalData set of parameters to create the source.
+	 * @param externalData	set of parameters to create the source.
+	 * @param args			set of parameters for the new source. Optional
 	 *
+	 * @return a JSONObject for the new source
 	 */
 	public JSONObject createExternalDataSource(final JSONObject externalData, final JSONObject args) {
 		try {

@@ -27,6 +27,8 @@ public class AssociationRule {
 
     /**
      * Constructor
+     * 
+     * @param ruleInfo	the json for the association rule
      */
     public AssociationRule(final JSONObject ruleInfo) {
         super();
@@ -92,6 +94,8 @@ public class AssociationRule {
     /**
      * Transforming the rule to CSV formats
      * Metrics ordered as in ASSOCIATION_METRICS in LocalAssociation.java
+     * 
+     * @return a list with the csv representation of the rule
      */
     public List<Object> toCsv() {
         List<Object> output = new ArrayList<Object>();
@@ -113,6 +117,8 @@ public class AssociationRule {
 
     /**
      * Transforming the rule to JSON
+     * 
+     * @return a map with the json representation of the rule
      */
     public Map<String, Object> toJson() {
         Map<String, Object> output = new HashMap<String, Object>();

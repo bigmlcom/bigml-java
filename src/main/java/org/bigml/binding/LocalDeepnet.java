@@ -217,7 +217,8 @@ public class LocalDeepnet extends ModelFields implements SupervisedModelInterfac
      *             - distribution: distribution of probabilities for each
      *                             of the objective field classes
      *             - unused_fields: list of fields in the input data that
-     *    
+     * 
+     * @return prediction for the input data
 	 */
 	public HashMap<String, Object> predict(
 			JSONObject inputData, JSONObject operatingPoint, 

@@ -249,10 +249,14 @@ public class LocalCluster extends ModelFields {
     /**
      * Returns the nearest centroid as a JSONObject with the following properties:
      *
+     * @param inputData
+     * 				an object with field's id/value pairs representing the
+	 *              instance you want to get the nearest centroid
      *   centroid_id
      *   centroid_name
      *   distance
      *
+     * @return the nearest centroid for input data
      */
     public JSONObject centroid(JSONObject inputData) {
         inputData = prepareForDistance(inputData);
@@ -282,6 +286,12 @@ public class LocalCluster extends ModelFields {
     /**
      * Parses the input data to find the list of unique terms in the
      * tag cloud
+     * 
+     * @param inputData
+     * 				an object with field's id/value pairs representing the
+	 *              instance you want to get the unique terms for
+	 *  
+	 * @return	a map with occurrences per unique term
      */
     protected Map<String, Object> getUniqueTerms(Map<String, Object> inputData) {
         Map<String, Object> uniqueTerms = new HashMap<String, Object>();
@@ -355,7 +365,13 @@ public class LocalCluster extends ModelFields {
     
     /**
      * Extracts the unique terms that occur in one of the alternative 
-     * forms in term_forms or in the tag cloud.
+     * forms in term forms or in the tag cloud.
+     * 
+     * @param terms			the list of terms to extract the info for
+	 * @param termForms		the term forms
+	 * @param tagClouds		list of tag cloud
+	 * 
+	 * @return a map with occurrences per unique term
      */
     protected List<String> getUniqueTerms(List<String> terms, 
     		JSONObject termForms, Map<String, Integer> tagClouds) {
@@ -421,6 +437,10 @@ public class LocalCluster extends ModelFields {
     /**
      * Statistic distance information from the given centroid
      * to the rest of centroids in the cluster
+     * 
+     * @param centroid	the local centroid
+     * 
+     * @return a map with statistic distance information
      */
     protected Map<String, Double> centroidDistances(LocalCentroid centroid) {
         Map<String, Double> intercentroidDistances = new HashMap<String, Double>();
@@ -583,6 +603,12 @@ public class LocalCluster extends ModelFields {
      * results. The response is a dictionary that contains the
      * centroid id of the cluster plus the list of points
      * 
+     * @param referencePoint	a reference point
+     * @param numberOfPoints	number of data points to calculate
+     * @param centroidId		the id of the centroid
+     * 
+     * @return the list of data points closer to a reference point
+     * @throws Exception a generic exception
      */
     public JSONObject closestInCluster(JSONObject referencePoint, 
     		Integer numberOfPoints, String centroidId) 
@@ -651,6 +677,10 @@ public class LocalCluster extends ModelFields {
     /**
      *  Gives the list of centroids sorted according to its distance to
      *  an arbitrary reference point.
+     *  
+     *  @param referencePoint	the arbitrary reference point
+     *  
+     *  @return the list of sorted centroids
      */
     public JSONObject sortedCentroids(JSONObject referencePoint) {
     	JSONObject sortedCentroids = new JSONObject();
@@ -680,6 +710,11 @@ public class LocalCluster extends ModelFields {
     /**
      * Returns features defining the centroid according to the list
      * of common field ids that define the centroids.
+     * 
+     * @param centroid	the local centroid
+     * @param fieldIds	the list of field ids
+     * 
+     * @return	a list of features defining the centroid
      */
     protected List centroidFeatures(LocalCentroid centroid, List<String> fieldIds) {
         List features = new ArrayList();
@@ -691,6 +726,8 @@ public class LocalCluster extends ModelFields {
     
     /**
      * Returns training data distribution
+     * 
+     * @return a list with training data distribution
      */
     protected JSONArray getDataDistribution() {
 
@@ -709,6 +746,10 @@ public class LocalCluster extends ModelFields {
     
     /**
      * Clusters statistic information in CSV format
+     * 
+     * @param outputFilePath	path of the output file
+     * 
+     * @throws IOException	an IO exception
      */
     public void exportStatistics(String outputFilePath) throws IOException {
     	
@@ -785,6 +826,8 @@ public class LocalCluster extends ModelFields {
 
     /**
      * Prints a summary of the cluster info
+     * 
+     * @return  a summary of the cluster info
      */
     public StringBuilder summarize() {
     	StringBuilder summary = new StringBuilder();

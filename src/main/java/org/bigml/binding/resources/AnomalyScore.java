@@ -25,6 +25,12 @@ public class AnomalyScore extends AbstractResource {
     /**
      * Constructor
      *
+     * @param bigmlClient	the client with connection to BigML
+     * @param apiUser		API user
+     * @param apiKey		API key
+     * @param project		project id
+     * @param organization	organization id
+     * @param cacheManager	cache manager
      */
     public AnomalyScore(final BigMLClient bigmlClient,
     					final String apiUser, final String apiKey, 
@@ -59,6 +65,7 @@ public class AnomalyScore extends AbstractResource {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new anomaly
      */
     public JSONObject create(final String anomalyId,
             JSONObject inputData, Boolean byName, JSONObject args,

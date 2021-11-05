@@ -32,6 +32,10 @@ public class AssociationItem {
 
     /**
      * Constructor
+     * 
+     * @param index		the position f the item
+     * @param item		the json representation of the item
+     * @param fields	the fields	
      */
     public AssociationItem(final int index, final JSONObject item, final JSONObject fields) {
         super();
@@ -104,6 +108,8 @@ public class AssociationItem {
 
     /**
      * Transforming the item to CSV formats
+     * 
+     * @return a list with the csv representation of the item
      */
     public List<Object> toCsv() {
         List<Object> output = new ArrayList<Object>();
@@ -120,6 +126,8 @@ public class AssociationItem {
 
     /**
      * Transforming the item relevant information to JSON
+     * 
+     * @return a map with the json representation of the item 
      */
     public Map<String, Object> toJson() {
         Map<String, Object> output = new HashMap<String, Object>();

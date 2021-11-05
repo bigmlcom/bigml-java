@@ -23,6 +23,12 @@ public class Cluster extends AbstractModelResource {
     /**
      * Constructor
      *
+     * @param bigmlClient	the client with connection to BigML
+     * @param apiUser		API user
+     * @param apiKey		API key
+     * @param project		project id
+     * @param organization	organization id
+     * @param cacheManager	cache manager
      */
     public Cluster(final BigMLClient bigmlClient,
     			   final String apiUser, final String apiKey, 
@@ -47,6 +53,7 @@ public class Cluster extends AbstractModelResource {
      * @param apiKey
      *            API key
      *
+     * @return a JSONObject for the cluster
      */
     public JSONObject get(final String clusterId, final String apiUser,
             final String apiKey) {
@@ -73,6 +80,7 @@ public class Cluster extends AbstractModelResource {
      * @param apiKey
      *            API key
      *
+     * @return a JSONObject for the cluster
      */
     public JSONObject get(final JSONObject cluster, final String apiUser,
             final String apiKey) {
@@ -97,6 +105,7 @@ public class Cluster extends AbstractModelResource {
      * @param apiKey
      *            API key
      *
+     * @return a JSONObject for the cluster
      */
     public JSONObject get(final String clusterId, final String queryString,
             final String apiUser, final String apiKey) {
@@ -125,6 +134,7 @@ public class Cluster extends AbstractModelResource {
      * @param apiKey
      *            API key
      *
+     * @return a JSONObject for the cluster
      */
     public JSONObject get(final JSONObject cluster, final String queryString,
             final String apiUser, final String apiKey) {

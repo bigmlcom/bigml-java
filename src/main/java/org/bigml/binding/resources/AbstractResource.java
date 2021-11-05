@@ -301,6 +301,13 @@ public abstract class AbstractResource {
 
     /**
      * Create a new resource.
+     * 
+     * @param urlString
+     * 			  the url for the remote resource
+     * @param json
+     * 			  the body json for the new resource
+     * 
+     * @return a JSONObject for the new resource
      */
     public JSONObject createResource(final String urlString, final String json) {
         int code = HTTP_INTERNAL_SERVER_ERROR;
@@ -358,6 +365,11 @@ public abstract class AbstractResource {
 
     /**
      * Retrieve a resource.
+     * 
+     * @param urlString
+     * 			  the url for the remote resource
+     * 
+     * @return a JSONObject for the resource
      */
     public JSONObject getResource(final String urlString) {
         return getResource(urlString, null, null, null);
@@ -365,6 +377,13 @@ public abstract class AbstractResource {
 
     /**
      * Retrieve a resource.
+     * 
+     * @param urlString
+     * 			  the url for the remote resource
+     * @param queryString
+     *            query for filtering.
+     * 
+     * @return a JSONObject for the resource
      */
     public JSONObject getResource(final String urlString,
             final String queryString) {
@@ -373,6 +392,17 @@ public abstract class AbstractResource {
 
     /**
      * Retrieve a resource.
+     * 
+     * @param urlString
+     * 			the url for the remote resource
+     * @param queryString
+     *            query for filtering.
+     * @param apiUser
+     * 			  API user
+     * @param apiKey
+     * 			  API key
+     *            
+     * @return a JSONObject for the resource
      */
     public JSONObject getResource(final String urlString,
             final String queryString, final String apiUser, final String apiKey) {
@@ -448,6 +478,13 @@ public abstract class AbstractResource {
 
     /**
      * List resources.
+     * 
+     * @param urlString
+     * 			the url for the remote resource type
+     * @param queryString
+     *            query for filtering.
+     * 
+     * @return a JSONObject containing all resources matching the query
      */
     public JSONObject listResources(final String urlString,
             final String queryString) {
@@ -498,6 +535,12 @@ public abstract class AbstractResource {
 
     /**
      * Update a resource.
+     * 
+     * @param urlString
+     * 			the url for the remote resource
+     * @param json
+     * 			the json for the update
+     * @return a JSONObject for the updated source
      */
     public JSONObject updateResource(final String urlString, final String json) {
         int code = HTTP_INTERNAL_SERVER_ERROR;
@@ -551,6 +594,11 @@ public abstract class AbstractResource {
 
     /**
      * Delete a resource.
+     * 
+     * @param urlString
+     * 			the url for the remote resource
+     * 
+     * @return a JSONObject for the deleted resource
      */
     public JSONObject deleteResource(final String urlString) {
         int code = HTTP_INTERNAL_SERVER_ERROR;
@@ -596,7 +644,12 @@ public abstract class AbstractResource {
 
     /**
      * Return a dictionary of fields
+     * 
+     * @param resourceId
+     *            a unique identifier in the form xxxxx/id where id is a string
+     *            of 24 alpha-numeric chars.
      *
+     * @return the fields of the resource
      */
     public JSONObject getFields(final String resourceId) {
         if (resourceId == null
@@ -629,7 +682,12 @@ public abstract class AbstractResource {
 
     /**
      * Maps status code to string.
+     * 
+     * @param resourceId
+     *            a unique identifier in the form xxxxx/id where id is a string
+     *            of 24 alpha-numeric chars.
      *
+     * @return the status of the resource
      */
     public String status(final String resourceId) {
         if (resourceId == null
@@ -661,6 +719,7 @@ public abstract class AbstractResource {
      * @param resource
      *            a resource
      *
+     * @return true if resource is finished
      */
     public boolean isResourceReady(final JSONObject resource) {
         if (resource == null) {
@@ -699,6 +758,7 @@ public abstract class AbstractResource {
      *            a unique identifier in the form xxxxx/id where id is a
      *            string of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the resource
      */
     public JSONObject get(final String resourceId) {
         if (resourceId == null || resourceId.length() == 0
@@ -719,6 +779,7 @@ public abstract class AbstractResource {
      * @param resource
      *            a resource JSONObject
      *
+     * @return a JSONObject for the resource
      */
     public JSONObject get(final JSONObject resource) {
         String resourceId = (String) resource.get("resource");
@@ -738,6 +799,7 @@ public abstract class AbstractResource {
      * @param queryString
      *            query for filtering.
      *
+     * @return a JSONObject for the resource
      */
     public JSONObject get(final String resourceId, final String queryString) {
         if (resourceId == null || resourceId.length() == 0
@@ -761,6 +823,7 @@ public abstract class AbstractResource {
      * @param queryString
      *            query for filtering
      *
+     * @return a JSONObject for the resource
      */
     public JSONObject get(final JSONObject resource, final String queryString) {
         String resourceId = (String) resource.get("resource");
@@ -774,6 +837,7 @@ public abstract class AbstractResource {
      *            a unique identifier in the form xxxxx/id where id is a string
      *            of 24 alpha-numeric chars.
      *
+     * @return true if resource is finished
      */
     public boolean isReady(final String resourceId) {
         return isResourceReady(get(resourceId));
@@ -785,6 +849,7 @@ public abstract class AbstractResource {
      * @param resource
      *            a resource JSONObject
      *
+     * @return true if resource is finished
      */
     public boolean isReady(final JSONObject resource) {
         return isResourceReady(resource)
@@ -800,6 +865,7 @@ public abstract class AbstractResource {
      * @param queryString
      *            query filtering the listing.
      *
+     * @return a JSONObject containing all resources matching the query
      */
     public JSONObject list(final String queryString) {
         return listResources(this.resourceUrl, queryString);
@@ -816,7 +882,8 @@ public abstract class AbstractResource {
      *            of 24 alpha-numeric chars.
      * @param changes
      *            set of parameters to update the resource. Optional
-     *
+     * 
+     * @return a JSONObject for the updated resource
      */
     public JSONObject update(final String resourceId, final String changes) {
         if (resourceId == null || resourceId.length() == 0
@@ -838,6 +905,7 @@ public abstract class AbstractResource {
      * @param changes
      *            set of parameters to update the resource. Optional
      *
+     * @return a JSONObject for the updated resource
      */
     public JSONObject update(final JSONObject resource, final JSONObject changes) {
         String resourceId = (String) resource.get("resource");
@@ -855,6 +923,7 @@ public abstract class AbstractResource {
      *            a unique identifier in the form xxxxx/id where id is a string
      *            of 24 alpha-numeric chars.
      *
+     * @return a JSONObject for the deleted resource
      */
     public JSONObject delete(final String resourceId) {
         if (resourceId == null || resourceId.length() == 0
@@ -874,6 +943,8 @@ public abstract class AbstractResource {
      * HTTP/1.1
      *
      * @param resource  a resource JSONObject
+     * 
+     * @return a JSONObject for the deleted resource
      */
     public JSONObject delete(final JSONObject resource) {
         String resourceId = (String) resource.get("resource");
@@ -893,7 +964,13 @@ public abstract class AbstractResource {
      * Retrieves a remote file.
      *
      * Uses HTTP GET to download a file object with a BigML `url`.
-     *
+     * 
+     * @param url
+     * 			  the url of the remote file
+     * @param fileName
+     * 			  the name of the downloaded file
+     * 
+     * @return the json representation of the downloaded resource
      */
     protected JSONObject download(final String url, final String fileName) {
         int code = HTTP_INTERNAL_SERVER_ERROR;
@@ -946,6 +1023,12 @@ public abstract class AbstractResource {
      *
      * Uses HTTP GET to download a file object with a BigML `url` asynchronous.
      *
+     * @param url
+     * 			  the url of the remote file
+     * @param fileName
+     * 			  the name of the downloaded file
+     * 
+     * @return the json representation of the downloaded resource
      */
     protected JSONObject downloadAsync(final String url, final String fileName) {
         return downloadAsync(url, fileName, 10L, 10, 0);
@@ -956,9 +1039,19 @@ public abstract class AbstractResource {
      *
      * Uses HTTP GET to download a file object with a BigML `url` asynchronous.
      *
-     * @param waitTime time between retries in seconds
+     * @param url
+     * 			  the url of the remote file
+     * @param fileName
+     * 			  the name of the downloaded file 
+     * @param waitTime
+     *            time (milliseconds) to wait for next check of FINISHED status
+     *            for resource before to start to operation. Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     * @param counter
+     * 			  a suffix to add to the downloaded file name
      *
-     *
+     * @return the json representation of the downloaded resource
      */
     protected JSONObject downloadAsync(final String url, final String fileName,
                                        Long waitTime, Integer retries, Integer counter) {
@@ -1055,7 +1148,16 @@ public abstract class AbstractResource {
 
     /**
      * Waits for the resource to be finished
-     *
+     * 
+     * @param resourceId
+     * 			   the id of the resource to wait for
+     * @param isReadyMethod
+     * 			  the isReady method name for the resource type
+     * @param waitTime
+     *            time (milliseconds) to wait for next check of FINISHED status
+     *            for resource before to start to operation. Optional
+     * @param retries
+     *            number of times to try the operation. Optional
      */
     protected void waitForResource(String resourceId, String isReadyMethod,
     			Integer waitTime, Integer retries) {

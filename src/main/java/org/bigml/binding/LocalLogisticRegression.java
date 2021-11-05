@@ -237,6 +237,8 @@ public class LocalLogisticRegression extends ModelFields implements SupervisedMo
     
     /**
 	 * Returns bigml resource JSONObject.
+	 * 
+	 * @return the logistic regression id
 	 */
     public JSONObject getBigMLModel(String modelId) {
 		return (JSONObject) this.bigmlClient.getLogisticRegression(modelId);
@@ -262,6 +264,8 @@ public class LocalLogisticRegression extends ModelFields implements SupervisedMo
      * field name or field ID.
      * 
      * @param inputData	Input data to be predicted
+     * 
+     * @return prediction of probability for the input data
 	 */
 	public JSONArray predictProbability(JSONObject inputData) {
 		try {
@@ -366,7 +370,8 @@ public class LocalLogisticRegression extends ModelFields implements SupervisedMo
      *             - distribution: distribution of probabilities for each
      *                             of the objective field classes
      *             - unused_fields: list of fields in the input data that
-     *    
+     *
+     * @return prediction for the input data
 	 */
 	public HashMap<String, Object> predict(
 			JSONObject inputData, JSONObject operatingPoint, 

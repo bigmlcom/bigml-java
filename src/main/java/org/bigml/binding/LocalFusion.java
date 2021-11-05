@@ -454,7 +454,9 @@ public class LocalFusion extends ModelFields implements SupervisedModelInterface
      *             - probability: prediction's probability
      *             - unused_fields: list of fields in the input data that
      *                              are not being used in the model
-     *
+     * 
+     * @return prediction for the input data
+     * @throws Exception a generic exception
 	 */
 	public HashMap<String, Object> predict(
 			JSONObject inputData, MissingStrategy missingStrategy,

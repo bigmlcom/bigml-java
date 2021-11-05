@@ -27,6 +27,12 @@ public class Prediction extends AbstractResource {
     /**
      * Constructor
      *
+     * @param bigmlClient	the client with connection to BigML
+     * @param apiUser		API user
+     * @param apiKey		API key
+     * @param project		project id
+     * @param organization	organization id
+     * @param cacheManager	cache manager
      */
     public Prediction(final BigMLClient bigmlClient,
     				  final String apiUser, final String apiKey, 
@@ -53,6 +59,7 @@ public class Prediction extends AbstractResource {
      *            an object with field's id/value pairs representing the
      *            instance you want to create a prediction for.
      * @param byName
+     * 			  whether inputData contains field names
      * @param args
      *            set of parameters for the new prediction. Required
      * @param waitTime
@@ -61,6 +68,7 @@ public class Prediction extends AbstractResource {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new prediction
      */
     public JSONObject create(final String model,
             JSONObject inputData, Boolean byName, JSONObject args,

@@ -38,6 +38,7 @@ public abstract class AbstractModelResource extends AbstractResource {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return the json representation of the new resource
      */
     public JSONObject create(final String datasetId, JSONObject args,
             Integer waitTime, Integer retries) {
@@ -67,6 +68,7 @@ public abstract class AbstractModelResource extends AbstractResource {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return the json representation of the new resource
      */
     public JSONObject create(final List datasetsIds, JSONObject args,
             Integer waitTime, Integer retries) {
@@ -88,6 +90,20 @@ public abstract class AbstractModelResource extends AbstractResource {
     /**
      * Builds args dictionary for the create call from a `dataset` or a list of
      * `datasets`
+     * 
+     * @param datasets
+     * 			  an array of datasets ids
+     * @param args
+     *            set of parameters for the new resource. Optional
+     * @param waitTime
+     *            time (milliseconds) to wait for next check of FINISHED status
+     *            for dataset before to start to create the resource. Optional
+     * @param retries
+     *            number of times to try the operation. Optional
+     * @param key
+     * 			  name of the resource to create					
+     * 
+     * @return the json representation of the new resource
      */
     protected JSONObject createFromDatasets(final String[] datasets,
             JSONObject args, Integer waitTime, Integer retries, String key) {

@@ -185,6 +185,9 @@ public class LocalTopicModel extends ModelFields implements Serializable {
      *             "petal width": 1.3,
      *             "sepal width": 2.1,
      *             "species": "Iris-versicolor"}
+     *             
+     * @return the distribution of topics given the input text
+     * @throws Exception a generic exception
      */
     public ArrayList<HashMap<String, Object>> distribution(JSONObject inputData) 
     		throws Exception {
@@ -203,7 +206,10 @@ public class LocalTopicModel extends ModelFields implements Serializable {
     /**
      * Returns the topic distribution of the given 'text'.
      *
-     * @param text
+     * @param text	text to get the topic distribution for
+     * 
+     * @return the topic distribution of the given 'text'
+     * @throws Exception a generic exception
      */
     public ArrayList<HashMap<String, Object>> distributionForText(
     		String text) throws Exception {

@@ -26,6 +26,12 @@ public class BatchCentroid extends AbstractResource {
     /**
      * Constructor
      *
+     * @param bigmlClient	the client with connection to BigML
+     * @param apiUser		API user
+     * @param apiKey		API key
+     * @param project		project id
+     * @param organization	organization id
+     * @param cacheManager	cache manager
      */
     public BatchCentroid(final BigMLClient bigmlClient,
     					 final String apiUser, final String apiKey, 
@@ -56,6 +62,7 @@ public class BatchCentroid extends AbstractResource {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new batch centroid
      */
     public JSONObject create(final String clusterId, final String datasetId,
             JSONObject args, Integer waitTime, Integer retries) {
@@ -104,6 +111,7 @@ public class BatchCentroid extends AbstractResource {
      * @param filename
      *            Path to save file locally
      *
+     * @return a JSONObject for the downloaded batch centroid
      */
     public JSONObject downloadBatchCentroid(final String batchCentroidId,
             final String filename) {
@@ -131,6 +139,7 @@ public class BatchCentroid extends AbstractResource {
      * @param filename
      *            Path to save file locally
      *
+     * @return a JSONObject for the downloaded batch centroid
      */
     public JSONObject downloadBatchCentroid(
     		final JSONObject batchCentroid, final String filename) {

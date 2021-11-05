@@ -28,6 +28,12 @@ public class ExternalConnector extends AbstractModelResource {
     /**
      * Constructor
      *
+     * @param bigmlClient	the client with connection to BigML
+     * @param apiUser		API user
+     * @param apiKey		API key
+     * @param project		project id
+     * @param organization	organization id
+     * @param cacheManager	cache manager
      */
     public ExternalConnector(final BigMLClient bigmlClient,
     					   final String apiUser, final String apiKey, 
@@ -56,6 +62,7 @@ public class ExternalConnector extends AbstractModelResource {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new external connector
      */
     public JSONObject create(final String source, 
     		final Map connectionInfo, JSONObject args,

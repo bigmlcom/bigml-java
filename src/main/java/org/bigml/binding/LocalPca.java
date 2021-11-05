@@ -190,7 +190,9 @@ public class LocalPca extends ModelFields implements Serializable {
 	 * @param inputData
 	 *            Input data to be predicted
 	 * @param maxComponents
+	 * 			  Max number of components
 	 * @param varianceThreshold
+	 * 			  Threshold for variance
 	 * @param full
 	 *            Boolean that controls whether to include the prediction's
 	 *            attributes. By default, only the prediction is produced. If
@@ -200,7 +202,8 @@ public class LocalPca extends ModelFields implements Serializable {
 	 *            distribution: distribution of probabilities for each of the
 	 *            objective field classes - unusedFields: list of fields in the
 	 *            input data that
-	 * 
+	 *
+	 * @return projection for the input data
 	 */
 	public JSONObject projection(JSONObject inputData,
 			Integer maxComponents, Double varianceThreshold, Boolean full) {

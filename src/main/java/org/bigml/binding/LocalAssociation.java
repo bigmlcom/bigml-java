@@ -186,6 +186,9 @@ public class LocalAssociation extends ModelFields implements Serializable {
      *              support
      *              lhs-cover
      *              lift
+     * 
+     * @return the list of association sets
+     * @throws Exception a generic exception
      */
     public List associationSet(JSONObject inputData, Integer k, 
     						   String scoreBy) throws Exception {
@@ -306,6 +309,13 @@ public class LocalAssociation extends ModelFields implements Serializable {
 	 * Returns the items array, previously selected by the field corresponding
 	 * to the given field name or a user-defined function (if set).
 	 *
+	 * @param field			The id of the field
+	 * @param names			The name of the field
+	 * @param inputMap		Input map
+	 * @param itemFilter	Function used as filter
+	 *
+	 * @return the list of association items
+	 * @throws Exception a generic exception
 	 */
 	public List<AssociationItem> items(String field, List<String> names,
         Map inputMap, ItemFilter itemFilter) throws Exception {
@@ -353,6 +363,8 @@ public class LocalAssociation extends ModelFields implements Serializable {
 	 * @param ruleFilter
 	 *            Function used as filter
 	 *
+	 * @return the list of the association rules
+	 * @throws Exception a generic exception
 	 */
 	public List<AssociationRule> rules(Double minLeverage, Double minConfidence,
         Double minPvalue, List itemList, RuleFilter ruleFilter)
@@ -414,6 +426,21 @@ public class LocalAssociation extends ModelFields implements Serializable {
     /**
      * Stores the rules in CSV format in the user-given file. The rules
      * can be previously selected using the arguments in rules
+     * 
+     * @param outputFilePath
+     * 			  Path of the output file
+     * @param minLeverage
+	 *            Minum leverage value
+     * @param minConfidence
+     *            Minum confidence value
+	 * @param minPvalue
+	 *            Minum p_value value
+	 * @param itemList
+	 *            List of Item objects. Any of them should be in the rules
+	 * @param ruleFilter
+	 *            Function used as filter
+     * 
+     * @throws Exception a generic exception
      */
     public void rulesCsv(String outputFilePath, Double minLeverage,
         Double minConfidence, Double minPvalue, List<AssociationItem> itemList,
@@ -460,6 +487,11 @@ public class LocalAssociation extends ModelFields implements Serializable {
 
 	/**
 	 * Transforms the lhs and rhs index information to a human-readable rule text.
+	 * 
+	 * @param ruleCsv	the list of rules in csf format
+	 * 
+	 * @return the list of transformed rules
+	 * @throws Exception a generic exception
 	 */
 	public List describe(List ruleCsv) throws Exception {
 		// lhs items and rhs items (second and third element in the row)
@@ -488,6 +520,22 @@ public class LocalAssociation extends ModelFields implements Serializable {
 
 	/**
 	 * Prints a summary of the obtained rules
+	 * 
+	 * @param limit
+	 * 			  Maximum number of rules
+	 * @param minLeverage
+	 *            Minum leverage value
+     * @param minConfidence
+     *            Minum confidence value
+	 * @param minPvalue
+	 *            Minum p_value value
+	 * @param itemList
+	 *            List of Item objects. Any of them should be in the rules
+	 * @param ruleFilter
+	 *            Function used as filter
+	 * 
+	 * @return the summary of the obtained rules
+	 * @throws Exception a generic exception
 	 */
 	public String summarize(Integer limit, Double minLeverage,
         Double minConfidence, Double minPvalue, List<AssociationItem> itemList,

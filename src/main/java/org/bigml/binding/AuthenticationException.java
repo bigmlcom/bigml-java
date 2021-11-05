@@ -10,13 +10,20 @@ public class AuthenticationException extends Exception {
     public AuthenticationException() {
         super();
     }
-
-    public AuthenticationException(final Throwable x) {
-        super(x);
+    
+    /**
+     * Forward to the RuntimeException constructor
+     * 
+     * @param t		the error class to forward the exception
+     */
+    public AuthenticationException(final Throwable t) {
+        super(t);
     }
 
     /**
      * Forward to the RuntimeException constructor
+     * 
+     * @param msg	the message for the exception
      */
     public AuthenticationException(final String msg) {
         super(msg);
@@ -24,8 +31,11 @@ public class AuthenticationException extends Exception {
 
     /**
      * Forward to the RuntimeException constructor
+     * 
+     * @param msg	the message for the exception
+     * @param t		the error class to forward the exception
      */
-    public AuthenticationException(final String msg, Throwable t) {
+	public AuthenticationException(final String msg, Throwable t) {
         super(msg, t);
     }
 }

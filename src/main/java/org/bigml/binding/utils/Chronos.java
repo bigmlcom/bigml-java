@@ -125,6 +125,14 @@ public class Chronos {
     /**
      * Creates a Date object from a string representing a date and a
      * format name
+     * 
+     * @param date
+     * 			the date to parse as a string
+     * @param formats
+     * 			list of date formats to check during parsing
+     * 
+     * @return the parsed date
+     * @throws Exception a generic exception
      */
     public static Date parse(String date, JSONArray formats) throws Exception {
     	for (Object formatName : formats) {

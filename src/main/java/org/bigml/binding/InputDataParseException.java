@@ -10,13 +10,20 @@ public class InputDataParseException extends Exception {
     public InputDataParseException() {
         super();
     }
-
-    public InputDataParseException(final Throwable x) {
-        super(x);
+    
+    /**
+     * Forward to the RuntimeException constructor
+     * 
+     * @param t		the error class to forward the exception
+     */
+    public InputDataParseException(final Throwable t) {
+        super(t);
     }
 
     /**
      * Forward to the RuntimeException constructor
+     * 
+     * @param msg	the message for the exception
      */
     public InputDataParseException(final String msg) {
         super(msg);
@@ -24,6 +31,9 @@ public class InputDataParseException extends Exception {
 
     /**
      * Forward to the RuntimeException constructor
+     * 
+     * @param msg	the message for the exception
+     * @param t		the error class to forward the exception
      */
     public InputDataParseException(final String msg, Throwable t) {
         super(msg, t);

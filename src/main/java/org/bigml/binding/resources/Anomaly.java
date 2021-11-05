@@ -22,7 +22,13 @@ public class Anomaly extends AbstractModelResource {
     
     /**
      * Constructor
-     *
+     * 
+     * @param bigmlClient	the client with connection to BigML
+     * @param apiUser		API user
+     * @param apiKey		API key
+     * @param project		project id
+     * @param organization	organization id
+     * @param cacheManager	cache manager
      */
     public Anomaly(final BigMLClient bigmlClient,
     			   final String apiUser, final String apiKey, 
@@ -47,6 +53,7 @@ public class Anomaly extends AbstractModelResource {
      * @param apiKey
      *            API key
      *
+     * @return a JSONObject for the anomaly
      */
     public JSONObject get(final String anomalyId, final String apiUser,
             final String apiKey) {
@@ -72,6 +79,7 @@ public class Anomaly extends AbstractModelResource {
      * @param apiKey
      *            API key
      *
+     * @return a JSONObject for the anomaly
      */
     public JSONObject get(final JSONObject anomaly, final String apiUser,
             final String apiKey) {
@@ -95,6 +103,7 @@ public class Anomaly extends AbstractModelResource {
      * @param apiKey
      *            API key
      *
+     * @return a JSONObject for the anomaly
      */
     public JSONObject get(final String anomalyId, final String queryString,
             final String apiUser, final String apiKey) {
@@ -122,6 +131,7 @@ public class Anomaly extends AbstractModelResource {
      * @param apiKey
      *            API key
      *
+     * @return a JSONObject for the anomaly
      */
     public JSONObject get(final JSONObject anomaly, final String queryString,
             final String apiUser, final String apiKey) {

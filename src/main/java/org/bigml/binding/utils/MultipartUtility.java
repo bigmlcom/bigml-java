@@ -27,9 +27,11 @@ public class MultipartUtility {
     /**
      * This constructor initializes a new HTTP POST request with content type
      * is set to multipart/form-data
-     * @param requestURL
-     * @param charset
-     * @throws IOException
+     * 
+     * @param requestURL	the url of the request
+     * @param charset		charset
+     * 
+     * @throws IOException an IO exception
      */
     public MultipartUtility(String requestURL, String charset)
             throws IOException {
@@ -79,9 +81,11 @@ public class MultipartUtility {
 
     /**
      * Adds a upload file section to the request
-     * @param fieldName name attribute in <input type="file" name="..." />
+     * 
+     * @param fieldName name attribute
      * @param uploadFile a File to be uploaded
-     * @throws IOException
+     * 
+     * @throws IOException an IO exception
      */
     public void addFilePart(String fieldName, File uploadFile)
             throws IOException {
@@ -126,7 +130,8 @@ public class MultipartUtility {
      * Completes the request and receives response from the server.
      * @return a list of Strings as response in case the server returned
      * status OK, otherwise an exception is thrown.
-     * @throws IOException
+     * 
+     * @throws IOException an IO exception
      */
     public HttpURLConnection finish() throws IOException {
         List<String> response = new ArrayList<String>();

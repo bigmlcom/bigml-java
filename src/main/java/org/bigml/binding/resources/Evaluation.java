@@ -24,6 +24,12 @@ public class Evaluation extends AbstractResource {
     /**
      * Constructor
      *
+     * @param bigmlClient	the client with connection to BigML
+     * @param apiUser		API user
+     * @param apiKey		API key
+     * @param project		project id
+     * @param organization	organization id
+     * @param cacheManager	cache manager
      */
     public Evaluation(final BigMLClient bigmlClient,
     				  final String apiUser, final String apiKey, 
@@ -58,6 +64,7 @@ public class Evaluation extends AbstractResource {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new evaluation
      */
     public JSONObject create(final String model, final String datasetId,
             JSONObject args, Integer waitTime, Integer retries) {

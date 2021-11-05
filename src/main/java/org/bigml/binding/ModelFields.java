@@ -81,9 +81,10 @@ public abstract class ModelFields implements Serializable {
 	/**
 	 * Constructor
 	 * 
-	 * @param bigmlClient
-	 * @param model
-	 * @throws Exception
+	 * @param bigmlClient	the client with connection to BigML
+	 * @param model			the model
+	 * 
+	 * @throws Exception a generic exception
 	 */
 	protected ModelFields(BigMLClient bigmlClient, JSONObject model) 
 			throws Exception {
@@ -129,6 +130,8 @@ public abstract class ModelFields implements Serializable {
 	 * Inits BigMLClient
 	 * 
 	 * @param bigmlClient	BigMLClient
+	 * 
+	 * @throws Exception	Exception
 	 */
 	protected void initBigML(BigMLClient bigmlClient) throws Exception {
 
@@ -165,11 +168,18 @@ public abstract class ModelFields implements Serializable {
 	 *            the fields structure itself
 	 * @param objectiveFieldId
 	 *            the ID of the objective field
+	 * @param dataLocale
+	 *            the locale of the data
 	 * @param missingTokens
 	 *            the list of missing tokens to use. DEFAULT_MISSING_TOKENS will
 	 *            be used by default
-	 * @param dataLocale
-	 *            the locale of the data
+	 * @param terms
+	 * 			  whether include terms or not
+	 * @param categories
+	 * 			  whether include categories or not
+	 * @param numerics
+	 * 			  whether include numerics or not
+	 * 
 	 */
 	protected void initialize(JSONObject fields, String objectiveFieldId,
 			String dataLocale, List<String> missingTokens, Boolean terms,
@@ -268,8 +278,11 @@ public abstract class ModelFields implements Serializable {
 	}
 
 	/**
-	 * Checks the model structure to see if it contains all the needed keys
+	 * Checks the model structure to see if it contains model keys
 	 * 
+	 * @param model	the model to check
+	 * 
+	 * @return whether the model structure contains model key
 	 */
 	protected boolean checkModelStructure(JSONObject model) {
 		return checkModelStructure(model, "model");
@@ -277,6 +290,11 @@ public abstract class ModelFields implements Serializable {
 
 	/**
 	 * Checks the model structure to see if it contains all the needed keys
+	 * 
+	 * @param model		the model to check
+	 * @param innerKey	the key to check in resource
+	 * 
+	 * @return whether the model contains the key
 	 */
 	protected boolean checkModelStructure(JSONObject model, String innerKey) {
 		return model.containsKey("resource") && model.get("resource") != null
@@ -288,6 +306,10 @@ public abstract class ModelFields implements Serializable {
 	/**
 	 * Checks the model structure to see whether it contains the required fields
 	 * information
+	 * 
+	 * @param model	the model
+	 * 
+	 * @return whether the model contains fields
 	 */
 	protected boolean checkModelFields(JSONObject model) {
 		if (!model.containsKey("resource") || model.get("resource") == null) {
@@ -345,6 +367,12 @@ public abstract class ModelFields implements Serializable {
 	/**
 	 * Fills the value set as default for numeric missing fields if user
 	 * created the model with the default_numeric_value option
+	 * 
+	 * @param inputData	
+	 * 				an object with field's id/value pairs representing the
+	 *              instance you want to fill with numeric defaults
+	 *
+	 * @return the input data filled with numeric defaults
 	 */
 	public JSONObject fillNumericDefaults(JSONObject inputData) {
 		try {
@@ -377,7 +405,11 @@ public abstract class ModelFields implements Serializable {
 	/**
 	 * Filters the keys given in input_data checking against model fields.
 	 *
-	 * @param inputData
+	 * @param inputData	
+	 * 				an object with field's id/value pairs representing the
+	 *              instance you want to filter
+	 *              
+	 * @return the filtered input data
 	 */
 	protected JSONObject filterInputData(JSONObject inputData) {
 		JSONObject filteredInputData = filterInputData(inputData, false);
@@ -503,8 +535,11 @@ public abstract class ModelFields implements Serializable {
 	 * Returns the values for all the subfields from all the datetime
 	 * fields in input_data.
 	 *
-	 * @param input_data
-	 * @return
+	 * @param inputData		
+	 * 				an object with field's id/value pairs representing the
+	 *              instance you want to expand
+	 *              
+	 * @return the expanded inputData
 	 */
 	protected Map<String, Object> expandDatetimeFields(JSONObject inputData) {
 		Map<String, Object> expanded = new HashMap<String, Object>();
@@ -530,8 +565,11 @@ public abstract class ModelFields implements Serializable {
 	 * If `addUnusedFields` is set to True, it also provides information about
 	 * the ones that are not used.
 	 *
-	 * @param inputData
-	 * @param addUnusedFields
+	 * @param inputData			an object with field's id/value pairs representing the
+	 *              			instance you want to filter
+	 * @param addUnusedFields	if include unused fields
+	 * 
+	 * @return	filtered input data
 	 */
 	protected JSONObject filterInputData(JSONObject inputData,
 			Boolean addUnusedFields) {
@@ -599,6 +637,8 @@ public abstract class ModelFields implements Serializable {
 	/**
 	 * Tests if the fields names are unique. If they aren't, a transformation is
 	 * applied to ensure unicity.
+	 * 
+	 * @param fields	the fields
 	 */
 	protected void uniquifyNames(JSONObject fields) {
 
@@ -630,6 +670,8 @@ public abstract class ModelFields implements Serializable {
 	 * If a field name is repeated, it will be transformed adding its column
 	 * number. If that combination is also a field name, the field id will be
 	 * added.
+	 * 
+	 * @param fields	the fields
 	 */
 	protected void transformRepeatedNames(JSONObject fields) {
 		Set<String> uniqueNames = new TreeSet<String>(fieldsName);
@@ -673,8 +715,10 @@ public abstract class ModelFields implements Serializable {
 	/**
 	 * Transforms to unicode and cleans missing tokens
 	 *
-	 * @param value
-	 *            the value to normalize
+	 * @param value	the value to normalize
+	 * @param <T>	the class
+	 *            
+	 * @return	the normalized value
 	 */
 	protected <T> T normalize(T value) {
 		// if( value instanceof String ) {
@@ -784,7 +828,13 @@ public abstract class ModelFields implements Serializable {
 
 	/**
 	 * Extracts the unique terms that occur in one of the alternative forms in
-	 * term_forms or in the tag cloud.
+	 * termForms or in the tag cloud.
+	 * 
+	 * @param terms			the list of terms to extract the info for
+	 * @param termForms		the term forms
+	 * @param tagClouds		list of tag cloud
+	 * 
+	 * @return a map with occurrences per unique term
 	 */
 	protected Map<String, Integer> uniqueTerms(List<String> terms,
 			JSONObject termForms, List<String> tagClouds) {
@@ -822,6 +872,11 @@ public abstract class ModelFields implements Serializable {
 
 	/**
 	 * Returns the list of parsed terms
+	 * 
+	 * @param text			the text to parse
+	 * @param caseSensitive	if use case sensitive parsing or not
+	 * 
+	 * @return the list of parsed terms
 	 */
 	protected List<String> parseTerms(String text, Boolean caseSensitive) {
 		if (caseSensitive == null) {
@@ -845,6 +900,11 @@ public abstract class ModelFields implements Serializable {
 
 	/**
 	 * Returns the list of parsed items
+	 * 
+	 * @param text		the text to parse
+	 * @param regexp	the regexp to use to parse items
+	 * 
+	 * @return the list of parsed items
 	 */
 	protected List<String> parseItems(String text, String regexp) {
 		if (text != null) {
@@ -862,12 +922,18 @@ public abstract class ModelFields implements Serializable {
 	}
 	
 	/**
-	 * Returns reg expre for model Id.
+	 * Returns reg expression for model Id.
+	 * 
+	 * @return regep for model Id
 	 */
 	public abstract String getModelIdRe();
 	
 	/**
-	 * Returns bigml resource JSONObject.
+	 * Returns JSONObject resource.
+	 * 
+	 * @param modelId	the id of the model
+	 * 
+	 * @return the JSONObject resource
 	 */
 	public abstract JSONObject getBigMLModel(String modelId);
 }

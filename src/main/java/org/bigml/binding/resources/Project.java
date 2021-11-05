@@ -25,6 +25,12 @@ public class Project extends AbstractResource {
     /**
      * Constructor
      *
+     * @param bigmlClient	the client with connection to BigML
+     * @param apiUser		API user
+     * @param apiKey		API key
+     * @param project		project id
+     * @param organization	organization id
+     * @param cacheManager	cache manager
      */
     public Project(final BigMLClient bigmlClient,
     			   final String apiUser, final String apiKey, 
@@ -46,6 +52,7 @@ public class Project extends AbstractResource {
      * @param args
      *            set of parameters for the new project. Optional
      *
+     * @return a JSONObject for the new project
      */
     public JSONObject create(JSONObject args) {
 
@@ -76,6 +83,7 @@ public class Project extends AbstractResource {
      * @param apiKey
      *            API key
      *
+     * @return a JSONObject for the project
      */
     public JSONObject get(final String projectId, final String queryString,
                           final String apiUser, final String apiKey) {
@@ -103,6 +111,7 @@ public class Project extends AbstractResource {
      * @param apiKey
      *            API key
      *
+     * @return a JSONObject for the project
      */
     public JSONObject get(final JSONObject project, final String queryString,
                           final String apiUser, final String apiKey) {

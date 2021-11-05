@@ -25,6 +25,12 @@ public class Fusion extends AbstractResource {
     /**
      * Constructor
      *
+     * @param bigmlClient	the client with connection to BigML
+     * @param apiUser		API user
+     * @param apiKey		API key
+     * @param project		project id
+     * @param organization	organization id
+     * @param cacheManager	cache manager
      */
     public Fusion(final BigMLClient bigmlClient,
     			  final String apiUser, final String apiKey, 
@@ -57,6 +63,7 @@ public class Fusion extends AbstractResource {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new fusion
      */
     public JSONObject create(List<String> modelsIds, JSONObject args,
                              Integer waitTime, Integer retries) {
@@ -116,6 +123,7 @@ public class Fusion extends AbstractResource {
      * @param retries
      *            number of times to try the operation. Optional
      *
+     * @return a JSONObject for the new fusion
      */
     public JSONObject createWithModels(final List<JSONObject> models,
         JSONObject args, Integer waitTime, Integer retries) {

@@ -61,7 +61,7 @@ public class MultiVote implements Serializable {
      * MultiVote: combiner class for ensembles voting predictions.
      *
      * @param predictionsArr {array|object} predictions Array of model's predictions
-     * @param boostingOffsets
+     * @param boostingOffsets {array|object}
      */
     public MultiVote(HashMap<Object, Object>[] predictionsArr, JSONArray boostingOffsets) {
         int i, len;
@@ -254,7 +254,7 @@ public class MultiVote implements Serializable {
      *  where the expected prediction keys are: prediction (compulsory),
      *  confidence, distribution and count.
      *
-     * @param votes
+     * @param votes	a MultiVote object
      */
     public void extend(MultiVote votes) {
         if( votes.predictions != null && votes.predictions.length > 0  ) {
@@ -315,6 +315,7 @@ public class MultiVote implements Serializable {
      * confidence, distribution and count.
      *
      * @param predictionsRows the list of predictions (in list format) we want to append
+     * @param predictionsHeader	the list of names of predictions
      * @return the this instance
      */
     public MultiVote extendRows(List<List<Object>> predictionsRows,
@@ -486,6 +487,8 @@ public class MultiVote implements Serializable {
      *        absent, the number is computed as the sum of weights in the
      *        provided distribution
      * @param z {float} z Percentile of the standard normal distribution
+     * 
+     * @return the Wilson score interval
      */
     protected static double wsConfidence(Object prediction,
             HashMap<String, Double> distribution, Integer n, Double z) {
@@ -765,6 +768,8 @@ public class MultiVote implements Serializable {
     
     /**
      * Creates a new predictions array based on the training data probability
+     * 
+     * @return the predictions based on the training data probability
      */
     public HashMap<Object, Object>[] probabilityWeight() {
         int index, len, total, order;
@@ -820,6 +825,8 @@ public class MultiVote implements Serializable {
      *
      * @param weightLabel {string} weightLabel Label of the value in the prediction object
      *        whose sum will be used as count in the distribution
+     *        
+     * @return the distribution based on the predictions of the MultiVote
      */
     public Object[] combineDistribution(String weightLabel) {
         int index, len;
@@ -868,6 +875,8 @@ public class MultiVote implements Serializable {
      *
      *        Will also return the combined confidence, as a weighted average of
      *        the confidences of the votes.
+     * 
+     * @return the prediction combining votes by using the given weight
      */
     public HashMap<Object, Object> combineCategorical(String weightLabel) {
         
@@ -947,6 +956,8 @@ public class MultiVote implements Serializable {
      * @param combinedPrediction {object} combinedPrediction Prediction object
      * @param weightLabel {string} weightLabel Label of the value in the prediction object
      *        that will be used to weight confidence
+     *        
+     * @return the combined weighted confidence
      */
     public HashMap<Object, Object> weightedConfidence(
             Object combinedPrediction, Object weightLabel) {
@@ -1010,6 +1021,11 @@ public class MultiVote implements Serializable {
     
     /**
      * Returns a distribution formed by grouping the distributions of each predicted node.
+     * 
+     * @param multiVoteInstance
+     * 			a multiVote instance
+     * 
+     * @return the distribution formed by grouping the distributions of each predicted node
      */
     protected static Map<String, Object> getGroupedDistribution(MultiVote multiVoteInstance) {
         Map<Object, Number> joinedDist = new HashMap<Object, Number>();
@@ -1056,6 +1072,13 @@ public class MultiVote implements Serializable {
     /**
      * Reduces a number of predictions voting for classification and
      * averaging predictions for regression.
+     * 
+     * @param method
+     * 			PLURALITY|CONFIDENCE|PROBABILITY|THRESHOLD prediction method
+     * @param options
+     * 			a map with options for specific prediction method
+     * 
+     * @return a map of predictions
      */
     public HashMap<Object, Object> combine(PredictionMethod method, Map options) {
     	

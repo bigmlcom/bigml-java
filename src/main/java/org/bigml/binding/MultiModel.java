@@ -55,6 +55,8 @@ public class MultiModel implements Serializable {
      * Constructor
      * 
      * @param models	the json representation for the remote models
+     * 
+     * @throws Exception a generic exception
      */
     public MultiModel(Object models) 
     		throws Exception {
@@ -64,7 +66,11 @@ public class MultiModel implements Serializable {
     /**
      * Constructor
      * 
-     * @param models	the json representation for the remote models
+     * @param models		the json representation for the remote models
+     * @param fields		the fields of the model
+     * @param classNames	the list of classes names
+     * 
+     * @throws Exception a generic exception
      */
     public MultiModel(Object models, JSONObject fields, List<String> classNames) 
     		throws Exception {
@@ -96,6 +102,8 @@ public class MultiModel implements Serializable {
     
     /**
      * Lists all the model/ids that compound the multi model.
+     * 
+     * @return the list of all model ids that compound the multi model
      */
     public JSONArray listModels() {
         return this.models;
@@ -105,6 +113,17 @@ public class MultiModel implements Serializable {
     /**
      * Generates a MultiVote object that contains the predictions made 
      * by each of the models.
+     * 
+     * @param inputData
+     * 			input data to be predicted
+     * @param strategy
+     * 			LAST_PREDICTION|PROPORTIONAL missing strategy for missing fields
+     * @param unusedFields
+     * 			unused fields to include in the prediction
+     * 
+     * @return a MultiVote object that contains the predictions made 
+     * by each of the models
+     * @throws Exception a generic exception
      */
     public MultiVote generateVotes(final JSONObject inputData, 
             MissingStrategy strategy, List<String> unusedFields) 
@@ -143,6 +162,17 @@ public class MultiModel implements Serializable {
     /**
      * Generates a MultiVote object that contains the predictions made by each
      * of the models.
+     * 
+     * @param inputData
+     * 			input data to be predicted
+     * @param strategy
+     * 			LAST_PREDICTION|PROPORTIONAL missing strategy for missing fields
+     * @param method
+     * 			PLURALITY|CONFIDENCE|PROBABILITY|THRESHOLD prediction method
+     * 
+     * @return a MultiVoteList object that contains the predictions made 
+     * by each of the models
+     * @throws Exception a generic exception
      */
     public MultiVoteList generateVotesDistribution(
     		final JSONObject inputData, MissingStrategy strategy, 
@@ -210,6 +240,18 @@ public class MultiModel implements Serializable {
      *              PROBABILITY_CODE
      *      3 - threshold filtered vote / doesn't apply:
      *              THRESHOLD_COD
+     *              
+     * @param inputData
+     * 			input data to be predicted
+     * @param strategy
+     * 			LAST_PREDICTION|PROPORTIONAL missing strategy for missing fields
+     * @param method
+     * 			PLURALITY|CONFIDENCE|PROBABILITY|THRESHOLD prediction method
+     * @param options
+     * 			options for votes 
+     *              
+     * @return prediction for input data
+     * @throws Exception a generic exception
      */
     public HashMap<Object, Object> predict(final JSONObject inputData,
             MissingStrategy strategy, PredictionMethod method, Map options)
@@ -237,6 +279,16 @@ public class MultiModel implements Serializable {
      * average: PLURALITY_CODE 1 - confidence weighted majority vote / error
      * weighted: CONFIDENCE_CODE 2 - probability weighted majority vote /
      * average: PROBABILITY_CODE
+     * 
+     * @param inputData
+     * 			input data to be predicted
+     * @param method
+     * 			PLURALITY|CONFIDENCE|PROBABILITY|THRESHOLD prediction method
+     * @param withConfidence
+     * 			whether to use confidence in prediction
+     * 
+     * @return prediction for input data
+     * @throws Exception a generic exception
      */
     public HashMap<Object, Object> predict(final JSONObject inputData,
             PredictionMethod method, Boolean withConfidence)
@@ -264,6 +316,30 @@ public class MultiModel implements Serializable {
      *              PROBABILITY_CODE
      *      3 - threshold filtered vote / doesn't apply:
      *              THRESHOLD_COD
+     * 
+     * @param inputData
+     * 			input data to be predicted
+     * @param method
+     * 			PLURALITY|CONFIDENCE|PROBABILITY|THRESHOLD prediction method
+     * @param withConfidence
+     * 			whether to use confidence in prediction
+     * @param withConfidence
+     * 			whether to use confidence in prediction
+     * @param options
+     * 			options for votes
+     * @param strategy
+     * 			LAST_PREDICTION|PROPORTIONAL missing strategy for missing fields
+     * @param addConfidence
+     * 			unused 
+     * @param addDistribution
+     * 			unused 
+     * @param addCount
+     * 			unused 
+     * @param addMedian
+     * 			unused 
+     *              
+     * @return prediction for input data
+     * @throws Exception a generic exception
      */
     public HashMap<Object, Object> predict(final JSONObject inputData,
             PredictionMethod method, Boolean withConfidence,
@@ -301,6 +377,13 @@ public class MultiModel implements Serializable {
      * average: PLURALITY_CODE 1 - confidence weighted majority vote / error
      * weighted: CONFIDENCE_CODE 2 - probability weighted majority vote /
      * average: PROBABILITY_CODE
+     * 
+     * @param inputDataList
+     * 					a list of input datas to predict
+     * @param outputFilePath
+     * 					the path of the output file with batch predictions
+     * 
+     * @throws Exception a generic exception
      */
     public void batchPredict(final JSONArray inputDataList,
                              String outputFilePath)
@@ -328,13 +411,30 @@ public class MultiModel implements Serializable {
      * average: PLURALITY_CODE 1 - confidence weighted majority vote / error
      * weighted: CONFIDENCE_CODE 2 - probability weighted majority vote /
      * average: PROBABILITY_CODE
+     * 
+     * @param inputDataList
+     * 					a list of input datas to predict
+     * @param outputFilePath
+     * 					the path of the output file with batch predictions
+     * @param reuse
+     * 					wheter to use same output file for all batch predictions
+     * @param strategy
+     * 					LAST_PREDICTION|PROPORTIONAL missing strategy for missing fields
+     * @param headers
+     * 					the names of the fields
+     * @param toFile
+     * 					whether to generate the batch predictions in output file
+     * @param useMedian
+     * 					whether to use median in predictions
+     * 
+     * @return batch predictions for a list of input data
+     * @throws Exception a generic exception
      */
     public List<MultiVote> batchPredict(final JSONArray inputDataList,
             String outputFilePath, Boolean reuse,
             MissingStrategy strategy, Set<String> headers, Boolean toFile,
-                             Boolean useMedian)
+            Boolean useMedian) throws Exception {
 
-            throws Exception {
         if (strategy == null) {
             strategy = MissingStrategy.LAST_PREDICTION;
         }
@@ -454,15 +554,20 @@ public class MultiModel implements Serializable {
         return votes;
     }
 
-    
-
-
     /**
      * Adds the votes for predictions generated by the models.
      *
      * Returns a list of MultiVote objects each of which contains a list
      * of predictions.
+     * 
+     * @param predictionsFilePath
+     * 					the path of the file with predictions
+     * @param dataLocale
+     * 					should contain the string identification for the locale
+     *  				used in numeric formatting.
      *
+     * @return the votes for predictions generated by the models
+     * @throws Exception a generic exception
      */
     public List<MultiVote> batchVotes(String predictionsFilePath, Locale dataLocale)
             throws Exception {
@@ -483,24 +588,28 @@ public class MultiModel implements Serializable {
      * Reads the votes found in the votes' files.
      *
      * Returns a list of MultiVote objects containing the list of predictions.
-     * votes_files parameter should contain the path to the files where votes
-     * are stored
-     * In to_prediction parameter we expect the method of a local model object
-     * that casts the string prediction values read from the file to their
-     * real type. For instance
+     * 
+     * @param votesFiles
+     * 				should contain the path to the files where votes are stored
+     * 
+     * @param converter
+     * 			 	we expect the method of a local model object
+     * 			 	that casts the string prediction values read from the file to 
+     * 			 	their real type. For instance
      *
-     *      LocalPredictiveModel localModel = new LocalPredictiveModel(model)
-     *      Object prediction = localModel .toPrediction("1")
-     *      prediction instanceof Double
-     *      True
-     *      read_votes(["my_predictions_file"], localModel)
+     *      		LocalPredictiveModel localModel = new LocalPredictiveModel(model)
+     *      		Object prediction = localModel .toPrediction("1")
+     *      		prediction instanceof Double True
+     *      		readVotes(["my_predictions_file"], localModel)
      *
-     *  data_locale should contain the string identification for the locale
-     *  used in numeric formatting.
-     *
+     * @param locale
+     * 				should contain the string identification for the locale
+     *  			used in numeric formatting.
+     *  
+     *  @return the votes found in the votes' files
+     *  @throws Exception a generic exception
      */
     public List<MultiVote> readVotes(List<String> votesFiles, PredictionConverter converter, Locale locale)
-
             throws Exception {
         List<MultiVote> votes = new ArrayList();
 

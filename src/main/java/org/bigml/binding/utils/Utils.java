@@ -222,6 +222,7 @@ public class Utils {
     /**
      * Converts a InputStream to a String.
      *
+     * @throws IOException an IO exception
      */
     public static String inputStreamAsString(InputStream stream, String encoding)
             throws IOException {
@@ -475,8 +476,10 @@ public class Utils {
     /**
      * Strips prefixes and suffixes if present
      *
-     * @param value
-     * @param field
+     * @param value		the value
+     * @param field		the json for the field
+     * 
+     * @return the new value
      */
     public static String stripAffixes(String value, JSONObject field) {
 
@@ -494,8 +497,8 @@ public class Utils {
     /**
      * Checks expected type in input data values, strips affixes and casts
      *
-     * @param inputData
-     * @param fields
+     * @param inputData	the input data to be cast
+     * @param fields	the fields json
      */
     public static void cast(JSONObject inputData, JSONObject fields) {
 
@@ -550,6 +553,8 @@ public class Utils {
      * Maps a BigML type to equivalent Java types.
      *
      * @param optype BigML Type
+     * 
+     * @return Java class for the optype
      */
     public static Class getJavaType(String optype) {
         return (JAVA_TYPE_MAP.containsKey(optype) ? JAVA_TYPE_MAP.get(optype) : String.class);
@@ -571,8 +576,10 @@ public class Utils {
     /**
      * Looks for the given locale or the closest alternatives
      *
-     * @param dataLocale
-     * @param verbose
+     * @param dataLocale	the locale name
+     * @param verbose		unused
+     * 
+     * @return the Locale
      */
     public static Locale findLocale(String dataLocale, Boolean verbose) {
         Locale newLocale = null;
@@ -699,8 +706,10 @@ public class Utils {
     /**
      * Joins all the string items in the list using the conjunction text
      *
-     * @param list
-     * @param conjunction
+     * @param list			the list of items
+     * @param conjunction	the conjuction text
+     * 
+     * @return a string joining all the string items in the list using the conjunction text
      */
     public static String join(List<String> list, String conjunction) {
         StringBuilder sb = new StringBuilder();
@@ -726,7 +735,9 @@ public class Utils {
     /**
      * Computes the mean of a distribution in the [[point, instances]] syntax
      *
-     * @param distribution
+     * @param distribution	a distribution
+     * 
+     * @return the mean of a distribution in the [[point, instances]] syntax
      */
     public static double meanOfDistribution(List<JSONArray> distribution) {
         double addition = 0.0f;
@@ -749,6 +760,10 @@ public class Utils {
 
     /**
      * Computes the mean of a list of double values
+     * 
+     * @param values	a list double values
+     * 
+     * @return the mean of a list of double values
      */
     public static double meanOfValues(List<Double> values) {
         double addition = 0.0f;
@@ -764,6 +779,10 @@ public class Utils {
 
     /**
      * Prints distribution data
+     * 
+     * @param distribution		a distribution
+     * 
+     * @return the distribution data
      */
     public static StringBuilder printDistribution(JSONArray distribution) {
         StringBuilder distributionStr = new StringBuilder();
@@ -791,8 +810,10 @@ public class Utils {
     /**
      * Adds up a new distribution structure to a map formatted distribution
      *
-     * @param distribution
-     * @param newDistribution
+     * @param distribution		a distribution
+     * @param newDistribution	the new distribution
+     * 
+     * @return a new distribution structure
      */
     public static Map<Object, Number> mergeDistributions(Map<Object, Number> distribution, Map<Object, Number> newDistribution) {
         if (newDistribution != null) {
@@ -829,6 +850,11 @@ public class Utils {
 
     /**
      * Round a float number x to n decimal places
+     * 
+     * @param x	the float number
+     * @param n	the number of decimals
+     * 
+     * @return a float number x to n decimal places
      */
     public static float roundOff(float x, int n)  {
         BigDecimal bd = new BigDecimal(x).setScale(n, RoundingMode.HALF_EVEN);
@@ -837,6 +863,11 @@ public class Utils {
 
     /**
      * Round a double number x to n decimal places
+     * 
+     * @param x	the double number
+     * @param n	the number of decimals
+     * 
+     * @return a double number x to n decimal places
      */
     public static double roundOff(double x, int n)  {
         BigDecimal bd = new BigDecimal(x).setScale(n, RoundingMode.HALF_EVEN);
@@ -847,6 +878,7 @@ public class Utils {
      * We switch the Array to a Map structure in order to be more easily manipulated
      *
      * @param distribution current distribution as an JSONArray instance
+     * 
      * @return the distribution as a Map instance
      */
 
@@ -894,6 +926,11 @@ public class Utils {
 
     /**
      * Merges the bins of a regression distribution to the given limit number
+     * 
+     * @param distribution	bins of a regression distribution
+     * @param limit			the limit of the result distribution
+     * 
+     * @return bins of a regression distribution
      */
     public static JSONArray mergeBins(JSONArray distribution, int limit) {
         int length = distribution.size();
@@ -938,6 +975,11 @@ public class Utils {
 
     /**
      * Merges the bins of a regression distribution to the given limit number
+     * 
+     * @param distribution	bins of a regression distribution
+     * @param limit			the limit of the result distribution
+     * 
+     * @return bins of a regression distribution
      */
     public static Map<Object, Number> mergeBins(Map<Object, Number> distribution, int limit) {
         JSONArray mergedDist = mergeBins(convertDistributionMapToSortedArray(distribution), limit);
@@ -970,7 +1012,12 @@ public class Utils {
     }
 
     /**
-     * Pluralizer: adds "s" at the end of a string if a given number is > 1
+     * Pluralizer: adds "s" at the end of a string if a given number is bigger than 1
+     * 
+     * @param text	the text to get the plural
+     * @param num	the number indicating if s is added to the text
+     * 
+     * @return the plural
      */
     public static String plural(String text, int num) {
         return String.format("%s%s", text, (num == 1 ? "" : "s"));
@@ -978,6 +1025,10 @@ public class Utils {
 
     /**
      * JSON library Hack - unescape forward slashes from already escaped JSON string
+     * 
+     * @param jsonString	the json string to unescape
+     * 
+     * @return the escaped json
      */
     public static String unescapeJSONString(String jsonString) {
         return jsonString.replaceAll("\\\\/", "/");
@@ -1018,20 +1069,24 @@ public class Utils {
     /**
      * Counts the match for full terms according to the case_sensitive option
      *
-     * @param text
-     * @param fullTerm
-     * @param caseSensitive
+     * @param text			the text where to count matches
+     * @param fullTerm		the term to check
+     * @param caseSensitive	whether use case sensitive search or not
+     * 
+     * @return the number of matches
      */
     public static int fullTermMatch(String text, String fullTerm, boolean caseSensitive) {
         return (caseSensitive ? (text.equals(fullTerm) ? 1 : 0) : (text.equalsIgnoreCase(fullTerm) ? 1 : 0));
     }
 
     /**
-     * Counts the number of occurences of the words in forms_list in the text
+     * Counts the number of occurences of the words in formsList in the text
      *
-     * @param text
-     * @param formsList
-     * @param caseSensitive
+     * @param text			the text where to count occurences
+     * @param formsList		the list of words to check
+     * @param caseSensitive	whether use case sensitive search or not
+     * 
+     * @return the number of occurences of the words
      */
     public static int termMatchesTokens(String text, List<String> formsList, boolean caseSensitive) {
         List<String> quotedFormsList = new ArrayList<String>();
@@ -1050,6 +1105,27 @@ public class Utils {
     /**
      * Checks the operating point contents and extracts and array with
      * the three defined variables
+     * 
+     * @param operatingPoint
+	 * 			In classification models, this is the point of the
+     *          ROC curve where the model will be used at. The
+     *          operating point can be defined in terms of:
+     *                - the positive class, the class that is important to
+     *                  predict accurately
+     *                - the probability threshold,
+     *                  the probability that is stablished
+     *                  as minimum for the positive_class to be predicted.
+     *          The operating point is then defined as a map with
+     *          two attributes, e.g.:
+     *                  {"positive_class": "Iris-setosa",
+     *                   "probability_threshold": 0.5}
+	 * 
+	 * @param operatingKinds
+	 * 			list of "probability" or "confidence". Sets the property that
+	 * 			decides the prediction. Used only if no operatingPoint
+	 * 			is used
+     * @param classNames
+     * 				the names of the classes
      */
     public static Object[] parseOperatingPoint(JSONObject operatingPoint,
     		String[] operatingKinds, List<String> classNames) {
@@ -1099,6 +1175,13 @@ public class Utils {
 
     /**
      * Checks whether some numeric fields are missing in the input data
+     * 
+     * @param inputData
+     * 				the input data to check if fields are missing
+     * @param fields
+     * 				the fields in input data to check
+     * @param weightField
+     * 				the weight field
      */
     public static void checkNoMissingNumerics(
     		JSONObject inputData, JSONObject fields, String weightField) {
@@ -1120,6 +1203,16 @@ public class Utils {
     /**
      * Checks whether some input fields are missing in the input data
      * while not training data has no missings in that field
+     * 
+     * @param inputData
+     * 				the input data to check if fields are missing
+     * @param fields
+     * 				the fields in input data to check
+     * @param weightField
+     * 				the weight field
+     * @param objectiveFieldId
+     * 				the objective field id
+     * 				
      */
     public static void checkNoTrainingMissings(
     		JSONObject inputData, JSONObject fields, String weightField,
@@ -1145,6 +1238,10 @@ public class Utils {
 
     /**
      * Calculates matrix inverse
+     * 
+     * @param matrix	the matrix to inverse
+     * 
+     * @return the inverse of a matrix
      */
     public static JSONArray inverseMatrix(JSONArray matrix) {
     	int n = matrix.size();
@@ -1180,6 +1277,13 @@ public class Utils {
 
     /**
 	  * Sorts list of predictions
+	  *
+	  * @param predictions
+	  * 			list of predictions to sort
+	  * @param primaryKey
+	  * 			primary key to sort by
+	  * @param secondaryKey
+	  * 			secondary key to sort by	
 	  *
 	  */
     public static void sortPredictions(JSONArray predictions,
