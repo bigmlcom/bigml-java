@@ -68,6 +68,7 @@ public class LocalDeepnet extends ModelFields implements SupervisedModelInterfac
 	private List<String> classNames = new ArrayList<String>();
 	private JSONObject network = null;
 	private JSONArray networks = null;
+	private JSONObject exposition = null;
 	private JSONArray preprocess = null;
 	//private JSONObject optimizer = null;
 	private String defaultNumericValue = null;
@@ -139,6 +140,17 @@ public class LocalDeepnet extends ModelFields implements SupervisedModelInterfac
 					network = (JSONObject) deepnetInfo.get("network");
 					networks = (JSONArray) Utils.getJSONObject(
 							network, "networks", new JSONArray());
+
+					if (network.containsKey("network")) {
+    					exposition = (JSONObject) Utils.getJSONObject(
+    						(JSONObject) networks.get(0),
+    						"output_exposition", new JSONObject());
+					} else {
+					    exposition = null;
+					}
+					exposition = (JSONObject) Utils.getJSONObject(
+						network, "output_exposition", exposition);
+
 					preprocess = (JSONArray) Utils.getJSONObject(
 							network, "preprocess", new JSONArray());
 					//optimizer = (JSONObject) Utils.getJSONObject(
@@ -517,12 +529,7 @@ public class LocalDeepnet extends ModelFields implements SupervisedModelInterfac
 			ArrayList<List<Double>> inputArray, JSONObject model) {
 
 		JSONArray layers = (JSONArray) model.get("layers");
-		
-		ArrayList<List<Double>> out =
-				MathOps.propagate(inputArray, layers);
-		;
-		JSONObject exposition = (JSONObject) Utils.getJSONObject(
-				model, "output_exposition", new JSONObject());
+		ArrayList<List<Double>> out = MathOps.propagate(inputArray, layers);
 
 		if (regression) {
 			Double mean = ((Number) exposition.get("mean")).doubleValue();

@@ -1,5 +1,11 @@
 # Changes in the BigML.io Java bindings
 
+## 1.8.18 version
+
+### Bugs
+
+* Fixing local deepnet prediction method to fit new deepnet structure.
+
 
 ## 1.8.17 version
 
