@@ -173,7 +173,20 @@ public class MathOps {
 		
 		ArrayList<List<Double>> identities = input;
 		ArrayList<List<Double>> lastX = input;
+
+		ArrayList residualsList = new ArrayList();
+		for (Object layerObj: layers) {
+			JSONObject layer = (JSONObject) layerObj;
+			residualsList.add((Boolean) layer.get("residuals"));
+		}
 		
+		boolean firstIdentities = false;
+		if (residualsList.contains(true)) {
+			firstIdentities = 
+				!residualsList.subList(2, residualsList.size()).contains(true);
+		}
+
+		int i = 0;
 		for (Object layerObj: layers) {
 			JSONObject layer = (JSONObject) layerObj;
 			JSONArray weights = (JSONArray) layer.get("weights");
@@ -199,7 +212,12 @@ public class MathOps {
 				identities = lastX;
 			} else {
 				lastX = broadcast(afn, nextIn);
+
+				if (firstIdentities && i==0) {
+					identities = lastX;
+				}
 			}
+			i++;
 		}
 		
 		return lastX;
