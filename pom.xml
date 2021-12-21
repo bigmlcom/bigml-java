@@ -221,6 +221,7 @@
                         <configuration>
                             <show>private</show>
                             <nohelp>true</nohelp>
+                            <doclint>none</doclint>
                             <additionalDependencies>
                                 <additionalDependency>
                                     <groupId>com.googlecode.json-simple</groupId>
