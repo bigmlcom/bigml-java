@@ -14,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import cucumber.annotation.en.Given;
+import io.cucumber.java.en.Given;
 
 public class CompositesStepdefs {
 

@@ -5,9 +5,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.Arrays;
 
-import cucumber.annotation.en.Then;
 import org.bigml.binding.resources.AbstractResource;
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONArray;
@@ -17,8 +15,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import cucumber.annotation.en.Given;
-import cucumber.annotation.en.When;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 
 public class DatasetsStepdefs {
 

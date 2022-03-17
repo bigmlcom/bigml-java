@@ -1,6 +1,5 @@
 package org.bigml.binding;
 
-import cucumber.annotation.en.Given;
 import org.bigml.binding.localmodel.Predicate;
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONArray;
@@ -9,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.*;
+
+import io.cucumber.java.en.Given;
 
 public class LocalModelInspectStepdefs {
 

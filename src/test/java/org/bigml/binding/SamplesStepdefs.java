@@ -1,7 +1,5 @@
 package org.bigml.binding;
 
-import cucumber.annotation.en.Then;
-import cucumber.annotation.en.When;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.bigml.binding.utils.Utils;
@@ -15,6 +13,9 @@ import java.io.*;
 import java.util.*;
 
 import static org.junit.Assert.*;
+
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 
 public class SamplesStepdefs {
 

@@ -4,8 +4,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import cucumber.annotation.After;
-import cucumber.annotation.Before;
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
 
 public class BeforeSteps {
 	

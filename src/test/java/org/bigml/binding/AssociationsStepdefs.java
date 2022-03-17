@@ -12,9 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import cucumber.annotation.en.Given;
-import cucumber.annotation.en.Then;
-import cucumber.annotation.en.When;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 
 import org.bigml.binding.localassociation.*;
 
@@ -52,7 +52,11 @@ public class AssociationsStepdefs {
 
     @When("^I get the rules for \"(.*)\" and the first rule is \"(.*)\"$")
     public void I_get_the_rules_for_and_the_first_rule_is(
-    		List itemList, String ruleJson) throws Throwable {
+            String item, String ruleJson) throws Throwable {
+
+        List<String> itemList = new ArrayList<String>();
+        itemList.add(item);
+
         List<AssociationRule> rules = localAssociation.rules(
             null, null, null, itemList, null);
 

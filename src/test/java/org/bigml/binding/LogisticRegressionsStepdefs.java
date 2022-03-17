@@ -1,7 +1,5 @@
 package org.bigml.binding;
 
-import cucumber.annotation.en.Given;
-
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -9,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import io.cucumber.java.en.Given;
 
 public class LogisticRegressionsStepdefs {
 

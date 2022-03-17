@@ -2,6 +2,10 @@
 
 ## 1.8.19 version
 
+* Updated springframework version.
+* Testing: updated junit and cucumber versions.
+
+
 ### Bugs
 
 * Fixing local deepnet prediction method checking missing_count is present in 

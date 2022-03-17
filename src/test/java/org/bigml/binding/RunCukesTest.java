@@ -12,13 +12,18 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 
-import cucumber.junit.Cucumber;
+import io.cucumber.junit.Cucumber;
+import io.cucumber.junit.CucumberOptions;
+import io.cucumber.spring.CucumberContextConfiguration;
+
+import org.springframework.test.context.ContextConfiguration;
+
 
 @RunWith(Cucumber.class)
-// @Cucumber.Options(format = {"pretty", "html:target/cucumber-html-report"})
-//@Cucumber.Options(format = { "pretty", "html:target/cucumber-html-report" }, features = {
-//        "src/test/resources/delete_all_test_data.feature" })
-@Cucumber.Options(format = { "pretty", "html:target/cucumber-html-report" },
+@CucumberContextConfiguration
+@ContextConfiguration(classes = ContextRepository.class)
+@CucumberOptions(
+  plugin = { "pretty", "html:target/cucumber/report.html" },
   glue = {"org.bigml.binding"},
   features = {
         "src/test/resources/test_anomaly.feature",

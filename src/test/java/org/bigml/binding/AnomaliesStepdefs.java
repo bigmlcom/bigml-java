@@ -1,8 +1,5 @@
 package org.bigml.binding;
 
-import cucumber.annotation.en.Given;
-import cucumber.annotation.en.Then;
-import cucumber.annotation.en.When;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -13,6 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 
 import static org.junit.Assert.*;
+
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 
 public class AnomaliesStepdefs {
 

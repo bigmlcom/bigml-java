@@ -1,7 +1,5 @@
 package org.bigml.binding;
 
-import cucumber.annotation.en.Then;
-
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.json.simple.JSONArray;
@@ -11,12 +9,11 @@ import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.*;
-
 import static org.junit.Assert.*;
 
 import org.bigml.binding.utils.Utils;
 
+import io.cucumber.java.en.Then;
 
 public class TimeSeriesStepdefs {
 
