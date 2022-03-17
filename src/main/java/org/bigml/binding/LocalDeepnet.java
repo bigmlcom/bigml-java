@@ -31,20 +31,16 @@ import org.slf4j.LoggerFactory;
  * BIGML_USERNAME and BIGML_API_KEY environment variables and that you 
  * own the deepnet/id below):
  *
- *
+ * import org.json.simple.JSONValue;
  * import org.bigml.binding.LocalDeepnet;
  * 
  * // API client
  * BigMLClient api = new BigMLClient();
  *
- * JSONObject deepnet = api.
- * 		getDeepnet("deepnet/5026965515526876630001b2");
- * LocalDeepnet localDeepnet = new LocalDeepnet(deepnet)
- *
- * JSONObject predictors = JSONValue.parse(
- * 		"{"petal length": 3, "petal width": 1"});
- *
- * localDeepnet.predict(predictors)
+ * JSONObject deepnet = api.getDeepnet("deepnet/5026965515526876630001b2");
+ * LocalDeepnet localDeepnet = new LocalDeepnet(deepnet);
+ * JSONObject inputData = (JSONObject) JSONValue.parse( "{\"petal length\": 3, \"petal width\": 1}" );
+ * HashMap<String, Object> prediction = localDeepnet.predict(inputData, null, null, true);
  * 
  */
 
@@ -452,8 +448,9 @@ public class LocalDeepnet extends ModelFields implements SupervisedModelInterfac
                     	// in the training data, then we add a new "is missing?" element
                     	// whose value is 1 or 0 according to whether the field is
                     	// missing or not in the input data
-                    	int missingCount = ((Number) Utils.getJSONObject(
-                    			fields, fieldId + ".summary.missing_count")).intValue();
+                        Number missingCountNumber = (Number) Utils.getJSONObject(fields,
+                               fieldId + ".summary.missing_count");
+                        int missingCount = missingCountNumber != null ? missingCountNumber.intValue() : 0;
 
                     	Double inputFieldValue = null;
                     	if (inputData.get(fieldId) != null) {

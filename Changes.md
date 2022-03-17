@@ -1,5 +1,12 @@
 # Changes in the BigML.io Java bindings
 
+## 1.8.19 version
+
+### Bugs
+
+* Fixing local deepnet prediction method checking missing_count is present in 
+fields summary.
+
 ## 1.8.18 version
 
 ### Bugs
