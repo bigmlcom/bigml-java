@@ -1,5 +1,14 @@
 # Changes in the BigML.io Java bindings
 
+## 2.0.0 version
+
+This version deprecating support for java versions. Only java 11 or higher supported
+from this version on.
+
+* Updated maven plugins dependencies.
+
+
+
 ## 1.8.19 version
 
 * Updated springframework version.

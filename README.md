@@ -37,7 +37,7 @@ Add the following dependency to your project's pom.xml file:
     <dependency>
         <groupId>org.bigml</groupId>
         <artifactId>bigml-binding</artifactId>
-        <version>1.8.13</version>
+        <version>2.0.0</version>
     </dependency>
 
 Add the following lines to your project's pom.xml file if you want to use the SNAPSHOT versions of the library:
