@@ -67,6 +67,7 @@ public class LocalDeepnet extends ModelFields implements SupervisedModelInterfac
 	private JSONArray objectiveFields = null;
 	private Boolean regression = false;
 	private List<String> classNames = new ArrayList<String>();
+	private String defaultNumericValue = null;
 
 		
 	public LocalDeepnet(JSONObject deepnet) throws Exception {
@@ -105,6 +106,8 @@ public class LocalDeepnet extends ModelFields implements SupervisedModelInterfac
 				
 				JSONObject fields = (JSONObject) Utils.getJSONObject(
 						deepnetInfo, "fields", new JSONObject());
+
+				this.defaultNumericValue = (String) deepnet.get("default_numeric_value");
 
 				// initialize ModelFields
 				objectiveField = objectiveField != null ?
