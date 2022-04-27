@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.bigml.binding.laminar.MathOps;
 import org.bigml.binding.resources.AbstractResource;
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONArray;
@@ -258,7 +257,7 @@ public class LocalPca extends ModelFields implements Serializable {
 		JSONArray inputs = new JSONArray();
 		inputs.add(inputArray);
 		
-		ArrayList<List<Double>> dots = MathOps.dot(components, inputs);
+		ArrayList<List<Double>> dots = Utils.dot(components, inputs);
 		ArrayList<Double> result = new ArrayList<Double>();
 		for (List<Double> dot: dots) {
 			result.add(dot.get(0));
@@ -301,7 +300,7 @@ public class LocalPca extends ModelFields implements Serializable {
 			JSONArray eigenArray = new JSONArray();
 			eigenArray.add(eigenvector);
 			
-			ArrayList<List<Double>> dots = MathOps.dot(eigen, eigenArray);
+			ArrayList<List<Double>> dots = Utils.dot(eigen, eigenArray);
 			sumEigenvectors.add(dots.get(0).get(0));
 		}
 		return sumEigenvectors;
