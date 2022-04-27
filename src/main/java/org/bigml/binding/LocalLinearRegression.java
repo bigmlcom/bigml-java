@@ -14,7 +14,6 @@ import java.util.Map;
 
 import org.bigml.binding.utils.Utils;
 import org.bigml.binding.resources.AbstractResource;
-import org.bigml.binding.laminar.MathOps;
 
 import org.apache.commons.math3.distribution.TDistribution;
 
@@ -324,7 +323,7 @@ public class LocalLinearRegression extends ModelFields {
             JSONArray inputs = new JSONArray();
             inputs.add(newInputs);
 
-            ArrayList<List<Double>> dots = MathOps.dot(projections, inputs);
+            ArrayList<List<Double>> dots = Utils.dot(projections, inputs);
             for (List<Double> dot: dots) {
                 newInputs.add(dot.get(0));
             }
@@ -354,7 +353,7 @@ public class LocalLinearRegression extends ModelFields {
         JSONArray inputs = new JSONArray();
         inputs.add(inputArray);
 
-        double product = ((List<Double>)MathOps.dot(MathOps.dot(inputs, this.invXtx), inputs).get(0)).get(0);
+        double product = ((List<Double>)Utils.dot(Utils.dot(inputs, this.invXtx), inputs).get(0)).get(0);
 
         double confidenceInterval = 0;
         double predictionInterval = 0;
@@ -498,7 +497,7 @@ public class LocalLinearRegression extends ModelFields {
         JSONArray inputs = new JSONArray();
         inputs.add(inputArray);
 
-        ArrayList<List<Double>> dots = MathOps.dot(coefficientsList, inputs);
+        ArrayList<List<Double>> dots = Utils.dot(coefficientsList, inputs);
         double prediction = dots.get(0).get(0);
 
         HashMap<String, Object> result = new HashMap<String, Object>();

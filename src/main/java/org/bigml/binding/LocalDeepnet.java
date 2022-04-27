@@ -5,16 +5,21 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.bigml.binding.laminar.MathOps;
-import org.bigml.binding.laminar.Preprocess;
+import org.apache.commons.lang3.ArrayUtils;
 import org.bigml.binding.resources.AbstractResource;
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.bigml.mimir.Predictor;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 /**
  * A local Predictive Deepnet.
@@ -62,12 +67,7 @@ public class LocalDeepnet extends ModelFields implements SupervisedModelInterfac
 	private JSONArray objectiveFields = null;
 	private Boolean regression = false;
 	private List<String> classNames = new ArrayList<String>();
-	private JSONObject network = null;
-	private JSONArray networks = null;
-	private JSONObject exposition = null;
-	private JSONArray preprocess = null;
-	//private JSONObject optimizer = null;
-	private String defaultNumericValue = null;
+
 		
 	public LocalDeepnet(JSONObject deepnet) throws Exception {
         this(null, deepnet);
@@ -106,8 +106,6 @@ public class LocalDeepnet extends ModelFields implements SupervisedModelInterfac
 				JSONObject fields = (JSONObject) Utils.getJSONObject(
 						deepnetInfo, "fields", new JSONObject());
 
-				this.defaultNumericValue = (String) deepnet.get("default_numeric_value");
-
 				// initialize ModelFields
 				objectiveField = objectiveField != null ?
 						objectiveField : (String) objectiveFields.get(0);
@@ -127,30 +125,6 @@ public class LocalDeepnet extends ModelFields implements SupervisedModelInterfac
 						classNames.add((String) ((JSONArray) cat).get(0));
 					}
 					Collections.sort(classNames);
-				}
-				
-				missingNumerics = (Boolean) Utils.getJSONObject(
-						deepnetInfo, "missing_numerics");
-				
-				if (deepnetInfo.containsKey("network")) {
-					network = (JSONObject) deepnetInfo.get("network");
-					networks = (JSONArray) Utils.getJSONObject(
-							network, "networks", new JSONArray());
-
-					if (network.containsKey("network")) {
-    					exposition = (JSONObject) Utils.getJSONObject(
-    						(JSONObject) networks.get(0),
-    						"output_exposition", new JSONObject());
-					} else {
-					    exposition = null;
-					}
-					exposition = (JSONObject) Utils.getJSONObject(
-						network, "output_exposition", exposition);
-
-					preprocess = (JSONArray) Utils.getJSONObject(
-							network, "preprocess", new JSONArray());
-					//optimizer = (JSONObject) Utils.getJSONObject(
-					//		network, "optimizer", new JSONObject());
 				}
 			} else {
 				throw new Exception(
@@ -230,7 +204,7 @@ public class LocalDeepnet extends ModelFields implements SupervisedModelInterfac
 	 */
 	public HashMap<String, Object> predict(
 			JSONObject inputData, JSONObject operatingPoint, 
-			String operatingKind, Boolean full) {
+			String operatingKind, Boolean full) throws Exception {
 		
 		if (full == null) {
 			full = false;
@@ -269,24 +243,20 @@ public class LocalDeepnet extends ModelFields implements SupervisedModelInterfac
         	return predictOperatingKind(inputData, operatingKind);
         }
         
-        
-        // Computes text and categorical field expansion
-        Map<String, Object> uniqueTerms = uniqueTerms(inputData);
+        HashMap<String, Object> prediction = new HashMap<String, Object>();
+        HashMap<String, Object> instance =
+            new ObjectMapper().readValue(inputData.toString(), HashMap.class);
 
-        ArrayList<List<Double>> inputArray =
-        		fillArray(inputData, uniqueTerms);
+		Predictor predictor = Predictor.getPredictor(this.model.toJSONString());
+        Double[] predict = ArrayUtils.toObject(predictor.predict(instance));
 
-        HashMap<String, Object> prediction = null;
-        if (networks != null && networks.size() > 0) {
-        	prediction = predictList(inputArray);
-        } else {
-        	prediction = predictSingle(inputArray);
-        }
-        
+        ArrayList<List<Double>> pred = new ArrayList<List<Double>>();
+        pred.add((List<Double>) Arrays.asList(predict));
+		prediction = toPrediction(pred);
+
         if (full) {
         	prediction.put("unused_fields", unusedFields);
         }
-
         return prediction;
 	}
 	
@@ -384,157 +354,6 @@ public class LocalDeepnet extends ModelFields implements SupervisedModelInterfac
 		prediction.put("prediction", prediction.get("category"));
 		prediction.remove("category");
 		return prediction;
-	}
-
-	
-	/**
-	 * Builds a list of occurrences for all the available terms
-	 */
-	private List<Double> expandTerms(
-			List termsList, Map<String, Integer> inputTerms) {
-
-		Double[] termsOccurrences = new Double[termsList.size()];
-		Arrays.fill(termsOccurrences, 0.0);
-
-		if (inputTerms!=null) {
-			for (Object term:  inputTerms.keySet()) {
-				double occurrences = ((Number) 
-						inputTerms.get(term)).doubleValue();
-				Integer index = termsList.indexOf(term);
-				termsOccurrences[index] = occurrences;
-			}
-		}
-		return Arrays.asList(termsOccurrences);
-	}
-
-
-	/**
-	 * Filling the input array for the network with the data in the
-	 * input_data dictionary. Numeric missings are added as a new field
-	 * and texts/items are processed.
-	 */
-	private ArrayList<List<Double>> fillArray(
-			JSONObject inputData, Map<String, Object> uniqueTerms) {
-
-		ArrayList<Object> columns = new ArrayList<Object>();
-		List<Double> termsOccurrences = null;
-		for (Object fieldId : inputFields) {
-
-			// if the field is text or items, we need to expand the field
-            // in one field per term and get its frequency
-
-			Map<String, Integer> uniqueTerm = (Map<String, Integer>)
-					uniqueTerms.get(fieldId);
-
-			if (tagClouds.containsKey(fieldId)) {
-				termsOccurrences = expandTerms(
-						(List) tagClouds.get(fieldId), uniqueTerm);
-				columns.addAll(termsOccurrences);
-            } else {
-            	if (items.containsKey(fieldId)) {
-            		termsOccurrences = expandTerms(
-    						(List) items.get(fieldId), uniqueTerm);
-            		columns.addAll(termsOccurrences);
-                } else {
-                	if (categories.containsKey(fieldId)) {
-                		if (uniqueTerm != null) {
-                			Object[] term = uniqueTerm.values().toArray();
-                			columns.add(uniqueTerm.keySet().toArray()[0]);
-            			} else {
-            				columns.add(null);
-            			}
-                    } else {
-                    	// when missing_numerics is True and the field had missings
-                    	// in the training data, then we add a new "is missing?" element
-                    	// whose value is 1 or 0 according to whether the field is
-                    	// missing or not in the input data
-                        Number missingCountNumber = (Number) Utils.getJSONObject(fields,
-                               fieldId + ".summary.missing_count");
-                        int missingCount = missingCountNumber != null ? missingCountNumber.intValue() : 0;
-
-                    	Double inputFieldValue = null;
-                    	if (inputData.get(fieldId) != null) {
-                    		inputFieldValue = ((Number) inputData.get(fieldId)).doubleValue();
-                    	}
-
-                    	if (missingNumerics && missingCount > 0) {
-                    		if (inputData.containsKey(fieldId)) {
-                        		columns.add(inputFieldValue);
-                    			columns.add(0.0);
-                    		} else {
-                    			columns.add(0.0);
-                    			columns.add(1.0);
-                    		}
-
-                    	} else {
-                    		columns.add(inputFieldValue);
-                    	}
-
-                    }
-                }
-            }
-		}
-
-		return Preprocess.preprocess(columns, preprocess);
-	}
-	
-	
-	/**
-	 * Makes a prediction with a single network
-	 */
-	private HashMap<String, Object> predictSingle(ArrayList<List<Double>> inputArray) {
-		JSONArray trees = (JSONArray) network.get("trees");
-		if (trees != null && trees.size() > 0) {
-			inputArray = Preprocess.treeTransform(inputArray, trees);
-		}
-
-		return toPrediction(modelPredict(inputArray, network));
-	}
-
-
-	/**
-	 * Makes a prediction with multiple network
-	 */
-	private HashMap<String, Object> predictList(ArrayList<List<Double>> inputArray) {
-		ArrayList<List<Double>> inputArrayTrees =
-				new ArrayList<List<Double>>();
-		JSONArray trees = (JSONArray) network.get("trees");
-		if (trees != null && trees.size() > 0) {
-			inputArrayTrees = Preprocess.treeTransform(inputArray, trees);
-		}
-		
-		JSONArray predictions = new JSONArray();
-		for (Object networkObj: networks) {
-			JSONObject network = (JSONObject) networkObj;
-			
-			Boolean networkTrees = (Boolean) network.get("trees");
-			if (networkTrees != null && networkTrees) {
-				predictions.add(modelPredict(inputArrayTrees, network));
-			} else {
-				predictions.add(modelPredict(inputArray, network));
-			}
-		}
-
-		return toPrediction(MathOps.sumAndNormalize(predictions, regression));
-	}
-
-
-	/**
-	 * Prediction with one model
-	 */
-	private ArrayList<List<Double>> modelPredict(
-			ArrayList<List<Double>> inputArray, JSONObject model) {
-
-		JSONArray layers = (JSONArray) model.get("layers");
-		ArrayList<List<Double>> out = MathOps.propagate(inputArray, layers);
-
-		if (regression) {
-			Double mean = ((Number) exposition.get("mean")).doubleValue();
-			Double stdev = ((Number) exposition.get("stdev")).doubleValue();
-			out = MathOps.destandardize(out, mean, stdev);
-		}
-
-		return out;
 	}
 
 	/**

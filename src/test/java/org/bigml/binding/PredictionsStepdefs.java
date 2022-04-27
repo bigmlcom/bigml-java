@@ -448,7 +448,7 @@ public class PredictionsStepdefs {
     @When("^I create a local prediction with deepnet with operating point \"(.*)\" for \"(.*)\"$")
     public void I_create_a_local_prediction_with_deepnet_with_operating_point(
     		String operatingPoint, String inputData)
-            throws AuthenticationException {
+            throws Exception {
     	
     	JSONObject data = (JSONObject) JSONValue.parse(inputData);
     	
@@ -480,7 +480,7 @@ public class PredictionsStepdefs {
     @When("^I create a local prediction with deepnet with operating kind \"(.*)\" for \"(.*)\"$")
     public void I_create_a_local_prediction_with_deepnet_with_operating_kind(
     		String kind, String inputData)
-            throws AuthenticationException {
+            throws Exception {
 
     	JSONObject data = (JSONObject) JSONValue.parse(inputData);
     	HashMap<String, Object> prediction = context.localDeepnet.predict(

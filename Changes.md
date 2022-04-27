@@ -6,6 +6,7 @@ This version deprecating support for java versions. Only java 11 or higher suppo
 from this version on.
 
 * Updated maven plugins dependencies.
+* Local Deepnet predictions usign bigml.mimir.
 
 
 
