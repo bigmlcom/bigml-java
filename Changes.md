@@ -1,5 +1,10 @@
 # Changes in the BigML.io Java bindings
 
+## 2.0.2 version
+
+* Bump spring-core, spring-test and spring-context from 5.3.19 to 5.3.20
+
+
 ## 2.0.1 version
 
 * Updated org.bigml:mimir dependency to version 0.8.1
