@@ -1,5 +1,9 @@
 # Changes in the BigML.io Java bindings
 
+## 2.0.3 version
+
+* Bump jackson-databind from 2.13.2.1 to 2.13.4.1 due to security vulnerability
+
 ## 2.0.2 version
 
 * Bump spring-core, spring-test and spring-context from 5.3.19 to 5.3.20
