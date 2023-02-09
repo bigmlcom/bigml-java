@@ -1,5 +1,10 @@
 # Changes in the BigML.io Java bindings
 
+## 2.0.4 version
+
+* Updated org.bigml:mimir dependency to version 0.8.3
+
+
 ## 2.0.3 version
 
 * Bump jackson-databind from 2.13.2.1 to 2.13.4.1 due to security vulnerability
