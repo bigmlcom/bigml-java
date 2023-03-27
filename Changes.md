@@ -1,5 +1,10 @@
 # Changes in the BigML.io Java bindings
 
+## 2.0.5 version
+
+* Updated commons-text dependency to 1.10.0
+* Updated spring-core dependency to 5.3.26
+
 ## 2.0.4 version
 
 * Updated org.bigml:mimir dependency to version 0.8.3
@@ -37,7 +42,7 @@ from this version on.
 
 ### Bugs
 
-* Fixing local deepnet prediction method checking missing_count is present in 
+* Fixing local deepnet prediction method checking missing_count is present in
 fields summary.
 
 ## 1.8.18 version
