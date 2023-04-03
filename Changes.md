@@ -1,5 +1,13 @@
 # Changes in the BigML.io Java bindings
 
+
+## 2.0.7 version
+
+* Updated jackson-core dependency to 2.14.2
+* Updated jackson-annotations dependency to 2.14.2
+* Updated jackson-databind dependency to 2.14.2
+
+
 ## 2.0.6 version
 
 * Updated jackson-databind dependency to 2.13.4.2
