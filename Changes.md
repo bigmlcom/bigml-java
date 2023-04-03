@@ -1,5 +1,10 @@
 # Changes in the BigML.io Java bindings
 
+## 2.0.6 version
+
+* Updated jackson-databind dependency to 2.13.4.2
+
+
 ## 2.0.5 version
 
 * Updated commons-text dependency to 1.10.0
