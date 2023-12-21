@@ -19,12 +19,12 @@ public abstract class AbstractModelResource extends AbstractResource {
 
     // Logging
     Logger logger = LoggerFactory.getLogger(AbstractModelResource.class);
-    
-    
+
+
     /**
      * Creates a new resource.
      *
-     * POST /andromeda/xxxxx?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/xxxxx?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param datasetId
@@ -48,12 +48,12 @@ public abstract class AbstractModelResource extends AbstractResource {
                 waitTime, retries, null);
         return createResource(this.resourceUrl, requestObject.toJSONString());
     }
-    
+
 
     /**
      * Creates a resource from a list of `datasets`.
      *
-     * POST /andromeda/xxxxx?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/xxxxx?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param datasetsIds
@@ -75,12 +75,12 @@ public abstract class AbstractModelResource extends AbstractResource {
 
         JSONObject requestObject = createFromDatasets(
                 (String[]) datasetsIds.toArray(new String[datasetsIds.size()]), args, waitTime, retries, null);
-        
+
         return createResource(this.resourceUrl, requestObject.toJSONString());
     }
-    
-    
-    
+
+
+
     // ################################################################
     // #
     // # Protected methods
@@ -90,7 +90,7 @@ public abstract class AbstractModelResource extends AbstractResource {
     /**
      * Builds args dictionary for the create call from a `dataset` or a list of
      * `datasets`
-     * 
+     *
      * @param datasets
      * 			  an array of datasets ids
      * @param args
@@ -101,8 +101,8 @@ public abstract class AbstractModelResource extends AbstractResource {
      * @param retries
      *            number of times to try the operation. Optional
      * @param key
-     * 			  name of the resource to create					
-     * 
+     * 			  name of the resource to create
+     *
      * @return the json representation of the new resource
      */
     protected JSONObject createFromDatasets(final String[] datasets,
@@ -125,7 +125,7 @@ public abstract class AbstractModelResource extends AbstractResource {
 
             // Checking status
             try {
-                waitForResource(datasetId, "datasetIsReady", 
+                waitForResource(datasetId, "datasetIsReady",
                 		waitTime, retries);
                 datasetsIds.add(datasetId);
             } catch (Throwable e) {

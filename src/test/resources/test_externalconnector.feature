@@ -1,3 +1,4 @@
+@externalconnector
 Feature: ExternalConnector REST api calls
 
     Scenario Outline: Successfully creating an external connector

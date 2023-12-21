@@ -1,3 +1,4 @@
+@localdeepnet
 Feature: LocalDeepnet
 
 	Scenario Outline: Successfully comparing predictions for deepnets
@@ -83,7 +84,7 @@ Feature: LocalDeepnet
         And I create a local deepnet prediction for "<data_input>"
         Then the local deepnet prediction is "<prediction>"
 
-      Examples:  
+      Examples:
         | data  | time_1  | data_input  | objective    | prediction | params    |
         | data/iris.csv | 1000  | {}    | 000004   | Iris-versicolor  | {}  |
         | data/iris.csv | 1000  | {}    | 000004   | Iris-virginica  | {"default_numeric_value": "maximum"} |

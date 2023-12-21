@@ -1,3 +1,4 @@
+@project
 Feature: Projects REST api calls
 
     Scenario Outline: Successfully creating a project:

@@ -1,5 +1,6 @@
-Feature: LocalTimeseries 
-	
+@localtimeseries
+Feature: LocalTimeseries
+
     Scenario Outline: Successfully comparing forecasts for Timeseries
         Given I provision a dataset from "<data>" file
         And I create a time series from a dataset with "<params>"

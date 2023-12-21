@@ -19,8 +19,8 @@ public class TopicDistribution extends AbstractResource {
 
     // Logging
     Logger logger = LoggerFactory.getLogger(TopicDistribution.class);
-    
-	
+
+
     /**
      * Constructor
      *
@@ -32,17 +32,17 @@ public class TopicDistribution extends AbstractResource {
      * @param cacheManager	cache manager
      */
     public TopicDistribution(final BigMLClient bigmlClient,
-    						 final String apiUser, final String apiKey, 
+    						 final String apiUser, final String apiKey,
     						 final String project, final String organization,
     						 final CacheManager cacheManager) {
-    		super.init(bigmlClient, apiUser, apiKey, project, organization, 
+    		super.init(bigmlClient, apiUser, apiKey, project, organization,
     				   cacheManager, TOPICDISTRIBUTION_RE, TOPICDISTRIBUTION_PATH);
     }
 
     /**
      * Creates a topic distribution from a topic model.
      *
-     * POST /andromeda/topicdistribution?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/topicdistribution?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param topicModelId
@@ -74,7 +74,7 @@ public class TopicDistribution extends AbstractResource {
 
         try {
         		waitForResource(topicModelId, "topicModelIsReady", waitTime, retries);
-        	
+
             // Input data
             JSONObject inputDataJSON = null;
             if (inputData == null) {

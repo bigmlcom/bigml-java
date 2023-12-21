@@ -1,15 +1,16 @@
+@locallogisticregression
 Feature: LocalLogisticRegression
-	
+
 	Scenario Outline: Successfully comparing logistic regression predictions
         Given I provision a dataset from "<data>" file
         And I create a logisticregression from a dataset
         And I wait until the logisticregression is ready less than <time_1> secs
         And I create a local logisticregression
-        When I create a logisticregression prediction for "<data_input>"  
+        When I create a logisticregression prediction for "<data_input>"
         Then the logisticregression prediction is "<prediction>"
         And I create a local logisticregression prediction for "<data_input>"
         Then the local logisticregression prediction is "<prediction>"
-        
+
         Examples:
         | data  | time_1  | data_input | prediction |
         | data/iris.csv | 50 | {"petal width": 0.5, "petal length": 0.5, "sepal width": 0.5, "sepal length": 0.5} |  Iris-versicolor |
@@ -18,7 +19,7 @@ Feature: LocalLogisticRegression
         | data/iris.csv | 50 | {"petal length": 1} |  Iris-setosa  |
         | data/iris_sp_chars.csv | 50 | {"pétal.length": 4, "pétal&width\u0000": 1.5, "sépal&width": 0.5, "sépal.length": 0.5} |  Iris-versicolor |
         | data/price.csv | 50  | {"Price": 1200} |  Product1 |
-  
+
 
     Scenario Outline: Successfully comparing predictions with text options
         Given I create a data source uploading a "<data>" file
@@ -28,8 +29,8 @@ Feature: LocalLogisticRegression
         And I wait until the dataset is ready less than <time_2> secs
         And I create a logisticregression from a dataset
         And I wait until the logisticregression is ready less than <time_3> secs
-        And I create a local logisticregression        
-        When I create a logisticregression prediction for "<data_input>"  
+        And I create a local logisticregression
+        When I create a logisticregression prediction for "<data_input>"
         Then the logisticregression prediction is "<prediction>"
         And I create a local logisticregression prediction for "<data_input>"
         Then the local logisticregression prediction is "<prediction>"
@@ -38,7 +39,7 @@ Feature: LocalLogisticRegression
         | data  | time_1  | time_2 | time_3 | options | data_input | prediction |
         | data/spam.csv | 50      | 50     | 50 | {"fields": {"000001": {"optype": "text", "term_analysis": {"case_sensitive": true, "stem_words": true, "use_stopwords": false, "language": "en"}}}}  | {"Message": "Mobile call"}  |  ham |
         | data/spam.csv | 50      | 50     | 50 | {"fields": {"000001": {"optype": "text", "term_analysis": {"case_sensitive": true, "stem_words": true, "use_stopwords": false, "language": "en"}}}}  | {"Message": "A normal message"}  |  ham  |
-        | data/spam.csv | 50      | 50     | 50 | {"fields": {"000001": {"optype": "text", "term_analysis": {"case_sensitive": false, "stem_words": false, "use_stopwords": false, "language": "en"}}}}  | {"Message": "Mobile calls"}  |  ham  |       
+        | data/spam.csv | 50      | 50     | 50 | {"fields": {"000001": {"optype": "text", "term_analysis": {"case_sensitive": false, "stem_words": false, "use_stopwords": false, "language": "en"}}}}  | {"Message": "Mobile calls"}  |  ham  |
         | data/spam.csv | 50      | 50     | 50 | {"fields": {"000001": {"optype": "text", "term_analysis": {"case_sensitive": false, "stem_words": false, "use_stopwords": false, "language": "en"}}}}  | {"Message": "A normal message"}  |  ham  |
         | data/spam.csv | 50      | 50     | 50 | {"fields": {"000001": {"optype": "text", "term_analysis": {"case_sensitive": false, "stem_words": true, "use_stopwords": true, "language": "en"}}}}  | {"Message": "Mobile call"}  |  ham |
         | data/spam.csv | 50      | 50     | 50 | {"fields": {"000001": {"optype": "text", "term_analysis": {"case_sensitive": false, "stem_words": true, "use_stopwords": true, "language": "en"}}}}  | {"Message": "A normal message"}  |  ham  |
@@ -66,7 +67,7 @@ Feature: LocalLogisticRegression
         | data/spam.csv | 50      | 50     | 180  | {"fields": {"000001": {"optype": "text", "term_analysis": {"token_mode": "full_terms_only", "language": "en"}}}}  | {"Message": "A normal message"}  |  ham | 0.8795  | 000000  |
         | data/spam.csv | 50      | 50     | 180  | {"fields": {"000001": {"optype": "text", "term_analysis": {"token_mode": "all", "language": "en"}}}}  | {"Message": "mobile"}  |  ham | 0.91833 | 000000  |
         | data/movies.csv | 50      | 50     | 180  | {"fields": {"000007": {"optype": "items", "item_analysis": {"separator": "$"}}}}  | {"gender": "Female", "genres": "Adventure$Action", "timestamp": 993906291, "occupation": "K-12 student", "zipcode": 59583, "rating": 3}  |  Under 18  | 0.83441  | 000002  |
-    
+
     Scenario Outline: Successfully comparing predictions with text options
         Given I provision a dataset from "<data>" file
         And I create a logisticregression with objective "<objective>" and params "<params>"
@@ -76,12 +77,12 @@ Feature: LocalLogisticRegression
         Then the logisticregression prediction is "<prediction>"
         And the logisticregression probability for the prediction is "<probability>"
         And I create a local logisticregression prediction for "<data_input>"
-        Then the local logisticregression prediction is "<prediction>"       
+        Then the local logisticregression prediction is "<prediction>"
         And the local logisticregression probability for the prediction is "<probability>"
 
         Examples:
         | data  | time_1  | params | data_input | prediction | probability | objective |
-        | data/iris.csv | 180  | {"weight_field": "000000", "missing_numerics": false}  | {"petal width": 1.5, "petal length": 2, "sepal width":1}  |  Iris-versicolor | 0.9547  | 000004  |     
+        | data/iris.csv | 180  | {"weight_field": "000000", "missing_numerics": false}  | {"petal width": 1.5, "petal length": 2, "sepal width":1}  |  Iris-versicolor | 0.9547  | 000004  |
 
 
      Scenario Outline: Successfully comparing predictions with text options
@@ -97,7 +98,7 @@ Feature: LocalLogisticRegression
         Then the logisticregression prediction is "<prediction>"
         And the logisticregression probability for the prediction is "<probability>"
         And I create a local logisticregression prediction for "<data_input>"
-        Then the local logisticregression prediction is "<prediction>"       
+        Then the local logisticregression prediction is "<prediction>"
         And the local logisticregression probability for the prediction is "<probability>"
 
         Examples:
@@ -121,7 +122,7 @@ Feature: LocalLogisticRegression
         Then the logisticregression prediction is "<prediction>"
         And the logisticregression probability for the prediction is "<probability>"
         And I create a local logisticregression prediction for "<data_input>"
-        Then the local logisticregression prediction is "<prediction>"       
+        Then the local logisticregression prediction is "<prediction>"
         And the local logisticregression probability for the prediction is "<probability>"
 
         Examples:

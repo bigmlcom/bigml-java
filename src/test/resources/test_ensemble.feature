@@ -1,3 +1,4 @@
+@ensemble
 Feature: Ensembles REST api
 
     Scenario Outline: Successfully creating a prediction from an ensemble:

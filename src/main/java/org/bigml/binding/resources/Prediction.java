@@ -22,8 +22,8 @@ public class Prediction extends AbstractResource {
 
     // Logging
     Logger logger = LoggerFactory.getLogger(Prediction.class);
-    
-	
+
+
     /**
      * Constructor
      *
@@ -35,7 +35,7 @@ public class Prediction extends AbstractResource {
      * @param cacheManager	cache manager
      */
     public Prediction(final BigMLClient bigmlClient,
-    				  final String apiUser, final String apiKey, 
+    				  final String apiUser, final String apiKey,
     				  final String project, final String organization,
     				  final CacheManager cacheManager) {
     		super.init(bigmlClient, apiUser, apiKey, project, organization,
@@ -46,14 +46,14 @@ public class Prediction extends AbstractResource {
      * Creates a new prediction.
      *
      * POST
-     * /andromeda/prediction?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/prediction?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param model
      *            a unique identifier in the form model/id, ensemble/id,
-     *            logisticregression/id or linearregression/id where id 
-     *            is a string of 24 alpha-numeric chars for the model, 
-     *            ensemble, logisticregression or linearregression to 
+     *            logisticregression/id or linearregression/id where id
+     *            is a string of 24 alpha-numeric chars for the model,
+     *            ensemble, logisticregression or linearregression to
      *            attach the prediction.
      * @param inputData
      *            an object with field's id/value pairs representing the
@@ -77,8 +77,8 @@ public class Prediction extends AbstractResource {
         JSONObject modelJSON = null;
 
         if (model == null || model.length() == 0 ||
-            !(model.matches(MODEL_RE) || 
-              model.matches(ENSEMBLE_RE) || 
+            !(model.matches(MODEL_RE) ||
+              model.matches(ENSEMBLE_RE) ||
               model.matches(LOGISTICREGRESSION_RE) ||
               model.matches(LINEARREGRESSION_RE) ||
               model.matches(DEEPNET_RE) ||
@@ -103,15 +103,15 @@ public class Prediction extends AbstractResource {
             if (model.matches(LOGISTICREGRESSION_RE)) {
             	waitForResource(model, "logisticRegressionIsReady", waitTime, retries);
             }
-            
+
             if (model.matches(LINEARREGRESSION_RE)) {
             	waitForResource(model, "linearRegressionIsReady", waitTime, retries);
             }
-            
+
             if (model.matches(DEEPNET_RE)) {
             	waitForResource(model, "deepnetIsReady", waitTime, retries);
             }
-            
+
             if (model.matches(FUSION_RE)) {
 	        	waitForResource(model, "fusionIsReady", waitTime, retries);
 	        }
@@ -170,7 +170,7 @@ public class Prediction extends AbstractResource {
 
             requestObject.put("input_data", inputDataJSON);
 
-            return createResource(resourceUrl, 
+            return createResource(resourceUrl,
             		requestObject.toJSONString());
 
         } catch (Throwable e) {

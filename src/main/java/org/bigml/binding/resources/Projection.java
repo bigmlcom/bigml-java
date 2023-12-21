@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 
 
 /**
- * Entry point to create, retrieve, list, update, and delete 
+ * Entry point to create, retrieve, list, update, and delete
  * projections.
  *
  * Full API documentation on the API can be found from BigML at:
@@ -20,7 +20,7 @@ public class Projection extends AbstractResource {
 
     // Logging
     Logger logger = LoggerFactory.getLogger(Projection.class);
-    
+
     /**
      * Constructor
      *
@@ -32,17 +32,17 @@ public class Projection extends AbstractResource {
      * @param cacheManager	cache manager
      */
     public Projection(final BigMLClient bigmlClient,
-    				  final String apiUser, final String apiKey, 
+    				  final String apiUser, final String apiKey,
     				  final String project, final String organization,
     				  final CacheManager cacheManager) {
 		super.init(bigmlClient, apiUser, apiKey, project, organization,
 				   cacheManager, PROJECTION_RE, PROJECTION_PATH);
     }
-    
+
     /**
      * Creates a projection from a pca.
      *
-     * POST /andromeda/projection?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/projection?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param pcaId
@@ -55,7 +55,7 @@ public class Projection extends AbstractResource {
      * @param args
      *            set of parameters for the new projection. Optional
      * @param waitTime
-     *            time (milliseconds) to wait for next check of FINISHED 
+     *            time (milliseconds) to wait for next check of FINISHED
      *            status for source before to start to create the projection.
      *            Optional
      * @param retries

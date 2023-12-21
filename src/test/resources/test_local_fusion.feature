@@ -1,5 +1,6 @@
+@localfusion
 Feature: LocalFusion
-    
+
     Scenario Outline: Successfully creating fusion from models:
         Given I provision a dataset from "<data>" file
         And I create a logisticregression with objective "<objective>" and params "<params>"
@@ -17,12 +18,12 @@ Feature: LocalFusion
         When I create a local fusion prediction for "<data_input>"
         Then the local fusion prediction is "<prediction>"
         Then the local prediction probability is <probability>
-        
+
         Examples:
         | data	| time_1  | params | objective | data_input	| prediction	| probability	|
         | data/iris.csv | 50	| {"missing_numerics": true} | 000004	| {"petal width": 1.75, "petal length": 2.45}	| Iris-setosa	| 0.4726	|
-        
-        
+
+
     Scenario Outline: Successfully creating fusion from models:
         Given I provision a dataset from "<data>" file
         And I create a logisticregression with objective "<objective>" and params "<params>"
@@ -40,12 +41,12 @@ Feature: LocalFusion
         When I create a local fusion prediction for "<data_input>"
         Then the local fusion prediction is "<prediction>"
         Then the local prediction probability is <probability>
-        
+
         Examples:
         | data	| time_1  | params | params2	| objective | data_input	| prediction	| probability	|
         | data/iris.csv | 50	| {"missing_numerics": true} | {"missing_numerics": false, "balance_fields": false }	|  000004	| {"petal width": 1.75, "petal length": 2.45}	| Iris-setosa	| 0.4726	|
-        
-        
+
+
     Scenario Outline: Successfully creating fusion from models:
         Given I provision a dataset from "<data>" file
         And I create a logisticregression with objective "<objective>" and params "<params>"
@@ -63,8 +64,7 @@ Feature: LocalFusion
         When I create a local fusion prediction for "<data_input>"
         Then the local fusion prediction is "<prediction>"
         Then the local prediction probability is <probability>
-        
+
         Examples:
         | data	| time_1  | params | params2	| objective | data_input	| prediction	| probability	| weights	|
         | data/iris.csv | 50	| {"missing_numerics": true} | {"missing_numerics": false, "balance_fields": false }	|  000004	| {"petal width": 1.75, "petal length": 2.45}	| Iris-setosa	| 0.4726	| [1, 2]	|
-         

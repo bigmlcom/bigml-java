@@ -23,8 +23,8 @@ public class Library extends AbstractResource {
 
     // Logging
     Logger logger = LoggerFactory.getLogger(Library.class);
-    
-	
+
+
     /**
      * Constructor
      *
@@ -36,7 +36,7 @@ public class Library extends AbstractResource {
      * @param cacheManager	cache manager
      */
     public Library(final BigMLClient bigmlClient,
-    			   final String apiUser, final String apiKey, 
+    			   final String apiUser, final String apiKey,
     			   final String project, final String organization,
     			   final CacheManager cacheManager) {
     		super.init(bigmlClient, apiUser, apiKey, project, organization,
@@ -46,7 +46,7 @@ public class Library extends AbstractResource {
     /**
      * Creates a whizzml library from its source code.
      *
-     * POST /andromeda/library?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/library?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param source
@@ -80,7 +80,7 @@ public class Library extends AbstractResource {
 
             if (source.matches(LIBRARY_RE)) {
             		waitForResource(source, "libraryIsReady", waitTime, retries);
-            	
+
                 requestObject.put("origin", source);
                 return createResource(resourceUrl, requestObject.toJSONString());
             }

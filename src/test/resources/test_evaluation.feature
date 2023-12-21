@@ -1,3 +1,4 @@
+@evaluation
 Feature: Evaluation REST api
 
 		 Scenario Outline: Successfully creating an evaluation:

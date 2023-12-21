@@ -1,3 +1,4 @@
+@localanomaly
 Feature: LocalAnomaly
 
 	Scenario Outline: Successfully comparing scores from anomaly detectors:
@@ -25,11 +26,10 @@ Feature: LocalAnomaly
         When I create an anomaly score for "<data_input>"
         Then the anomaly score is "<score>"
         And I create a local anomaly score for "<data_input>"
-        Then the local anomaly score is <score>    
-        
-        
-      Examples:  
+        Then the local anomaly score is <score>
+
+
+      Examples:
         | data	| time_1  | data_input	| score	| params	|
         | data/iris.csv	| 1000	| {"petal length": 2, "petal width": 2, "sepal length": 2, "sepal width": 2, "species": "Iris-setosa"}	| 0.64387  | {}	|
         | data/iris.csv	| 1000	| {}	| 0.77699  | {"default_numeric_value": "maximum"}	|
-        

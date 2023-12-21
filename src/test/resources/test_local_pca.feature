@@ -1,6 +1,7 @@
+@localpca
 Feature: LocalPca
 
-	Scenario Outline: Successfully comparing projections for PCAs   
+	Scenario Outline: Successfully comparing projections for PCAs
         Given I provision a dataset from "<data>" file
         And I create a pca with "<params>"
         And I wait until the pca is ready less than <time_1> secs
@@ -9,7 +10,7 @@ Feature: LocalPca
         Then the projection is "<projection>"
         And I create a local projection for "<data_input>"
         Then the local projection is "<projection>"
-                
+
         Examples:
         | data          | time_1  | data_input  | projection         | params    |
         | data/iris.csv | 120  | {}  | {"PC2": 0, "PC3": 0, "PC1": 0, "PC6": 0, "PC4": 5e-05, "PC5": 0} | {}    |
@@ -31,7 +32,7 @@ Feature: LocalPca
         And I create a local pca
         And I create a local projection for "<data_input>"
         Then the local projection is "<projection>"
-                
+
         Examples:
         | data  | time_1  | time_2 | time_3 | options |  data_input | projection  | params    |
         | data/spam_tiny.csv  | 120      | 120     | 120  | {"fields": {"000001": {"optype": "text", "term_analysis": {"token_mode": "all"}}}}  | {"Message": "early"}  | {"PC40": 0.00416, "PC38": 0.08267, "PC39": 0.00033, "PC18": 0.28094, "PC19": -0.15056, "PC14": 0.20643, "PC15": 0.23931, "PC16": 0.03251, "PC17": 0.02776, "PC10": 0.1424, "PC11": 0.4059, "PC12": -0.1238, "PC13": 0.15131, "PC43": 0.29617, "PC42": 1.0091, "PC41": 0, "PC25": 0.07164, "PC24": -0.29904, "PC27": -0.1331, "PC26": -0.18572, "PC21": 0.25616, "PC20": 0.30424, "PC23": -0.45775, "PC22": -0.3362, "PC47": -0.13757, "PC49": 0.01864, "PC48": 0.04742, "PC29": -0.16286, "PC28": 0.42207, "PC32": -0.05917, "PC46": -0.05018, "PC31": -0.13973, "PC45": -0.05015, "PC36": 0.03017, "PC44": 0, "PC37": -0.06093, "PC34": 0.25821, "PC35": -0.22194, "PC33": -0.23398, "PC8": 0.01159, "PC9": -0.16042, "PC2": -0.09202, "PC3": 0.14371, "PC1": 0.65114, "PC6": -0.43034, "PC7": -0.02563, "PC4": -0.04947, "PC5": -0.07796, "PC50": -0.00769, "PC30": 0.07813} | {} |

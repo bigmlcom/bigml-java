@@ -80,7 +80,7 @@ public class CommonStepdefs {
 		if ("list".equals(operation)) {
 			name = plural(name);
 		}
-		
+
 		if ("create-args".equals(operation)) {
 			name = "create" + name.substring(0, 1).toUpperCase()
 				+ name.substring(1);
@@ -97,7 +97,7 @@ public class CommonStepdefs {
 			}
 			if ("create".equals(operation)) {
 				method = client.getClass().getMethod(
-						name, String.class, JSONObject.class, 
+						name, String.class, JSONObject.class,
 						Integer.class, Integer.class);
 			}
 			if ("list".equals(operation)) {
@@ -128,24 +128,24 @@ public class CommonStepdefs {
 			throws IllegalAccessException {
 		getField(resourceName).set(context, resource);
 	}
-	
-	
+
+
 	public JSONObject setProject(JSONObject args) {
 		if (args == null) {
 			args = new JSONObject();
 		}
-		
+
 		if (!args.containsKey("tags")) {
 			args.put("tags", new JSONArray());
 		}
-		
+
 		((JSONArray) args.get("tags")).add("unitTest");
 		args.put("project", context.testProject);
-		
+
 		return args;
 	}
-	
-	
+
+
 	@Given("^I create a (configuration|project) with \"(.*)\"$")
 	public void I_create_a_resource_with_(String resourceName, String args)
         throws AuthenticationException, Exception {
@@ -155,7 +155,7 @@ public class CommonStepdefs {
 
         try {
 			Method method = getClientMethod("create-args", resourceName);
-			
+
 			JSONObject resource = (JSONObject) method.invoke(
 					context.api, argsJSON);
 
@@ -168,8 +168,8 @@ public class CommonStepdefs {
 			assertFalse(true);
 		}
     }
-	
-	
+
+
 	@Given("^I create a[n]* (anomaly detector|association|correlation|deepnet|ensemble|logisticregression|linearregression|model|sample|statisticaltest|time series|pca) from a dataset with \"(.*)\"$")
 	public void I_create_a_resource_from_a_dataset_with(String resourceName, String args)
 			throws Throwable {
@@ -180,7 +180,7 @@ public class CommonStepdefs {
         JSONObject argsJSON = args != null ?
             (JSONObject) JSONValue.parse(args) :
             new JSONObject();
-        
+
         argsJSON = setProject(argsJSON);
 
 		try {
@@ -320,7 +320,7 @@ public class CommonStepdefs {
 			throws Throwable {
 		assertEquals(newName, getResource(resourceName).get("name"));
 	}
-	
+
 	public void I_get_the_resource(String resourceName, String resourceId)
 			throws AuthenticationException {
 
@@ -336,7 +336,7 @@ public class CommonStepdefs {
 			assertFalse(true);
 		}
 	}
-	
+
 
 	@When("I delete the (.*)$")
 	public void i_delete_the_resource(String resourceName) throws Throwable {
@@ -353,15 +353,15 @@ public class CommonStepdefs {
 		}
 
 	}
-	
-	
+
+
 	@Then("^delete all test data$")
 	public void delete_all_test_data() throws Exception {
-		
+
 		context.api.getCacheManager().cleanCache();
-		
+
 		JSONObject listProjects = (JSONObject) context.api.listProjects(
-	        	";tags__in=unitTestProject");
+	        	"&tags__in=unitTestProject");
 		JSONArray projects = (JSONArray) listProjects.get("objects");
 		for (int i = 0; i < projects.size(); i++) {
 			JSONObject project = (JSONObject) projects.get(i);

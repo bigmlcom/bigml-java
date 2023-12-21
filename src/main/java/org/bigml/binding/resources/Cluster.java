@@ -18,8 +18,8 @@ public class Cluster extends AbstractModelResource {
 
     // Logging
     Logger logger = LoggerFactory.getLogger(Cluster.class);
-    
-	
+
+
     /**
      * Constructor
      *
@@ -31,7 +31,7 @@ public class Cluster extends AbstractModelResource {
      * @param cacheManager	cache manager
      */
     public Cluster(final BigMLClient bigmlClient,
-    			   final String apiUser, final String apiKey, 
+    			   final String apiUser, final String apiKey,
     			   final String project, final String organization,
     			   final CacheManager cacheManager) {
     		super.init(bigmlClient, apiUser, apiKey, project, organization,
@@ -42,7 +42,7 @@ public class Cluster extends AbstractModelResource {
      * Retrieves a cluster.
      *
      * GET
-     * /andromeda/cluster/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/cluster/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param clusterId
@@ -70,7 +70,7 @@ public class Cluster extends AbstractModelResource {
      * Retrieves a cluster.
      *
      * GET
-     * /andromeda/cluster/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/cluster/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param cluster
@@ -92,7 +92,7 @@ public class Cluster extends AbstractModelResource {
      * Retrieves a cluster.
      *
      * GET
-     * /andromeda/cluster/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/cluster/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param clusterId
@@ -122,7 +122,7 @@ public class Cluster extends AbstractModelResource {
      * Retrieves a cluster.
      *
      * GET
-     * /andromeda/cluster/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/cluster/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param cluster

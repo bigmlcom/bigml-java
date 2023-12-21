@@ -19,8 +19,8 @@ public class AssociationSet extends AbstractResource {
 
     // Logging
     Logger logger = LoggerFactory.getLogger(AssociationSet.class);
-    
-	
+
+
     /**
      * Constructor
      *
@@ -32,7 +32,7 @@ public class AssociationSet extends AbstractResource {
      * @param cacheManager	cache manager
      */
     public AssociationSet(final BigMLClient bigmlClient,
-    					  final String apiUser, final String apiKey, 
+    					  final String apiUser, final String apiKey,
     					  final String project, final String organization,
     					  final CacheManager cacheManager) {
     		super.init(bigmlClient, apiUser, apiKey, project, organization,
@@ -42,7 +42,7 @@ public class AssociationSet extends AbstractResource {
     /**
      * Creates an association set from an association.
      *
-     * POST /andromeda/associationset?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/associationset?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param associationId
@@ -73,7 +73,7 @@ public class AssociationSet extends AbstractResource {
         }
 
         try {
-        		waitForResource(associationId, "associationIsReady",  
+        		waitForResource(associationId, "associationIsReady",
         				waitTime, retries);
 
             JSONObject requestObject = new JSONObject();

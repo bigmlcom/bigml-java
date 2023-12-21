@@ -1,3 +1,4 @@
+@inspectmodel
 Feature: Inspect the information of a local model
   In order to inspect the information
   I need to create a model and a dataset first
@@ -119,8 +120,8 @@ Feature: Inspect the information of a local model
     Examples:
     | data                   | time_1   | time_2 | time_3 | expected_file                                       |
     | data/iris_missing2.csv |  10      | 10     | 10     | data/model/java_rules_iris_missing2_MISSINGS.txt |
- 
- 
+
+
   Scenario Outline: Successfully creating a model and check its data distribution:
     Given I create a data source uploading a "<data>" file
     And I wait until the source is ready less than <time_1> secs

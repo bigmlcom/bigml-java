@@ -1,3 +1,4 @@
+@localassociation
 Feature: LocalAssociation
 
     Scenario Outline: Successfully creating local association object:

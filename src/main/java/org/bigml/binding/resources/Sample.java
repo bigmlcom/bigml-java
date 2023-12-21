@@ -24,8 +24,8 @@ public class Sample extends AbstractResource {
 
     // Logging
     Logger logger = LoggerFactory.getLogger(Sample.class);
-    
-	
+
+
     /**
      * Constructor
      *
@@ -37,10 +37,10 @@ public class Sample extends AbstractResource {
      * @param cacheManager	cache manager
      */
     public Sample(final BigMLClient bigmlClient,
-    			  final String apiUser, final String apiKey, 
+    			  final String apiUser, final String apiKey,
     			  final String project, final String organization,
     			  final CacheManager cacheManager) {
-    		super.init(bigmlClient, apiUser, apiKey, project, organization, 
+    		super.init(bigmlClient, apiUser, apiKey, project, organization,
     				   cacheManager, SAMPLE_RE, SAMPLE_PATH);
     }
 
@@ -81,7 +81,7 @@ public class Sample extends AbstractResource {
             // If the original resource is a Source
             if( datasetId.matches(DATASET_RE) ) {
             		waitForResource(datasetId, "datasetIsReady", waitTime, retries);
-            	
+
                 if (args != null) {
                     requestObject = args;
                 }
@@ -91,7 +91,7 @@ public class Sample extends AbstractResource {
                         "to create a sample. %s found.", datasetId));
             }
 
-            return createResource(resourceUrl, 
+            return createResource(resourceUrl,
             		requestObject.toJSONString());
         } catch (Throwable e) {
             logger.error("Failed to generate the sample.", e);
@@ -102,7 +102,7 @@ public class Sample extends AbstractResource {
     /**
      * Retrieves an sample.
      *
-     * GET /andromeda/sample/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/sample/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param sampleId
@@ -131,7 +131,7 @@ public class Sample extends AbstractResource {
     /**
      * Retrieves an sample.
      *
-     * GET /andromeda/sample/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/sample/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param sample

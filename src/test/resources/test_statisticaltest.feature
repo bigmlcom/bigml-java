@@ -1,3 +1,4 @@
+@statisticaltest
 Feature: StatiticalTest REST api calls
 
     Scenario Outline: Successfully creating a statiticaltest from a dataset:

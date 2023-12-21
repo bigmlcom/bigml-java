@@ -1,10 +1,11 @@
+@locallinearregression
 Feature: LocalLinearRegression
-	
+
 	Scenario Outline: Successfully comparing predictions for linear regression
         Given I provision a dataset from "<data>" file
         And I create a linearregression with objective "<objective>" and params "<params>"
         And I wait until the linearregression is ready less than <time_1> secs
-        When I create a linearregression prediction for "<data_input>"  
+        When I create a linearregression prediction for "<data_input>"
         Then the linearregression prediction is "<prediction>"
         And I create a local linearregression
         And I create a local linearregression prediction for "<data_input>"

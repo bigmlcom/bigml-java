@@ -23,8 +23,8 @@ public class Execution extends AbstractResource {
 
     // Logging
     Logger logger = LoggerFactory.getLogger(Execution.class);
-    
-	
+
+
     /**
      * Constructor
      *
@@ -36,7 +36,7 @@ public class Execution extends AbstractResource {
      * @param cacheManager	cache manager
      */
     public Execution(final BigMLClient bigmlClient,
-    				 final String apiUser, final String apiKey, 
+    				 final String apiUser, final String apiKey,
     				 final String project, final String organization,
     				 final CacheManager cacheManager) {
     		super.init(bigmlClient, apiUser, apiKey, project, organization,
@@ -46,7 +46,7 @@ public class Execution extends AbstractResource {
     /**
      * Creates a whizzml execution for a script.
      *
-     * POST /andromeda/execution?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/execution?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param script
@@ -74,7 +74,7 @@ public class Execution extends AbstractResource {
             		waitForResource(script, "scriptIsReady", waitTime, retries);
 
                 requestObject.put("script", script);
-                return createResource(resourceUrl, 
+                return createResource(resourceUrl,
                 		requestObject.toJSONString());
             } else {
                 logger.info("A script id or a list of them is needed to create a whizzml execution");
@@ -90,7 +90,7 @@ public class Execution extends AbstractResource {
     /**
      * Creates a whizzml execution for a list of scripts.
      *
-     * POST /andromeda/execution?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/execution?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param scripts
@@ -140,7 +140,7 @@ public class Execution extends AbstractResource {
             }
 
             requestObject.put("scripts", scriptsIds);
-            return createResource(resourceUrl, 
+            return createResource(resourceUrl,
             		requestObject.toJSONString());
         } catch (Throwable e) {
             logger.error("Error creating execution");

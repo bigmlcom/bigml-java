@@ -20,8 +20,8 @@ public class Model extends AbstractModelResource {
 
     // Logging
     Logger logger = LoggerFactory.getLogger(Model.class);
-    
-	
+
+
     /**
      * Constructor
      *
@@ -33,7 +33,7 @@ public class Model extends AbstractModelResource {
      * @param cacheManager	cache manager
      */
     public Model(final BigMLClient bigmlClient,
-    			 final String apiUser, final String apiKey, 
+    			 final String apiUser, final String apiKey,
     			 final String project, final String organization,
     			 final CacheManager cacheManager) {
     		super.init(bigmlClient, apiUser, apiKey, project, organization,
@@ -43,7 +43,7 @@ public class Model extends AbstractModelResource {
     /**
      * Creates a new model.
      *
-     * POST /andromeda/model?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/model?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param resourceId
@@ -72,7 +72,7 @@ public class Model extends AbstractModelResource {
                 String[] datasetsIds = { resourceId };
                 JSONObject requestObject = createFromDatasets(datasetsIds, args,
                     waitTime, retries, null);
-                return createResource(resourceUrl, 
+                return createResource(resourceUrl,
                 		requestObject.toJSONString());
 
             } else if( resourceId.matches(CLUSTER_RE) ) {
@@ -80,7 +80,7 @@ public class Model extends AbstractModelResource {
 
                 // If the original resource is a Cluster
                 waitForResource(resourceId, "clusterIsReady", waitTime, retries);
-               
+
                 if (args != null) {
                     requestObject = args;
                 }
@@ -102,7 +102,7 @@ public class Model extends AbstractModelResource {
                 }
 
                 requestObject.put("cluster", resourceId);
-                return createResource(resourceUrl, 
+                return createResource(resourceUrl,
                 		requestObject.toJSONString());
             }
         } catch (Throwable e) {
@@ -117,7 +117,7 @@ public class Model extends AbstractModelResource {
     /**
      * Retrieves a model.
      *
-     * GET /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/model/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param modelId
@@ -144,7 +144,7 @@ public class Model extends AbstractModelResource {
     /**
      * Retrieves a model.
      *
-     * GET /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/model/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param model
@@ -165,7 +165,7 @@ public class Model extends AbstractModelResource {
     /**
      * Retrieves a model.
      *
-     * GET /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/model/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param modelId
@@ -194,7 +194,7 @@ public class Model extends AbstractModelResource {
     /**
      * Retrieves a model.
      *
-     * GET /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/model/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param model

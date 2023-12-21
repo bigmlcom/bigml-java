@@ -1,4 +1,4 @@
-
+@prediction
 Feature: Predictions
 
   Scenario Outline: Successfully creating a prediction from a source in a remote location:

@@ -19,10 +19,10 @@ public class Anomaly extends AbstractModelResource {
 
     // Logging
     Logger logger = LoggerFactory.getLogger(Anomaly.class);
-    
+
     /**
      * Constructor
-     * 
+     *
      * @param bigmlClient	the client with connection to BigML
      * @param apiUser		API user
      * @param apiKey		API key
@@ -31,10 +31,10 @@ public class Anomaly extends AbstractModelResource {
      * @param cacheManager	cache manager
      */
     public Anomaly(final BigMLClient bigmlClient,
-    			   final String apiUser, final String apiKey, 
+    			   final String apiUser, final String apiKey,
     		       final String project, final String organization,
     			   final CacheManager cacheManager) {
-    		super.init(bigmlClient, apiUser, apiKey, project, organization, 
+    		super.init(bigmlClient, apiUser, apiKey, project, organization,
     				   cacheManager, ANOMALY_RE, ANOMALY_PATH);
     }
 
@@ -42,7 +42,7 @@ public class Anomaly extends AbstractModelResource {
     /**
      * Retrieves an anomaly.
      *
-     * GET /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/anomaly/id?username=$BIGML_USERNAME&api_key$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param anomalyId
@@ -69,7 +69,7 @@ public class Anomaly extends AbstractModelResource {
     /**
      * Retrieves an anomaly.
      *
-     * GET /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/anomaly/id?username=$BIGML_USERNAME&api_key$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param anomaly
@@ -90,7 +90,7 @@ public class Anomaly extends AbstractModelResource {
     /**
      * Retrieves an anomaly.
      *
-     * GET /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/anomaly/id?username=$BIGML_USERNAME&api_key$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param anomalyId
@@ -119,7 +119,7 @@ public class Anomaly extends AbstractModelResource {
     /**
      * Retrieves an anomaly.
      *
-     * GET /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/anomaly/id?username=$BIGML_USERNAME&api_key$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param anomaly

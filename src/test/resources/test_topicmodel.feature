@@ -1,3 +1,4 @@
+@topicmodel
 Feature: TopicModel REST api
 
     Scenario Outline: Successfully creating Topic Model from a dataset:
@@ -15,8 +16,8 @@ Feature: TopicModel REST api
         Examples:
         | data             | time_1  | time_2 | time_3 | time_4 | topic_model_name | params |
         | data/spam.csv | 100      | 100     | 200     | 500 | my new topic model name | {"fields": {"000001": {"optype": "text", "term_analysis": {"case_sensitive": true, "stem_words": true, "use_stopwords": false, "language": "en"}}}}   |
-		
-		
+
+
 		Scenario Outline: Successfully creating a topic model:
 	      Given I create a data source uploading a "<data>" file
 	      And I wait until the source is ready less than <time_1> secs
@@ -25,8 +26,7 @@ Feature: TopicModel REST api
 	      And I wait until the dataset is ready less than <time_2> secs
 	      When I create topic model from a dataset
 	      Then I wait until the topic model is ready less than <time_3> secs
-	
+
 	      Examples:
 	      | data                    | time_1  | time_2 | time_3   | options  |
 	      | data/movies.csv       | 10      | 10     | 100      | {"fields": {"000007": {"optype": "items", "item_analysis": {"separator": "$"}}, "000006": {"optype": "text"}}} |
-			

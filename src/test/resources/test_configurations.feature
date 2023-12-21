@@ -1,3 +1,4 @@
+@configurations
 Feature: Testing Configuration REST api calls
 
     Scenario Outline: Successfully creating a configuration:

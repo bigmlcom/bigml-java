@@ -1,3 +1,4 @@
+@timeseries
 Feature: TimeSeries REST api
 
     Scenario Outline: Successfully creating forecasts from a dataset:
