@@ -45,7 +45,7 @@ public class Source extends AbstractResource {
 	/**
 	 * Creates a source using a local file.
 	 *
-	 * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+	 * POST /andromeda/source?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
 	 * HTTP/1.1 Host: bigml.io Content-Type: multipart/form-data;
 	 *
 	 * @param fileName     file containing your data in csv format. It can be
@@ -63,7 +63,7 @@ public class Source extends AbstractResource {
 	/**
 	 * Creates a source using a local file.
 	 *
-	 * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+	 * POST /andromeda/source?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
 	 * HTTP/1.1 Host: bigml.io Content-Type: multipart/form-data;
 	 *
 	 * @param fileName     file containing your data in csv format. It can be
@@ -72,7 +72,7 @@ public class Source extends AbstractResource {
 	 * @param name         the name you want to give to the new source. Optional
 	 * @param sourceParser set of parameters to parse the source. Optional
 	 * @param args         set of parameters for the new model. Optional
-	 * 
+	 *
 	 * @return a JSONObject for the new source
 	 */
 	public JSONObject createLocalSource(final String fileName, final String name, final JSONObject sourceParser,
@@ -162,12 +162,12 @@ public class Source extends AbstractResource {
 	/**
 	 * Creates a source using a Batch Prediction Id.
 	 *
-	 * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+	 * POST /andromeda/source?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
 	 * HTTP/1.1 Host: bigml.io Content-Type: application/json;
 	 *
 	 * @param batchPredictionId the ID of the batch prediction resource to use
 	 * @param sourceParser      set of parameters to create the source. Optional
-	 * 
+	 *
 	 * @return a JSONObject for the new source
 	 */
 	public JSONObject createSourceFromBatchPrediction(final String batchPredictionId, final JSONObject sourceParser) {
@@ -178,13 +178,13 @@ public class Source extends AbstractResource {
 	/**
 	 * Creates a source using a Batch Prediction Id.
 	 *
-	 * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+	 * POST /andromeda/source?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
 	 * HTTP/1.1 Host: bigml.io Content-Type: application/json;
 	 *
 	 * @param batchPredictionId the ID of the batch prediction resource to use
 	 * @param sourceParser      set of parameters to create the source. Optional
 	 * @param args              set of parameters for the new model. Optional
-	 * 
+	 *
 	 * @return a JSONObject for the new source
 	 */
 	public JSONObject createSourceFromBatchPrediction(final String batchPredictionId, final JSONObject sourceParser,
@@ -198,7 +198,7 @@ public class Source extends AbstractResource {
 	/**
 	 * Creates a source using an Anomaly Score Id.
 	 *
-	 * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+	 * POST /andromeda/source?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
 	 * HTTP/1.1 Host: bigml.io Content-Type: application/json;
 	 *
 	 * @param anomalyScoreId the ID of the anomaly score resource to use
@@ -214,13 +214,13 @@ public class Source extends AbstractResource {
 	/**
 	 * Creates a source using an Anomaly Score Id.
 	 *
-	 * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+	 * POST /andromeda/source?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
 	 * HTTP/1.1 Host: bigml.io Content-Type: application/json;
 	 *
 	 * @param anomalyScoreId the ID of the anomaly score resource to use
 	 * @param sourceParser   set of parameters to create the source. Optional
 	 * @param args           set of parameters for the new model. Optional
-	 * 
+	 *
 	 * @return a JSONObject for the new source
 	 */
 	public JSONObject createSourceFromBatchAnomalyScore(final String anomalyScoreId, final JSONObject sourceParser,
@@ -234,12 +234,12 @@ public class Source extends AbstractResource {
 	/**
 	 * Creates a source using a URL.
 	 *
-	 * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+	 * POST /andromeda/source?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
 	 * HTTP/1.1 Host: bigml.io Content-Type: application/json;
 	 *
 	 * @param url          url for remote source
 	 * @param sourceParser set of parameters to create the source. Optional
-	 * 
+	 *
 	 * @return a JSONObject for the new source
 	 */
 	public JSONObject createRemoteSource(final String url, final JSONObject sourceParser) {
@@ -249,13 +249,13 @@ public class Source extends AbstractResource {
 	/**
 	 * Creates a source using a URL.
 	 *
-	 * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+	 * POST /andromeda/source?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
 	 * HTTP/1.1 Host: bigml.io Content-Type: application/json;
 	 *
 	 * @param url          url for remote source
 	 * @param sourceParser set of parameters to create the source. Optional
 	 * @param args         set of parameters for the new model. Optional
-	 * 
+	 *
 	 * @return a JSONObject for the new source
 	 */
 	public JSONObject createRemoteSource(final String url, final JSONObject sourceParser, final JSONObject args) {
@@ -279,7 +279,7 @@ public class Source extends AbstractResource {
 	/**
 	 * Creates a source using inline data.
 	 *
-	 * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+	 * POST /andromeda/source?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
 	 * HTTP/1.1 Host: bigml.io Content-Type: application/json;
 	 *
 	 * @param data         inline data for source
@@ -305,7 +305,7 @@ public class Source extends AbstractResource {
 	/**
 	 * Creates a source using external data.
 	 *
-	 * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+	 * POST /andromeda/source?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
 	 * HTTP/1.1 Host: bigml.io Content-Type: application/json;
 	 *
 	 * @param externalData	set of parameters to create the source.

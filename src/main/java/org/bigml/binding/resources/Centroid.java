@@ -18,8 +18,8 @@ public class Centroid extends AbstractResource {
 
     // Logging
     Logger logger = LoggerFactory.getLogger(Centroid.class);
-    
-	
+
+
     /**
      * Constructor
      *
@@ -31,17 +31,17 @@ public class Centroid extends AbstractResource {
      * @param cacheManager	cache manager
      */
     public Centroid(final BigMLClient bigmlClient,
-    				final String apiUser, final String apiKey, 
+    				final String apiUser, final String apiKey,
     				final String project, final String organization,
     				final CacheManager cacheManager) {
-    		super.init(bigmlClient, apiUser, apiKey, project, organization, 
+    		super.init(bigmlClient, apiUser, apiKey, project, organization,
     				   cacheManager, CENTROID_RE, CENTROID_PATH);
     }
 
     /**
      * Creates a new centroid.
      *
-     * POST /andromeda/centroid?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/centroid?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param clusterId
@@ -69,7 +69,7 @@ public class Centroid extends AbstractResource {
 
         try {
         		waitForResource(clusterId, "clusterIsReady", waitTime, retries);
-        	
+
             JSONObject requestObject = new JSONObject();
             if (args != null) {
                 requestObject = args;
@@ -77,7 +77,7 @@ public class Centroid extends AbstractResource {
             requestObject.put("cluster", clusterId);
             requestObject.put("input_data", inputDataJSON);
 
-            return createResource(resourceUrl, 
+            return createResource(resourceUrl,
             		requestObject.toJSONString());
         } catch (Throwable e) {
             logger.error("Error creating centroid");

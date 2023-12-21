@@ -1,3 +1,4 @@
+@logisticregression
 Feature: LogisticRegression REST api calls
 
     Scenario Outline: Successfully creating a logisticregression from a dataset:

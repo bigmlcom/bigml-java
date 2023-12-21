@@ -1,3 +1,4 @@
+@association
 Feature: Association REST api calls
 
     Scenario Outline: Successfully creating associations from a dataset:

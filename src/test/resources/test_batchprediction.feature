@@ -1,5 +1,6 @@
+@batchprediction
 Feature: Batch Predictions
-		
+
 		Scenario Outline: Successfully creating a batch prediction:
         Given I provision a dataset from "<data>" file
         And I create a model
@@ -90,21 +91,21 @@ Feature: Batch Predictions
           | data              |  time_1   | time_2 | local_file | predictions_file       |
           | data/iris.csv     | 50     | 50     | data/downloaded_batch_predictions_lr.csv | data/batch_predictions_lr.csv |
 
-          
+
      Scenario Outline: Successfully creating a batch prediction for a linear regression:
         Given I provision a dataset from "<data>" file
         And I create a linearregression from a dataset
         And I wait until the linearregression is ready less than <time_1> secs
         When I create a batch prediction for the dataset with the linear regression
-        And I wait until the batch prediction is ready less than <time_2> secs    
+        And I wait until the batch prediction is ready less than <time_2> secs
         And I download the created predictions file to "<local_file>"
         Then the batch prediction file "<local_file>" is like "<predictions_file>"
 
         Examples:
           | data    |  time_1   | time_2 | local_file | predictions_file       |
           | data/grades.csv | 50     | 50     | data/downloaded_batch_predictions_linear.csv | data/batch_predictions_linear.csv |
-    
-    
+
+
     Scenario Outline: Successfully creating a fusion
         Given I provision a dataset from "<data>" file
         And I create a model
@@ -119,7 +120,7 @@ Feature: Batch Predictions
         And I wait until the batch prediction is ready less than <time_2> secs
         And I download the created predictions file to "<local_file>"
         Then the batch prediction file "<local_file>" is like "<predictions_file>"
-        
+
         Examples:
         | data  | time_1  | time_2 | local_file | predictions_file |
         | data/iris.csv | 50      | 50     |  data/downloaded_batch_predictions.csv | data/batch_predictions_fs.csv	|

@@ -1,3 +1,4 @@
+@correlation
 Feature: Correlation REST api calls
 
     Scenario Outline: Successfully creating a correlation from a dataset:

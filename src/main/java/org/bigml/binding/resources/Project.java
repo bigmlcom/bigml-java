@@ -20,8 +20,8 @@ public class Project extends AbstractResource {
 
     // Logging
     Logger logger = LoggerFactory.getLogger(Project.class);
-    
-	
+
+
     /**
      * Constructor
      *
@@ -33,7 +33,7 @@ public class Project extends AbstractResource {
      * @param cacheManager	cache manager
      */
     public Project(final BigMLClient bigmlClient,
-    			   final String apiUser, final String apiKey, 
+    			   final String apiUser, final String apiKey,
     			   final String project, final String organization,
     			   final CacheManager cacheManager) {
     		super.init(bigmlClient, apiUser, apiKey, project, organization,
@@ -59,7 +59,7 @@ public class Project extends AbstractResource {
         try {
             JSONObject requestObject = new JSONObject();
             requestObject.putAll(args);
-            return createResource(resourceUrl, 
+            return createResource(resourceUrl,
             		requestObject.toJSONString());
         } catch (Throwable e) {
             logger.error("Failed to generate the project.", e);
@@ -70,7 +70,7 @@ public class Project extends AbstractResource {
     /**
      * Retrieves an project.
      *
-     * GET /andromeda/project/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/project/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param projectId
@@ -99,7 +99,7 @@ public class Project extends AbstractResource {
     /**
      * Retrieves an project.
      *
-     * GET /andromeda/project/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/project/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param project

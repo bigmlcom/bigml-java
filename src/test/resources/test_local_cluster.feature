@@ -1,3 +1,4 @@
+@localcluster
 Feature: LocalCluster
 
 	Scenario Outline: Successfully getting the closest point in a cluster
@@ -11,7 +12,7 @@ Feature: LocalCluster
         | data  |  time_1  | reference |    closest |
         | data/iris.csv | 100   | {"petal length": 1.4, "petal width": 0.2, "sepal width": 3.0, "sepal length": 4.89, "species": "Iris-setosa"} | {"distance": 0.001894153207990619, "data": {"petal length": 1.4, "petal width": 0.2, "sepal width": 3.0, "sepal length": 4.9, "species": "Iris-setosa"}}  |
         #| data/spam_4w.csv | 100   | {"Message": "mobile"} | {"distance": 0.0, "data": {"Message": "mobile", "Type": "spam"}}  |
-        
+
 
 	Scenario Outline: Successfully getting the closest centroid in a cluster
         Given I provision a dataset from "<data>" file
@@ -84,4 +85,4 @@ Feature: LocalCluster
         Examples:
         | data  | time_1 | options | data_input | centroid  | distance |
         | data/iris.csv | 100 | {} | {"petal length": 2, "petal width": 2, "sepal length": 2, "sepal width": 2, "species": "Iris-setosa"}  | Cluster 7   | 0.7340597799442431   |
-        | data/iris.csv | 100 | {"default_numeric_value": "maximum"} | {}  | Cluster 5   | 0.502695797586787   | 
+        | data/iris.csv | 100 | {"default_numeric_value": "maximum"} | {}  | Cluster 5   | 0.502695797586787   |

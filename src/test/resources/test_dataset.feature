@@ -1,3 +1,4 @@
+@dataset
 Feature: Dataset REST api
 
     Scenario Outline: Successfully creating and reading a public dataset:
@@ -23,8 +24,8 @@ Feature: Dataset REST api
         Examples:
         | data          | local_file |
         | data/iris.csv | data/exported_iris.csv |
-        
-    
+
+
     Scenario Outline: Successfully creating a sample from a dataset:
         Given I provision a dataset from "<data>" file
         And I create a sample from a dataset
@@ -48,8 +49,8 @@ Feature: Dataset REST api
         Examples:
         | data          | seed  | time_1  | rows  |   expected_file                 |   local_file                    |
         | data/iris.csv | BigML |   30    | 50    |   data/expected_iris_sample.csv | data/exported_sample_iris.csv   |
-        
-        
+
+
      Scenario Outline: Successfully creating a split dataset:
         Given I provision a dataset from "<data>" file
         And I create a dataset extracting a <rate> sample
@@ -60,8 +61,8 @@ Feature: Dataset REST api
 				Examples:
 				| data             | time_1  | rate |
         | data/iris.csv    |  50     | 0.8  |
-        
-     
+
+
      Scenario Outline: Successfully obtaining missing values counts:
 		    Given I create a data source uploading a "<data>" file
 		    And I wait until the source is ready less than <time_1> secs
@@ -70,7 +71,7 @@ Feature: Dataset REST api
 		    And I wait until the dataset is ready less than <time_2> secs
 		    When I ask for the missing values counts in the fields
 		    Then the missing values counts dict is "<missing_values>"
-		
+
 		  Examples:
 		    | data	|  time_1  | params	| time_2 | missing_values       |
 		    | data/iris_missing.csv |    30      | {"fields": {"000000": {"optype": "numeric"}}}   |30      | {"000000": 1}      |
@@ -84,8 +85,7 @@ Feature: Dataset REST api
 		    And I wait until the dataset is ready less than <time_2> secs
 		    When I ask for the error counts in the fields
 		    Then the error counts dict is "<error_values>"
-		
+
 		  Examples:
 		    | data	|   time_1  | params	| time_2 |error_values       |
 		    | data/iris_missing.csv |    30      | {"fields": {"000000": {"optype": "numeric"}}}   |30      |{"000000": 1}      |
-	     

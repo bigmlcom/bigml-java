@@ -1,5 +1,6 @@
+@linearregression
 Feature: Linear regression
-	
+
 	Scenario Outline: Successfully creating a linear regression from a dataset:
         Given I provision a dataset from "<data>" file
         And I create a linearregression from a dataset
@@ -11,13 +12,13 @@ Feature: Linear regression
         Examples:
         | data  |  time_1  | time_2 | linearregression_name |
         | data/grades.csv | 200	| 200	| my new linear regression name |
-        
+
 
 	Scenario Outline: Successfully creating a prediction from linear regression:
         Given I provision a dataset from "<data>" file
         And I create a linearregression from a dataset
         And I wait until the linearregression is ready less than <time_1> secs
-        When I create a linearregression prediction for "<data_input>"  
+        When I create a linearregression prediction for "<data_input>"
         Then the linearregression prediction is "<prediction>"
 
         Examples:

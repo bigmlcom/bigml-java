@@ -18,9 +18,9 @@ public class Evaluation extends AbstractResource {
 
     // Logging
     Logger logger = LoggerFactory.getLogger(Evaluation.class);
-    
-    
-	
+
+
+
     /**
      * Constructor
      *
@@ -32,10 +32,10 @@ public class Evaluation extends AbstractResource {
      * @param cacheManager	cache manager
      */
     public Evaluation(final BigMLClient bigmlClient,
-    				  final String apiUser, final String apiKey, 
+    				  final String apiUser, final String apiKey,
     				  final String project, final String organization,
     				  final CacheManager cacheManager) {
-    		super.init(bigmlClient, apiUser, apiKey, project, organization, 
+    		super.init(bigmlClient, apiUser, apiKey, project, organization,
     				   cacheManager, EVALUATION_RE, EVALUATION_PATH);
     }
 
@@ -43,13 +43,13 @@ public class Evaluation extends AbstractResource {
      * Create a new evaluation.
      *
      * POST
-     * /andromeda/evaluation?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/evaluation?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param model
      *            a unique identifier in the form model/id, ensemble/id,
-     *            logisticregression/id, fusion/id or linearregression/id 
-     *            where id is a string of 24 alpha-numeric chars for the 
+     *            logisticregression/id, fusion/id or linearregression/id
+     *            where id is a string of 24 alpha-numeric chars for the
      *            model, ensemble, logisticregression, fusion or
      *            linearregression to attach the evaluation.
      * @param datasetId
@@ -70,7 +70,7 @@ public class Evaluation extends AbstractResource {
             JSONObject args, Integer waitTime, Integer retries) {
 
         if (model == null || model.length() == 0 ||
-    		!(model.matches(MODEL_RE) || 
+    		!(model.matches(MODEL_RE) ||
               model.matches(ENSEMBLE_RE) ||
               model.matches(LOGISTICREGRESSION_RE) ||
               model.matches(LINEARREGRESSION_RE) ||
@@ -99,11 +99,11 @@ public class Evaluation extends AbstractResource {
             if (model.matches(LOGISTICREGRESSION_RE)) {
             	waitForResource(model, "logisticRegressionIsReady", waitTime, retries);
             }
-            
+
             if (model.matches(LINEARREGRESSION_RE)) {
             	waitForResource(model, "linearRegressionIsReady", waitTime, retries);
             }
-            
+
             if (model.matches(FUSION_RE)) {
             	waitForResource(model, "fusionIsReady", waitTime, retries);
             }
@@ -111,7 +111,7 @@ public class Evaluation extends AbstractResource {
             if (model.matches(DEEPNET_RE)) {
                 waitForResource(model, "deepnetIsReady", waitTime, retries);
             }
-        	
+
             waitForResource(datasetId, "datasetIsReady", waitTime, retries);
 
             JSONObject requestObject = new JSONObject();
@@ -139,7 +139,7 @@ public class Evaluation extends AbstractResource {
             }
             requestObject.put("dataset", datasetId);
 
-            return createResource(resourceUrl, 
+            return createResource(resourceUrl,
             		requestObject.toJSONString());
         } catch (Throwable e) {
             logger.error("Error creating evaluation");

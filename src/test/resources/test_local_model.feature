@@ -1,3 +1,4 @@
+@localmodel
 Feature: LocalModel
 
 		Scenario Outline: Successfully comparing predictions:
@@ -33,8 +34,8 @@ Feature: LocalModel
 				| data	| time_1  | time_2 | time_3 | options | field_id | new_name  |
         | data/iris.csv |  20      | 20     | 30     | {"fields": {"000001": {"name": "species"}}} | 000001 | species1  |
         | data/iris.csv |  20      | 20     | 30     | {"fields": {"000001": {"name": "petal width"}}} | 000001 | petal width3  |
-	
-	
+
+
 		Scenario Outline: Successfully comparing predictions:
 		    Given I provision a dataset from "<data>" file
 		    And I create a model
@@ -43,7 +44,7 @@ Feature: LocalModel
 		    When I create a prediction for "<data_input>"
 		    Then the prediction for "<objective>" is "<prediction>"
 		    Then the local prediction for "<data_input>" is "<prediction>"
-		
+
 		    Examples:
 		      | data	|  time_1  |  data_input    | objective | prediction  |
 		      | data/iris.csv | 50     | {"petal width": 0.5}                   | 000004    | Iris-setosa |
@@ -64,7 +65,7 @@ Feature: LocalModel
 		    When I create a prediction for "<data_input>"
 		    Then the prediction for "<objective>" is "<prediction>"
 		    And the local prediction for "<data_input>" is "<prediction>"
-		
+
 		    Examples:
 		      | data             |   time_1  | time_2 | time_3 |    options | data_input                             | objective | prediction  |
 		      | data/spam.csv |    20      | 20     | 30     | {"fields": {"000001": {"optype": "text", "term_analysis": {"case_sensitive": true, "stem_words": true, "use_stopwords": false, "language": "en"}}}} |{"Message": "Mobile call"}             | 000000    | spam    |
@@ -77,8 +78,8 @@ Feature: LocalModel
 		      | data/spam.csv |    20      | 20     | 30     | {"fields": {"000001": {"optype": "text", "term_analysis": {"token_mode": "full_terms_only", "language": "en"}}}} |{"Message": "Ok"}       | 000000    | ham     |
 					#| data/movies.csv |    20      | 20     | 30     | {"fields": {"000007": {"optype": "items", "item_analysis": {"separator": "$"}}}} | {"genres": "Adventure$Action", "timestamp": 993906291, "occupation": "K-12 student"}	| 000009    | 3.92135     |
 					#| data/text_missing.csv |    20      | 20     | 30     | {"fields": {"000001": {"optype": "text", "term_analysis": {"token_mode": "all", "language": "en"}}, "000000": {"optype": "text", "term_analysis": {"token_mode": "all", "language": "en"}}}} | {}	| 000003    | swap     |
-			
-		
+
+
 		Scenario Outline: Successfully comparing predictions with proportional missing strategy:
 		    Given I provision a dataset from "<data>" file
 		    And I create a model
@@ -90,12 +91,12 @@ Feature: LocalModel
 		    And I create a local model
 		    Then the proportional missing strategy local prediction for "<data_input>" is "<prediction>"
 		    Then the confidence of the proportional missing strategy local prediction for "<data_input>" is <confidence>
-		
+
 		    Examples:
 		      | data              | time_1  | data_input  | objective | prediction      | confidence        |
 		      | data/iris.csv     | 50    |   {}  |   000004  |   Iris-setosa   | 0.2629           |
 
-		
+
 		Scenario Outline: Successfully comparing predictions with proportional missing strategy:
 		    Given I provision a dataset from "<data>" file
 		    And I create a model
@@ -106,7 +107,7 @@ Feature: LocalModel
 		    And the confidence for the prediction is <confidence>
 		    Then the numerical prediction of proportional missing strategy local prediction for "<data_input>" is <prediction>
 		    Then the confidence of the proportional missing strategy local prediction for "<data_input>" is <confidence>
-		
+
 		    Examples:
 		      | data	| time_1  | data_input           | objective | prediction     | confidence |
 		      | data/grades.csv | 50     | {}                   | 000005    | 68.62224       | 27.5358    |
@@ -124,7 +125,7 @@ Feature: LocalModel
 		    And the confidence for the prediction is <confidence>
 		    And the proportional missing strategy local prediction for "<data_input>" is "<prediction>"
 		    And the confidence of the proportional missing strategy local prediction for "<data_input>" is <confidence>
-		
+
 		    Examples:
 		      | data	| time_1  | data_input  | objective | prediction     | confidence |
 		      | data/iris_missing2.csv   | 50     | {"petal width": 1}             | 000004    | Iris-setosa    | 0.8064     |
@@ -144,10 +145,10 @@ Feature: LocalModel
         | data	| time_1  | data_input | objective	| prediction	| operating_point	|
         | data/iris.csv | 30000	| {"petal width": 4} | 000004	| Iris-setosa	| {"kind": "probability", "threshold": 0.1, "positive_class": "Iris-setosa"}	|
 				| data/iris.csv | 30000	| {"petal width": 4} | 000004	| Iris-versicolor	| {"kind": "probability", "threshold": 0.9, "positive_class": "Iris-setosa"}	|
-				| data/iris.csv | 30000	| {"sepal length": 4.1, "sepal width": 2.4} | 000004	| Iris-setosa	| {"kind": "confidence", "threshold": 0.1, "positive_class": "Iris-setosa"}	|	
+				| data/iris.csv | 30000	| {"sepal length": 4.1, "sepal width": 2.4} | 000004	| Iris-setosa	| {"kind": "confidence", "threshold": 0.1, "positive_class": "Iris-setosa"}	|
 				| data/iris.csv | 30000	| {"sepal length": 4.1, "sepal width": 2.4}| 000004	| Iris-versicolor	| {"kind": "confidence", "threshold": 0.9, "positive_class": "Iris-setosa"}	|
-	
-	
+
+
 		Scenario Outline: Successfully comparing predictions for models with operating kind
         Given I provision a dataset from "<data>" file
         And I create a model
@@ -164,8 +165,8 @@ Feature: LocalModel
         | data/iris.csv | 30000	| {"petal length": 2.46, "sepal length": 5} | 000004	| Iris-versicolor	| confidence	|
 				| data/iris.csv | 30000	| {"petal length": 2} | 000004	| Iris-setosa	| probability	|
         | data/iris.csv | 30000	| {"petal length": 2} | 000004	| Iris-setosa	| confidence	|
-        
-        
+
+
     Scenario Outline: Successfully creating a prediction from a local model in a json file:
       Given I create a local model from a "<model>" file
       And the local prediction for "<data_input>" is "<prediction>"
@@ -197,7 +198,7 @@ Feature: LocalModel
           | data  | time_1  | objective1 | prediction1  | objective2 | prediction2  |
           | data/iris.csv | 50     | {"petal width": 0.5}    | Iris-setosa | {"000003": 0.5}    | Iris-setosa |
 
-     
+
      Scenario Outline: Successfully creating a model from a dataset list and predicting with it using median:
         Given I provision a dataset from "<data>" file
         Then I create a model
@@ -208,8 +209,8 @@ Feature: LocalModel
         Examples:
           | data	|  time_1  |  input_data |  prediction    |
           | data/grades.csv    | 30     |  {"Tutorial": 99.47, "Midterm": 53.12, "TakeHome": 87.96}    |    63.33  |
-          
-              
+
+
      Scenario Outline: Successfully creating a prediction from a multi model:
         Given I provision a dataset from "<data>" file
         And I create a model with "<params>"
@@ -242,8 +243,8 @@ Feature: LocalModel
         Examples:
             | data          | time_1  | params             |  tag  |  data_inputs                                                   | predictions                       |
             | data/iris.csv |  30     | {"tags":["mytag"]} | mytag |  [{"petal width": 0.5}, {"petal length": 6, "petal width": 2}] | ["Iris-setosa", "Iris-virginica"] |
-     
-     
+
+
      Scenario Outline: Successfully creating a batch prediction from a multi model:
 		    Given I provision a dataset from "<data>" file
 		    And I create a model with "<params>"
@@ -258,7 +259,7 @@ Feature: LocalModel
 		    And I combine the votes in "<path>"
 		    Then the plurality combined predictions are "<predictions>"
 		    And the confidence weighted predictions are "<predictions>"
-		
+
 		  Examples:
 		    | data          | time_1  | params                         |  tag  |  data_input    | path | predictions  |
 		    | data/iris.csv |  30     | {"tags":["mytag"]} | mytag |  [{"petal width": 0.5}, {"petal length": 6, "petal width": 2}, {"petal length": 4, "petal width": 1.5}]  | data | ["Iris-setosa", "Iris-virginica", "Iris-versicolor"] |

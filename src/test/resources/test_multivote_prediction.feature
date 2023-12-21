@@ -1,3 +1,4 @@
+@multivote
 Feature: Compute MultiVote predictions
     In order compute combined predictions
     I need to create a MultiVote object

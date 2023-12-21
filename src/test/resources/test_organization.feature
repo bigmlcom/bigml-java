@@ -1,3 +1,4 @@
+@organization
 @beforeOrganizationScenario
 @afterOganizationScenario
 Feature: Testing Organizations

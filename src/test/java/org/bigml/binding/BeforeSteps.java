@@ -8,21 +8,21 @@ import io.cucumber.java.After;
 import io.cucumber.java.Before;
 
 public class BeforeSteps {
-	
+
 	@Autowired
 	private ContextRepository context;
-	
+
     @Before
     public void beforeScenario() throws AuthenticationException {
-    	
+
     	// Check test project
     	if (context.testProject == null) {
 			JSONObject listProjects = (JSONObject) context.api.listProjects(
-	        	";tags__in=unitTestProject");
+	        	"&tags__in=unitTestProject");
 			JSONArray projects = (JSONArray) listProjects.get("objects");
 			context.testProject = (String) ((JSONObject) projects.get(0)).get("resource");
 		}
-    	
+
     }
 
     @After

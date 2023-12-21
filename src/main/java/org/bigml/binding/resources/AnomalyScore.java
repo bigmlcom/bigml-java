@@ -21,7 +21,7 @@ public class AnomalyScore extends AbstractResource {
 
     // Logging
     Logger logger = LoggerFactory.getLogger(AnomalyScore.class);
-    
+
     /**
      * Constructor
      *
@@ -33,10 +33,10 @@ public class AnomalyScore extends AbstractResource {
      * @param cacheManager	cache manager
      */
     public AnomalyScore(final BigMLClient bigmlClient,
-    					final String apiUser, final String apiKey, 
+    					final String apiUser, final String apiKey,
     					final String project, final String organization,
     					final CacheManager cacheManager) {
-    		super.init(bigmlClient, apiUser, apiKey, project, organization, 
+    		super.init(bigmlClient, apiUser, apiKey, project, organization,
     				   cacheManager, ANOMALYSCORE_RE, ANOMALYSCORE_PATH);
     }
 
@@ -44,7 +44,7 @@ public class AnomalyScore extends AbstractResource {
      * Creates a new anomaly score.
      *
      * POST
-     * /andromeda/anomalyscore?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/anomalyscore?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param anomalyId
@@ -71,7 +71,7 @@ public class AnomalyScore extends AbstractResource {
             JSONObject inputData, Boolean byName, JSONObject args,
             Integer waitTime, Integer retries) {
         JSONObject anomaly = null;
-        
+
         try {
             anomaly = this.bigmlClient.getAnomaly(anomalyId);
             waitForResource(anomalyId, "anomalyIsReady",  waitTime, retries);
@@ -110,7 +110,7 @@ public class AnomalyScore extends AbstractResource {
             requestObject.put("anomaly", anomalyId);
             requestObject.put("input_data", inputDataJSON);
 
-            return createResource(resourceUrl,  
+            return createResource(resourceUrl,
             		requestObject.toJSONString());
         } catch (Throwable e) {
             logger.error("Error creating anomaly score", e);

@@ -23,8 +23,8 @@ public class Script extends AbstractResource {
 
     // Logging
     Logger logger = LoggerFactory.getLogger(Script.class);
-    
-	
+
+
     /**
      * Constructor
      *
@@ -36,7 +36,7 @@ public class Script extends AbstractResource {
      * @param cacheManager	cache manager
      */
     public Script(final BigMLClient bigmlClient,
-    			  final String apiUser, final String apiKey, 
+    			  final String apiUser, final String apiKey,
     			  final String project, final String organization,
     			  final CacheManager cacheManager) {
     		super.init(bigmlClient, apiUser, apiKey, project, organization,
@@ -46,7 +46,7 @@ public class Script extends AbstractResource {
     /**
      * Creates a whizzml script from its source code.
      *
-     * POST /andromeda/script?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/script?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param source
@@ -80,9 +80,9 @@ public class Script extends AbstractResource {
 
             if (source.matches(SCRIPT_RE)) {
             		waitForResource(source, "scriptIsReady", waitTime, retries);
-            	
+
                 requestObject.put("origin", source);
-                return createResource(resourceUrl, 
+                return createResource(resourceUrl,
                 		requestObject.toJSONString());
             }
 
@@ -96,7 +96,7 @@ public class Script extends AbstractResource {
             }
 
             requestObject.put("source_code", source);
-            return createResource(resourceUrl, 
+            return createResource(resourceUrl,
             		requestObject.toJSONString());
 
         } catch (Throwable e) {

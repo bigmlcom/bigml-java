@@ -62,16 +62,16 @@ import org.springframework.test.context.ContextConfiguration;
         "src/test/resources/test_topicmodel.feature",
         "src/test/resources/test_whizzml.feature" })
 public class RunCukesTest {
-	
+
 	@BeforeClass
     public static void setup() {
-		// Create project for tests running 
+		// Create project for tests running
         BigMLClient api = new BigMLClient();
-        
-        Date date = Calendar.getInstance().getTime();  
+
+        Date date = Calendar.getInstance().getTime();
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         String projectName = "Test: java bindings " + dateFormat.format(date);
-        
+
         JSONObject args = new JSONObject();
         args.put("tags", Arrays.asList("unitTestProject"));
         args.put("name", projectName);
@@ -82,14 +82,14 @@ public class RunCukesTest {
     public static void teardown() {
     	// Remove all projects created for tests running
         BigMLClient api = new BigMLClient();
-        
+
         JSONObject listProjects = (JSONObject) api.listProjects(
-        	";tags__in=unitTestProject");
+        	"&tags__in=unitTestProject");
 		JSONArray projects = (JSONArray) listProjects.get("objects");
 		for (int i = 0; i < projects.size(); i++) {
 			JSONObject project = (JSONObject) projects.get(i);
 			api.deleteProject(project);
 		}
     }
-    
+
 }

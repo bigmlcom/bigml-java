@@ -20,8 +20,8 @@ public class Fusion extends AbstractResource {
 
     // Logging
     Logger logger = LoggerFactory.getLogger(Fusion.class);
-    
-	
+
+
     /**
      * Constructor
      *
@@ -33,20 +33,20 @@ public class Fusion extends AbstractResource {
      * @param cacheManager	cache manager
      */
     public Fusion(final BigMLClient bigmlClient,
-    			  final String apiUser, final String apiKey, 
+    			  final String apiUser, final String apiKey,
     			  final String project, final String organization,
     			  final CacheManager cacheManager) {
-        super.init(bigmlClient, apiUser, apiKey, project, organization, 
+        super.init(bigmlClient, apiUser, apiKey, project, organization,
         		   cacheManager, FUSION_RE, FUSION_PATH);
     }
-    
-    
+
+
     /**
      * Creates a fusion from a list of models.
      * Available models types: deepnet, ensemble, fusion, model,
      * logisticregression and linearregression.
      *
-     * POST /andromeda/fusion?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/fusion?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param modelsIds
@@ -57,8 +57,8 @@ public class Fusion extends AbstractResource {
      * @param args
      *            set of parameters for the new fusion. Optional
      * @param waitTime
-     *            time (milliseconds) to wait for next check of FINISHED 
-     *            status for every submodel before to start to create 
+     *            time (milliseconds) to wait for next check of FINISHED
+     *            status for every submodel before to start to create
      *            the fusion. Optional
      * @param retries
      *            number of times to try the operation. Optional
@@ -72,22 +72,22 @@ public class Fusion extends AbstractResource {
             logger.info("A valid model id must be provided.");
             return null;
         }
-        
+
         try {
             JSONObject requestObject = new JSONObject();
             if (args != null) {
                 requestObject = args;
             }
-            
+
             // Checking valid submodels Ids
             for (String modelId : modelsIds) {
             	if (!validateModel(modelId, waitTime, retries)) {
             		return null;
             	}
             }
-            
+
             requestObject.put("models", modelsIds);
-            return createResource(resourceUrl, 
+            return createResource(resourceUrl,
             		requestObject.toJSONString());
 
         } catch (Throwable e) {
@@ -95,30 +95,30 @@ public class Fusion extends AbstractResource {
             return null;
         }
     }
-    
-    
+
+
     /**
      * Creates a fusion from a list of models definitions.
      *
-     * POST /andromeda/fusion?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/fusion?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param models
      *            list of models definitions int he form
-     *            
+     *
      *           {
      *           	"id": xxx/id, where xxx is
      *            			one of the model types availables and id is a string
      *            			of 24 alpha-numeric chars for the model to include in
      *            			the fusion resource,
-     *            	"weight": a number specifying the weight of the submodel 
+     *            	"weight": a number specifying the weight of the submodel
      *            			in the fusion
      *            }
      * @param args
      *            set of parameters for the new fusion. Optional
      * @param waitTime
-     *            time (milliseconds) to wait for next check of FINISHED 
-     *            status for every submodel before to start to create 
+     *            time (milliseconds) to wait for next check of FINISHED
+     *            status for every submodel before to start to create
      *            the fusion. Optional
      * @param retries
      *            number of times to try the operation. Optional
@@ -132,22 +132,22 @@ public class Fusion extends AbstractResource {
             logger.info("A valid model configuration must be provided.");
             return null;
         }
-        
+
         try {
             JSONObject requestObject = new JSONObject();
             if (args != null) {
                 requestObject = args;
             }
-            
+
             for (JSONObject model : models) {
             	String modelId = (String) model.get("id");
             	if (!validateModel(modelId, waitTime, retries)) {
             		return null;
             	}
             }
-            
+
             requestObject.put("models", models);
-            return createResource(resourceUrl, 
+            return createResource(resourceUrl,
             		requestObject.toJSONString());
 
         } catch (Throwable e) {
@@ -155,21 +155,21 @@ public class Fusion extends AbstractResource {
             return null;
         }
     }
-    
-    
+
+
     private Boolean validateModel(String modelId, Integer waitTime, Integer retries) {
     	// Checking valid submodels Ids
         if (modelId == null || modelId.length() == 0
-                || !(modelId.matches(DEEPNET_RE) || 
-                		modelId.matches(MODEL_RE) || 
-                		modelId.matches(ENSEMBLE_RE) || 
-                		modelId.matches(FUSION_RE) || 
+                || !(modelId.matches(DEEPNET_RE) ||
+                		modelId.matches(MODEL_RE) ||
+                		modelId.matches(ENSEMBLE_RE) ||
+                		modelId.matches(FUSION_RE) ||
                 		modelId.matches(LOGISTICREGRESSION_RE) ||
                 		modelId.matches(LINEARREGRESSION_RE))) {
             logger.info("Wrong submodel id");
             return false;
         }
-        
+
         if (modelId.matches(ENSEMBLE_RE)) {
         		waitForResource(modelId, "ensembleIsReady", waitTime, retries);
         }
@@ -181,19 +181,19 @@ public class Fusion extends AbstractResource {
         if (modelId.matches(LOGISTICREGRESSION_RE)) {
         		waitForResource(modelId, "logisticRegressionIsReady", waitTime, retries);
         }
-        
+
         if (modelId.matches(LINEARREGRESSION_RE)) {
     		waitForResource(modelId, "linearRegressionIsReady", waitTime, retries);
         }
-        
+
         if (modelId.matches(DEEPNET_RE)) {
         		waitForResource(modelId, "deepnetIsReady", waitTime, retries);
         }
-        
+
         if (modelId.matches(FUSION_RE)) {
         		waitForResource(modelId, "fusionIsReady", waitTime, retries);
         }
         return true;
     }
-    
+
 }

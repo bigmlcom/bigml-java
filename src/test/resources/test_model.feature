@@ -1,17 +1,18 @@
+@model
 Feature: Model REST api
-		
+
 		Scenario Outline: Successfully creating a prediction:
 	      Given I provision a dataset from "<data>" file
 	      And I create a model
 	      And I wait until the model is ready less than <time_1> secs
 	      When I create a prediction for "<data_input>"
 	      Then the prediction for "<objective>" is "<prediction>"
-	
+
 	      Examples:
 	      | data                |  time_1  | data_input    | objective | prediction  |
 	      | data/iris.csv | 50      | {"petal width": 0.5} | 000004    | Iris-setosa |
 	      | data/iris_sp_chars.csv |  50      | {"pétal&width\u0000": 0.5} | 000004    | Iris-setosa |
-		
+
 		Scenario Outline: Successfully creating a prediction using a public model:
         Given I provision a dataset from "<data>" file
         And I create a model
@@ -43,8 +44,8 @@ Feature: Model REST api
         Examples:
         | data	| time_1  | data_input    | objective | prediction  |
         | data/iris.csv | 50	| {"petal width": 0.5} | 000004    | Iris-setosa |
-        
-        
+
+
      Scenario Outline: Successfully creating a model from a dataset list:
         Given I provision a data source from "<data>" file
         And I create a dataset
@@ -60,4 +61,3 @@ Feature: Model REST api
         Examples:
           | data	|  time_1  | time_2 | time_3 |
           | data/iris.csv    |   30     | 30     | 30     |
-          

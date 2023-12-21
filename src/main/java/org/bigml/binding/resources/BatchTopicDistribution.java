@@ -19,8 +19,8 @@ public class BatchTopicDistribution extends AbstractResource {
 
     // Logging
     Logger logger = LoggerFactory.getLogger(BatchTopicDistribution.class);
-    
-	
+
+
     /**
      * Constructor
      *
@@ -32,11 +32,11 @@ public class BatchTopicDistribution extends AbstractResource {
      * @param cacheManager	cache manager
      */
     public BatchTopicDistribution(final BigMLClient bigmlClient,
-    							  final String apiUser, final String apiKey, 
+    							  final String apiUser, final String apiKey,
     							  final String project, final String organization,
     							  final CacheManager cacheManager) {
     		super.init(bigmlClient, apiUser, apiKey, project, organization,
-    				   cacheManager, BATCH_TOPICDISTRIBUTION_RE, 
+    				   cacheManager, BATCH_TOPICDISTRIBUTION_RE,
     				   BATCH_TOPICDISTRIBUTION_PATH);
     }
 
@@ -80,7 +80,7 @@ public class BatchTopicDistribution extends AbstractResource {
         try {
         		waitForResource(topicModelId, "topicModelIsReady", waitTime, retries);
         		waitForResource(datasetId, "datasetIsReady", waitTime, retries);
-        	
+
             JSONObject requestObject = new JSONObject();
             if (args != null) {
                 requestObject = args;

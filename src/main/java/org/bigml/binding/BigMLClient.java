@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * Entry point to create, retrieve, list, update, and delete sources, 
+ * Entry point to create, retrieve, list, update, and delete sources,
  * datasets, models, predictions, evaluations, ensembles, etc.
  *
  * Full API documentation on the API can be found from BigML at:
@@ -35,9 +35,9 @@ public class BigMLClient {
     // (current)
     // BigML version
     final public static String BIGML_URL = "https://bigml.io/";
-    
+
     final public static Locale DEFAUL_LOCALE = Locale.ENGLISH;
-    
+
     final public static String STORAGE = "./storage";
 
     /**
@@ -51,7 +51,7 @@ public class BigMLClient {
     private String bigmlUser;
     private String bigmlDomain;
     private String bigmlApiKey;
-    
+
     private String projectId;
     private String organizationId;
 
@@ -97,7 +97,7 @@ public class BigMLClient {
     private String storage;
 
     private CacheManager cacheManager;
-    
+
     /**
      * Constructor
      */
@@ -108,10 +108,10 @@ public class BigMLClient {
     		logger.error(ae.getLocalizedMessage());
     	}
     }
-    
+
     /**
      * Constructor
-     * 
+     *
      * @param apiUser
      * 			API username
      * @param apiKey
@@ -122,17 +122,17 @@ public class BigMLClient {
      *
      * @throws AuthenticationException if authentication in bigml domain fails
      */
-    public BigMLClient(final String apiUser, final String apiKey, 
+    public BigMLClient(final String apiUser, final String apiKey,
     		final String storage) throws AuthenticationException {
     	this.init(null, apiUser, apiKey, storage);
     }
-    
+
     /**
      * Constructor
-     * 
+     *
      * @param bigmlDomain
-     * 			If bigmlDomain is set, the api will point to the specified domain. 
-     * 			Default will be the one in the environment variable `BIGML_DOMAIN` 
+     * 			If bigmlDomain is set, the api will point to the specified domain.
+     * 			Default will be the one in the environment variable `BIGML_DOMAIN`
      * 			or `bigml.io` if missing
      * @param apiUser
      * 			API username
@@ -144,28 +144,28 @@ public class BigMLClient {
      *
      * @throws AuthenticationException if authentication in bigml domain fails
      */
-    public BigMLClient(final String bigmlDomain, 
-    		final String apiUser, final String apiKey, 
+    public BigMLClient(final String bigmlDomain,
+    		final String apiUser, final String apiKey,
     		final String storage) throws AuthenticationException {
     	this.init(bigmlDomain, apiUser, apiKey, storage);
     }
-    
+
     /**
      * Constructor
-     * 
+     *
      * @param apiUser
      * 			API username
      * @param apiKey
      * 			API key
      * @param projectId
-     * 			When projectId is set to a project ID, the user is considered to be 
-     * 			working in an organization project. The scope of the API requests 
-     * 			will be limited to this project and permissions should be previously 
+     * 			When projectId is set to a project ID, the user is considered to be
+     * 			working in an organization project. The scope of the API requests
+     * 			will be limited to this project and permissions should be previously
      * 			given by the organization administrator
      * @param organizationId
-     * 			When organizationId is set to an organization ID, the user is 
-     * 			considered to be working for an organization. The scope of the API 
-     * 			requests will be limited to the projects of the organization and 
+     * 			When organizationId is set to an organization ID, the user is
+     * 			considered to be working for an organization. The scope of the API
+     * 			requests will be limited to the projects of the organization and
      * 			permissions need to be previously given by the organization administrator
      * @param storage
      * 			If storage is set to a directory name, the resources obtained in
@@ -173,33 +173,33 @@ public class BigMLClient {
      *
      * @throws AuthenticationException if authentication in bigml domain fails
      */
-    public BigMLClient(final String apiUser, final String apiKey, 
-    		final String projectId, final String organizationId, 
+    public BigMLClient(final String apiUser, final String apiKey,
+    		final String projectId, final String organizationId,
     		final String storage) throws AuthenticationException {
-    	this.init(null, apiUser, apiKey, projectId, 
+    	this.init(null, apiUser, apiKey, projectId,
   			  organizationId, storage);
     }
-    
+
     /**
      * Constructor
-     * 
+     *
      * @param bigmlDomain
-     * 			If bigmlDomain is set, the api will point to the specified domain. 
-     * 			Default will be the one in the environment variable `BIGML_DOMAIN` 
+     * 			If bigmlDomain is set, the api will point to the specified domain.
+     * 			Default will be the one in the environment variable `BIGML_DOMAIN`
      * 			or `bigml.io` if missing
      * @param apiUser
      * 			API username
      * @param apiKey
      * 			API key
      * @param projectId
-     * 			When projectId is set to a project ID, the user is considered to be 
-     * 			working in an organization project. The scope of the API requests 
-     * 			will be limited to this project and permissions should be previously 
+     * 			When projectId is set to a project ID, the user is considered to be
+     * 			working in an organization project. The scope of the API requests
+     * 			will be limited to this project and permissions should be previously
      * 			given by the organization administrator
      * @param organizationId
-     * 			When organizationId is set to an organization ID, the user is 
-     * 			considered to be working for an organization. The scope of the API 
-     * 			requests will be limited to the projects of the organization and 
+     * 			When organizationId is set to an organization ID, the user is
+     * 			considered to be working for an organization. The scope of the API
+     * 			requests will be limited to the projects of the organization and
      * 			permissions need to be previously given by the organization administrator
      * @param storage
      * 			If storage is set to a directory name, the resources obtained in
@@ -207,14 +207,14 @@ public class BigMLClient {
      *
      * @throws AuthenticationException if authentication in bigml domain fails
      */
-    public BigMLClient(final String bigmlDomain, 
-    		final String apiUser, final String apiKey, 
-    		final String projectId, final String organizationId, 
+    public BigMLClient(final String bigmlDomain,
+    		final String apiUser, final String apiKey,
+    		final String projectId, final String organizationId,
     		final String storage) throws AuthenticationException {
-    	this.init(bigmlDomain, apiUser, apiKey, projectId, 
+    	this.init(bigmlDomain, apiUser, apiKey, projectId,
   			  organizationId, storage);
     }
-    
+
 
     public static void resetInstance() {
         instance = null;
@@ -226,14 +226,14 @@ public class BigMLClient {
         value = System.getenv(setting);
       return value;
     }
-    
-    
+
+
     /**
      * Initialization object.
-     * 
+     *
      * @param bigmlDomain
-     * 		If bigmlDomain is set, the api will point to the specified domain. 
-     * 		Default will be the one in the environment variable `BIGML_DOMAIN` 
+     * 		If bigmlDomain is set, the api will point to the specified domain.
+     * 		Default will be the one in the environment variable `BIGML_DOMAIN`
      * 		or `bigml.io` if missing
      * @param apiUser
      * 		API username
@@ -253,27 +253,27 @@ public class BigMLClient {
         initBigmlSettings(apiUser, apiKey);
         initResources();
     }
-    
+
     /**
      * Initialization object.
-     * 
+     *
      * @param bigmlDomain
-     * 		If bigmlDomain is set, the api will point to the specified domain. 
-     * 		Default will be the one in the environment variable `BIGML_DOMAIN` 
+     * 		If bigmlDomain is set, the api will point to the specified domain.
+     * 		Default will be the one in the environment variable `BIGML_DOMAIN`
      * 		or `bigml.io` if missing
      * @param apiUser
      * 		API username
      * @param apiKey
      * 		API key
      * @param projectId
-     * 		When projectId is set to a project ID, the user is considered to be 
-     * 		working in an organization project. The scope of the API requests 
-     * 		will be limited to this project and permissions should be previously 
+     * 		When projectId is set to a project ID, the user is considered to be
+     * 		working in an organization project. The scope of the API requests
+     * 		will be limited to this project and permissions should be previously
      * 		given by the organization administrator
      * @param organizationId
-     * 		When organizationId is set to an organization ID, the user is 
-     * 		considered to be working for an organization. The scope of the API 
-     * 		requests will be limited to the projects of the organization and 
+     * 		When organizationId is set to an organization ID, the user is
+     * 		considered to be working for an organization. The scope of the API
+     * 		requests will be limited to the projects of the organization and
      * 		permissions need to be previously given by the organization administrator
      * @param storage
      * 		If storage is set to a directory name, the resources obtained in
@@ -281,7 +281,7 @@ public class BigMLClient {
      * @throws AuthenticationException if authentication in bigml domain fails
      */
     private void init(final String bigmlDomain, final String apiUser,
-                      final String apiKey, final String projectId, 
+                      final String apiKey, final String projectId,
                       final String organizationId, final String storage)
             throws AuthenticationException {
         this.bigmlDomain = bigmlDomain;
@@ -294,7 +294,7 @@ public class BigMLClient {
     }
 
     private void initBigmlSettings(final String apiUser,
-                                   final String apiKey) 
+                                   final String apiKey)
       throws AuthenticationException {
 
         this.bigmlUser = apiUser != null ? apiUser : this.setting("BIGML_USERNAME");
@@ -337,87 +337,87 @@ public class BigMLClient {
     private void initResources() {
         // Lets create the storage folder in it was informed
         this.cacheManager = new CacheManager(storage);
-        
-        source = new Source(this, this.bigmlUser, this.bigmlApiKey, 
+
+        source = new Source(this, this.bigmlUser, this.bigmlApiKey,
         		this.projectId, this.organizationId, cacheManager);
-        dataset = new Dataset(this, this.bigmlUser, this.bigmlApiKey, 
+        dataset = new Dataset(this, this.bigmlUser, this.bigmlApiKey,
         		this.projectId, this.organizationId, cacheManager);
-        model = new Model(this, this.bigmlUser, this.bigmlApiKey, 
+        model = new Model(this, this.bigmlUser, this.bigmlApiKey,
         		this.projectId, this.organizationId, cacheManager);
-        prediction = new Prediction(this, this.bigmlUser, this.bigmlApiKey, 
+        prediction = new Prediction(this, this.bigmlUser, this.bigmlApiKey,
         		this.projectId, this.organizationId, cacheManager);
-        evaluation = new Evaluation(this, this.bigmlUser, this.bigmlApiKey, 
+        evaluation = new Evaluation(this, this.bigmlUser, this.bigmlApiKey,
         		this.projectId, this.organizationId, cacheManager);
-        ensemble = new Ensemble(this, this.bigmlUser, this.bigmlApiKey, 
+        ensemble = new Ensemble(this, this.bigmlUser, this.bigmlApiKey,
         		this.projectId, this.organizationId, cacheManager);
-        anomaly = new Anomaly(this, this.bigmlUser, this.bigmlApiKey, 
+        anomaly = new Anomaly(this, this.bigmlUser, this.bigmlApiKey,
         		this.projectId, this.organizationId, cacheManager);
-        anomalyScore = new AnomalyScore(this, this.bigmlUser, this.bigmlApiKey, 
+        anomalyScore = new AnomalyScore(this, this.bigmlUser, this.bigmlApiKey,
         		this.projectId, this.organizationId, cacheManager);
-        batchAnomalyScore = new BatchAnomalyScore(this, this.bigmlUser, this.bigmlApiKey, 
+        batchAnomalyScore = new BatchAnomalyScore(this, this.bigmlUser, this.bigmlApiKey,
         		this.projectId, this.organizationId, cacheManager);
-        batchPrediction = new BatchPrediction(this, this.bigmlUser, this.bigmlApiKey, 
+        batchPrediction = new BatchPrediction(this, this.bigmlUser, this.bigmlApiKey,
         		this.projectId, this.organizationId, cacheManager);
-        cluster = new Cluster(this, this.bigmlUser, this.bigmlApiKey, 
+        cluster = new Cluster(this, this.bigmlUser, this.bigmlApiKey,
         		this.projectId, this.organizationId, cacheManager);
-        centroid = new Centroid(this, this.bigmlUser, this.bigmlApiKey, 
+        centroid = new Centroid(this, this.bigmlUser, this.bigmlApiKey,
         		this.projectId, this.organizationId, cacheManager);
-        batchCentroid = new BatchCentroid(this, this.bigmlUser, this.bigmlApiKey, 
+        batchCentroid = new BatchCentroid(this, this.bigmlUser, this.bigmlApiKey,
         		this.projectId, this.organizationId, cacheManager);
-        project = new Project(this, this.bigmlUser, this.bigmlApiKey, 
+        project = new Project(this, this.bigmlUser, this.bigmlApiKey,
         		this.projectId, this.organizationId, cacheManager);
-        sample = new Sample(this, this.bigmlUser, this.bigmlApiKey, 
+        sample = new Sample(this, this.bigmlUser, this.bigmlApiKey,
         		this.projectId, this.organizationId, cacheManager);
-        correlation = new Correlation(this, this.bigmlUser, this.bigmlApiKey, 
+        correlation = new Correlation(this, this.bigmlUser, this.bigmlApiKey,
         		this.projectId, this.organizationId, cacheManager);
-        statisticalTest = new StatisticalTest(this, this.bigmlUser, this.bigmlApiKey, 
+        statisticalTest = new StatisticalTest(this, this.bigmlUser, this.bigmlApiKey,
         		this.projectId, this.organizationId, cacheManager);
-        logisticRegression = new LogisticRegression(this, this.bigmlUser, this.bigmlApiKey, 
+        logisticRegression = new LogisticRegression(this, this.bigmlUser, this.bigmlApiKey,
         		this.projectId, this.organizationId, cacheManager);
-        script = new Script(this, this.bigmlUser, this.bigmlApiKey, 
+        script = new Script(this, this.bigmlUser, this.bigmlApiKey,
         		this.projectId, this.organizationId, cacheManager);
-        execution = new Execution(this, this.bigmlUser, this.bigmlApiKey, 
+        execution = new Execution(this, this.bigmlUser, this.bigmlApiKey,
         		this.projectId, this.organizationId, cacheManager);
-        library = new Library(this, this.bigmlUser, this.bigmlApiKey, 
+        library = new Library(this, this.bigmlUser, this.bigmlApiKey,
         		this.projectId, this.organizationId, cacheManager);
-        association = new Association(this, this.bigmlUser, this.bigmlApiKey, 
+        association = new Association(this, this.bigmlUser, this.bigmlApiKey,
         		this.projectId, this.organizationId, cacheManager);
-        associationSet = new AssociationSet(this, this.bigmlUser, this.bigmlApiKey, 
+        associationSet = new AssociationSet(this, this.bigmlUser, this.bigmlApiKey,
         		this.projectId, this.organizationId, cacheManager);
-        topicModel = new TopicModel(this, this.bigmlUser, this.bigmlApiKey, 
+        topicModel = new TopicModel(this, this.bigmlUser, this.bigmlApiKey,
         		this.projectId, this.organizationId, cacheManager);
-        topicDistribution = new TopicDistribution(this, this.bigmlUser, this.bigmlApiKey, 
+        topicDistribution = new TopicDistribution(this, this.bigmlUser, this.bigmlApiKey,
         		this.projectId, this.organizationId, cacheManager);
-        batchTopicDistribution = new BatchTopicDistribution(this, this.bigmlUser, this.bigmlApiKey, 
+        batchTopicDistribution = new BatchTopicDistribution(this, this.bigmlUser, this.bigmlApiKey,
         		this.projectId, this.organizationId, cacheManager);
-        configuration = new Configuration(this, this.bigmlUser, this.bigmlApiKey, 
+        configuration = new Configuration(this, this.bigmlUser, this.bigmlApiKey,
         		this.projectId, this.organizationId, cacheManager);
-        timeSeries = new TimeSeries(this, this.bigmlUser, this.bigmlApiKey, 
+        timeSeries = new TimeSeries(this, this.bigmlUser, this.bigmlApiKey,
         		this.projectId, this.organizationId, cacheManager);
-        forecast = new Forecast(this, this.bigmlUser, this.bigmlApiKey, 
+        forecast = new Forecast(this, this.bigmlUser, this.bigmlApiKey,
         		this.projectId, this.organizationId, cacheManager);
-        deepnet = new Deepnet(this, this.bigmlUser, this.bigmlApiKey, 
+        deepnet = new Deepnet(this, this.bigmlUser, this.bigmlApiKey,
         		this.projectId, this.organizationId, cacheManager);
-        optiml = new OptiML(this, this.bigmlUser, this.bigmlApiKey, 
+        optiml = new OptiML(this, this.bigmlUser, this.bigmlApiKey,
         		this.projectId, this.organizationId, cacheManager);
-        fusion = new Fusion(this, this.bigmlUser, this.bigmlApiKey, 
+        fusion = new Fusion(this, this.bigmlUser, this.bigmlApiKey,
         		this.projectId, this.organizationId, cacheManager);
-        pca = new Pca(this, this.bigmlUser, this.bigmlApiKey, 
+        pca = new Pca(this, this.bigmlUser, this.bigmlApiKey,
         		this.projectId, this.organizationId, cacheManager);
-        projection = new Projection(this, this.bigmlUser, this.bigmlApiKey, 
+        projection = new Projection(this, this.bigmlUser, this.bigmlApiKey,
         		this.projectId, this.organizationId, cacheManager);
-        batchProjection = new BatchProjection(this, this.bigmlUser, this.bigmlApiKey, 
+        batchProjection = new BatchProjection(this, this.bigmlUser, this.bigmlApiKey,
         		this.projectId, this.organizationId, cacheManager);
-        linearRegression = new LinearRegression(this, this.bigmlUser, this.bigmlApiKey, 
+        linearRegression = new LinearRegression(this, this.bigmlUser, this.bigmlApiKey,
         		this.projectId, this.organizationId, cacheManager);
-        externalConnector = new ExternalConnector(this, this.bigmlUser, this.bigmlApiKey, 
+        externalConnector = new ExternalConnector(this, this.bigmlUser, this.bigmlApiKey,
         		this.projectId, this.organizationId, cacheManager);
     }
 
     public String getBigMLUrl() {
         return bigmlUrl;
     }
-    
+
     public CacheManager getCacheManager() {
         return cacheManager;
     }
@@ -432,7 +432,7 @@ public class BigMLClient {
     /**
      * Creates a new source.
      *
-     * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/source?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: multipart/form-data;
      *
      * @param fileName
@@ -443,7 +443,7 @@ public class BigMLClient {
      *            the name you want to give to the new source. Optional
      * @param sourceParser
      *            set of parameters to parse the source. Optional
-     * 
+     *
      * @return a JSONObject for the new source
      */
     public JSONObject createSource(final String fileName, String name,
@@ -454,7 +454,7 @@ public class BigMLClient {
     /**
      * Creates a new source.
      *
-     * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/source?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: multipart/form-data;
      *
      * @param fileName
@@ -467,7 +467,7 @@ public class BigMLClient {
      *            set of parameters to parse the source. Optional
      * @param args
      *            set of parameters for the new model. Optional
-     * 
+     *
      * @return a JSONObject for the new source
      */
     public JSONObject createSource(final String fileName, String name,
@@ -478,14 +478,14 @@ public class BigMLClient {
     /**
      * Creates a source using a URL.
      *
-     * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/source?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json;
      *
      * @param url
      *            url for remote source
      * @param sourceParser
      *            set of parameters to create the source. Optional
-     * 
+     *
      * @return a JSONObject for the new source
      */
     public JSONObject createRemoteSource(final String url,
@@ -496,7 +496,7 @@ public class BigMLClient {
     /**
      * Creates a source using a URL.
      *
-     * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/source?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json;
      *
      * @param url
@@ -505,7 +505,7 @@ public class BigMLClient {
      *            set of parameters to create the source. Optional
      * @param args
      *            set of parameters for the new model. Optional
-     * 
+     *
      * @return a JSONObject for the new source
      */
     public JSONObject createRemoteSource(final String url,
@@ -516,7 +516,7 @@ public class BigMLClient {
     /**
      * Creates a source using a BatchPrediction ID.
      *
-     * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/source?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json;
      *
      * @param batchPredictionId
@@ -535,7 +535,7 @@ public class BigMLClient {
     /**
      * Creates a source using a BatchPrediction ID.
      *
-     * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/source?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json;
      *
      * @param batchPredictionId
@@ -556,14 +556,14 @@ public class BigMLClient {
     /**
      * Creates a source using a BatchAnomalyScore ID.
      *
-     * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/source?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json;
      *
      * @param batchAnomalyScoreId
      *            the resource ID of the batch anomaly score resource
      * @param sourceParser
      *            set of parameters to create the source. Optional
-     * 
+     *
      *  @return a JSONObject for the new source
      */
     public JSONObject createSourceFromBatchAnomalyScore(final String batchAnomalyScoreId,
@@ -575,7 +575,7 @@ public class BigMLClient {
     /**
      * Creates a source using a BatchAnomalyScore ID.
      *
-     * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/source?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json;
      *
      * @param batchAnomalyScoreId
@@ -584,7 +584,7 @@ public class BigMLClient {
      *            set of parameters to create the source. Optional
      * @param args
      *            set of parameters for the new model. Optional
-     * 
+     *
      * @return a JSONObject for the new source
      */
     public JSONObject createSourceFromBatchAnomalyScore(final String batchAnomalyScoreId,
@@ -596,7 +596,7 @@ public class BigMLClient {
     /**
      * Creates a source using a URL.
      *
-     * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/source?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json;
      *
      * @param data
@@ -614,7 +614,7 @@ public class BigMLClient {
     /**
      * Creates a source using external data.
      *
-     * POST /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/source?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json;
      *
      * @param externalData
@@ -632,7 +632,7 @@ public class BigMLClient {
     /**
      * Retrieves a remote source.
      *
-     * GET /andromeda/source/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/source/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io
      *
      * @param sourceId
@@ -648,7 +648,7 @@ public class BigMLClient {
     /**
      * Retrieves a remote source.
      *
-     * GET /andromeda/source/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/source/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io
      *
      * @param sourceJSON
@@ -688,7 +688,7 @@ public class BigMLClient {
     /**
      * Lists all your remote sources.
      *
-     * GET /andromeda/source?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/source?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param queryString
@@ -706,7 +706,7 @@ public class BigMLClient {
      * Updates remote `source` with `changes'.
      *
      * POST
-     * /andromeda/source/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/source/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param sourceId
@@ -727,7 +727,7 @@ public class BigMLClient {
      * Updates remote `source` with `changes'.
      *
      * POST
-     * /andromeda/source/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/source/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param sourceJSON
@@ -746,7 +746,7 @@ public class BigMLClient {
      * Deletes a remote source permanently.
      *
      * DELETE
-     * /andromeda/source/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/source/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param sourceId
@@ -763,7 +763,7 @@ public class BigMLClient {
      * Deletes a remote source permanently.
      *
      * DELETE
-     * /andromeda/source/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/source/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param sourceJSON
@@ -847,7 +847,7 @@ public class BigMLClient {
      * Retrieves a dataset.
      *
      * GET
-     * /andromeda/dataset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/dataset/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io
      *
      * @param datasetId
@@ -859,12 +859,12 @@ public class BigMLClient {
     public JSONObject getDataset(final String datasetId) {
         return dataset.get(datasetId);
     }
-    
+
     /**
      * Retrieves a dataset.
      *
      * GET
-     * /andromeda/dataset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/dataset/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io
      *
      * @param datasetJSON
@@ -880,7 +880,7 @@ public class BigMLClient {
      * Returns the ids of the fields that contain errors and their number.
      *
      * @param datasetId the dataset id of the dataset to be inspected
-     * 
+     *
      * @return a Map with error counts in dataset
      */
     public Map<String, Long> getErrorCounts(final String datasetId) {
@@ -891,8 +891,8 @@ public class BigMLClient {
      * Returns the ids of the fields that contain errors and their number.
      *
      * @param datasetJSON the dataset JSON object to be inspected
-     * 
-     * @return a Map with error counts in dataset 
+     *
+     * @return a Map with error counts in dataset
      */
     public Map<String, Long> getErrorCounts(final JSONObject datasetJSON) {
         return dataset.getErrorCounts(datasetJSON);
@@ -926,7 +926,7 @@ public class BigMLClient {
     /**
      * Lists all your datasources.
      *
-     * GET /andromeda/dataset?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/dataset?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param queryString
@@ -942,7 +942,7 @@ public class BigMLClient {
      * Updates a dataset.
      *
      * PUT
-     * /andromeda/dataset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/dataset/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param datasetId
@@ -961,7 +961,7 @@ public class BigMLClient {
      * Updates a dataset.
      *
      * PUT
-     * /andromeda/dataset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/dataset/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param datasetJSON
@@ -980,7 +980,7 @@ public class BigMLClient {
      * Deletes a dataset.
      *
      * DELETE
-     * /andromeda/dataset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/dataset/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param datasetId
@@ -997,7 +997,7 @@ public class BigMLClient {
      * Deletes a dataset.
      *
      * DELETE
-     * /andromeda/dataset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/dataset/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param datasetJSON
@@ -1039,7 +1039,7 @@ public class BigMLClient {
     /**
      * Creates a new model.
      *
-     * POST /andromeda/model?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/model?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param resourceId
@@ -1056,7 +1056,7 @@ public class BigMLClient {
      *
      * @return a JSONObject for the new model
      */
-    public JSONObject createModel(final String resourceId, 
+    public JSONObject createModel(final String resourceId,
     		JSONObject args, Integer waitTime, Integer retries) {
 
         return model.create(resourceId, args, waitTime, retries);
@@ -1065,7 +1065,7 @@ public class BigMLClient {
     /**
      * Creates a mdel from a list of `datasets`.
      *
-     * POST /andromeda/mdel?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/mdel?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param datasetsIds
@@ -1082,7 +1082,7 @@ public class BigMLClient {
      *
      * @return a JSONObject for the new model
      */
-    public JSONObject createModel(final List datasetsIds, 
+    public JSONObject createModel(final List datasetsIds,
     		JSONObject args, Integer waitTime, Integer retries) {
 
         return model.create(datasetsIds, args, waitTime, retries);
@@ -1092,7 +1092,7 @@ public class BigMLClient {
      * Retrieves a model.
      *
      *
-     * GET /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/model/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param modelId
@@ -1109,7 +1109,7 @@ public class BigMLClient {
      * Retrieves a model.
      *
      *
-     * GET /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/model/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param modelId
@@ -1131,7 +1131,7 @@ public class BigMLClient {
      * Retrieves a public model.
      *
      *
-     * GET /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/model/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param modelId
@@ -1148,7 +1148,7 @@ public class BigMLClient {
      * Retrieves a public model.
      *
      *
-     * GET /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/model/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param modelId
@@ -1169,7 +1169,7 @@ public class BigMLClient {
     /**
      * Retrieves a model.
      *
-     * GET /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/model/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param modelJSON
@@ -1184,7 +1184,7 @@ public class BigMLClient {
     /**
      * Retrieves a model.
      *
-     * GET /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/model/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param modelJSON
@@ -1205,7 +1205,7 @@ public class BigMLClient {
      * Retrieves a model.
      *
      *
-     * GET /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/model/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param modelId
@@ -1224,7 +1224,7 @@ public class BigMLClient {
      * Retrieves a model.
      *
      *
-     * GET /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/model/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param modelId
@@ -1248,7 +1248,7 @@ public class BigMLClient {
      * Retrieves a public model.
      *
      *
-     * GET /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/model/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param modelId
@@ -1268,7 +1268,7 @@ public class BigMLClient {
      * Retrieves a public model.
      *
      *
-     * GET /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/model/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param modelId
@@ -1291,7 +1291,7 @@ public class BigMLClient {
     /**
      * Retrieves a model.
      *
-     * GET /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/model/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param modelJSON
@@ -1309,7 +1309,7 @@ public class BigMLClient {
     /**
      * Retrieves a model.
      *
-     * GET /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/model/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param modelJSON
@@ -1356,7 +1356,7 @@ public class BigMLClient {
     /**
      * Lists all your models.
      *
-     * GET /andromeda/model?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/model?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param queryString
@@ -1371,7 +1371,7 @@ public class BigMLClient {
     /**
      * Updates a model.
      *
-     * PUT /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * PUT /andromeda/model/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param modelId
@@ -1389,7 +1389,7 @@ public class BigMLClient {
     /**
      * Updates a model.
      *
-     * PUT /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * PUT /andromeda/model/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param modelJSON
@@ -1408,7 +1408,7 @@ public class BigMLClient {
      * Deletes a model.
      *
      * DELETE
-     * /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/model/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param modelId
@@ -1425,7 +1425,7 @@ public class BigMLClient {
      * Deletes a model.
      *
      * DELETE
-     * /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/model/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param modelJSON
@@ -1447,7 +1447,7 @@ public class BigMLClient {
     /**
      * Creates a new anomaly.
      *
-     * POST /andromeda/anomaly?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/anomaly?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param datasetId
@@ -1463,7 +1463,7 @@ public class BigMLClient {
      *
      * @return a JSONObject for the new anomaly
      */
-    public JSONObject createAnomaly(final String datasetId, 
+    public JSONObject createAnomaly(final String datasetId,
     		JSONObject args, Integer waitTime, Integer retries) {
 
         return anomaly.create(datasetId, args, waitTime, retries);
@@ -1472,7 +1472,7 @@ public class BigMLClient {
     /**
      * Creates an anomaly from a list of `datasets`.
      *
-     * POST /andromeda/anomaly?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/anomaly?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param datasetsIds
@@ -1489,7 +1489,7 @@ public class BigMLClient {
      *
      * @return a JSONObject for the new anomaly
      */
-    public JSONObject createAnomaly(final List datasetsIds, 
+    public JSONObject createAnomaly(final List datasetsIds,
     		JSONObject args, Integer waitTime, Integer retries) {
 
         return anomaly.create(datasetsIds, args, waitTime, retries);
@@ -1499,7 +1499,7 @@ public class BigMLClient {
      * Retrieves an anomaly.
      *
      *
-     * GET /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/anomaly/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param anomalyId
@@ -1516,7 +1516,7 @@ public class BigMLClient {
      * Retrieves an anomaly.
      *
      *
-     * GET /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/anomaly/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param anomalyId
@@ -1538,7 +1538,7 @@ public class BigMLClient {
      * Retrieves a public anomaly.
      *
      *
-     * GET /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/anomaly/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param anomalyId
@@ -1555,7 +1555,7 @@ public class BigMLClient {
      * Retrieves a public anomaly.
      *
      *
-     * GET /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/anomaly/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param anomalyId
@@ -1576,7 +1576,7 @@ public class BigMLClient {
     /**
      * Retrieves an anomaly.
      *
-     * GET /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/anomaly/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param anomalyJSON
@@ -1591,7 +1591,7 @@ public class BigMLClient {
     /**
      * Retrieves an anomaly.
      *
-     * GET /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/anomaly/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param anomalyJSON
@@ -1612,7 +1612,7 @@ public class BigMLClient {
      * Retrieves an anomaly.
      *
      *
-     * GET /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/anomaly/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param anomalyId
@@ -1631,7 +1631,7 @@ public class BigMLClient {
      * Retrieves an anomaly.
      *
      *
-     * GET /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/anomaly/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param anomalyId
@@ -1655,7 +1655,7 @@ public class BigMLClient {
      * Retrieves a public anomaly.
      *
      *
-     * GET /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/anomaly/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param anomalyId
@@ -1675,7 +1675,7 @@ public class BigMLClient {
      * Retrieves a public anomaly.
      *
      *
-     * GET /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/anomaly/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param anomalyId
@@ -1698,7 +1698,7 @@ public class BigMLClient {
     /**
      * Retrieves an anomaly.
      *
-     * GET /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/anomaly/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param anomalyJSON
@@ -1716,7 +1716,7 @@ public class BigMLClient {
     /**
      * Retrieves an anomaly.
      *
-     * GET /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/anomaly/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param anomalyJSON
@@ -1763,7 +1763,7 @@ public class BigMLClient {
     /**
      * Lists all your anomalies.
      *
-     * GET /andromeda/anomaly?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/anomaly?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param queryString
@@ -1778,7 +1778,7 @@ public class BigMLClient {
     /**
      * Updates an anomaly.
      *
-     * PUT /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * PUT /andromeda/anomaly/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param anomalyId
@@ -1796,7 +1796,7 @@ public class BigMLClient {
     /**
      * Updates an anomaly.
      *
-     * PUT /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * PUT /andromeda/anomaly/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param anomalyJSON
@@ -1815,7 +1815,7 @@ public class BigMLClient {
      * Deletes an anomaly.
      *
      * DELETE
-     * /andromeda/anomaly/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/anomaly/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param anomalyId
@@ -1832,7 +1832,7 @@ public class BigMLClient {
      * Deletes an anomaly.
      *
      * DELETE
-     * /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/model/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param anomalyJSON
@@ -1856,14 +1856,14 @@ public class BigMLClient {
      * Creates a new prediction.
      *
      * POST
-     * /andromeda/prediction?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/prediction?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param modelId
      *            a unique identifier in the form model/id, ensemble/id,
-     *            logisticregression/id or linearregression/id where id 
-     *            is a string of 24 alpha-numeric chars for the model, 
-     *            ensemble, logisticregression or linearregression to 
+     *            logisticregression/id or linearregression/id where id
+     *            is a string of 24 alpha-numeric chars for the model,
+     *            ensemble, logisticregression or linearregression to
      *            attach the prediction.
      * @param inputData
      *            an object with field's id/value pairs representing the
@@ -1891,14 +1891,14 @@ public class BigMLClient {
      * Creates a new prediction.
      *
      * POST
-     * /andromeda/prediction?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/prediction?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param modelId
      *            a unique identifier in the form model/id, ensemble/id,
-     *            logisticregression/id or linearregression/id where id 
-     *            is a string of 24 alpha-numeric chars for the model, 
-     *            ensemble, logisticregression or linearregression to 
+     *            logisticregression/id or linearregression/id where id
+     *            is a string of 24 alpha-numeric chars for the model,
+     *            ensemble, logisticregression or linearregression to
      *            attach the prediction.
      * @param inputData
      *            an object with field's id/value pairs representing the
@@ -1923,7 +1923,7 @@ public class BigMLClient {
     /**
      * Retrieves a prediction.
      *
-     * GET /andromeda/prediction/id?username=$BIGML_USERNAME;api_key=
+     * GET /andromeda/prediction/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
      *
      * @param predictionId
@@ -1939,7 +1939,7 @@ public class BigMLClient {
     /**
      * Retrieves a prediction.
      *
-     * GET /andromeda/prediction/id?username=$BIGML_USERNAME;api_key=
+     * GET /andromeda/prediction/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
      *
      * @param predictionJSON
@@ -1980,7 +1980,7 @@ public class BigMLClient {
      * Lists all your predictions.
      *
      * GET
-     * /andromeda/prediction?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/prediction?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param queryString
@@ -1995,7 +1995,7 @@ public class BigMLClient {
     /**
      * Updates a prediction.
      *
-     * PUT /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * PUT /andromeda/model/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param predictionId
@@ -2014,7 +2014,7 @@ public class BigMLClient {
     /**
      * Updates a prediction.
      *
-     * PUT /andromeda/model/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * PUT /andromeda/model/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param predictionJSON
@@ -2032,7 +2032,7 @@ public class BigMLClient {
     /**
      * Deletes a prediction.
      *
-     * DELETE /andromeda/prediction/id?username=$BIGML_USERNAME;api_key=
+     * DELETE /andromeda/prediction/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1
      *
      * @param predictionId
@@ -2048,7 +2048,7 @@ public class BigMLClient {
     /**
      * Deletes a prediction.
      *
-     * DELETE /andromeda/prediction/id?username=$BIGML_USERNAME;api_key=
+     * DELETE /andromeda/prediction/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1
      *
      * @param predictionJSON
@@ -2071,7 +2071,7 @@ public class BigMLClient {
      * Creates a new anomaly score.
      *
      * POST
-     * /andromeda/anomalyscore?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/anomalyscore?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param anomalyId
@@ -2102,7 +2102,7 @@ public class BigMLClient {
      * Creates a new anomaly score.
      *
      * POST
-     * /andromeda/anomalyscore?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/anomalyscore?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param anomaly
@@ -2124,14 +2124,14 @@ public class BigMLClient {
             JSONObject inputData, JSONObject args,
             Integer waitTime, Integer retries) {
         String anomalyId = (String) anomaly.get("resource");
-        return  createAnomalyScore(anomalyId, inputData, args, 
+        return  createAnomalyScore(anomalyId, inputData, args,
         		waitTime, retries);
     }
 
     /**
      * Retrieves an anomaly score.
      *
-     * GET /andromeda/anomalyscore/id?username=$BIGML_USERNAME;api_key=
+     * GET /andromeda/anomalyscore/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
      *
      * @param anomalyScoreId
@@ -2147,7 +2147,7 @@ public class BigMLClient {
     /**
      * Retrieves an anomaly score.
      *
-     * GET /andromeda/anomalyscore/id?username=$BIGML_USERNAME;api_key=
+     * GET /andromeda/anomalyscore/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
      *
      * @param anomalyScoreJSON
@@ -2188,7 +2188,7 @@ public class BigMLClient {
      * Lists all your anomaly scores.
      *
      * GET
-     * /andromeda/anomalyscore?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/anomalyscore?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param queryString
@@ -2203,7 +2203,7 @@ public class BigMLClient {
     /**
      * Updates an anomaly score.
      *
-     * PUT /andromeda/anomalyscore/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * PUT /andromeda/anomalyscore/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param anomalyScoreId
@@ -2222,7 +2222,7 @@ public class BigMLClient {
     /**
      * Updates an anomaly score.
      *
-     * PUT /andromeda/anomalyscore/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * PUT /andromeda/anomalyscore/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param anomalyScoreJSON
@@ -2240,7 +2240,7 @@ public class BigMLClient {
     /**
      * Deletes an anomaly score.
      *
-     * DELETE /andromeda/anomalyscore/id?username=$BIGML_USERNAME;api_key=
+     * DELETE /andromeda/anomalyscore/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1
      *
      * @param anomalyScoreId
@@ -2256,7 +2256,7 @@ public class BigMLClient {
     /**
      * Deletes an anomaly score.
      *
-     * DELETE /andromeda/anomalyscore/id?username=$BIGML_USERNAME;api_key=
+     * DELETE /andromeda/anomalyscore/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1
      *
      * @param anomalyScoreJSON
@@ -2279,18 +2279,18 @@ public class BigMLClient {
      * Creates a new evaluation.
      *
      * POST
-     * /andromeda/evaluation?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/evaluation?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param modelId
      *            a unique identifier in the form model/id, ensemble/id,
-     *            logisticregression/id or linearregression/id where id 
-     *            is a string of 24 alpha-numeric chars for the model, 
-     *            ensemble, logisticregression or linearregression to 
+     *            logisticregression/id or linearregression/id where id
+     *            is a string of 24 alpha-numeric chars for the model,
+     *            ensemble, logisticregression or linearregression to
      *            attach the evaluation.
      * @param datasetId
-     *            a unique identifier in the form dataset/id where id is 
-     *            a string of 24 alpha-numeric chars for the dataset to 
+     *            a unique identifier in the form dataset/id where id is
+     *            a string of 24 alpha-numeric chars for the dataset to
      *            attach the evaluation.
      * @param args
      *            set of parameters for the new evaluation. Optional
@@ -2317,7 +2317,7 @@ public class BigMLClient {
      * encloses the evaluation values and state info available at the time it is
      * called.
      *
-     * GET /andromeda/evaluation/id?username=$BIGML_USERNAME;api_key=
+     * GET /andromeda/evaluation/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
      *
      * @param evaluationId
@@ -2338,7 +2338,7 @@ public class BigMLClient {
      * encloses the evaluation values and state info available at the time it is
      * called.
      *
-     * GET /andromeda/evaluation/id?username=$BIGML_USERNAME;api_key=
+     * GET /andromeda/evaluation/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
      *
      * @param evaluationJSON
@@ -2379,7 +2379,7 @@ public class BigMLClient {
      * Lists all your evaluations.
      *
      * GET
-     * /andromeda/evaluation?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/evaluation?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param queryString
@@ -2394,7 +2394,7 @@ public class BigMLClient {
     /**
      * Updates an evaluation.
      *
-     * PUT /andromeda/evaluation/id?username=$BIGML_USERNAME;api_key=
+     * PUT /andromeda/evaluation/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param evaluationId
@@ -2413,7 +2413,7 @@ public class BigMLClient {
     /**
      * Updates an evaluation.
      *
-     * PUT /andromeda/evaluation/id?username=$BIGML_USERNAME;api_key=
+     * PUT /andromeda/evaluation/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param evaluationJSON
@@ -2431,7 +2431,7 @@ public class BigMLClient {
     /**
      * Deletes an evaluation.
      *
-     * DELETE /andromeda/evaluation/id?username=$BIGML_USERNAME;api_key=
+     * DELETE /andromeda/evaluation/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1
      *
      * @param evaluationId
@@ -2447,7 +2447,7 @@ public class BigMLClient {
     /**
      * Deletes an evaluation.
      *
-     * DELETE /andromeda/evaluation/id?username=$BIGML_USERNAME;api_key=
+     * DELETE /andromeda/evaluation/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1
      *
      * @param evaluationJSON
@@ -2469,7 +2469,7 @@ public class BigMLClient {
     /**
      * Creates a new ensemble.
      *
-     * POST /andromeda/ensemble?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/ensemble?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param datasetId
@@ -2486,7 +2486,7 @@ public class BigMLClient {
      *
      * @return a JSONObject for the new ensemble
      */
-    public JSONObject createEnsemble(final String datasetId, 
+    public JSONObject createEnsemble(final String datasetId,
     		JSONObject args, Integer waitTime, Integer retries) {
 
         return ensemble.create(datasetId, args, waitTime, retries);
@@ -2495,7 +2495,7 @@ public class BigMLClient {
     /**
      * Creates an ensemble from a list of `datasets`.
      *
-     * POST /andromeda/ensemble?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/ensemble?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param datasetsIds
@@ -2512,7 +2512,7 @@ public class BigMLClient {
      *
      * @return a JSONObject for the new ensemble
      */
-    public JSONObject createEnsemble(final List datasetsIds, 
+    public JSONObject createEnsemble(final List datasetsIds,
     		JSONObject args, Integer waitTime, Integer retries) {
 
         return ensemble.create(datasetsIds, args, waitTime, retries);
@@ -2527,7 +2527,7 @@ public class BigMLClient {
      * called.
      *
      * GET
-     * /andromeda/ensemble/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/ensemble/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io
      *
      * @param ensembleId
@@ -2549,7 +2549,7 @@ public class BigMLClient {
      * called.
      *
      * GET
-     * /andromeda/ensemble/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/ensemble/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io
      *
      * @param ensembleJSON
@@ -2589,7 +2589,7 @@ public class BigMLClient {
     /**
      * Lists all your ensembles.
      *
-     * GET /andromeda/ensemble?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/ensemble?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param queryString
@@ -2605,7 +2605,7 @@ public class BigMLClient {
      * Updates an ensemble.
      *
      * PUT
-     * /andromeda/ensemble/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/ensemble/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param ensembleId
@@ -2625,7 +2625,7 @@ public class BigMLClient {
      * Updates an ensemble.
      *
      * PUT
-     * /andromeda/ensemble/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/ensemble/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param ensembleJSON
@@ -2644,7 +2644,7 @@ public class BigMLClient {
      * Deletes an ensemble.
      *
      * DELETE
-     * /andromeda/ensemble/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/ensemble/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param ensembleId
@@ -2661,7 +2661,7 @@ public class BigMLClient {
      * Deletes an ensemble.
      *
      * DELETE
-     * /andromeda/ensemble/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/ensemble/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param ensembleJSON
@@ -2683,18 +2683,18 @@ public class BigMLClient {
     /**
      * Creates a new batch prediction.
      *
-     * POST /andromeda/batchprediction?username=$BIGML_USERNAME;api_key=
+     * POST /andromeda/batchprediction?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param modelId
      *            a unique identifier in the form model/id, ensemble/id,
-     *            logisticregression/id or linearregression/id where id 
-     *            is a string of 24 alpha-numeric chars for the model, 
-     *            ensemble, logisticregression or linearregression to 
+     *            logisticregression/id or linearregression/id where id
+     *            is a string of 24 alpha-numeric chars for the model,
+     *            ensemble, logisticregression or linearregression to
      *            attach the batchprediction.
      * @param datasetId
      *            a unique identifier in the form dataset/id where id is a
-     *            string of 24 alpha-numeric chars for the dataset to 
+     *            string of 24 alpha-numeric chars for the dataset to
      *            attach the batchprediction.
      * @param args
      *            set of parameters for the new batch prediction. Optional
@@ -2724,7 +2724,7 @@ public class BigMLClient {
      * encloses the batch_prediction values and state info available at the time
      * it is called.
      *
-     * GET /andromeda/batchprediction/id?username=$BIGML_USERNAME;api_key=
+     * GET /andromeda/batchprediction/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
      *
      * @param batchPredictionId
@@ -2747,7 +2747,7 @@ public class BigMLClient {
      * encloses the batch_prediction values and state info available at the time
      * it is called.
      *
-     * GET /andromeda/batchprediction/id?username=$BIGML_USERNAME;api_key=
+     * GET /andromeda/batchprediction/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
      *
      * @param batchPredictionJSON
@@ -2771,7 +2771,7 @@ public class BigMLClient {
      *            a string of 24 alpha-numeric chars.
      * @param filename
      *            Path to save file locally
-     * 
+     *
      * @return a JSONObject for the downloaded batch prediction
      */
     public JSONObject downloadBatchPrediction(final String batchPredictionId,
@@ -2791,7 +2791,7 @@ public class BigMLClient {
      *            a batch prediction JSONObject.
      * @param filename
      *            Path to save file locally
-     * 
+     *
      * @return a JSONObject for the downloaded batch prediction
      */
     public JSONObject downloadBatchPrediction(
@@ -2828,7 +2828,7 @@ public class BigMLClient {
     /**
      * Lists all your batch predictions.
      *
-     * GET /andromeda/batchprediction?username=$BIGML_USERNAME;api_key=
+     * GET /andromeda/batchprediction?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; Host: bigml.io
      *
      * @param queryString
@@ -2843,7 +2843,7 @@ public class BigMLClient {
     /**
      * Updates a batch prediction.
      *
-     * PUT /andromeda/batchprediction/id?username=$BIGML_USERNAME;api_key=
+     * PUT /andromeda/batchprediction/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param batchPredictionId
@@ -2862,7 +2862,7 @@ public class BigMLClient {
     /**
      * Updates a batch prediction.
      *
-     * PUT /andromeda/batchprediction/id?username=$BIGML_USERNAME;api_key=
+     * PUT /andromeda/batchprediction/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param batchpredictionJSON
@@ -2880,7 +2880,7 @@ public class BigMLClient {
     /**
      * Deletes a batch prediction.
      *
-     * DELETE /andromeda/batchprediction/id?username=$BIGML_USERNAME;api_key=
+     * DELETE /andromeda/batchprediction/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1
      *
      * @param batchPredictionId
@@ -2896,7 +2896,7 @@ public class BigMLClient {
     /**
      * Deletes a batch prediction.
      *
-     * DELETE /andromeda/batchprediction/id?username=$BIGML_USERNAME;api_key=
+     * DELETE /andromeda/batchprediction/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1
      *
      * @param batchPredictionJSON
@@ -2918,7 +2918,7 @@ public class BigMLClient {
     /**
      * Creates a new batch anomaly score.
      *
-     * POST /andromeda/batchanomalyscore?username=$BIGML_USERNAME;api_key=
+     * POST /andromeda/batchanomalyscore?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param anomalyId
@@ -2957,7 +2957,7 @@ public class BigMLClient {
      * encloses the batch_anomalyscore values and state info available at the time
      * it is called.
      *
-     * GET /andromeda/batchanomalyscore/id?username=$BIGML_USERNAME;api_key=
+     * GET /andromeda/batchanomalyscore/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
      *
      * @param batchAnomalyScoreId
@@ -2980,7 +2980,7 @@ public class BigMLClient {
      * encloses the batch_anomalyscore values and state info available at the time
      * it is called.
      *
-     * GET /andromeda/batchanomalyscore/id?username=$BIGML_USERNAME;api_key=
+     * GET /andromeda/batchanomalyscore/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
      *
      * @param batchAnomalyScoreJSON
@@ -3004,7 +3004,7 @@ public class BigMLClient {
      *            a string of 24 alpha-numeric chars.
      * @param filename
      *            Path to save file locally
-     *	
+     *
      * @return a JSONObject for the downloaded batch anomaly score
      */
     public JSONObject downloadBatchAnomalyScore(final String batchAnomalyScoreId,
@@ -3024,7 +3024,7 @@ public class BigMLClient {
      *            a batch anomaly score JSONObject.
      * @param filename
      *            Path to save file locally
-     * 
+     *
      * @return a JSONObject for the downloaded batch anomaly score
      */
     public JSONObject downloadBatchAnomalyScore(
@@ -3061,7 +3061,7 @@ public class BigMLClient {
     /**
      * Lists all your batch anomaly scores.
      *
-     * GET /andromeda/batchanomalyscore?username=$BIGML_USERNAME;api_key=
+     * GET /andromeda/batchanomalyscore?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; Host: bigml.io
      *
      * @param queryString
@@ -3076,7 +3076,7 @@ public class BigMLClient {
     /**
      * Updates a batch anomaly score.
      *
-     * PUT /andromeda/batchanomalyscore/id?username=$BIGML_USERNAME;api_key=
+     * PUT /andromeda/batchanomalyscore/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param batchAnomalyScoreId
@@ -3095,7 +3095,7 @@ public class BigMLClient {
     /**
      * Updates a batch anomaly score.
      *
-     * PUT /andromeda/batchanomalyscore/id?username=$BIGML_USERNAME;api_key=
+     * PUT /andromeda/batchanomalyscore/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param batchAnomalyScoreJSON
@@ -3113,7 +3113,7 @@ public class BigMLClient {
     /**
      * Deletes a batch anomaly score.
      *
-     * DELETE /andromeda/batchanomalyscore/id?username=$BIGML_USERNAME;api_key=
+     * DELETE /andromeda/batchanomalyscore/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1
      *
      * @param batchAnomalyScoreId
@@ -3129,7 +3129,7 @@ public class BigMLClient {
     /**
      * Deletes a batch anomaly score.
      *
-     * DELETE /andromeda/batchanomalyscore/id?username=$BIGML_USERNAME;api_key=
+     * DELETE /andromeda/batchanomalyscore/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1
      *
      * @param batchAnomalyScoreJSON
@@ -3151,7 +3151,7 @@ public class BigMLClient {
     /**
      * Creates a new cluster.
      *
-     * POST /andromeda/cluster?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/cluster?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param datasetId
@@ -3168,7 +3168,7 @@ public class BigMLClient {
      *
      * @return a JSONObject for the new cluster
      */
-    public JSONObject createCluster(final String datasetId, 
+    public JSONObject createCluster(final String datasetId,
     		JSONObject args, Integer waitTime, Integer retries) {
 
         return cluster.create(datasetId, args, waitTime, retries);
@@ -3177,7 +3177,7 @@ public class BigMLClient {
     /**
      * Creates a cluster from a list of `datasets`.
      *
-     * POST /andromeda/cluster?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/cluster?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param datasetsIds
@@ -3194,7 +3194,7 @@ public class BigMLClient {
      *
      * @return a JSONObject for the new cluster
      */
-    public JSONObject createCluster(final List datasetsIds, 
+    public JSONObject createCluster(final List datasetsIds,
     		JSONObject args, Integer waitTime, Integer retries) {
 
         return cluster.create(datasetsIds, args, waitTime, retries);
@@ -3209,7 +3209,7 @@ public class BigMLClient {
      * called.
      *
      * GET
-     * /andromeda/ensemble/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/ensemble/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io
      *
      * @param clusterId
@@ -3231,7 +3231,7 @@ public class BigMLClient {
      * called.
      *
      * GET
-     * /andromeda/cluster/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/cluster/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io
      *
      * @param clusterJSON
@@ -3271,7 +3271,7 @@ public class BigMLClient {
     /**
      * Lists all your clusters.
      *
-     * GET /andromeda/cluster?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/cluster?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param queryString
@@ -3287,7 +3287,7 @@ public class BigMLClient {
      * Updates a cluster.
      *
      * PUT
-     * /andromeda/cluster/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/cluster/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param clusterId
@@ -3306,7 +3306,7 @@ public class BigMLClient {
      * Updates a cluster.
      *
      * PUT
-     * /andromeda/cluster/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/cluster/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param clusterJSON
@@ -3325,7 +3325,7 @@ public class BigMLClient {
      * Deletes a cluster.
      *
      * DELETE
-     * /andromeda/cluster/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/cluster/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param clusterId
@@ -3342,7 +3342,7 @@ public class BigMLClient {
      * Deletes a cluster.
      *
      * DELETE
-     * /andromeda/cluster/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/cluster/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param clusterJSON
@@ -3364,7 +3364,7 @@ public class BigMLClient {
     /**
      * Creates a new centroid.
      *
-     * POST /andromeda/centroid?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/centroid?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param clusterId
@@ -3372,7 +3372,7 @@ public class BigMLClient {
      *            string of 24 alpha-numeric chars for the cluster.
      * @param inputDataJSON
      * 			  an object with field's id/value pairs representing the
-     *            instance you want to create a centroid for.		
+     *            instance you want to create a centroid for.
      * @param args
      *            set of parameters for the new centroid. Optional
      * @param waitTime
@@ -3399,7 +3399,7 @@ public class BigMLClient {
      * called.
      *
      * GET
-     * /andromeda/centroid/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/centroid/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io
      *
      * @param centroidId
@@ -3421,7 +3421,7 @@ public class BigMLClient {
      * called.
      *
      * GET
-     * /andromeda/centroid/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/centroid/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io
      *
      * @param centroidJSON
@@ -3461,7 +3461,7 @@ public class BigMLClient {
     /**
      * Lists all your centroids.
      *
-     * GET /andromeda/centroid?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/centroid?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param queryString
@@ -3477,7 +3477,7 @@ public class BigMLClient {
      * Updates a centroid.
      *
      * PUT
-     * /andromeda/centroid/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/centroid/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param centroidId
@@ -3497,7 +3497,7 @@ public class BigMLClient {
      * Updates a centroid.
      *
      * PUT
-     * /andromeda/centroid/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/centroid/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param centroidJSON
@@ -3516,7 +3516,7 @@ public class BigMLClient {
      * Deletes a centroid.
      *
      * DELETE
-     * /andromeda/centroid/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/centroid/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param centroidId
@@ -3533,7 +3533,7 @@ public class BigMLClient {
      * Deletes a centroid.
      *
      * DELETE
-     * /andromeda/centroid/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/centroid/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param centroidJSON
@@ -3555,7 +3555,7 @@ public class BigMLClient {
     /**
      * Creates a new batch_centroid.
      *
-     * POST /andromeda/batch_centroid?username=$BIGML_USERNAME;api_key=
+     * POST /andromeda/batch_centroid?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param clusterId
@@ -3590,7 +3590,7 @@ public class BigMLClient {
      * encloses the batch_centroid values and state info available at the time
      * it is called.
      *
-     * GET /andromeda/batch_centroid/id?username=$BIGML_USERNAME;api_key=
+     * GET /andromeda/batch_centroid/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
      *
      * @param batchCentroidId
@@ -3611,7 +3611,7 @@ public class BigMLClient {
      * encloses the batch_centroid values and state info available at the time
      * it is called.
      *
-     * GET /andromeda/batch_centroid/id?username=$BIGML_USERNAME;api_key=
+     * GET /andromeda/batch_centroid/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
      *
      * @param batchCentroidJSON
@@ -3635,7 +3635,7 @@ public class BigMLClient {
      *            string of 24 alpha-numeric chars.
      * @param filename
      *            Path to save file locally
-     * 
+     *
      * @return a JSONObject for the downloaded batch centroid
      */
     public JSONObject downloadBatchCentroid(final String batchCentroidId,
@@ -3654,7 +3654,7 @@ public class BigMLClient {
      *            a batch centroid JSONObject.
      * @param filename
      *            Path to save file locally
-     * 
+     *
      * @return a JSONObject for the downloaded batch centroid
      */
     public JSONObject downloadBatchCentroid(final JSONObject batchCentroidJSON,
@@ -3690,7 +3690,7 @@ public class BigMLClient {
     /**
      * Lists all your batch_centroid.
      *
-     * GET /andromeda/batch_centroid?username=$BIGML_USERNAME;api_key=
+     * GET /andromeda/batch_centroid?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; Host: bigml.io
      *
      * @param queryString
@@ -3705,7 +3705,7 @@ public class BigMLClient {
     /**
      * Updates a batch_centroid.
      *
-     * PUT /andromeda/batch_centroid/id?username=$BIGML_USERNAME;api_key=
+     * PUT /andromeda/batch_centroid/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param batchCentroidId
@@ -3724,7 +3724,7 @@ public class BigMLClient {
     /**
      * Updates a batch_centroid.
      *
-     * PUT /andromeda/batch_centroid/id?username=$BIGML_USERNAME;api_key=
+     * PUT /andromeda/batch_centroid/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param batchCentroidJSON
@@ -3742,7 +3742,7 @@ public class BigMLClient {
     /**
      * Deletes a batch_centroid.
      *
-     * DELETE /andromeda/batch_centroid/id?username=$BIGML_USERNAME;api_key=
+     * DELETE /andromeda/batch_centroid/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1
      *
      * @param batchCentroidId
@@ -3758,7 +3758,7 @@ public class BigMLClient {
     /**
      * Deletes a batch_centroid.
      *
-     * DELETE /andromeda/batch_centroid/id?username=$BIGML_USERNAME;api_key=
+     * DELETE /andromeda/batch_centroid/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1
      *
      * @param batchCentroidJSON
@@ -3784,7 +3784,7 @@ public class BigMLClient {
      * `args`. If `wait_time` is higher than 0 then the sample creation request
      * is not sent until the `dataset` has been created successfuly.
      *
-     * POST /andromeda/sample?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/sample?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param datasetId
@@ -3810,7 +3810,7 @@ public class BigMLClient {
      * Retrieves a sample.
      *
      * GET
-     * /andromeda/sample/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/sample/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io
      *
      * @param sampleId
@@ -3827,7 +3827,7 @@ public class BigMLClient {
      * Returns the ids of the fields that contain errors and their number.
      *
      * @param sampleId the sample id of the sample to be inspected
-     * 
+     *
      * @return a Map with error counts in sample
      */
     public Map<String, Long> getErrorCountsInSample(final String sampleId) {
@@ -3838,7 +3838,7 @@ public class BigMLClient {
      * Returns the ids of the fields that contain errors and their number.
      *
      * @param sampleJSON the sample JSON object to be inspected
-     * 
+     *
      * @return a Map with error counts in sample
      */
     public Map<String, Long> getErrorCountsInSample(final JSONObject sampleJSON) {
@@ -3849,7 +3849,7 @@ public class BigMLClient {
      * Retrieves a sample.
      *
      * GET
-     * /andromeda/sample/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/sample/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io
      *
      * @param sampleJSON
@@ -3865,7 +3865,7 @@ public class BigMLClient {
      * Retrieves an sample.
      *
      *
-     * GET /andromeda/sample/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/sample/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param sampleId
@@ -3884,7 +3884,7 @@ public class BigMLClient {
      * Retrieves an sample.
      *
      *
-     * GET /andromeda/sample/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/sample/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param sampleId
@@ -3932,7 +3932,7 @@ public class BigMLClient {
     /**
      * Lists all your samples.
      *
-     * GET /andromeda/sample?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/sample?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param queryString
@@ -3948,7 +3948,7 @@ public class BigMLClient {
      * Updates a sample.
      *
      * PUT
-     * /andromeda/sample/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/sample/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param sampleId
@@ -3967,7 +3967,7 @@ public class BigMLClient {
      * Updates a sample.
      *
      * PUT
-     * /andromeda/sample/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/sample/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param sampleJSON
@@ -3986,7 +3986,7 @@ public class BigMLClient {
      * Deletes a sample.
      *
      * DELETE
-     * /andromeda/sample/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/sample/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param sampleId
@@ -4003,7 +4003,7 @@ public class BigMLClient {
      * Deletes a sample.
      *
      * DELETE
-     * /andromeda/sample/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/sample/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param sampleJSON
@@ -4027,7 +4027,7 @@ public class BigMLClient {
      *
      * Create a new project using the arguments in `args`.
      *
-     * POST /andromeda/project?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/project?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param args
@@ -4043,7 +4043,7 @@ public class BigMLClient {
      * Retrieves a project.
      *
      * GET
-     * /andromeda/project/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/project/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io
      *
      * @param projectId
@@ -4060,7 +4060,7 @@ public class BigMLClient {
      * Retrieves a project.
      *
      * GET
-     * /andromeda/project/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/project/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io
      *
      * @param projectJSON
@@ -4076,7 +4076,7 @@ public class BigMLClient {
      * Retrieves an project.
      *
      *
-     * GET /andromeda/project/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/project/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param projectId
@@ -4095,7 +4095,7 @@ public class BigMLClient {
      * Retrieves an project.
      *
      *
-     * GET /andromeda/project/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/project/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param projectId
@@ -4143,7 +4143,7 @@ public class BigMLClient {
     /**
      * Lists all your projects.
      *
-     * GET /andromeda/project?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/project?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param queryString
@@ -4159,7 +4159,7 @@ public class BigMLClient {
      * Updates a project.
      *
      * PUT
-     * /andromeda/project/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/project/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param projectId
@@ -4178,7 +4178,7 @@ public class BigMLClient {
      * Updates a project.
      *
      * PUT
-     * /andromeda/project/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/project/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param projectJSON
@@ -4197,7 +4197,7 @@ public class BigMLClient {
      * Deletes a project.
      *
      * DELETE
-     * /andromeda/project/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/project/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param projectId
@@ -4214,7 +4214,7 @@ public class BigMLClient {
      * Deletes a project.
      *
      * DELETE
-     * /andromeda/project/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/project/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param projectJSON
@@ -4237,7 +4237,7 @@ public class BigMLClient {
     /**
      * Creates a new correlation.
      *
-     * POST /andromeda/correlation?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/correlation?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param datasetId
@@ -4254,7 +4254,7 @@ public class BigMLClient {
      *
      * @return a JSONObject for the new correlation
      */
-    public JSONObject createCorrelation(final String datasetId, 
+    public JSONObject createCorrelation(final String datasetId,
     		JSONObject args, Integer waitTime, Integer retries) {
 
         return correlation.create(datasetId, args, waitTime, retries);
@@ -4269,7 +4269,7 @@ public class BigMLClient {
      * called.
      *
      * GET
-     * /andromeda/ensemble/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/ensemble/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io
      *
      * @param correlationId
@@ -4291,7 +4291,7 @@ public class BigMLClient {
      * called.
      *
      * GET
-     * /andromeda/correlation/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/correlation/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io
      *
      * @param correlationJSON
@@ -4331,7 +4331,7 @@ public class BigMLClient {
     /**
      * Lists all your correlations.
      *
-     * GET /andromeda/correlation?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/correlation?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param queryString
@@ -4347,7 +4347,7 @@ public class BigMLClient {
      * Updates a correlation.
      *
      * PUT
-     * /andromeda/correlation/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/correlation/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param correlationId
@@ -4366,7 +4366,7 @@ public class BigMLClient {
      * Updates a correlation.
      *
      * PUT
-     * /andromeda/correlation/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/correlation/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param correlationJSON
@@ -4385,7 +4385,7 @@ public class BigMLClient {
      * Deletes a correlation.
      *
      * DELETE
-     * /andromeda/correlation/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/correlation/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param correlationId
@@ -4402,7 +4402,7 @@ public class BigMLClient {
      * Deletes a correlation.
      *
      * DELETE
-     * /andromeda/correlation/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/correlation/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param correlationJSON
@@ -4424,7 +4424,7 @@ public class BigMLClient {
     /**
      * Creates a new statisticaltest.
      *
-     * POST /andromeda/statisticaltest?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/statisticaltest?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param datasetId
@@ -4441,7 +4441,7 @@ public class BigMLClient {
      *
      * @return a JSONObject for the new statisticaltest
      */
-    public JSONObject createStatisticalTest(final String datasetId, 
+    public JSONObject createStatisticalTest(final String datasetId,
     		JSONObject args, Integer waitTime, Integer retries) {
 
         return statisticalTest.create(datasetId, args, waitTime, retries);
@@ -4456,7 +4456,7 @@ public class BigMLClient {
      * called.
      *
      * GET
-     * /andromeda/ensemble/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/ensemble/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io
      *
      * @param statisticaltestId
@@ -4478,7 +4478,7 @@ public class BigMLClient {
      * called.
      *
      * GET
-     * /andromeda/statisticaltest/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/statisticaltest/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io
      *
      * @param statisticaltestJSON
@@ -4518,7 +4518,7 @@ public class BigMLClient {
     /**
      * Lists all your statisticaltests.
      *
-     * GET /andromeda/statisticaltest?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/statisticaltest?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param queryString
@@ -4534,7 +4534,7 @@ public class BigMLClient {
      * Updates a statisticaltest.
      *
      * PUT
-     * /andromeda/statisticaltest/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/statisticaltest/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param statisticaltestId
@@ -4553,7 +4553,7 @@ public class BigMLClient {
      * Updates a statisticaltest.
      *
      * PUT
-     * /andromeda/statisticaltest/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/statisticaltest/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param statisticaltestJSON
@@ -4572,7 +4572,7 @@ public class BigMLClient {
      * Deletes a statisticaltest.
      *
      * DELETE
-     * /andromeda/statisticaltest/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/statisticaltest/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param statisticaltestId
@@ -4589,7 +4589,7 @@ public class BigMLClient {
      * Deletes a statisticaltest.
      *
      * DELETE
-     * /andromeda/statisticaltest/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/statisticaltest/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param statisticaltestJSON
@@ -4613,7 +4613,7 @@ public class BigMLClient {
     /**
      * Creates a new logistic regression.
      *
-     * POST /andromeda/logisticregression?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/logisticregression?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param datasetId
@@ -4630,7 +4630,7 @@ public class BigMLClient {
      *
      * @return a JSONObject for the new logistic regression
      */
-    public JSONObject createLogisticRegression(final String datasetId, 
+    public JSONObject createLogisticRegression(final String datasetId,
     		JSONObject args, Integer waitTime, Integer retries) {
 
         return logisticRegression.create(datasetId, args, waitTime, retries);
@@ -4639,7 +4639,7 @@ public class BigMLClient {
     /**
      * Creates a new logistic regression from a list of `datasets`.
      *
-     * POST /andromeda/logisticregression?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/logisticregression?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param datasetsIds
@@ -4657,7 +4657,7 @@ public class BigMLClient {
      *
      * @return a JSONObject for the new logistic regression
      */
-    public JSONObject createLogisticRegression(final List datasetsIds, 
+    public JSONObject createLogisticRegression(final List datasetsIds,
     		JSONObject args, Integer waitTime, Integer retries) {
 
         return logisticRegression.create(datasetsIds, args, waitTime, retries);
@@ -4672,7 +4672,7 @@ public class BigMLClient {
      * the time it is called.
      *
      * GET
-     * /andromeda/logisticregression/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/logisticregression/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io
      *
      * @param logisticRegressionId
@@ -4694,7 +4694,7 @@ public class BigMLClient {
      * the time it is called.
      *
      * GET
-     * /andromeda/logisticRegression/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/logisticRegression/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io
      *
      * @param logisticRegressionJSON
@@ -4712,7 +4712,7 @@ public class BigMLClient {
      * @param logisticRegressionId
      *            a unique identifier in the form logisticregression/id where id is a
      *            string of 24 alpha-numeric chars.
-     *            
+     *
      * @return true if logistic regression is finished
      */
     public boolean logisticRegressionIsReady(final String logisticRegressionId) {
@@ -4734,7 +4734,7 @@ public class BigMLClient {
     /**
      * Lists all your logisticRegressions.
      *
-     * GET /andromeda/logisticRegression?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/logisticRegression?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param queryString
@@ -4750,7 +4750,7 @@ public class BigMLClient {
      * Updates a logisticRegression.
      *
      * PUT
-     * /andromeda/logisticRegression/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/logisticRegression/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param logisticRegressionId
@@ -4770,7 +4770,7 @@ public class BigMLClient {
      * Updates a logisticRegression.
      *
      * PUT
-     * /andromeda/logisticRegression/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/logisticRegression/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param logisticRegressionJSON
@@ -4789,7 +4789,7 @@ public class BigMLClient {
      * Deletes a logisticRegression.
      *
      * DELETE
-     * /andromeda/logisticRegression/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/logisticRegression/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param logisticRegressionId
@@ -4806,7 +4806,7 @@ public class BigMLClient {
      * Deletes a logisticRegression.
      *
      * DELETE
-     * /andromeda/logisticRegression/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/logisticRegression/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param logisticRegressionJSON
@@ -4817,8 +4817,8 @@ public class BigMLClient {
     public JSONObject deleteLogisticRegression(final JSONObject logisticRegressionJSON) {
         return logisticRegression.delete(logisticRegressionJSON);
     }
-    
-    
+
+
  // ################################################################
     // #
     // # LinearRegression
@@ -4829,7 +4829,7 @@ public class BigMLClient {
     /**
      * Creates a new linear regression.
      *
-     * POST /andromeda/linearregression?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/linearregression?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param datasetId
@@ -4846,7 +4846,7 @@ public class BigMLClient {
      *
      * @return a JSONObject for the new linear regression
      */
-    public JSONObject createLinearRegression(final String datasetId, 
+    public JSONObject createLinearRegression(final String datasetId,
     		JSONObject args, Integer waitTime, Integer retries) {
 
         return linearRegression.create(datasetId, args, waitTime, retries);
@@ -4855,7 +4855,7 @@ public class BigMLClient {
     /**
      * Creates a new linear regression from a list of `datasets`.
      *
-     * POST /andromeda/linearregression?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/linearregression?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param datasetsIds
@@ -4873,7 +4873,7 @@ public class BigMLClient {
      *
      * @return a JSONObject for the new linear regression
      */
-    public JSONObject createLinearRegression(final List datasetsIds, 
+    public JSONObject createLinearRegression(final List datasetsIds,
     		JSONObject args, Integer waitTime, Integer retries) {
 
         return linearRegression.create(datasetsIds, args, waitTime, retries);
@@ -4888,7 +4888,7 @@ public class BigMLClient {
      * the time it is called.
      *
      * GET
-     * /andromeda/linearregression/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/linearregression/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io
      *
      * @param linearRegressionId
@@ -4910,7 +4910,7 @@ public class BigMLClient {
      * the time it is called.
      *
      * GET
-     * /andromeda/linearRegression/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/linearRegression/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io
      *
      * @param linearRegressionJSON
@@ -4950,7 +4950,7 @@ public class BigMLClient {
     /**
      * Lists all your linearRegressions.
      *
-     * GET /andromeda/linearRegression?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/linearRegression?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param queryString
@@ -4966,7 +4966,7 @@ public class BigMLClient {
      * Updates a linearRegression.
      *
      * PUT
-     * /andromeda/linearRegression/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/linearRegression/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param linearRegressionId
@@ -4986,7 +4986,7 @@ public class BigMLClient {
      * Updates a linearRegression.
      *
      * PUT
-     * /andromeda/linearRegression/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/linearRegression/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param linearRegressionJSON
@@ -5005,7 +5005,7 @@ public class BigMLClient {
      * Deletes a linearRegression.
      *
      * DELETE
-     * /andromeda/linearRegression/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/linearRegression/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param linearRegressionId
@@ -5022,7 +5022,7 @@ public class BigMLClient {
      * Deletes a linearRegression.
      *
      * DELETE
-     * /andromeda/linearRegression/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/linearRegression/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param linearRegressionJSON
@@ -5044,7 +5044,7 @@ public class BigMLClient {
     /**
      * Creates a whizzml script from its source code.
      *
-     * POST /andromeda/script?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/script?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param source
@@ -5072,7 +5072,7 @@ public class BigMLClient {
      * Retrieves a whizzml script.
      *
      * GET
-     * /andromeda/script/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/script/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param scriptId
@@ -5089,7 +5089,7 @@ public class BigMLClient {
      * Retrieves a whizzml script.
      *
      * GET
-     * /andromeda/script/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/script/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param scriptJSON
@@ -5129,7 +5129,7 @@ public class BigMLClient {
     /**
      * Lists all your whizzml libraries.
      *
-     * GET /andromeda/script?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/script?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param queryString
@@ -5145,7 +5145,7 @@ public class BigMLClient {
      * Updates a whizzml script.
      *
      * PUT
-     * /andromeda/script/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/script/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param scriptId
@@ -5164,7 +5164,7 @@ public class BigMLClient {
      * Updates a whizzml script.
      *
      * PUT
-     * /andromeda/script/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/script/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param scriptJSON
@@ -5183,7 +5183,7 @@ public class BigMLClient {
      * Deletes a whizzml script.
      *
      * DELETE
-     * /andromeda/script/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/script/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param scriptId
@@ -5200,7 +5200,7 @@ public class BigMLClient {
      * Deletes a script.
      *
      * DELETE
-     * /andromeda/script/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/script/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param scriptJSON
@@ -5223,7 +5223,7 @@ public class BigMLClient {
     /**
      * Creates a whizzml execution for a script.
      *
-     * POST /andromeda/execution?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/execution?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param script
@@ -5248,7 +5248,7 @@ public class BigMLClient {
     /**
      * Creates a whizzml execution for a list of scripts.
      *
-     * POST /andromeda/execution?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/execution?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param scripts
@@ -5273,7 +5273,7 @@ public class BigMLClient {
      * Retrieves a whizzml execution.
      *
      * GET
-     * /andromeda/execution/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/execution/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param executionId
@@ -5290,7 +5290,7 @@ public class BigMLClient {
      * Retrieves a whizzml execution.
      *
      * GET
-     * /andromeda/execution/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/execution/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param executionJSON
@@ -5330,7 +5330,7 @@ public class BigMLClient {
     /**
      * Lists all your whizzml executions.
      *
-     * GET /andromeda/execution?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/execution?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param queryString
@@ -5346,7 +5346,7 @@ public class BigMLClient {
      * Updates a whizzml execution.
      *
      * PUT
-     * /andromeda/execution/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/execution/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param executionId
@@ -5365,7 +5365,7 @@ public class BigMLClient {
      * Updates a whizzml execution.
      *
      * PUT
-     * /andromeda/execution/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/execution/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param executionJSON
@@ -5384,7 +5384,7 @@ public class BigMLClient {
      * Deletes a whizzml execution.
      *
      * DELETE
-     * /andromeda/execution/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/execution/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param executionId
@@ -5401,7 +5401,7 @@ public class BigMLClient {
      * Deletes a whizzml execution.
      *
      * DELETE
-     * /andromeda/execution/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/execution/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param executionJSON
@@ -5424,7 +5424,7 @@ public class BigMLClient {
     /**
      * Creates a whizzml library from its source code.
      *
-     * POST /andromeda/library?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/library?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param source
@@ -5452,7 +5452,7 @@ public class BigMLClient {
      * Retrieves a whizzml library.
      *
      * GET
-     * /andromeda/library/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/library/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param libraryId
@@ -5469,7 +5469,7 @@ public class BigMLClient {
      * Retrieves a whizzml library.
      *
      * GET
-     * /andromeda/library/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/library/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param executionJSON
@@ -5509,7 +5509,7 @@ public class BigMLClient {
     /**
      * Lists all your whizzml libraries.
      *
-     * GET /andromeda/library?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/library?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param queryString
@@ -5525,7 +5525,7 @@ public class BigMLClient {
      * Updates a whizzml library.
      *
      * PUT
-     * /andromeda/library/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/library/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param libraryId
@@ -5544,7 +5544,7 @@ public class BigMLClient {
      * Updates a whizzml library.
      *
      * PUT
-     * /andromeda/library/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/library/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param executionJSON
@@ -5563,7 +5563,7 @@ public class BigMLClient {
      * Deletes a whizzml library.
      *
      * DELETE
-     * /andromeda/library/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/library/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param libraryId
@@ -5580,7 +5580,7 @@ public class BigMLClient {
      * Deletes a library.
      *
      * DELETE
-     * /andromeda/library/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/library/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param libraryJSON	a library JSONObject
@@ -5602,7 +5602,7 @@ public class BigMLClient {
     /**
      * Creates a new association.
      *
-     * POST /andromeda/association?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/association?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param datasetId
@@ -5634,7 +5634,7 @@ public class BigMLClient {
      * called.
      *
      * GET
-     * /andromeda/association/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/association/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io
      *
      * @param associationId
@@ -5656,7 +5656,7 @@ public class BigMLClient {
      * called.
      *
      * GET
-     * /andromeda/association/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/association/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io
      *
      * @param associationJSON
@@ -5696,7 +5696,7 @@ public class BigMLClient {
     /**
      * Lists all your association.
      *
-     * GET /andromeda/association?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/association?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param queryString
@@ -5712,7 +5712,7 @@ public class BigMLClient {
      * Updates an association.
      *
      * PUT
-     * /andromeda/association/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/association/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param associationId
@@ -5731,14 +5731,14 @@ public class BigMLClient {
      * Updates an association.
      *
      * PUT
-     * /andromeda/association/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/association/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param associationJSON
      *            an association JSONObject
      * @param changes
      *            set of parameters to update the association. Optional
-     * 
+     *
      *  @return a JSONObject for the updated association
      */
     public JSONObject updateAssociation(final JSONObject associationJSON,
@@ -5750,7 +5750,7 @@ public class BigMLClient {
      * Deletes an association.
      *
      * DELETE
-     * /andromeda/association/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/association/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param associationId
@@ -5767,7 +5767,7 @@ public class BigMLClient {
      * Deletes an association.
      *
      * DELETE
-     * /andromeda/association/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/association/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param associationJSON
@@ -5790,7 +5790,7 @@ public class BigMLClient {
     /**
      * Creates a new association set.
      *
-     * POST /andromeda/associationset?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/associationset?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param associationId
@@ -5827,7 +5827,7 @@ public class BigMLClient {
      * it is called.
      *
      * GET
-     * /andromeda/associationset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/associationset/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io
      *
      * @param associationSetId
@@ -5849,7 +5849,7 @@ public class BigMLClient {
      * called.
      *
      * GET
-     * /andromeda/associationset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/associationset/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io
      *
      * @param associationsetJSON
@@ -5889,7 +5889,7 @@ public class BigMLClient {
     /**
      * Lists all your associationset.
      *
-     * GET /andromeda/associationset?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/associationset?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param queryString
@@ -5905,7 +5905,7 @@ public class BigMLClient {
      * Updates an association set.
      *
      * PUT
-     * /andromeda/associationset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/associationset/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param associationSetId
@@ -5924,7 +5924,7 @@ public class BigMLClient {
      * Updates an association set.
      *
      * PUT
-     * /andromeda/associationset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/associationset/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param associationSetJSON
@@ -5943,7 +5943,7 @@ public class BigMLClient {
      * Deletes an association set.
      *
      * DELETE
-     * /andromeda/associationset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/associationset/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param associationSetId
@@ -5960,7 +5960,7 @@ public class BigMLClient {
      * Deletes an association set.
      *
      * DELETE
-     * /andromeda/associationset/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/associationset/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param associationSetJSON
@@ -5982,7 +5982,7 @@ public class BigMLClient {
     /**
      * Creates a new topic model.
      *
-     * POST /andromeda/topicmodel?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/topicmodel?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param datasetId
@@ -6008,7 +6008,7 @@ public class BigMLClient {
     /**
      * Creates a topic model from a list of `datasets`.
      *
-     * POST /andromeda/topicmodel?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/topicmodel?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param datasetsIds
@@ -6026,7 +6026,7 @@ public class BigMLClient {
      *
      * @return a JSONObject for the new topic model
      */
-    public JSONObject createTopicModel(final List datasetsIds, 
+    public JSONObject createTopicModel(final List datasetsIds,
     		JSONObject args, Integer waitTime, Integer retries) {
 
         return topicModel.create(datasetsIds, args, waitTime, retries);
@@ -6041,7 +6041,7 @@ public class BigMLClient {
      * called.
      *
      * GET
-     * /andromeda/topicmodel/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/topicmodel/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io
      *
      * @param topicModelId
@@ -6063,7 +6063,7 @@ public class BigMLClient {
      * called.
      *
      * GET
-     * /andromeda/topicmodel/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/topicmodel/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io
      *
      * @param topicModelJSON
@@ -6103,7 +6103,7 @@ public class BigMLClient {
     /**
      * Lists all your topic models.
      *
-     * GET /andromeda/topicmodel?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/topicmodel?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param queryString
@@ -6119,7 +6119,7 @@ public class BigMLClient {
      * Updates a topicmodel.
      *
      * PUT
-     * /andromeda/topicmodel/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/topicmodel/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param topicModelId
@@ -6128,7 +6128,7 @@ public class BigMLClient {
      * @param changes
      *            set of parameters to update the topic model. Optional
      *
-     * @return a JSONObject for the updated topic model 
+     * @return a JSONObject for the updated topic model
      */
     public JSONObject updateTopicModel(final String topicModelId, final String changes) {
         return topicModel.update(topicModelId, changes);
@@ -6138,7 +6138,7 @@ public class BigMLClient {
      * Updates a topicmodel.
      *
      * PUT
-     * /andromeda/topicmodel/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/topicmodel/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param topicModelJSON
@@ -6157,7 +6157,7 @@ public class BigMLClient {
      * Deletes a topicmodel.
      *
      * DELETE
-     * /andromeda/topicmodel/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/topicmodel/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param topicModelId
@@ -6174,7 +6174,7 @@ public class BigMLClient {
      * Deletes a topicmodel.
      *
      * DELETE
-     * /andromeda/topicmodel/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/topicmodel/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param topicModelJSON
@@ -6197,7 +6197,7 @@ public class BigMLClient {
      * Creates a new topic distribution.
      *
      * POST
-     * /andromeda/topicdistribution?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/topicdistribution?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param topicModelId
@@ -6227,7 +6227,7 @@ public class BigMLClient {
     /**
      * Retrieves a topic distribution.
      *
-     * GET /andromeda/topicdistribution/id?username=$BIGML_USERNAME;api_key=
+     * GET /andromeda/topicdistribution/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
      *
      * @param topicDistributionId
@@ -6243,7 +6243,7 @@ public class BigMLClient {
     /**
      * Retrieves a topic distribution.
      *
-     * GET /andromeda/topicdistribution/id?username=$BIGML_USERNAME;api_key=
+     * GET /andromeda/topicdistribution/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
      *
      * @param topicDistributionJSON
@@ -6284,7 +6284,7 @@ public class BigMLClient {
      * Lists all your topic distributions.
      *
      * GET
-     * /andromeda/topicdistribution?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/topicdistribution?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param queryString
@@ -6299,7 +6299,7 @@ public class BigMLClient {
     /**
      * Updates a topic distribution.
      *
-     * PUT /andromeda/topicdistribution/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * PUT /andromeda/topicdistribution/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param topicDistributionId
@@ -6318,7 +6318,7 @@ public class BigMLClient {
     /**
      * Updates a topic distribution.
      *
-     * PUT /andromeda/topicdistribution/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * PUT /andromeda/topicdistribution/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param topicDistributionJSON
@@ -6336,7 +6336,7 @@ public class BigMLClient {
     /**
      * Deletes a topic distribution.
      *
-     * DELETE /andromeda/topicdistribution/id?username=$BIGML_USERNAME;api_key=
+     * DELETE /andromeda/topicdistribution/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1
      *
      * @param topicDistributionId
@@ -6352,7 +6352,7 @@ public class BigMLClient {
     /**
      * Deletes a topic distribution.
      *
-     * DELETE /andromeda/topicdistribution/id?username=$BIGML_USERNAME;api_key=
+     * DELETE /andromeda/topicdistribution/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1
      *
      * @param topicDistributionJSON
@@ -6374,7 +6374,7 @@ public class BigMLClient {
     /**
      * Creates a new batch topic distribution.
      *
-     * POST /andromeda/batchtopicdistribution?username=$BIGML_USERNAME;api_key=
+     * POST /andromeda/batchtopicdistribution?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param topicModelId
@@ -6413,7 +6413,7 @@ public class BigMLClient {
      * encloses the batch_topic distribution values and state info available at the time
      * it is called.
      *
-     * GET /andromeda/batchtopicdistribution/id?username=$BIGML_USERNAME;api_key=
+     * GET /andromeda/batchtopicdistribution/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
      *
      * @param batchTopicDistributionId
@@ -6436,7 +6436,7 @@ public class BigMLClient {
      * encloses the batch_topic distribution values and state info available at the time
      * it is called.
      *
-     * GET /andromeda/batchtopicdistribution/id?username=$BIGML_USERNAME;api_key=
+     * GET /andromeda/batchtopicdistribution/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
      *
      * @param batchTopicDistributionJSON
@@ -6460,7 +6460,7 @@ public class BigMLClient {
      *            a string of 24 alpha-numeric chars.
      * @param filename
      *            Path to save file locally
-     * 
+     *
      * @return a JSONObject for the downloaded batch topic distribution
      */
     public JSONObject downloadBatchTopicDistribution(final String batchTopicDistributionId,
@@ -6480,7 +6480,7 @@ public class BigMLClient {
      *            a batch topic distribution JSONObject.
      * @param filename
      *            Path to save file locally
-     * 
+     *
      * @return a JSONObject for the downloaded batch topic distribution
      */
     public JSONObject downloadBatchTopicDistribution(
@@ -6517,7 +6517,7 @@ public class BigMLClient {
     /**
      * Lists all your batch topic distributions.
      *
-     * GET /andromeda/batchtopicdistribution?username=$BIGML_USERNAME;api_key=
+     * GET /andromeda/batchtopicdistribution?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; Host: bigml.io
      *
      * @param queryString
@@ -6532,7 +6532,7 @@ public class BigMLClient {
     /**
      * Updates a batch topic distribution.
      *
-     * PUT /andromeda/batchtopicdistribution/id?username=$BIGML_USERNAME;api_key=
+     * PUT /andromeda/batchtopicdistribution/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param batchTopicDistributionId
@@ -6551,7 +6551,7 @@ public class BigMLClient {
     /**
      * Updates a batch topic distribution.
      *
-     * PUT /andromeda/batchtopicdistribution/id?username=$BIGML_USERNAME;api_key=
+     * PUT /andromeda/batchtopicdistribution/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param batchTopicDistributionJSON
@@ -6569,7 +6569,7 @@ public class BigMLClient {
     /**
      * Deletes a batch topic distribution.
      *
-     * DELETE /andromeda/batchtopicdistribution/id?username=$BIGML_USERNAME;api_key=
+     * DELETE /andromeda/batchtopicdistribution/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1
      *
      * @param batchTopicDistributionId
@@ -6585,7 +6585,7 @@ public class BigMLClient {
     /**
      * Deletes a batch topic distribution.
      *
-     * DELETE /andromeda/batchtopicdistribution/id?username=$BIGML_USERNAME;api_key=
+     * DELETE /andromeda/batchtopicdistribution/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1
      *
      * @param batchTopicDistributionJSON
@@ -6609,7 +6609,7 @@ public class BigMLClient {
      *
      * Create a new configuration using the arguments in `args`.
      *
-     * POST /andromeda/configuration?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/configuration?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param args
@@ -6625,7 +6625,7 @@ public class BigMLClient {
      * Retrieves a configuration.
      *
      * GET
-     * /andromeda/configuration/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/configuration/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io
      *
      * @param configurationId
@@ -6642,7 +6642,7 @@ public class BigMLClient {
      * Retrieves a configuration.
      *
      * GET
-     * /andromeda/configuration/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/configuration/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io
      *
      * @param configurationJSON
@@ -6658,7 +6658,7 @@ public class BigMLClient {
      * Retrieves a configuration.
      *
      *
-     * GET /andromeda/configuration/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/configuration/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param configurationId
@@ -6677,7 +6677,7 @@ public class BigMLClient {
      * Retrieves a configuration.
      *
      *
-     * GET /andromeda/configuration/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/configuration/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param configurationId
@@ -6725,7 +6725,7 @@ public class BigMLClient {
     /**
      * Lists all your configurations.
      *
-     * GET /andromeda/configuration?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/configuration?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param queryString
@@ -6741,7 +6741,7 @@ public class BigMLClient {
      * Updates a configuration.
      *
      * PUT
-     * /andromeda/configuration/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/configuration/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param configurationId
@@ -6760,7 +6760,7 @@ public class BigMLClient {
      * Updates a configuration.
      *
      * PUT
-     * /andromeda/configuration/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/configuration/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param configurationJSON
@@ -6779,7 +6779,7 @@ public class BigMLClient {
      * Deletes a configuration.
      *
      * DELETE
-     * /andromeda/configuration/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/configuration/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param configurationId
@@ -6796,7 +6796,7 @@ public class BigMLClient {
      * Deletes a configuration.
      *
      * DELETE
-     * /andromeda/configuration/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/configuration/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param configurationJSON
@@ -6819,7 +6819,7 @@ public class BigMLClient {
     /**
      * Creates a new timeseries.
      *
-     * POST /andromeda/timeseries?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/timeseries?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param datasetId
@@ -6845,7 +6845,7 @@ public class BigMLClient {
     /**
      * Creates a timeseries from a list of `datasets`.
      *
-     * POST /andromeda/timeseries?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/timeseries?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param datasetsIds
@@ -6860,10 +6860,10 @@ public class BigMLClient {
      *            Optional
      * @param retries
      *            number of times to try the operation. Optional
-     *            
+     *
      * @return a JSONObject for the new timeseries
      */
-    public JSONObject createTimeSeries(final List datasetsIds, 
+    public JSONObject createTimeSeries(final List datasetsIds,
     		JSONObject args, Integer waitTime, Integer retries) {
 
         return timeSeries.create(datasetsIds, args, waitTime, retries);
@@ -6878,7 +6878,7 @@ public class BigMLClient {
      * called.
      *
      * GET
-     * /andromeda/timeseries/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/timeseries/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io
      *
      * @param timeSeriesId
@@ -6900,7 +6900,7 @@ public class BigMLClient {
      * called.
      *
      * GET
-     * /andromeda/timeseries/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/timeseries/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io
      *
      * @param timeSeriesJSON
@@ -6940,7 +6940,7 @@ public class BigMLClient {
     /**
      * Lists all your timeseries.
      *
-     * GET /andromeda/timeseries?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/timeseries?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param queryString
@@ -6956,7 +6956,7 @@ public class BigMLClient {
      * Updates a timeseries.
      *
      * PUT
-     * /andromeda/timeseries/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/timeseries/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param timeSeriesId
@@ -6975,7 +6975,7 @@ public class BigMLClient {
      * Updates a timeseries.
      *
      * PUT
-     * /andromeda/timeseries/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/timeseries/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param timeSeriesJSON
@@ -6994,7 +6994,7 @@ public class BigMLClient {
      * Deletes a timeseries.
      *
      * DELETE
-     * /andromeda/timeseries/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/timeseries/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param timeSeriesId
@@ -7011,7 +7011,7 @@ public class BigMLClient {
      * Deletes a timeseries.
      *
      * DELETE
-     * /andromeda/timeseries/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/timeseries/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param timeSeriesJSON
@@ -7035,7 +7035,7 @@ public class BigMLClient {
      * Creates a new forecast.
      *
      * POST
-     * /andromeda/forecast?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/forecast?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param timeSeriesId
@@ -7065,7 +7065,7 @@ public class BigMLClient {
     /**
      * Retrieves a forecast.
      *
-     * GET /andromeda/forecast/id?username=$BIGML_USERNAME;api_key=
+     * GET /andromeda/forecast/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
      *
      * @param forecastId
@@ -7081,7 +7081,7 @@ public class BigMLClient {
     /**
      * Retrieves a forecast.
      *
-     * GET /andromeda/forecast/id?username=$BIGML_USERNAME;api_key=
+     * GET /andromeda/forecast/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
      *
      * @param forecastJSON
@@ -7121,7 +7121,7 @@ public class BigMLClient {
      * Lists all your forecasts.
      *
      * GET
-     * /andromeda/forecast?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/forecast?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param queryString
@@ -7136,7 +7136,7 @@ public class BigMLClient {
     /**
      * Updates a forecast.
      *
-     * PUT /andromeda/forecast/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * PUT /andromeda/forecast/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param forecastId
@@ -7155,7 +7155,7 @@ public class BigMLClient {
     /**
      * Updates a forecast.
      *
-     * PUT /andromeda/forecast/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * PUT /andromeda/forecast/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param forecastJSON
@@ -7173,7 +7173,7 @@ public class BigMLClient {
     /**
      * Deletes a forecast.
      *
-     * DELETE /andromeda/forecast/id?username=$BIGML_USERNAME;api_key=
+     * DELETE /andromeda/forecast/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1
      *
      * @param forecastId
@@ -7189,7 +7189,7 @@ public class BigMLClient {
     /**
      * Deletes a forecast.
      *
-     * DELETE /andromeda/forecast/id?username=$BIGML_USERNAME;api_key=
+     * DELETE /andromeda/forecast/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1
      *
      * @param forecastJSON
@@ -7212,7 +7212,7 @@ public class BigMLClient {
     /**
      * Creates a new deepnet.
      *
-     * POST /andromeda/deepnet?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/deepnet?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param datasetId
@@ -7244,7 +7244,7 @@ public class BigMLClient {
      * called.
      *
      * GET
-     * /andromeda/deepnet/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/deepnet/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io
      *
      * @param deepnetId
@@ -7266,7 +7266,7 @@ public class BigMLClient {
      * called.
      *
      * GET
-     * /andromeda/deepnet/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/deepnet/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io
      *
      * @param deepnetJSON
@@ -7306,7 +7306,7 @@ public class BigMLClient {
     /**
      * Lists all your deepnet.
      *
-     * GET /andromeda/deepnet?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/deepnet?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param queryString
@@ -7322,7 +7322,7 @@ public class BigMLClient {
      * Updates a deepnet.
      *
      * PUT
-     * /andromeda/deepnet/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/deepnet/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param deepnetId
@@ -7341,7 +7341,7 @@ public class BigMLClient {
      * Updates a deepnet.
      *
      * PUT
-     * /andromeda/deepnet/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/deepnet/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param deepnetJSON
@@ -7360,7 +7360,7 @@ public class BigMLClient {
      * Deletes a deepnet.
      *
      * DELETE
-     * /andromeda/deepnet/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/deepnet/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param deepnetId
@@ -7377,7 +7377,7 @@ public class BigMLClient {
      * Deletes a deepnet.
      *
      * DELETE
-     * /andromeda/deepnet/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/deepnet/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param deepnetJSON
@@ -7389,7 +7389,7 @@ public class BigMLClient {
         return deepnet.delete(deepnetJSON);
     }
 
-    
+
     // ################################################################
     // #
     // # OptiMLs
@@ -7400,17 +7400,17 @@ public class BigMLClient {
     /**
      * Creates a new optiml.
      *
-     * POST /andromeda/optiml?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/optiml?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param datasetId
      *            a unique identifier in the form dataset/id where id is
-     *            a string of 24 alpha-numeric chars for the dataset to 
+     *            a string of 24 alpha-numeric chars for the dataset to
      *            attach the optiML.
      * @param args
      *            set of parameters for the new optiml. Optional
      * @param waitTime
-     *            time to wait for next check of FINISHED status for 
+     *            time to wait for next check of FINISHED status for
      *            dataset before to start to create the optiml. Optional
      * @param retries
      *            number of times to try the operation. Optional
@@ -7422,18 +7422,18 @@ public class BigMLClient {
 
         return optiml.create(datasetId, args, waitTime, retries);
     }
-    
+
 
     /**
      * Retrieves an optiML.
      *
-     * An optiML is an evolving object that is processed until it reaches 
-     * the FINISHED or FAULTY state, the method will return a JSONObject 
-     * that encloses the optiML values and state info available at the 
+     * An optiML is an evolving object that is processed until it reaches
+     * the FINISHED or FAULTY state, the method will return a JSONObject
+     * that encloses the optiML values and state info available at the
      * time it is called.
      *
      * GET
-     * /andromeda/optiml/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/optiml/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io
      *
      * @param optimlId
@@ -7449,13 +7449,13 @@ public class BigMLClient {
     /**
      * Retrieves an optiML.
      *
-     * An optiML is an evolving object that is processed until it reaches 
-     * the FINISHED or FAULTY state, the method will return a JSONObject 
-     * that encloses the optiml values and state info available at the 
+     * An optiML is an evolving object that is processed until it reaches
+     * the FINISHED or FAULTY state, the method will return a JSONObject
+     * that encloses the optiml values and state info available at the
      * time it is called.
      *
      * GET
-     * /andromeda/optiml/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/optiml/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io
      *
      * @param optimlJSON
@@ -7467,7 +7467,7 @@ public class BigMLClient {
         return optiml.get(optimlJSON);
     }
 
-    
+
     /**
      * Check whether an optiML's status is FINISHED.
      *
@@ -7491,12 +7491,12 @@ public class BigMLClient {
      */
     public boolean optimlIsReady(final JSONObject optimlJSON) {
         return optiml.isReady(optimlJSON);
-    }    
-    
+    }
+
     /**
      * Lists all your optiMLs.
      *
-     * GET /andromeda/optiml?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/optiml?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param queryString
@@ -7507,23 +7507,23 @@ public class BigMLClient {
     public JSONObject listOptiMLs(final String queryString) {
         return optiml.list(queryString);
     }
-    
+
     /**
      * Updates an optiml.
      *
      * PUT
-     * /andromeda/optiml/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/optiml/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param optimlId
-     *            a unique identifier in the form optiml/id where id is 
+     *            a unique identifier in the form optiml/id where id is
      *            a string of 24 alpha-numeric chars.
      * @param changes
      *            set of parameters to update the optiml. Optional
      *
      * @return a JSONObject for the updated optiML
      */
-    public JSONObject updateOptiML(final String optimlId, 
+    public JSONObject updateOptiML(final String optimlId,
     			final String changes) {
         return optiml.update(optimlId, changes);
     }
@@ -7532,7 +7532,7 @@ public class BigMLClient {
      * Updates an optiML.
      *
      * PUT
-     * /andromeda/optiml/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/optiml/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param optimlJSON
@@ -7545,13 +7545,13 @@ public class BigMLClient {
     public JSONObject updateOptiML(final JSONObject optimlJSON,
             final JSONObject changes) {
         return optiml.update(optimlJSON, changes);
-    }    
-    
+    }
+
     /**
      * Deletes an optiML.
      *
      * DELETE
-     * /andromeda/optiml/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/optiml/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param optimlId
@@ -7568,7 +7568,7 @@ public class BigMLClient {
      * Deletes an optiML.
      *
      * DELETE
-     * /andromeda/optiml/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/optiml/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param optimlJSON
@@ -7579,8 +7579,8 @@ public class BigMLClient {
     public JSONObject deleteOptiML(final JSONObject optimlJSON) {
         return optiml.delete(optimlJSON);
     }
-    
-    
+
+
     // ################################################################
     // #
     // # Fusion
@@ -7591,7 +7591,7 @@ public class BigMLClient {
     /**
      * Creates a fusion from a list of models.
      *
-     * POST /andromeda/fusion?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/fusion?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param modelsIds
@@ -7602,8 +7602,8 @@ public class BigMLClient {
      * @param args
      *            set of parameters for the new fusion. Optional
      * @param waitTime
-     *            time (milliseconds) to wait for next check of FINISHED 
-     *            status for every submodel before to start to create 
+     *            time (milliseconds) to wait for next check of FINISHED
+     *            status for every submodel before to start to create
      *            the fusion. Optional
      * @param retries
      *            number of times to try the operation. Optional
@@ -7615,29 +7615,29 @@ public class BigMLClient {
 
         return fusion.create(modelsIds, args, waitTime, retries);
     }
-    
+
     /**
      * Creates a fusion from a list of models definitions.
      *
-     * POST /andromeda/fusion?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/fusion?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param models
      *            list of models definitions int he form
-     *            
+     *
      *           {
      *           	"id": xxx/id, where xxx is
      *            			one of the model types availables and id is a string
      *            			of 24 alpha-numeric chars for the model to include in
      *            			the fusion resource,
-     *            	"weight": a number specifying the weight of the submodel 
+     *            	"weight": a number specifying the weight of the submodel
      *            			in the fusion
      *            }
      * @param args
      *            set of parameters for the new fusion. Optional
      * @param waitTime
-     *            time (milliseconds) to wait for next check of FINISHED 
-     *            status for every submodel before to start to create 
+     *            time (milliseconds) to wait for next check of FINISHED
+     *            status for every submodel before to start to create
      *            the fusion. Optional
      * @param retries
      *            number of times to try the operation. Optional
@@ -7654,7 +7654,7 @@ public class BigMLClient {
      * Retrieves a fusion.
      *
      * GET
-     * /andromeda/fusion/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/fusion/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param fusionId
@@ -7671,7 +7671,7 @@ public class BigMLClient {
      * Retrieves a fusion.
      *
      * GET
-     * /andromeda/fusion/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/fusion/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param fusionJSON
@@ -7711,7 +7711,7 @@ public class BigMLClient {
     /**
      * Lists all your fusion.
      *
-     * GET /andromeda/fusion?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/fusion?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param queryString
@@ -7727,7 +7727,7 @@ public class BigMLClient {
      * Updates a fusion.
      *
      * PUT
-     * /andromeda/fusion/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/fusion/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param fusionId
@@ -7746,7 +7746,7 @@ public class BigMLClient {
      * Updates a fusion.
      *
      * PUT
-     * /andromeda/fusion/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/fusion/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param fusionJSON
@@ -7765,7 +7765,7 @@ public class BigMLClient {
      * Deletes a fusion.
      *
      * DELETE
-     * /andromeda/fusion/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/fusion/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param fusionId
@@ -7782,7 +7782,7 @@ public class BigMLClient {
      * Deletes a fusion.
      *
      * DELETE
-     * /andromeda/fusion/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/fusion/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param fusionJSON
@@ -7793,8 +7793,8 @@ public class BigMLClient {
     public JSONObject deleteFusion(final JSONObject fusionJSON) {
         return fusion.delete(fusionJSON);
     }
-    
-    
+
+
     // ################################################################
     // #
     // # Pca
@@ -7805,12 +7805,12 @@ public class BigMLClient {
     /**
      * Creates a new pca.
      *
-     * POST /andromeda/pca?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/pca?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param datasetId
      *            a unique identifier in the form dataset/id where id is a
-     *            string of 24 alpha-numeric chars for the dataset to 
+     *            string of 24 alpha-numeric chars for the dataset to
      *            attach the pca.
      * @param args
      *            set of parameters for the new pca. Optional
@@ -7822,7 +7822,7 @@ public class BigMLClient {
      *
      * @return a JSONObject for the new pca
      */
-    public JSONObject createPca(final String datasetId, 
+    public JSONObject createPca(final String datasetId,
     		JSONObject args, Integer waitTime, Integer retries) {
 
         return pca.create(datasetId, args, waitTime, retries);
@@ -7831,17 +7831,17 @@ public class BigMLClient {
     /**
      * Creates a from a list of `datasets`.
      *
-     * POST /andromeda/pca?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/pca?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param datasetsIds
      *            list of identifiers in the form dataset/id where id is a
-     *            string of 24 alpha-numeric chars for the dataset to 
+     *            string of 24 alpha-numeric chars for the dataset to
      *            attach the pca.
      * @param args
      *            set of parameters for the new pca. Optional
      * @param waitTime
-     *            time (milliseconds) to wait for next check of FINISHED 
+     *            time (milliseconds) to wait for next check of FINISHED
      *            status for source before to start to create the pca.
      *            Optional
      * @param retries
@@ -7849,7 +7849,7 @@ public class BigMLClient {
      *
      * @return a JSONObject for the new pca
      */
-    public JSONObject createPca(final List datasetsIds, 
+    public JSONObject createPca(final List datasetsIds,
     		JSONObject args, Integer waitTime, Integer retries) {
 
         return pca.create(datasetsIds, args, waitTime, retries);
@@ -7858,13 +7858,13 @@ public class BigMLClient {
     /**
      * Retrieves a pca.
      *
-     * A pca is an evolving object that is processed until it reaches 
+     * A pca is an evolving object that is processed until it reaches
      * the FINISHED or FAULTY state, the method will return a JSONObject
-     * that encloses the pca values and state info  available at the 
+     * that encloses the pca values and state info  available at the
      * time it is called.
      *
      * GET
-     * /andromeda/pca/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/pca/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io
      *
      * @param pcaId
@@ -7882,11 +7882,11 @@ public class BigMLClient {
      *
      * A pca is an evolving object that is processed until it reaches
      * the FINISHED or FAULTY state, the method will return a JSONObject
-     * that encloses the pca values and state info available at the time 
+     * that encloses the pca values and state info available at the time
      * it is called.
      *
      * GET
-     * /andromeda/pca/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/pca/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io
      *
      * @param pcaJSON
@@ -7926,7 +7926,7 @@ public class BigMLClient {
     /**
      * Lists all your pca.
      *
-     * GET /andromeda/pca?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/pca?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param queryString
@@ -7942,7 +7942,7 @@ public class BigMLClient {
      * Updates a pca.
      *
      * PUT
-     * /andromeda/pca/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/pca/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param pcaId
@@ -7962,7 +7962,7 @@ public class BigMLClient {
      * Updates a pca.
      *
      * PUT
-     * /andromeda/pca/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/pca/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param pcaJSON
@@ -7980,7 +7980,7 @@ public class BigMLClient {
      * Deletes a pca.
      *
      * DELETE
-     * /andromeda/pca/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/pca/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param pcaId
@@ -7997,7 +7997,7 @@ public class BigMLClient {
      * Deletes a pca.
      *
      * DELETE
-     * /andromeda/pca/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/pca/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param pcaJSON
@@ -8008,8 +8008,8 @@ public class BigMLClient {
     public JSONObject deletePca(final JSONObject pcaJSON) {
         return pca.delete(pcaJSON);
     }
-    
-    
+
+
     // ################################################################
     // #
     // # Projections
@@ -8021,12 +8021,12 @@ public class BigMLClient {
      * Creates a new projection.
      *
      * POST
-     * /andromeda/projection?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/projection?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param pcaId
      *            a unique identifier in the form pca/id where
-     *            id is a string of 24 alpha-numeric chars for the 
+     *            id is a string of 24 alpha-numeric chars for the
      *            projection to attach the projection.
      * @param inputData
      *            an object with field's id/value pairs representing the
@@ -8034,8 +8034,8 @@ public class BigMLClient {
      * @param args
      *            set of parameters for the new projection. Required
      * @param waitTime
-     *            time to wait for next check of FINISHED status for 
-     *            projection before to start to create the projection. 
+     *            time to wait for next check of FINISHED status for
+     *            projection before to start to create the projection.
      *            Optional
      * @param retries
      *            number of times to try the operation. Optional
@@ -8053,7 +8053,7 @@ public class BigMLClient {
      * Creates a new projection.
      *
      * POST
-     * /andromeda/projection?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/projection?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param pca
@@ -8064,8 +8064,8 @@ public class BigMLClient {
      * @param args
      *            set of parameters for the new projection. Required
      * @param waitTime
-     *            time to wait for next check of FINISHED status for 
-     *            projection before to start to create the projection. 
+     *            time to wait for next check of FINISHED status for
+     *            projection before to start to create the projection.
      *            Optional
      * @param retries
      *            number of times to try the operation. Optional
@@ -8076,18 +8076,18 @@ public class BigMLClient {
             JSONObject inputData, JSONObject args,
             Integer waitTime, Integer retries) {
         String pcaId = (String) pca.get("resource");
-        return  createProjection(pcaId, inputData, args, 
+        return  createProjection(pcaId, inputData, args,
         		waitTime, retries);
     }
 
     /**
      * Retrieves a projection.
      *
-     * GET /andromeda/projection/id?username=$BIGML_USERNAME;api_key=
+     * GET /andromeda/projection/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
      *
      * @param projectionId
-     *            a unique identifier in the form projection/id where id 
+     *            a unique identifier in the form projection/id where id
      *            is a string of 24 alpha-numeric chars.
      *
      * @return a JSONObject for the projection
@@ -8099,7 +8099,7 @@ public class BigMLClient {
     /**
      * Retrieves a projection.
      *
-     * GET /andromeda/projection/id?username=$BIGML_USERNAME;api_key=
+     * GET /andromeda/projection/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
      *
      * @param projectionJSON
@@ -8115,7 +8115,7 @@ public class BigMLClient {
      * Checks whether a projection's status is FINISHED.
      *
      * @param projectionId
-     *            a unique identifier in the form projection/id where id 
+     *            a unique identifier in the form projection/id where id
      *            is a string of 24 alpha-numeric chars.
      *
      * @return true if projection is finished
@@ -8140,7 +8140,7 @@ public class BigMLClient {
      * Lists all your projections.
      *
      * GET
-     * /andromeda/projection?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/projection?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param queryString
@@ -8155,11 +8155,11 @@ public class BigMLClient {
     /**
      * Updates a projection.
      *
-     * PUT /andromeda/projection/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * PUT /andromeda/projection/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param projectionId
-     *            a unique identifier in the form projection/id where id 
+     *            a unique identifier in the form projection/id where id
      *            is a string of 24 alpha-numeric chars.
      * @param changes
      *            set of parameters to update the projection. Optional
@@ -8174,7 +8174,7 @@ public class BigMLClient {
     /**
      * Updates a projection.
      *
-     * PUT /andromeda/projection/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * PUT /andromeda/projection/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param projectionJSON
@@ -8192,11 +8192,11 @@ public class BigMLClient {
     /**
      * Deletes a projection.
      *
-     * DELETE /andromeda/projection/id?username=$BIGML_USERNAME;api_key=
+     * DELETE /andromeda/projection/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1
      *
      * @param projectionId
-     *            a unique identifier in the form projection/id where id 
+     *            a unique identifier in the form projection/id where id
      *            is a string of 24 alpha-numeric chars
      *
      * @return a JSONObject for the deleted projection
@@ -8208,7 +8208,7 @@ public class BigMLClient {
     /**
      * Deletes a projection.
      *
-     * DELETE /andromeda/projection/id?username=$BIGML_USERNAME;api_key=
+     * DELETE /andromeda/projection/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1
      *
      * @param projectionJSON
@@ -8219,8 +8219,8 @@ public class BigMLClient {
     public JSONObject deleteProjection(final JSONObject projectionJSON) {
         return projection.delete(projectionJSON);
     }
-    
-    
+
+
     // ################################################################
     // #
     // # Batch projections
@@ -8231,7 +8231,7 @@ public class BigMLClient {
     /**
      * Creates a new batch projection.
      *
-     * POST /andromeda/batchprojection?username=$BIGML_USERNAME;api_key=
+     * POST /andromeda/batchprojection?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param pcaId
@@ -8240,7 +8240,7 @@ public class BigMLClient {
      *            pca to attach the batch projection.
      * @param datasetId
      *            a unique identifier in the form dataset/id where id is a
-     *            string of 24 alpha-numeric chars for the dataset to attach 
+     *            string of 24 alpha-numeric chars for the dataset to attach
      *            the batch projection.
      * @param args
      *            set of parameters for the new batch projection. Optional
@@ -8270,7 +8270,7 @@ public class BigMLClient {
      * encloses the batch projection values and state info available at the time
      * it is called.
      *
-     * GET /andromeda/batchprojection/id?username=$BIGML_USERNAME;api_key=
+     * GET /andromeda/batchprojection/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
      *
      * @param batchProjectionId
@@ -8293,7 +8293,7 @@ public class BigMLClient {
      * encloses the batch projection values and state info available at the time
      * it is called.
      *
-     * GET /andromeda/batchprojection/id?username=$BIGML_USERNAME;api_key=
+     * GET /andromeda/batchprojection/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
      *
      * @param batchProjectionJSON
@@ -8317,7 +8317,7 @@ public class BigMLClient {
      *            a string of 24 alpha-numeric chars.
      * @param filename
      *            Path to save file locally
-     * 
+     *
      * @return a JSONObject for the downloaded batch projection
      */
     public JSONObject downloadBatchProjection(final String batchProjectionId,
@@ -8337,7 +8337,7 @@ public class BigMLClient {
      *            a batch projection JSONObject.
      * @param filename
      *            Path to save file locally
-     * 
+     *
      * @return a JSONObject for the downloaded batch projection
      */
     public JSONObject downloadBatchProjection(
@@ -8374,7 +8374,7 @@ public class BigMLClient {
     /**
      * Lists all your batch projections.
      *
-     * GET /andromeda/projection?username=$BIGML_USERNAME;api_key=
+     * GET /andromeda/projection?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; Host: bigml.io
      *
      * @param queryString
@@ -8389,7 +8389,7 @@ public class BigMLClient {
     /**
      * Updates a batch projection.
      *
-     * PUT /andromeda/projection/id?username=$BIGML_USERNAME;api_key=
+     * PUT /andromeda/projection/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param batchProjectionId
@@ -8408,7 +8408,7 @@ public class BigMLClient {
     /**
      * Updates a batch projection.
      *
-     * PUT /andromeda/projection/id?username=$BIGML_USERNAME;api_key=
+     * PUT /andromeda/projection/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param batchProjectionJSON
@@ -8426,7 +8426,7 @@ public class BigMLClient {
     /**
      * Deletes a batch projection.
      *
-     * DELETE /andromeda/projection/id?username=$BIGML_USERNAME;api_key=
+     * DELETE /andromeda/projection/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1
      *
      * @param batchProjectionId
@@ -8442,7 +8442,7 @@ public class BigMLClient {
     /**
      * Deletes a batch projection.
      *
-     * DELETE /andromeda/projection/id?username=$BIGML_USERNAME;api_key=
+     * DELETE /andromeda/projection/id?username=$BIGML_USERNAME&api_key=
      * $BIGML_API_KEY; HTTP/1.1
      *
      * @param batchProjectionJSON
@@ -8453,8 +8453,8 @@ public class BigMLClient {
     public JSONObject deleteBatchProjection(final JSONObject batchProjectionJSON) {
         return batchProjection.delete(batchProjectionJSON);
     }
-    
-    
+
+
     // ################################################################
     // #
     // # ExternalConnectors
@@ -8465,7 +8465,7 @@ public class BigMLClient {
     /**
      * Creates a new external connector.
      *
-     * POST /andromeda/externalconnector?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/externalconnector?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param source
@@ -8482,7 +8482,7 @@ public class BigMLClient {
      *
      * @return a JSONObject for the new external connector
      */
-    public JSONObject createExternalConnector(final String source, 
+    public JSONObject createExternalConnector(final String source,
     		final Map connectionInfo, JSONObject args, Integer waitTime,
     		Integer retries) {
 
@@ -8492,17 +8492,17 @@ public class BigMLClient {
     /**
      * Retrieves an external connector.
      *
-     * An external connector is an evolving object that is processed until it 
-     * reaches the FINISHED or FAULTY state, the method will return a JSONObject 
-     * that encloses the external connector values and state info available at 
+     * An external connector is an evolving object that is processed until it
+     * reaches the FINISHED or FAULTY state, the method will return a JSONObject
+     * that encloses the external connector values and state info available at
      * the time it is called.
      *
      * GET
-     * /andromeda/externalconnector/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/externalconnector/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io
      *
      * @param externalConnectorId
-     *            a unique identifier in the form externalconnector/id where id 
+     *            a unique identifier in the form externalconnector/id where id
      *            is a string of 24 alpha-numeric chars.
      *
      * @return a JSONObject for the external connector
@@ -8514,13 +8514,13 @@ public class BigMLClient {
     /**
      * Retrieves an external connector.
      *
-     * An external connector is an evolving object that is processed until it 
-     * reaches the FINISHED or FAULTY state, the method will return a JSONObject 
-     * that encloses the external connector values and state info available at 
+     * An external connector is an evolving object that is processed until it
+     * reaches the FINISHED or FAULTY state, the method will return a JSONObject
+     * that encloses the external connector values and state info available at
      * the time it is called.
      *
      * GET
-     * /andromeda/externalconnector/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/externalconnector/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io
      *
      * @param externalConnectorJSON
@@ -8536,7 +8536,7 @@ public class BigMLClient {
      * Check whether am external connector's status is FINISHED.
      *
      * @param externalConnectorId
-     *            a unique identifier in the form externalConnector/id where 
+     *            a unique identifier in the form externalConnector/id where
      *            id is a string of 24 alpha-numeric chars.
      *
      * @return true if external connector is finished
@@ -8560,7 +8560,7 @@ public class BigMLClient {
     /**
      * Lists all your external connectors.
      *
-     * GET /andromeda/externalconnector?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/externalconnector?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * Host: bigml.io
      *
      * @param queryString
@@ -8576,11 +8576,11 @@ public class BigMLClient {
      * Updates an external connector.
      *
      * PUT
-     * /andromeda/externalconnector/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/externalconnector/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param externalConnectorId
-     *            a unique identifier in the form externalconnector/id where id 
+     *            a unique identifier in the form externalconnector/id where id
      *            is a string of 24 alpha-numeric chars.
      * @param changes
      *            set of parameters to update the external connector. Optional
@@ -8596,7 +8596,7 @@ public class BigMLClient {
      * Updates anexternal connector.
      *
      * PUT
-     * /andromeda/externalconnector/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/externalconnector/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param externalConnectorJSON
@@ -8614,7 +8614,7 @@ public class BigMLClient {
      * Deletes an externalconnector.
      *
      * DELETE
-     * /andromeda/externalconnector/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/externalconnector/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param externalConnectorId
@@ -8631,7 +8631,7 @@ public class BigMLClient {
      * Deletes an external connector.
      *
      * DELETE
-     * /andromeda/externalconnector/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/externalconnector/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1
      *
      * @param externalConnectorJSON
@@ -8643,5 +8643,5 @@ public class BigMLClient {
             final JSONObject externalConnectorJSON) {
         return externalConnector.delete(externalConnectorJSON);
     }
-    
+
 }

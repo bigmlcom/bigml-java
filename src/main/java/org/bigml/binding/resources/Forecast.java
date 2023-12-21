@@ -19,8 +19,8 @@ public class Forecast extends AbstractResource {
 
     // Logging
     Logger logger = LoggerFactory.getLogger(Forecast.class);
-    
-	
+
+
     /**
      * Constructor
      *
@@ -32,7 +32,7 @@ public class Forecast extends AbstractResource {
      * @param cacheManager	cache manager
      */
     public Forecast(final BigMLClient bigmlClient,
-    				final String apiUser, final String apiKey, 
+    				final String apiUser, final String apiKey,
     				final String project, final String organization,
     				final CacheManager cacheManager) {
     		super.init(bigmlClient, apiUser, apiKey, project, organization,
@@ -42,7 +42,7 @@ public class Forecast extends AbstractResource {
     /**
      * Creates a forecast from a timeseries.
      *
-     * POST /andromeda/forecast?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * POST /andromeda/forecast?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param timeSeriesId
@@ -74,7 +74,7 @@ public class Forecast extends AbstractResource {
 
         try {
         	waitForResource(timeSeriesId, "timeSeriesIsReady", waitTime, retries);
-        	
+
             JSONObject requestObject = new JSONObject();
             if (args != null) {
                 requestObject = args;

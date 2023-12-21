@@ -267,16 +267,16 @@ public abstract class AbstractResource {
 	                .getProperty("BIGML_USERNAME");
 	        this.bigmlApiKey = apiKey != null ? apiKey : System
 	                .getProperty("BIGML_API_KEY");
-	        bigmlAuth = "?username=" + this.bigmlUser + ";api_key="
-	                + this.bigmlApiKey + ";";
+	        bigmlAuth = "?username=" + this.bigmlUser + "&api_key="
+	                + this.bigmlApiKey + "&";
 
 	        if (project != null) {
 	        	this.project = project;
-	        	bigmlAuth += "project=" + this.project + ";";
+	        	bigmlAuth += "project=" + this.project + "&";
 	        }
 	        if (organization != null) {
 	        	this.organization = organization;
-	        	bigmlAuth += "organization=" + this.organization + ";";
+	        	bigmlAuth += "organization=" + this.organization + "&";
 	        }
 
 	        BIGML_URL = this.bigmlClient.getBigMLUrl();
@@ -301,12 +301,12 @@ public abstract class AbstractResource {
 
     /**
      * Create a new resource.
-     * 
+     *
      * @param urlString
      * 			  the url for the remote resource
      * @param json
      * 			  the body json for the new resource
-     * 
+     *
      * @return a JSONObject for the new resource
      */
     public JSONObject createResource(final String urlString, final String json) {
@@ -365,10 +365,10 @@ public abstract class AbstractResource {
 
     /**
      * Retrieve a resource.
-     * 
+     *
      * @param urlString
      * 			  the url for the remote resource
-     * 
+     *
      * @return a JSONObject for the resource
      */
     public JSONObject getResource(final String urlString) {
@@ -377,12 +377,12 @@ public abstract class AbstractResource {
 
     /**
      * Retrieve a resource.
-     * 
+     *
      * @param urlString
      * 			  the url for the remote resource
      * @param queryString
      *            query for filtering.
-     * 
+     *
      * @return a JSONObject for the resource
      */
     public JSONObject getResource(final String urlString,
@@ -392,7 +392,7 @@ public abstract class AbstractResource {
 
     /**
      * Retrieve a resource.
-     * 
+     *
      * @param urlString
      * 			the url for the remote resource
      * @param queryString
@@ -401,7 +401,7 @@ public abstract class AbstractResource {
      * 			  API user
      * @param apiKey
      * 			  API key
-     *            
+     *
      * @return a JSONObject for the resource
      */
     public JSONObject getResource(final String urlString,
@@ -436,7 +436,7 @@ public abstract class AbstractResource {
         try {
             String query = queryString != null ? queryString : "";
             String auth = apiUser != null && apiKey != null ? "?username="
-                    + apiUser + ";api_key=" + apiKey + ";" : bigmlAuth;
+                    + apiUser + "&api_key=" + apiKey + "&" : bigmlAuth;
 
             HttpURLConnection connection = Utils.processGET(urlString + auth + query);
 
@@ -478,12 +478,12 @@ public abstract class AbstractResource {
 
     /**
      * List resources.
-     * 
+     *
      * @param urlString
      * 			the url for the remote resource type
      * @param queryString
      *            query for filtering.
-     * 
+     *
      * @return a JSONObject containing all resources matching the query
      */
     public JSONObject listResources(final String urlString,
@@ -535,7 +535,7 @@ public abstract class AbstractResource {
 
     /**
      * Update a resource.
-     * 
+     *
      * @param urlString
      * 			the url for the remote resource
      * @param json
@@ -594,10 +594,10 @@ public abstract class AbstractResource {
 
     /**
      * Delete a resource.
-     * 
+     *
      * @param urlString
      * 			the url for the remote resource
-     * 
+     *
      * @return a JSONObject for the deleted resource
      */
     public JSONObject deleteResource(final String urlString) {
@@ -644,7 +644,7 @@ public abstract class AbstractResource {
 
     /**
      * Return a dictionary of fields
-     * 
+     *
      * @param resourceId
      *            a unique identifier in the form xxxxx/id where id is a string
      *            of 24 alpha-numeric chars.
@@ -682,7 +682,7 @@ public abstract class AbstractResource {
 
     /**
      * Maps status code to string.
-     * 
+     *
      * @param resourceId
      *            a unique identifier in the form xxxxx/id where id is a string
      *            of 24 alpha-numeric chars.
@@ -882,7 +882,7 @@ public abstract class AbstractResource {
      *            of 24 alpha-numeric chars.
      * @param changes
      *            set of parameters to update the resource. Optional
-     * 
+     *
      * @return a JSONObject for the updated resource
      */
     public JSONObject update(final String resourceId, final String changes) {
@@ -943,7 +943,7 @@ public abstract class AbstractResource {
      * HTTP/1.1
      *
      * @param resource  a resource JSONObject
-     * 
+     *
      * @return a JSONObject for the deleted resource
      */
     public JSONObject delete(final JSONObject resource) {
@@ -964,12 +964,12 @@ public abstract class AbstractResource {
      * Retrieves a remote file.
      *
      * Uses HTTP GET to download a file object with a BigML `url`.
-     * 
+     *
      * @param url
      * 			  the url of the remote file
      * @param fileName
      * 			  the name of the downloaded file
-     * 
+     *
      * @return the json representation of the downloaded resource
      */
     protected JSONObject download(final String url, final String fileName) {
@@ -1027,7 +1027,7 @@ public abstract class AbstractResource {
      * 			  the url of the remote file
      * @param fileName
      * 			  the name of the downloaded file
-     * 
+     *
      * @return the json representation of the downloaded resource
      */
     protected JSONObject downloadAsync(final String url, final String fileName) {
@@ -1042,7 +1042,7 @@ public abstract class AbstractResource {
      * @param url
      * 			  the url of the remote file
      * @param fileName
-     * 			  the name of the downloaded file 
+     * 			  the name of the downloaded file
      * @param waitTime
      *            time (milliseconds) to wait for next check of FINISHED status
      *            for resource before to start to operation. Optional
@@ -1148,7 +1148,7 @@ public abstract class AbstractResource {
 
     /**
      * Waits for the resource to be finished
-     * 
+     *
      * @param resourceId
      * 			   the id of the resource to wait for
      * @param isReadyMethod
