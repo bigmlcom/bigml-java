@@ -44,8 +44,8 @@ public class BatchCentroid extends AbstractResource {
     /**
      * Creates a new batchcentroid.
      *
-     * POST /andromeda/batchcentroid?username=$BIGML_USERNAME;api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
+     * POST /andromeda/batchcentroid?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param clusterId
      *            a unique identifier in the form cluster/id where id is a

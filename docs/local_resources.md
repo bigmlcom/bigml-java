@@ -924,7 +924,7 @@ combining the outputs of each model.
     BigMLClient api = new BigMLClient();
 
     JSONArray models = (JSONArray) api.listModels(
-        ";tags__in=my_tag").get("objects");
+        "&tags__in=my_tag").get("objects");
 
     MultiModel multiModel = new MultiModel(models, null, null);
 ```

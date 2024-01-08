@@ -83,7 +83,7 @@ public class LocalDeepnet extends ModelFields implements SupervisedModelInterfac
 		deepnetId = (String) deepnet.get("resource");
 		
 		inputFields = (JSONArray) Utils.getJSONObject(
-				deepnet, "input_fields");		
+				deepnet, "input_fields");
 		
 		if (deepnet.containsKey("deepnet")
 				&& deepnet.get("deepnet") instanceof JSONObject) {

@@ -264,7 +264,7 @@ public class LocalTimeseries extends ModelFields {
 
             String name = (String)sm.get("name");
             String trend = name;
-            String seasonality = null;            
+            String seasonality = null;
             if (name.indexOf(",") >= 0) {
                 String[] cs = name.split(",");
                 trend = cs[1];
@@ -355,7 +355,7 @@ public class LocalTimeseries extends ModelFields {
                 }
             }
             if (this.inputFields.contains(fid)) {
-                newInput.put(fid, val);                
+                newInput.put(fid, val);
             } else {
                 unusedFields.add(fid);
             }

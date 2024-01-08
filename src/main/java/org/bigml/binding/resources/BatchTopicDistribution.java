@@ -43,8 +43,8 @@ public class BatchTopicDistribution extends AbstractResource {
     /**
      * Creates a new batch topic distribution.
      *
-     * POST /andromeda/batchtopicdistribution?username=$BIGML_USERNAME;api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
+     * POST /andromeda/batchtopicdistribution?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param topicModelId
      *            a unique identifier in the form topicmodel/id where id is a

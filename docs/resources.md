@@ -146,7 +146,7 @@ hosted locally at port ``9200`` by calling:
 
     JSONObject connectionInfo = JSONValue.parse(
         "{\"hosts\": [\"elasticsearch\"]}"
-    ); 
+    );
     JSONObject externalConnector = api.createExternalConnector(
         elasticsearch, connectionInfo);
 ```
@@ -170,7 +170,7 @@ Here's a sample invocation:
     JSONObject args = JSONValue.parse(
         "{\"name\": \"my source\",
            \"source_parser\": {\"missing_tokens\": [\"?\""]}}"
-    ); 
+    );
     JSONObject source = api.createSource("./data/iris.csv", args);
 ```
 
@@ -985,13 +985,13 @@ A few examples:
 First 5 sources created before April 1st, 2012
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    api.listSources("limit=5;created__lt=2012-04-1");
+    api.listSources("limit=5&created__lt=2012-04-1");
 
 
 First 10 datasets bigger than 1MB
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    api.listDatasets("limit=10;size__gt=1048576");
+    api.listDatasets("limit=10&size__gt=1048576");
 
 
 Models with more than 5 fields (columns)
@@ -1022,7 +1022,7 @@ Sources ordered by size
 Datasets created before April 1st, 2012 ordered by size
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    api.listDatasets("created__lt=2012-04-1;order_by=size");
+    api.listDatasets("created__lt=2012-04-1&order_by=size");
 
 Models ordered by number of predictions (in descending order).
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

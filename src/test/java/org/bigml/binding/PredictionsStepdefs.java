@@ -144,7 +144,7 @@ public class PredictionsStepdefs {
     		String operatingPoint, String inputData)
             throws Exception {
     	
-    	JSONObject data = (JSONObject) JSONValue.parse(inputData);  	
+    	JSONObject data = (JSONObject) JSONValue.parse(inputData);
     	try {
     		Prediction prediction = context.localModel.predict(
 	    			data, null, (JSONObject) JSONValue.parse(operatingPoint), null, true, null);
@@ -617,7 +617,7 @@ public class PredictionsStepdefs {
     public void I_create_a_local_fusion_prediction(String inputData)
             throws Exception {
     	
-    	JSONObject data = (JSONObject) JSONValue.parse(inputData);  	
+    	JSONObject data = (JSONObject) JSONValue.parse(inputData);
     	try {
 	        context.localPrediction = context.localFusion.predict(
 	        		data, null, null, true);

@@ -41,8 +41,8 @@ public class BatchPrediction extends AbstractResource {
     /**
      * Creates a new batch prediction.
      *
-     * POST /andromeda/batchprediction?username=$BIGML_USERNAME;api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
+     * POST /andromeda/batchprediction?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param model
      *            a unique identifier in the form model/id, ensemble/id,

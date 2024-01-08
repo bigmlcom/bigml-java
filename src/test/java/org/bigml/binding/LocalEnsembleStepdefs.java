@@ -149,7 +149,7 @@ public class LocalEnsembleStepdefs {
             throws AuthenticationException {
         
     	try {
-            JSONObject inputData = (JSONObject) JSONValue.parse(args);   
+            JSONObject inputData = (JSONObject) JSONValue.parse(args);
             JSONObject opts = (JSONObject) JSONValue.parse(options);
             
             String operatingKind = null;

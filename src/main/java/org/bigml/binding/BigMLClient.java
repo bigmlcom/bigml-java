@@ -1923,8 +1923,8 @@ public class BigMLClient {
     /**
      * Retrieves a prediction.
      *
-     * GET /andromeda/prediction/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
+     * GET /andromeda/prediction/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1 Host: bigml.io
      *
      * @param predictionId
      *            a unique identifier in the form prediction/id where id is a
@@ -1939,8 +1939,8 @@ public class BigMLClient {
     /**
      * Retrieves a prediction.
      *
-     * GET /andromeda/prediction/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
+     * GET /andromeda/prediction/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1 Host: bigml.io
      *
      * @param predictionJSON
      *            a prediction JSONObject
@@ -2032,8 +2032,8 @@ public class BigMLClient {
     /**
      * Deletes a prediction.
      *
-     * DELETE /andromeda/prediction/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1
+     * DELETE /andromeda/prediction/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1
      *
      * @param predictionId
      *            a unique identifier in the form prediction/id where id is a
@@ -2048,8 +2048,8 @@ public class BigMLClient {
     /**
      * Deletes a prediction.
      *
-     * DELETE /andromeda/prediction/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1
+     * DELETE /andromeda/prediction/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1
      *
      * @param predictionJSON
      *            a prediction JSONObject
@@ -2131,8 +2131,8 @@ public class BigMLClient {
     /**
      * Retrieves an anomaly score.
      *
-     * GET /andromeda/anomalyscore/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
+     * GET /andromeda/anomalyscore/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1 Host: bigml.io
      *
      * @param anomalyScoreId
      *            a unique identifier in the form anomalyScore/id where id is a
@@ -2147,8 +2147,8 @@ public class BigMLClient {
     /**
      * Retrieves an anomaly score.
      *
-     * GET /andromeda/anomalyscore/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
+     * GET /andromeda/anomalyscore/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1 Host: bigml.io
      *
      * @param anomalyScoreJSON
      *            an anomaly score JSONObject
@@ -2240,8 +2240,8 @@ public class BigMLClient {
     /**
      * Deletes an anomaly score.
      *
-     * DELETE /andromeda/anomalyscore/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1
+     * DELETE /andromeda/anomalyscore/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1
      *
      * @param anomalyScoreId
      *            a unique identifier in the form anomalyScore/id where id is a
@@ -2256,8 +2256,8 @@ public class BigMLClient {
     /**
      * Deletes an anomaly score.
      *
-     * DELETE /andromeda/anomalyscore/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1
+     * DELETE /andromeda/anomalyscore/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1
      *
      * @param anomalyScoreJSON
      *            an anomaly score JSONObject
@@ -2317,8 +2317,8 @@ public class BigMLClient {
      * encloses the evaluation values and state info available at the time it is
      * called.
      *
-     * GET /andromeda/evaluation/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
+     * GET /andromeda/evaluation/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1 Host: bigml.io
      *
      * @param evaluationId
      *            a unique identifier in the form evaluation/id where id is a
@@ -2338,8 +2338,8 @@ public class BigMLClient {
      * encloses the evaluation values and state info available at the time it is
      * called.
      *
-     * GET /andromeda/evaluation/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
+     * GET /andromeda/evaluation/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1 Host: bigml.io
      *
      * @param evaluationJSON
      *            an evaluation JSONObject.
@@ -2394,8 +2394,8 @@ public class BigMLClient {
     /**
      * Updates an evaluation.
      *
-     * PUT /andromeda/evaluation/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
+     * PUT /andromeda/evaluation/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param evaluationId
      *            a unique identifier in the form evauation/id where id is a
@@ -2413,8 +2413,8 @@ public class BigMLClient {
     /**
      * Updates an evaluation.
      *
-     * PUT /andromeda/evaluation/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
+     * PUT /andromeda/evaluation/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param evaluationJSON
      *            an evaluation JSONObject
@@ -2431,8 +2431,8 @@ public class BigMLClient {
     /**
      * Deletes an evaluation.
      *
-     * DELETE /andromeda/evaluation/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1
+     * DELETE /andromeda/evaluation/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1
      *
      * @param evaluationId
      *            a unique identifier in the form evaluation/id where id is a
@@ -2447,8 +2447,8 @@ public class BigMLClient {
     /**
      * Deletes an evaluation.
      *
-     * DELETE /andromeda/evaluation/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1
+     * DELETE /andromeda/evaluation/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1
      *
      * @param evaluationJSON
      *            an evaluation JSONObject.
@@ -2683,8 +2683,8 @@ public class BigMLClient {
     /**
      * Creates a new batch prediction.
      *
-     * POST /andromeda/batchprediction?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
+     * POST /andromeda/batchprediction?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param modelId
      *            a unique identifier in the form model/id, ensemble/id,
@@ -2724,8 +2724,8 @@ public class BigMLClient {
      * encloses the batch_prediction values and state info available at the time
      * it is called.
      *
-     * GET /andromeda/batchprediction/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
+     * GET /andromeda/batchprediction/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1 Host: bigml.io
      *
      * @param batchPredictionId
      *            a unique identifier in the form batchPrediction/id where id is
@@ -2747,8 +2747,8 @@ public class BigMLClient {
      * encloses the batch_prediction values and state info available at the time
      * it is called.
      *
-     * GET /andromeda/batchprediction/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
+     * GET /andromeda/batchprediction/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1 Host: bigml.io
      *
      * @param batchPredictionJSON
      *            a batch prediction JSONObject.
@@ -2828,8 +2828,8 @@ public class BigMLClient {
     /**
      * Lists all your batch predictions.
      *
-     * GET /andromeda/batchprediction?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; Host: bigml.io
+     * GET /andromeda/batchprediction?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * Host: bigml.io
      *
      * @param queryString
      *            query filtering the listing.
@@ -2843,8 +2843,8 @@ public class BigMLClient {
     /**
      * Updates a batch prediction.
      *
-     * PUT /andromeda/batchprediction/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
+     * PUT /andromeda/batchprediction/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param batchPredictionId
      *            a unique identifier in the form batchPrediction/id where id is
@@ -2862,8 +2862,8 @@ public class BigMLClient {
     /**
      * Updates a batch prediction.
      *
-     * PUT /andromeda/batchprediction/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
+     * PUT /andromeda/batchprediction/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param batchpredictionJSON
      *            a batch prediction JSONObject
@@ -2880,8 +2880,8 @@ public class BigMLClient {
     /**
      * Deletes a batch prediction.
      *
-     * DELETE /andromeda/batchprediction/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1
+     * DELETE /andromeda/batchprediction/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1
      *
      * @param batchPredictionId
      *            a unique identifier in the form batchPrediction/id where id is
@@ -2896,8 +2896,8 @@ public class BigMLClient {
     /**
      * Deletes a batch prediction.
      *
-     * DELETE /andromeda/batchprediction/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1
+     * DELETE /andromeda/batchprediction/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1
      *
      * @param batchPredictionJSON
      *            a batch prediction JSONObject.
@@ -2918,8 +2918,8 @@ public class BigMLClient {
     /**
      * Creates a new batch anomaly score.
      *
-     * POST /andromeda/batchanomalyscore?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
+     * POST /andromeda/batchanomalyscore?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param anomalyId
      *            a unique identifier in the form anomaly/id where
@@ -2957,8 +2957,8 @@ public class BigMLClient {
      * encloses the batch_anomalyscore values and state info available at the time
      * it is called.
      *
-     * GET /andromeda/batchanomalyscore/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
+     * GET /andromeda/batchanomalyscore/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1 Host: bigml.io
      *
      * @param batchAnomalyScoreId
      *            a unique identifier in the form batchanomalyscore/id where id is
@@ -2980,8 +2980,8 @@ public class BigMLClient {
      * encloses the batch_anomalyscore values and state info available at the time
      * it is called.
      *
-     * GET /andromeda/batchanomalyscore/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
+     * GET /andromeda/batchanomalyscore/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1 Host: bigml.io
      *
      * @param batchAnomalyScoreJSON
      *            a batch anomaly score JSONObject.
@@ -3061,8 +3061,8 @@ public class BigMLClient {
     /**
      * Lists all your batch anomaly scores.
      *
-     * GET /andromeda/batchanomalyscore?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; Host: bigml.io
+     * GET /andromeda/batchanomalyscore?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * Host: bigml.io
      *
      * @param queryString
      *            query filtering the listing.
@@ -3076,8 +3076,8 @@ public class BigMLClient {
     /**
      * Updates a batch anomaly score.
      *
-     * PUT /andromeda/batchanomalyscore/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
+     * PUT /andromeda/batchanomalyscore/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param batchAnomalyScoreId
      *            a unique identifier in the form batchanomalyscore/id where id is
@@ -3095,8 +3095,8 @@ public class BigMLClient {
     /**
      * Updates a batch anomaly score.
      *
-     * PUT /andromeda/batchanomalyscore/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
+     * PUT /andromeda/batchanomalyscore/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param batchAnomalyScoreJSON
      *            a batch anomaly score JSONObject
@@ -3113,8 +3113,8 @@ public class BigMLClient {
     /**
      * Deletes a batch anomaly score.
      *
-     * DELETE /andromeda/batchanomalyscore/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1
+     * DELETE /andromeda/batchanomalyscore/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1
      *
      * @param batchAnomalyScoreId
      *            a unique identifier in the form batchanomalyscore/id where id is
@@ -3129,8 +3129,8 @@ public class BigMLClient {
     /**
      * Deletes a batch anomaly score.
      *
-     * DELETE /andromeda/batchanomalyscore/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1
+     * DELETE /andromeda/batchanomalyscore/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1
      *
      * @param batchAnomalyScoreJSON
      *            a batch anomaly score JSONObject.
@@ -3555,8 +3555,8 @@ public class BigMLClient {
     /**
      * Creates a new batch_centroid.
      *
-     * POST /andromeda/batch_centroid?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
+     * POST /andromeda/batch_centroid?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param clusterId
      *            a unique identifier in the form cluster/id where id is a
@@ -3590,8 +3590,8 @@ public class BigMLClient {
      * encloses the batch_centroid values and state info available at the time
      * it is called.
      *
-     * GET /andromeda/batch_centroid/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
+     * GET /andromeda/batch_centroid/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1 Host: bigml.io
      *
      * @param batchCentroidId
      *            a unique identifier in the form batchcentroid/id where id is a
@@ -3611,8 +3611,8 @@ public class BigMLClient {
      * encloses the batch_centroid values and state info available at the time
      * it is called.
      *
-     * GET /andromeda/batch_centroid/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
+     * GET /andromeda/batch_centroid/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1 Host: bigml.io
      *
      * @param batchCentroidJSON
      *            a batch_centroid JSONObject.
@@ -3690,8 +3690,8 @@ public class BigMLClient {
     /**
      * Lists all your batch_centroid.
      *
-     * GET /andromeda/batch_centroid?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; Host: bigml.io
+     * GET /andromeda/batch_centroid?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * Host: bigml.io
      *
      * @param queryString
      *            query filtering the listing.
@@ -3705,8 +3705,8 @@ public class BigMLClient {
     /**
      * Updates a batch_centroid.
      *
-     * PUT /andromeda/batch_centroid/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
+     * PUT /andromeda/batch_centroid/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param batchCentroidId
      *            a unique identifier in the form batchcentroid/id where id is a
@@ -3724,8 +3724,8 @@ public class BigMLClient {
     /**
      * Updates a batch_centroid.
      *
-     * PUT /andromeda/batch_centroid/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
+     * PUT /andromeda/batch_centroid/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param batchCentroidJSON
      *            an batch_centroid JSONObject
@@ -3742,8 +3742,8 @@ public class BigMLClient {
     /**
      * Deletes a batch_centroid.
      *
-     * DELETE /andromeda/batch_centroid/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1
+     * DELETE /andromeda/batch_centroid/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1
      *
      * @param batchCentroidId
      *            a unique identifier in the form batchCentroid/id where id is a
@@ -3758,8 +3758,8 @@ public class BigMLClient {
     /**
      * Deletes a batch_centroid.
      *
-     * DELETE /andromeda/batch_centroid/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1
+     * DELETE /andromeda/batch_centroid/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1
      *
      * @param batchCentroidJSON
      *            an batch_centroid JSONObject.
@@ -6227,8 +6227,8 @@ public class BigMLClient {
     /**
      * Retrieves a topic distribution.
      *
-     * GET /andromeda/topicdistribution/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
+     * GET /andromeda/topicdistribution/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1 Host: bigml.io
      *
      * @param topicDistributionId
      *            a unique identifier in the form topicDistribution/id where id is a
@@ -6243,8 +6243,8 @@ public class BigMLClient {
     /**
      * Retrieves a topic distribution.
      *
-     * GET /andromeda/topicdistribution/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
+     * GET /andromeda/topicdistribution/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1 Host: bigml.io
      *
      * @param topicDistributionJSON
      *            a topic distribution JSONObject
@@ -6336,8 +6336,8 @@ public class BigMLClient {
     /**
      * Deletes a topic distribution.
      *
-     * DELETE /andromeda/topicdistribution/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1
+     * DELETE /andromeda/topicdistribution/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1
      *
      * @param topicDistributionId
      *            a unique identifier in the form topicDistribution/id where id is a
@@ -6352,8 +6352,8 @@ public class BigMLClient {
     /**
      * Deletes a topic distribution.
      *
-     * DELETE /andromeda/topicdistribution/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1
+     * DELETE /andromeda/topicdistribution/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1
      *
      * @param topicDistributionJSON
      *            a topic distribution JSONObject
@@ -6374,8 +6374,8 @@ public class BigMLClient {
     /**
      * Creates a new batch topic distribution.
      *
-     * POST /andromeda/batchtopicdistribution?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
+     * POST /andromeda/batchtopicdistribution?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param topicModelId
      *            a unique identifier in the form topicmodel/id where
@@ -6413,8 +6413,8 @@ public class BigMLClient {
      * encloses the batch_topic distribution values and state info available at the time
      * it is called.
      *
-     * GET /andromeda/batchtopicdistribution/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
+     * GET /andromeda/batchtopicdistribution/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1 Host: bigml.io
      *
      * @param batchTopicDistributionId
      *            a unique identifier in the form batchtopicdistribution/id where id is
@@ -6436,8 +6436,8 @@ public class BigMLClient {
      * encloses the batch_topic distribution values and state info available at the time
      * it is called.
      *
-     * GET /andromeda/batchtopicdistribution/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
+     * GET /andromeda/batchtopicdistribution/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1 Host: bigml.io
      *
      * @param batchTopicDistributionJSON
      *            a batch topic distribution JSONObject.
@@ -6517,8 +6517,8 @@ public class BigMLClient {
     /**
      * Lists all your batch topic distributions.
      *
-     * GET /andromeda/batchtopicdistribution?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; Host: bigml.io
+     * GET /andromeda/batchtopicdistribution?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * Host: bigml.io
      *
      * @param queryString
      *            query filtering the listing.
@@ -6532,8 +6532,8 @@ public class BigMLClient {
     /**
      * Updates a batch topic distribution.
      *
-     * PUT /andromeda/batchtopicdistribution/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
+     * PUT /andromeda/batchtopicdistribution/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param batchTopicDistributionId
      *            a unique identifier in the form batchtopicdistribution/id where id is
@@ -6551,8 +6551,8 @@ public class BigMLClient {
     /**
      * Updates a batch topic distribution.
      *
-     * PUT /andromeda/batchtopicdistribution/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
+     * PUT /andromeda/batchtopicdistribution/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param batchTopicDistributionJSON
      *            a batch topic distribution JSONObject
@@ -6569,8 +6569,8 @@ public class BigMLClient {
     /**
      * Deletes a batch topic distribution.
      *
-     * DELETE /andromeda/batchtopicdistribution/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1
+     * DELETE /andromeda/batchtopicdistribution/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1
      *
      * @param batchTopicDistributionId
      *            a unique identifier in the form batchtopicdistribution/id where id is
@@ -6585,8 +6585,8 @@ public class BigMLClient {
     /**
      * Deletes a batch topic distribution.
      *
-     * DELETE /andromeda/batchtopicdistribution/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1
+     * DELETE /andromeda/batchtopicdistribution/id?username=$$BIGML_API_KEY&
+     * HTTP/1.1
      *
      * @param batchTopicDistributionJSON
      *            a batch topic distribution JSONObject.
@@ -7065,8 +7065,8 @@ public class BigMLClient {
     /**
      * Retrieves a forecast.
      *
-     * GET /andromeda/forecast/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
+     * GET /andromeda/forecast/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1 Host: bigml.io
      *
      * @param forecastId
      *            a unique identifier in the form forecast/id where id is a
@@ -7081,8 +7081,8 @@ public class BigMLClient {
     /**
      * Retrieves a forecast.
      *
-     * GET /andromeda/forecast/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
+     * GET /andromeda/forecast/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1 Host: bigml.io
      *
      * @param forecastJSON
      *            a forecast JSONObject
@@ -7173,8 +7173,8 @@ public class BigMLClient {
     /**
      * Deletes a forecast.
      *
-     * DELETE /andromeda/forecast/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1
+     * DELETE /andromeda/forecast/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1
      *
      * @param forecastId
      *            a unique identifier in the form forecast/id where id is a
@@ -7189,8 +7189,8 @@ public class BigMLClient {
     /**
      * Deletes a forecast.
      *
-     * DELETE /andromeda/forecast/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1
+     * DELETE /andromeda/forecast/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1
      *
      * @param forecastJSON
      *            a forecast JSONObject
@@ -8083,8 +8083,8 @@ public class BigMLClient {
     /**
      * Retrieves a projection.
      *
-     * GET /andromeda/projection/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
+     * GET /andromeda/projection/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1 Host: bigml.io
      *
      * @param projectionId
      *            a unique identifier in the form projection/id where id
@@ -8099,8 +8099,8 @@ public class BigMLClient {
     /**
      * Retrieves a projection.
      *
-     * GET /andromeda/projection/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
+     * GET /andromeda/projection/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1 Host: bigml.io
      *
      * @param projectionJSON
      *            a projection JSONObject
@@ -8192,8 +8192,8 @@ public class BigMLClient {
     /**
      * Deletes a projection.
      *
-     * DELETE /andromeda/projection/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1
+     * DELETE /andromeda/projection/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1
      *
      * @param projectionId
      *            a unique identifier in the form projection/id where id
@@ -8208,8 +8208,8 @@ public class BigMLClient {
     /**
      * Deletes a projection.
      *
-     * DELETE /andromeda/projection/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1
+     * DELETE /andromeda/projection/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1
      *
      * @param projectionJSON
      *            a projection JSONObject
@@ -8231,8 +8231,8 @@ public class BigMLClient {
     /**
      * Creates a new batch projection.
      *
-     * POST /andromeda/batchprojection?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
+     * POST /andromeda/batchprojection?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param pcaId
      *            a unique identifier in the form pca/id where
@@ -8270,8 +8270,8 @@ public class BigMLClient {
      * encloses the batch projection values and state info available at the time
      * it is called.
      *
-     * GET /andromeda/batchprojection/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
+     * GET /andromeda/batchprojection/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1 Host: bigml.io
      *
      * @param batchProjectionId
      *            a unique identifier in the form batchprojection/id where id is
@@ -8293,8 +8293,8 @@ public class BigMLClient {
      * encloses the batch projection values and state info available at the time
      * it is called.
      *
-     * GET /andromeda/batchprojection/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
+     * GET /andromeda/batchprojection/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1 Host: bigml.io
      *
      * @param batchProjectionJSON
      *            a batch projection JSONObject.
@@ -8374,8 +8374,8 @@ public class BigMLClient {
     /**
      * Lists all your batch projections.
      *
-     * GET /andromeda/projection?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; Host: bigml.io
+     * GET /andromeda/projection?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * Host: bigml.io
      *
      * @param queryString
      *            query filtering the listing.
@@ -8389,8 +8389,8 @@ public class BigMLClient {
     /**
      * Updates a batch projection.
      *
-     * PUT /andromeda/projection/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
+     * PUT /andromeda/projection/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param batchProjectionId
      *            a unique identifier in the form batchtoprojection/id where id is
@@ -8408,8 +8408,8 @@ public class BigMLClient {
     /**
      * Updates a batch projection.
      *
-     * PUT /andromeda/projection/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io Content-Type: application/json
+     * PUT /andromeda/projection/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param batchProjectionJSON
      *            a batch projection JSONObject
@@ -8426,8 +8426,8 @@ public class BigMLClient {
     /**
      * Deletes a batch projection.
      *
-     * DELETE /andromeda/projection/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1
+     * DELETE /andromeda/projection/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1
      *
      * @param batchProjectionId
      *            a unique identifier in the form batchprojection/id where id is
@@ -8442,8 +8442,8 @@ public class BigMLClient {
     /**
      * Deletes a batch projection.
      *
-     * DELETE /andromeda/projection/id?username=$BIGML_USERNAME&api_key=
-     * $BIGML_API_KEY; HTTP/1.1
+     * DELETE /andromeda/projection/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1
      *
      * @param batchProjectionJSON
      *            a batch projection JSONObject.

@@ -274,10 +274,10 @@ public class LocalTopicModel extends ModelFields implements Serializable {
     		
     		char ch = text.charAt(index);
     		StringBuilder buf = new StringBuilder();
-    		sawChar = false; 
+    		sawChar = false;
     		
     		if (!Character.isLetterOrDigit(ch)) {
-    			sawChar = true; 
+    			sawChar = true;
     		}
     		
     		while (!Character.isLetterOrDigit(ch) && index < length) {
@@ -426,7 +426,7 @@ public class LocalTopicModel extends ModelFields implements Serializable {
     	}
     	
     	int[] randomInit = new int[1];
-        randomInit[0] = (int) this.seed;  
+        randomInit[0] = (int) this.seed;
         MersenneTwister rng = new MersenneTwister(randomInit);
     	
         double normalizer = (doc.size() * updates) + this.ktimesalpha;

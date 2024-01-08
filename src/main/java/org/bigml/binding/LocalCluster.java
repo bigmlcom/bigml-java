@@ -68,10 +68,10 @@ public class LocalCluster extends ModelFields {
     private List<LocalCentroid> centroids;
     private JSONArray clusters;
     private LocalCentroid clusterGlobal;
-    private Double totalSS = null; 
-    private Double withinSS = null; 
-    private Double betweenSS = null; 
-    private Double ratioSS = null; 
+    private Double totalSS = null;
+    private Double withinSS = null;
+    private Double betweenSS = null;
+    private Double ratioSS = null;
     private Long criticalValue = null;
     private String defaultNumericValue;
     private Integer k;

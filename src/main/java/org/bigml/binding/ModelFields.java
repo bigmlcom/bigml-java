@@ -123,7 +123,7 @@ public abstract class ModelFields implements Serializable {
  			model = (JSONObject) model.get("object");
         }
  		
- 		this.model = model; 
+ 		this.model = model;
 	}
 	
 	/**

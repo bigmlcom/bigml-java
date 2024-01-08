@@ -113,7 +113,7 @@ public class BoostedTree extends AbstractTree {
                 }
             }
             
-            return new Prediction(this.output, this.count, path, children);           
+            return new Prediction(this.output, this.count, path, children);
         } else if( strategy == MissingStrategy.PROPORTIONAL  ) {
             TreeHolder lastNode = new TreeHolder();
             Map<Object, Object> finalDistribution = predictProportional(

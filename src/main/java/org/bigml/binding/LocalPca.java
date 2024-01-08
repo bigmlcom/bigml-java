@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  * // API client 
  * BigMLClient api = new BigMLClient();
  *
- * JSONObject pca = api. getPca("pca/5026965515526876630001b2"); 
+ * JSONObject pca = api. getPca("pca/5026965515526876630001b2");
  * LocalPca localPca = new LocalPca(pca)
  *
  * JSONObject predictors = (JSONObject) JSONValue.parse( 

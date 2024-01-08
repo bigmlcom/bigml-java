@@ -751,8 +751,8 @@ public abstract class AbstractResource {
     /**
      * Retrieves a resource.
      *
-     * GET /andromeda/xxxxx/id?username=$BIGML_USERNAME;api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
+     * GET /andromeda/xxxxx/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1 Host: bigml.io
      *
      * @param resourceId
      *            a unique identifier in the form xxxxx/id where id is a
@@ -773,8 +773,8 @@ public abstract class AbstractResource {
     /**
      * Retrieves a resource.
      *
-     * GET /andromeda/xxxxx/id?username=$BIGML_USERNAME;api_key=
-     * $BIGML_API_KEY; HTTP/1.1 Host: bigml.io
+     * GET /andromeda/xxxxx/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY&
+     * HTTP/1.1 Host: bigml.io
      *
      * @param resource
      *            a resource JSONObject
@@ -790,7 +790,7 @@ public abstract class AbstractResource {
      * Retrieves a resource.
      *
      * GET
-     * /andromeda/xxxxx/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/xxxxx/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY;
      * Host: bigml.io
      *
      * @param  resourceId
@@ -815,7 +815,7 @@ public abstract class AbstractResource {
      * Retrieves a resource.
      *
      * GET
-     * /andromeda/xxxxx/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/xxxxx/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY;
      * Host: bigml.io
      *
      * @param resource
@@ -859,7 +859,7 @@ public abstract class AbstractResource {
     /**
      * Lists all your resources.
      *
-     * GET /andromeda/xxxxx?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * GET /andromeda/xxxxx?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY;
      * Host: bigml.io
      *
      * @param queryString
@@ -874,7 +874,7 @@ public abstract class AbstractResource {
     /**
      * Updates a resource.
      *
-     * PUT /andromeda/xxxxx/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * PUT /andromeda/xxxxx/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param resourceId
@@ -897,7 +897,7 @@ public abstract class AbstractResource {
     /**
      * Updates a resource.
      *
-     * PUT /andromeda/xxxxx/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * PUT /andromeda/xxxxx/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY;
      * HTTP/1.1 Host: bigml.io Content-Type: application/json
      *
      * @param resource
@@ -916,7 +916,7 @@ public abstract class AbstractResource {
      * Deletes a resource.
      *
      * DELETE
-     * /andromeda/xxxxx/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/xxxxx/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY;
      * HTTP/1.1
      *
      * @param resourceId
@@ -939,7 +939,7 @@ public abstract class AbstractResource {
      * Deletes a resource.
      *
      * DELETE
-     * /andromeda/xxxxx/id?username=$BIGML_USERNAME;api_key=$BIGML_API_KEY;
+     * /andromeda/xxxxx/id?username=$BIGML_USERNAME&api_key=$BIGML_API_KEY;
      * HTTP/1.1
      *
      * @param resource  a resource JSONObject

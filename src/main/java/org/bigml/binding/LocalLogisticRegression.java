@@ -309,7 +309,7 @@ public class LocalLogisticRegression extends ModelFields implements SupervisedMo
 		for (Object pred: predictions) {
 			HashMap<String, Object> prediction 
 				= (HashMap<String, Object>) pred;
-			String category = (String) prediction.get("prediction");		
+			String category = (String) prediction.get("prediction");
 			if (category.equals(positiveClass) &&
 					(Double) prediction.get(kind) > threshold) {
 				return prediction;
@@ -716,20 +716,20 @@ public class LocalLogisticRegression extends ModelFields implements SupervisedMo
 	 *
 	 */
 	 private void formatFieldCodings(JSONArray fieldCodingsArray) {
-	 	fieldCodings = new JSONObject(); 
+	 	fieldCodings = new JSONObject();
 	 	for (int i=0; i<fieldCodingsArray.size(); i++) { 
 	 		JSONObject element = (JSONObject)
- 				fieldCodingsArray.get(i); 
+ 				fieldCodingsArray.get(i);
 	 		String fieldId = (String) element.get("field");
-	  		String coding = (String) element.get("coding"); 
-	  		JSONObject elemObject = new JSONObject(); 
+	  		String coding = (String) element.get("coding");
+	  		JSONObject elemObject = new JSONObject();
 	  		if (coding.equals("dummy")) { 
-	  			elemObject.put(coding,element.get("dummy_class")); 
+	  			elemObject.put(coding,element.get("dummy_class"));
 	  		} else { 
 	  			elemObject.put(coding,element.get("coefficients"));
 	  		}
 
-	  		fieldCodings.put(fieldId, elemObject); 
+	  		fieldCodings.put(fieldId, elemObject);
 	  	} 
 	 }
 	 
