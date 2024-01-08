@@ -2,7 +2,8 @@
 
 ## 2.1.0 version
 
-* Change query string separator
+* Change query string separator to &
+* Bump spring-core from 5.3.26 to 5.3.27
 
 ## 2.0.7 version
 
