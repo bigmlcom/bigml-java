@@ -1,5 +1,25 @@
 # Changes in the BigML.io Java bindings
 
+## 2.1.1 version
+
+* Bump slf4j-reload4j from 1.7.36 to 2.0.11
+* Bump cucumber-junit from 7.2.3 to 7.15.0
+* Bump cucumber-java from 7.2.3 to 7.15.0
+* Bump cucumber-spring from 7.2.3 to 7.15.0
+* Bump commons-csv from 1.9.0 to 1.10.0
+* Bump lucene-core from 9.1.0 to 9.9.1
+* Bump lucene-analyzers-common from 8.1.11 to 8.1.12
+* Bump lucene-analyzers from 2.9.4 to 3.6.2
+* Bump commons-text from 1.10.0 to 1.11.0
+* Bump jackson-core from 2.14.2 to 2.16.1
+* Bump jackson-annotations from 2.14.2 to 2.16.1
+* Bump jackson-databind from 2.14.2 to 2.16.1
+* Bump maven-javadoc-plugin from 3.3.2 to 3.6.3
+* Bump spring-core from 5.3.27 to 5.3.31
+* Bump spring-test from 5.3.20 to 5.3.31
+* Bump spring-context from 5.3.20 to 5.3.31
+
+
 ## 2.1.0 version
 
 * Change query string separator to &
