@@ -832,8 +832,8 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
         String positiveClass = (String) operating[2];
 
         if (!Arrays.asList(OPERATING_POINT_KINDS).contains(kind)) {
-            throw new IllegalArgumentException(String.format(
-                                                             "Allowed operating kinds are %", OPERATING_POINT_KINDS));
+            throw new IllegalArgumentException(
+                String.format("Allowed operating kinds are %", (Object[]) OPERATING_POINT_KINDS));
         }
 
         JSONArray predictions = null;
@@ -896,8 +896,8 @@ public class LocalEnsemble extends ModelFields implements SupervisedModelInterfa
         }
 
         if (!Arrays.asList(OPERATING_POINT_KINDS).contains(kind)) {
-            throw new IllegalArgumentException(String.format(
-                                                             "Allowed operating kinds are %", OPERATING_POINT_KINDS));
+            throw new IllegalArgumentException(
+                String.format("Allowed operating kinds are %", (Object[]) OPERATING_POINT_KINDS));
         }
 
         JSONArray predictions = null;

@@ -116,7 +116,7 @@ public class LocalFusion extends ModelFields implements SupervisedModelInterface
 					String type = model.split("/")[0];
 					if (!Arrays.asList(LOCAL_SUPERVISED).contains(type)) {
 						throw new IllegalArgumentException(
-								String.format("The resource %s has not an allowed supervised model type.", OPERATING_POINT_KINDS));
+							String.format("The resource %s has not an allowed supervised model type.", (Object[]) OPERATING_POINT_KINDS));
 					}
 		    	}
 
@@ -387,7 +387,7 @@ public class LocalFusion extends ModelFields implements SupervisedModelInterface
 
 		if (!Arrays.asList(OPERATING_POINT_KINDS).contains(kind)) {
 			throw new IllegalArgumentException(
-					String.format("Allowed operating kinds are %", OPERATING_POINT_KINDS));
+					String.format("Allowed operating kinds are %", (Object[]) OPERATING_POINT_KINDS));
 		}
 
 		JSONArray predictions = predictProbability(

@@ -944,7 +944,7 @@ public class LocalPredictiveModel extends ModelFields
    		String kind = operatingKind.toLowerCase();
    		if (!Arrays.asList(OPERATING_POINT_KINDS).contains(kind)) {
    			throw new IllegalArgumentException(
-   					String.format("Allowed operating kinds are %", OPERATING_POINT_KINDS));
+   					String.format("Allowed operating kinds are %", (Object[]) OPERATING_POINT_KINDS));
    		}
 
    		JSONArray predictions = null;
