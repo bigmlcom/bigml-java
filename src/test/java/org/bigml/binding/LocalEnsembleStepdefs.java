@@ -1,31 +1,22 @@
 package org.bigml.binding;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
 public class LocalEnsembleStepdefs {
-
-    // Logging
-    Logger logger = LoggerFactory.getLogger(LocalEnsembleStepdefs.class);
-
-    @Autowired
-    CommonStepdefs commonSteps;
 
     @Autowired
     private ContextRepository context;
@@ -82,7 +73,7 @@ public class LocalEnsembleStepdefs {
             
             Object prediction = p.get("prediction");
             if( prediction instanceof Number ) { // Regression
-                Double expected = Double.parseDouble(expectedPrediction);
+                Double expected = Double.valueOf(expectedPrediction);
                 assertEquals(String.format("%.4g", expected), String.format("%.4g", prediction));
             } else {
                 assertTrue("", prediction != null && prediction.equals(expectedPrediction));
@@ -101,13 +92,12 @@ public class LocalEnsembleStepdefs {
             
             Object prediction = p.get("prediction");
             if( prediction instanceof Number ) { // Regression
-                Double expected = Double.parseDouble(pred);
+                Double expected = Double.valueOf(pred);
                 assertEquals(String.format("%.4g", expected), String.format("%.4g", prediction));
             } else {
                 assertTrue("", prediction != null && prediction.equals(pred));
             }
         } catch (Exception parseException) {
-        	parseException.printStackTrace();
             assertTrue("", false);
         }
     }
@@ -117,14 +107,14 @@ public class LocalEnsembleStepdefs {
     public void the_field_importance_print(String expFieldImportance) {
         try {
             JSONArray expFieldImportanceArr = (JSONArray) JSONValue.parse(expFieldImportance);
-            Map<String, Double> expFieldImportanceMap = new HashMap<String, Double>();
+            Map<String, Double> expFieldImportanceMap = new HashMap<>();
             for (Object fieldImportance : expFieldImportanceArr) {
                 JSONArray fieldImportanceObj = (JSONArray) fieldImportance;
                 expFieldImportanceMap.put((String) fieldImportanceObj.get(0), (Double) fieldImportanceObj.get(1));
             }
 
             List<JSONArray> actualFieldImportanceArr = context.localEnsemble.getFieldImportanceData();
-            Map<String, Double> actFieldImportanceMap = new HashMap<String, Double>();
+            Map<String, Double> actFieldImportanceMap = new HashMap<>();
             for (JSONArray fieldImportance : actualFieldImportanceArr) {
                 actFieldImportanceMap.put( (String) fieldImportance.get(0), (Double) fieldImportance.get(1));
             }
@@ -137,7 +127,6 @@ public class LocalEnsembleStepdefs {
                         String.format("%.12g%n", actFieldImportanceMap.get(fieldName)));
             }
         } catch (Exception parseException) {
-        	parseException.printStackTrace();
             assertTrue("", false);
         }
     }

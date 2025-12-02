@@ -7,17 +7,12 @@ import java.io.IOException;
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import io.cucumber.java.en.Given;
 
 public class SourcesStepdefs {
 
-    // Logging
-    Logger logger = LoggerFactory.getLogger(SourcesStepdefs.class);
-    
     @Autowired
     CommonStepdefs commonSteps;
 
@@ -32,7 +27,7 @@ public class SourcesStepdefs {
     	try {
     		JSONArray resources = (JSONArray) context.api
     			.listSources("tags__in=" + fileName).get("objects");
-    		if (resources.size() > 0) {
+    		if (!resources.isEmpty()) {
     			resource = (JSONObject) resources.get(0);
     		}
     	} catch (Exception e) {}

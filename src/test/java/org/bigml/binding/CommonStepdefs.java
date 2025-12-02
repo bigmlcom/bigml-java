@@ -1,10 +1,7 @@
 package org.bigml.binding;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Calendar;
 import java.util.Date;
@@ -16,8 +13,9 @@ import org.bigml.binding.resources.AbstractResource;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import io.cucumber.java.en.Given;
@@ -26,7 +24,7 @@ import io.cucumber.java.en.When;
 
 public class CommonStepdefs {
 
-	private static final Map<String, String> RES_NAMES = new HashMap<String, String>();
+	private static final Map<String, String> RES_NAMES = new HashMap<>();
 	static {
 		RES_NAMES.put("anomaly detector", "anomaly");
 		RES_NAMES.put("anomaly score", "anomalyScore");
@@ -42,9 +40,6 @@ public class CommonStepdefs {
 		RES_NAMES.put("batch projection", "batchProjection");
 		RES_NAMES.put("externalconnector", "externalConnector");
 	}
-
-	// Logging
-	Logger logger = LoggerFactory.getLogger(CommonStepdefs.class);
 
 	@Autowired
 	private ContextRepository context;
@@ -67,7 +62,7 @@ public class CommonStepdefs {
 				: resourceName;
 		try {
 			return context.getClass().getDeclaredField(name);
-		} catch (Exception nme) {
+		} catch (NoSuchFieldException | SecurityException nme) {
 			return null;
 		}
 	}
@@ -114,7 +109,8 @@ public class CommonStepdefs {
 				method = client.getClass().getMethod(name, JSONObject.class);
 			}
 			return method;
-		} catch (Exception nme) {
+		} catch (NoSuchMethodException | SecurityException nme) {
+			assertFalse(true);
 		}
 		return method;
 	}
@@ -163,8 +159,7 @@ public class CommonStepdefs {
 			context.location = (String) resource.get("location");
 			setResource(resourceName, (JSONObject) resource.get("object"));
 			the_resource_has_been_created_with_status(context.status);
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (IllegalAccessException | InvocationTargetException e) {
 			assertFalse(true);
 		}
     }
@@ -193,7 +188,7 @@ public class CommonStepdefs {
             setResource(resourceName, (JSONObject) resource.get("object"));
 
 			the_resource_has_been_created_with_status(context.status);
-		} catch (Exception e) {
+		} catch (IllegalAccessException | InvocationTargetException e) {
 			assertFalse(true);
 		}
 	}
@@ -254,7 +249,7 @@ public class CommonStepdefs {
 
 			setResource(resourceName, (JSONObject) resource.get("object"));
 			the_resource_has_been_updated_with_status(context.status);
-		} catch (Exception e) {
+		} catch (IllegalAccessException | InvocationTargetException e) {
 			assertFalse(true);
 		}
 	}
@@ -277,7 +272,7 @@ public class CommonStepdefs {
 				context.location = (String) resource.get("location");
 				setResource(resourceName, (JSONObject) resource.get("object"));
 				the_resource_has_been_updated_with_status(context.status);
-			} catch (Exception e) {
+			} catch (IllegalAccessException | InvocationTargetException e) {
 				assertFalse(true);
 			}
 		}
@@ -332,7 +327,7 @@ public class CommonStepdefs {
 			Integer code = (Integer) resource.get("code");
 			assertEquals(AbstractResource.HTTP_OK, code.intValue());
 			setResource(resourceName, (JSONObject) resource.get("object"));
-		} catch (Exception e) {
+		} catch (IllegalAccessException | InvocationTargetException e) {
 			assertFalse(true);
 		}
 	}
@@ -348,7 +343,7 @@ public class CommonStepdefs {
 			context.status = (Integer) resource.get("code");
 			assertTrue(context.status == AbstractResource.HTTP_NO_CONTENT);
 			setResource(resourceName, (JSONObject) null);
-		} catch (Exception e) {
+		} catch (IllegalAccessException | InvocationTargetException e) {
 			assertFalse(true);
 		}
 

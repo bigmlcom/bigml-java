@@ -1,25 +1,18 @@
 package org.bigml.binding;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.*;
+import java.util.ArrayList;
 
 import org.bigml.binding.utils.Utils;
-
-import static org.junit.Assert.*;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import static org.junit.Assert.assertEquals;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 
 public class ExecutionsStepdefs {
 
-    // Logging
-    Logger logger = LoggerFactory.getLogger(ExecutionsStepdefs.class);
-    
     @Autowired
     CommonStepdefs commonSteps;
 
@@ -55,7 +48,7 @@ public class ExecutionsStepdefs {
 
     @Given("^I reset scripts$")
     public void I_reset_scripts() throws AuthenticationException {
-        context.scriptsIds = new ArrayList<String>();
+        context.scriptsIds = new ArrayList<>();
     }
 
     @Then("^the script id is correct and the result is \"([^\"]*)\"$")

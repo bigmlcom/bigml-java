@@ -1,21 +1,14 @@
 package org.bigml.binding;
 
-
 import org.json.simple.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.junit.Assert.assertEquals;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import static org.junit.Assert.*;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 
 public class ScriptsStepdefs {
 
-    // Logging
-    Logger logger = LoggerFactory.getLogger(ScriptsStepdefs.class);
-    
     @Autowired
     CommonStepdefs commonSteps;
 

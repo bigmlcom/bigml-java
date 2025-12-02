@@ -1,16 +1,11 @@
 package org.bigml.binding;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 
 public class OrganizationStepdefs {
-
-    // Logging
-    Logger logger = LoggerFactory.getLogger(OrganizationStepdefs.class);
     
     @Autowired
     CommonStepdefs commonSteps;

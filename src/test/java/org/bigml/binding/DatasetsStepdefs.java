@@ -1,8 +1,5 @@
 package org.bigml.binding;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 import java.io.File;
 import java.io.FileInputStream;
 
@@ -11,8 +8,8 @@ import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import io.cucumber.java.en.Given;
@@ -20,9 +17,6 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
 public class DatasetsStepdefs {
-
-    // Logging
-    Logger logger = LoggerFactory.getLogger(DatasetsStepdefs.class);
     
     @Autowired
     CommonStepdefs commonSteps;
@@ -45,7 +39,7 @@ public class DatasetsStepdefs {
     	try {
     		JSONArray resources = (JSONArray) context.api
     			.listDatasets("tags__in=" + fileName).get("objects");
-    		if (resources.size() > 0) {
+    		if (!resources.isEmpty()) {
     			resource = (JSONObject) resources.get(0);
     		}
     	} catch (Exception e) {}
@@ -220,7 +214,7 @@ public class DatasetsStepdefs {
     @Given("^I make the dataset public$")
     public void I_make_the_dataset_public() throws Throwable {
         JSONObject changes = new JSONObject();
-        changes.put("private", new Boolean(false));
+        changes.put("private", false);
 
         JSONObject resource = context.api.updateDataset(
                 context.dataset, changes);
@@ -250,9 +244,6 @@ public class DatasetsStepdefs {
 
     @Given("^I check that the dataset is created for the cluster and the centroid$")
     public void i_check_dataset_from_cluster_centroid() throws Throwable {
-        JSONObject changes = new JSONObject();
-        changes.put("private", new Boolean(false));
-        
         context.api.getCacheManager().cleanCache();
         JSONObject resource = context.api.getCluster(
             (String) context.cluster.get("resource"));

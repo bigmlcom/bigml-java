@@ -1,27 +1,24 @@
 package org.bigml.binding;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 import org.bigml.binding.resources.AbstractResource;
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 
 public class ModelsStepdefs {
-
-    // Logging
-    Logger logger = LoggerFactory.getLogger(ModelsStepdefs.class);
 
     @Autowired
     CommonStepdefs commonSteps;
@@ -151,11 +148,10 @@ public class ModelsStepdefs {
     @Given("^I make the model public$")
     public void I_make_the_model_public() throws Throwable {
         JSONObject changes = new JSONObject();
-        changes.put("private", new Boolean(false));
-        changes.put("white_box", new Boolean(true));
+        changes.put("private", false);
+        changes.put("white_box", true);
 
-        JSONObject resource = context.api.updateModel(
-                context.model, changes);
+        JSONObject resource = context.api.updateModel(context.model, changes);
         context.status = (Integer) resource.get("code");
         context.location = (String) resource.get("location");
         context.model = (JSONObject) resource.get("object");
@@ -194,7 +190,7 @@ public class ModelsStepdefs {
     @Given("^I make the model shared$")
     public void make_the_model_shared() throws Throwable {
         JSONObject changes = new JSONObject();
-        changes.put("shared", new Boolean(true));
+        changes.put("shared", true);
 
         JSONObject resource = context.api.updateModel(
                 context.model, changes);

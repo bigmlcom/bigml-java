@@ -1,16 +1,16 @@
 package org.bigml.binding;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.bigml.binding.localmodel.Prediction;
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import io.cucumber.java.en.Given;
@@ -19,9 +19,6 @@ import io.cucumber.java.en.When;
 
 public class PredictionsStepdefs {
 
-    // Logging
-    Logger logger = LoggerFactory.getLogger(PredictionsStepdefs.class);
-    
     @Autowired
     CommonStepdefs commonSteps;
 
@@ -91,7 +88,7 @@ public class PredictionsStepdefs {
         
         Object prediction = obj.get(objectiveField);
         if( prediction instanceof Number ) { // Regression
-            Double expected = Double.parseDouble(pred);
+            Double expected = Double.valueOf(pred);
             assertEquals(String.format("%.4g", expected), String.format("%.4g", prediction));
         } else {
             assertTrue("", prediction != null && prediction.equals(pred));
@@ -151,7 +148,6 @@ public class PredictionsStepdefs {
 	    	
 	        context.localModelPrediction = prediction;
     	} catch (Exception e) {
-			e.printStackTrace();
 		}
         
     }
@@ -258,7 +254,6 @@ public class PredictionsStepdefs {
 	    	
 	        context.localPrediction = prediction;
     	} catch (Exception e) {
-			e.printStackTrace();
 		}
         
     }
@@ -551,7 +546,6 @@ public class PredictionsStepdefs {
         try {
             context.votes = context.multiModel.batchVotes(dir, null);
         } catch (Exception e) {
-            e.printStackTrace();
             assertTrue("Exception combining votes", false);
         }
     }
@@ -622,7 +616,6 @@ public class PredictionsStepdefs {
 	        context.localPrediction = context.localFusion.predict(
 	        		data, null, null, true);
     	} catch (Exception e) {
-			e.printStackTrace();
 		}
         
     }

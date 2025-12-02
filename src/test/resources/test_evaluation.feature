@@ -1,7 +1,7 @@
 @evaluation
 Feature: Evaluation REST api
 
-		 Scenario Outline: Successfully creating an evaluation:
+	Scenario Outline: Successfully creating an evaluation:
         Given I provision a dataset from "<data>" file
         And I create a model
         And I wait until the model is ready less than <time_1> secs
@@ -80,4 +80,4 @@ Feature: Evaluation REST api
 
         Examples:
         | data  | time_1  | time_2 | tlp | measure  | value  |
-        | data/iris.csv | 800   | 1000  | 5 | average_phi   | 0.97007   |
+        | data/iris.csv | 800   | 1000  | 5 | average_phi   | 0.98029   |

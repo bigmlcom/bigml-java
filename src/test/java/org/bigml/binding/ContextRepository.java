@@ -1,13 +1,13 @@
 package org.bigml.binding;
 
-import org.bigml.binding.localmodel.Prediction;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.bigml.binding.localmodel.Prediction;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 @org.springframework.stereotype.Repository
 public class ContextRepository {
@@ -83,7 +83,7 @@ public class ContextRepository {
     Map<String, Long> datasetErrorCounts;
     Map<String, Long> datasetMissingCounts;
 
-    ArrayList<String> scriptsIds = new ArrayList<String>();
+    ArrayList<String> scriptsIds = new ArrayList<>();
 
     public int getStatus() {
         return status;
@@ -339,6 +339,14 @@ public class ContextRepository {
 
     public void setAssociation(JSONObject association) {
         this.association = association;
+    }
+
+    public JSONObject getAssociationSet() {
+        return associationSet;
+    }
+
+    public void setAssociationSet(JSONObject associationSet) {
+        this.associationSet = associationSet;
     }
 
     public JSONObject getTopicModel() {

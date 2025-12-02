@@ -1,8 +1,5 @@
 package org.bigml.binding;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.util.List;
 
 import org.bigml.binding.localmodel.Prediction;
@@ -10,20 +7,14 @@ import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 
 public class LocalModelsStepdefs {
-
-    // Logging
-    Logger logger = LoggerFactory.getLogger(LocalModelsStepdefs.class);
-
-    @Autowired
-    CommonStepdefs commonSteps;
 
     @Autowired
     private ContextRepository context;
@@ -115,7 +106,7 @@ public class LocalModelsStepdefs {
                 assertEquals(pred, prediction);
             } else {
                 Double prediction = (Double) p.getPrediction();
-                assertEquals(new Double(pred), prediction);
+                assertEquals(Double.valueOf(pred), prediction);
             }
         } catch (Exception e) {
         	assertTrue("", false);
@@ -133,7 +124,6 @@ public class LocalModelsStepdefs {
             JSONArray was = (JSONArray) JSONValue.parse(predictionsStr);
             assertEquals(expected, was);
         } catch (InputDataParseException parseException) {
-        	parseException.printStackTrace();
             assertTrue("", false);
         }
     }

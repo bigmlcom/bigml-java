@@ -1,25 +1,18 @@
 package org.bigml.binding;
 
-import static org.junit.Assert.assertTrue;
-
 import java.util.HashMap;
 
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.junit.Assert.assertTrue;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
 public class ComputeMultivotePredictionsStepdefs {
-
-    // Logging
-    Logger logger = LoggerFactory
-            .getLogger(ComputeMultivotePredictionsStepdefs.class);
 
     MultiVote multivote;
     HashMap<Object, Object> combinedPrediction;
@@ -35,14 +28,14 @@ public class ComputeMultivotePredictionsStepdefs {
             for (int i = 0; i < jsonArray.size(); i++) {
                 JSONObject item = (JSONObject) jsonArray.get(i);
 
-                HashMap<Object, Object> prediction = new HashMap<Object, Object>();
+                HashMap<Object, Object> prediction = new HashMap<>();
                 prediction.put("prediction", item.get("prediction"));
                 prediction.put("confidence", item.get("confidence"));
                 prediction.put("count", item.get("count"));
 
                 JSONArray distributionArray = (JSONArray) item
                         .get("distribution");
-                HashMap<Object, Integer> distributionHash = new HashMap<Object, Integer>();
+                HashMap<Object, Integer> distributionHash = new HashMap<>();
                 for (int j = 0; j < distributionArray.size(); j++) {
                     JSONArray dist = (JSONArray) distributionArray.get(j);
                     distributionHash.put(dist.get(0),
@@ -56,7 +49,6 @@ public class ComputeMultivotePredictionsStepdefs {
             // build multivote
             multivote = new MultiVote(exampleArray, null);
         } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
@@ -64,10 +56,10 @@ public class ComputeMultivotePredictionsStepdefs {
     public void I_compute_the_prediction_with_confidence_using_method(
             String method) throws Throwable {
         try {
-            PredictionMethod intMethod = PredictionMethod.valueOf(new Integer(method));
+            PredictionMethod intMethod = PredictionMethod.valueOf(Integer.parseInt(method));
             combinedPrediction = multivote.combine(intMethod, null);
-        } catch (Exception e) {
-            assertTrue("" == "Incorrect method");
+        } catch (NumberFormatException e) {
+            assertTrue("".equals("Incorrect method"));
         }
     }
 

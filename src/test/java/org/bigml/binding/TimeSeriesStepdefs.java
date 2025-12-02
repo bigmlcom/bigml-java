@@ -1,25 +1,16 @@
 package org.bigml.binding;
 
+import org.bigml.binding.utils.Utils;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
-import org.json.simple.JSONArray;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import static org.junit.Assert.assertEquals;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import static org.junit.Assert.*;
-
-import org.bigml.binding.utils.Utils;
 
 import io.cucumber.java.en.Then;
 
 public class TimeSeriesStepdefs {
 
-    // Logging
-    Logger logger = LoggerFactory.getLogger(TimeSeriesStepdefs.class);
-    
     @Autowired
     CommonStepdefs commonSteps;
 

@@ -1,28 +1,22 @@
 package org.bigml.binding;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.bigml.binding.localassociation.AssociationRule;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-
-import java.util.*;
-
-import org.json.simple.JSONObject;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
-import org.bigml.binding.localassociation.*;
-
 
 public class AssociationsStepdefs {
-
-    // Logging
-    Logger logger = LoggerFactory.getLogger(AssociationsStepdefs.class);
     
     @Autowired
     CommonStepdefs commonSteps;
@@ -54,13 +48,13 @@ public class AssociationsStepdefs {
     public void I_get_the_rules_for_and_the_first_rule_is(
             String item, String ruleJson) throws Throwable {
 
-        List<String> itemList = new ArrayList<String>();
+        List<String> itemList = new ArrayList<>();
         itemList.add(item);
 
         List<AssociationRule> rules = localAssociation.rules(
             null, null, null, itemList, null);
 
-        if (rules.size() == 0) {
+        if (rules.isEmpty()) {
             assertFalse("No rules for association", false);
         }
 

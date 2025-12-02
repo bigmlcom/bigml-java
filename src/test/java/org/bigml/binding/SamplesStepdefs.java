@@ -1,29 +1,27 @@
 package org.bigml.binding;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.junit.Assert.assertEquals;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.io.*;
-import java.util.*;
-
-import static org.junit.Assert.*;
 
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
 public class SamplesStepdefs {
-
-    // Logging
-    Logger logger = LoggerFactory.getLogger(SamplesStepdefs.class);
-    
-    @Autowired
-    CommonStepdefs commonSteps;
 
     @Autowired
     private ContextRepository context;
@@ -45,7 +43,7 @@ public class SamplesStepdefs {
     }
 
     private void exportSampleData(String fileTo, JSONArray fields, JSONArray rows) throws Exception {
-        List<String> headers = new ArrayList<String>();
+        List<String> headers = new ArrayList<>();
         for (Object field : fields) {
             headers.add((String) ((JSONObject) field).get("name"));
         }
@@ -59,7 +57,7 @@ public class SamplesStepdefs {
         }
 
         final CSVPrinter printer = CSVFormat.DEFAULT.withHeader((String[])
-                headers.toArray(new String[headers.size()])).print(predictionsFile);
+                headers.toArray(String[]::new)).print(predictionsFile);
 
         try {
             for (Object row : rows) {
@@ -69,7 +67,7 @@ public class SamplesStepdefs {
                 }
                 printer.printRecord(values);
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new Exception("Error generating the CSV !!!");
         }
 

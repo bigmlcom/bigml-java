@@ -1,20 +1,16 @@
 package org.bigml.binding;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import static org.junit.Assert.assertEquals;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.*;
-
-import static org.junit.Assert.*;
-
-import org.bigml.binding.utils.Utils;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -22,9 +18,6 @@ import io.cucumber.java.en.When;
 
 public class TopicModelsStepdefs {
 
-	// Logging
-	Logger logger = LoggerFactory.getLogger(TopicModelsStepdefs.class);
-	
 	@Autowired
 	CommonStepdefs commonSteps;
 
@@ -96,7 +89,7 @@ public class TopicModelsStepdefs {
 			Double expectedValue = (Double) expected.get(i);
 			BigDecimal wasValue = BigDecimal.valueOf(
 					(Double) topicDist.get("probability")).setScale(5, RoundingMode.HALF_EVEN);
-			assertEquals(expectedValue.doubleValue(), wasValue.doubleValue(), 0);
+			assertEquals(expectedValue, wasValue.doubleValue(), 0);
 		}
 	}
 

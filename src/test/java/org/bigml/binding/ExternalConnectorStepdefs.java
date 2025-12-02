@@ -1,21 +1,13 @@
 package org.bigml.binding;
 
-import static org.junit.Assert.assertFalse;
-
-import java.lang.reflect.Method;
-
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.junit.Assert.assertFalse;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import io.cucumber.java.en.Given;
 
 public class ExternalConnectorStepdefs {
-
-	// Logging
-	Logger logger = LoggerFactory.getLogger(ExternalConnectorStepdefs.class);
 
 	@Autowired
 	CommonStepdefs commonSteps;

@@ -1,24 +1,21 @@
 package org.bigml.binding;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.*;
-
-import static org.junit.Assert.*;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
 public class AnomaliesStepdefs {
-
-    // Logging
-    Logger logger = LoggerFactory.getLogger(AnomaliesStepdefs.class);
 
     LocalAnomaly localAnomaly;
     Double localScore;
@@ -35,7 +32,7 @@ public class AnomaliesStepdefs {
 
     	JSONObject args = commonSteps.setProject(null);
 
-    	assertTrue("No datasets found!", context.datasets != null && context.datasets.size() > 0);
+    	assertTrue("No datasets found!", context.datasets != null && !context.datasets.isEmpty());
 
         List datasetsIds = new ArrayList();
         for (Object datasetId : context.datasets) {
@@ -67,12 +64,12 @@ public class AnomaliesStepdefs {
 
     @Given("^I check the anomaly detector stems from the original dataset list$")
     public void i_check_anomaly_dataset_and_datasets_list () throws AuthenticationException {
-        String[] datasetIds = (String[]) context.datasets.toArray(new String[context.datasets.size()]);
+        String[] datasetIds = (String[]) context.datasets.toArray(String[]::new);
 
         JSONArray anomalyDatasetsJSONArr = (JSONArray) context.anomaly.get("datasets");
 
         String[] anomalyDatasetIds = (anomalyDatasetsJSONArr != null ?
-                (String[]) anomalyDatasetsJSONArr.toArray(new String[anomalyDatasetsJSONArr.size()]) : null);
+                (String[]) anomalyDatasetsJSONArr.toArray(String[]::new) : null);
 
         assertArrayEquals(datasetIds, anomalyDatasetIds);
     }

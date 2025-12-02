@@ -1,16 +1,13 @@
 package org.bigml.binding;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 import java.io.FileInputStream;
 
 import org.bigml.binding.utils.Utils;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import io.cucumber.java.en.Given;
@@ -18,9 +15,6 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
 public class PcaStepdefs {
-
-	// Logging
-	Logger logger = LoggerFactory.getLogger(PcaStepdefs.class);
 
 	@Autowired
 	CommonStepdefs commonSteps;

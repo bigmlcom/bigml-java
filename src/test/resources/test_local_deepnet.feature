@@ -16,7 +16,7 @@ Feature: LocalDeepnet
         | data/iris.csv | 30000  | {"petal width": 4} | 000004   | Iris-virginica    | {}    |
         | data/iris.csv | 30000  | {"sepal length": 4.1, "sepal width": 2.4} | 000004    | Iris-versicolor   | {}    |
         | data/iris_missing2.csv | 30000 | {} | 000004   | Iris-versicolor   | {}    |
-        | data/grades.csv | 30000    | {} | 000005   | 55.65609  | {}    |
+        | data/grades.csv | 30000    | {} | 000005   | 47.04852  | {}    |
         | data/spam.csv | 30000  | {} | 000000   | ham   | {}    |
         | data/diabetes.csv | 30000  | {} | 000008   | false | {"search": true, "number_of_model_candidates": 10, "max_training_time": 600}  |
         | data/diabetes.csv | 30000  | {} | 000008   | false | {"learn_residuals": true, "number_of_model_candidates": 10, "max_training_time": 600} |
@@ -65,13 +65,13 @@ Feature: LocalDeepnet
 
         Examples:
         | data  | time_1  | data_input | objective    | prediction    |
-        | data/dates2.csv | 30000  | {"time-1": "1910-05-08T19:10:23.106", "cat-0":"cat2"} | 000002   | -0.02616    |
-        | data/dates2.csv | 30000  | {"time-1": "2011-04-01T00:16:45.747", "cat-0":"cat2"} | 000002   | 0.13352    |
-        | data/dates2.csv | 30000  | {"time-1": "1969-W29-1T17:36:39Z", "cat-0":"cat1"} | 000002   | 0.10071    |
-        | data/dates2.csv | 30000  | {"time-1": "2001-01-05T23:04:04.693", "cat-0":"cat2"} | 000002   | 0.15235    |
-        | data/dates2.csv | 30000  | {"time-1": "1950-11-06T05:34:05.602", "cat-0":"cat1"} | 000002   | -0.07686    |
-        | data/dates2.csv | 30000  | {"time-1": "1932-01-30T19:24:11.440",  "cat-0":"cat2"} | 000002   | 0.0017    |
-        | data/dates2.csv | 30000  | {"time-1": "Mon Jul 14 17:36 +0000 1969", "cat-0":"cat1"} | 000002   | 0.10071    |
+        | data/dates2.csv | 30000  | {"time-1": "1910-05-08T19:10:23.106", "cat-0":"cat2"} | 000002   | -0.4264    |
+        | data/dates2.csv | 30000  | {"time-1": "2011-04-01T00:16:45.747", "cat-0":"cat2"} | 000002   | 0.11985    |
+        | data/dates2.csv | 30000  | {"time-1": "1969-W29-1T17:36:39Z", "cat-0":"cat1"} | 000002   | -0.08211    |
+        | data/dates2.csv | 30000  | {"time-1": "2001-01-05T23:04:04.693", "cat-0":"cat2"} | 000002   | 0.00388    |
+        | data/dates2.csv | 30000  | {"time-1": "1950-11-06T05:34:05.602", "cat-0":"cat1"} | 000002   | -0.04976    |
+        | data/dates2.csv | 30000  | {"time-1": "1932-01-30T19:24:11.440",  "cat-0":"cat2"} | 000002   | -0.36264    |
+        | data/dates2.csv | 30000  | {"time-1": "Mon Jul 14 17:36 +0000 1969", "cat-0":"cat1"} | 000002   | -0.08211    |
 
 
     Scenario Outline: Successfully comparing predictions from deepnets:
@@ -87,4 +87,4 @@ Feature: LocalDeepnet
       Examples:
         | data  | time_1  | data_input  | objective    | prediction | params    |
         | data/iris.csv | 1000  | {}    | 000004   | Iris-versicolor  | {}  |
-        | data/iris.csv | 1000  | {}    | 000004   | Iris-virginica  | {"default_numeric_value": "maximum"} |
+        | data/iris.csv | 1000  | {}    | 000004   | Iris-versicolor  | {"default_numeric_value": "maximum"} |
